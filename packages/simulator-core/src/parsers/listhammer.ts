@@ -1,5 +1,5 @@
 import { applyBaseSizesToArmy } from '../data/unitBaseSizes';
-import { loadNecronCatalog, loadOrkCatalog } from '../engine/catalog';
+import { loadAllCatalogs } from '../engine/catalog';
 import type { ArmyCatalog, ImportedArmy, RuleText, UnitProfile, WargearChoice } from '../types/army';
 import type { UnitDefinition } from '../types/catalog';
 
@@ -41,7 +41,7 @@ type ParsedRoster = {
   units: ListhammerUnitEntry[];
 };
 
-const FACTION_CATALOGS = [loadOrkCatalog(), loadNecronCatalog()];
+const FACTION_CATALOGS = loadAllCatalogs();
 
 function repairText(value: string): string {
   return value

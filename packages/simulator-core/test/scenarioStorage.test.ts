@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PHASE_STEP } from '../src/types/battle';
+import { beginBattleshockStep } from '../src/engine/battleshockPhase';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { simulatePlayerTurn } from '../src/engine/simulator';
+import { advancePlayCombatResolution, simulatePlayerTurn } from '../src/engine/simulator';
 import { startPlayFightPileInStep } from '../src/engine/simulator';
 import { fightOnDeathTargetIds, fightOnDeathWeaponOptions, fightPlayUnitWeapons } from '../src/engine/simulator';
 import { playConsolidationUnitIds } from '../src/engine/simulator';
@@ -50,7 +51,7 @@ import {
   startMissionEventsForNewTurn,
 } from '../src/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/engine/stratagems';
-import { availableUnitAbilities, runAutomaticCommandUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
+import { availableArmyAbilities, availableUnitAbilities, runAutomaticCommandUnitAbilities, useArmyAbility, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
 import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName, type MissionScoringClause } from '../src/data/missionRules';
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectTemptingTargetObjective } from '../src/engine/secondaryMissions';
@@ -992,6 +993,27 @@ test('11th edition Insane Bravery clears Battle-shock on its target', () => {
   assert.equal(next.log.at(-1)?.message, 'blue-1 automatically passes its Battle-shock test.');
 });
 
+test('11th Insane Bravery immediately resolves its current Battle-shock entry', () => {
+  const battle = state('command');
+  battle.commandPoints = [1, 0];
+  const unit = losTestUnit('brave-unit', 0, { x: 10, y: 10 });
+  unit.battleshocked = true;
+  battle.units = [unit];
+  beginBattleshockStep(battle, 0);
+
+  const next = useStratagem(battle, 0, 'insane-bravery', rules40K11th, unit.id);
+
+  assert.deepEqual(next.battleshockResults, [{
+    unitId: unit.id,
+    unitName: unit.profile.name,
+    side: 0,
+    needed: unit.profile.leadership,
+    passed: true,
+    automaticallyPassed: true,
+  }]);
+  assert.equal(next.battleshockPendingUnitId, undefined);
+});
+
 test('11th Fire Overwatch is only available in the opponent Movement phase', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
@@ -1660,6 +1682,11 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
 
   const available = availableUnitAbilities(battle, ork.id, 0, 'command-phase', rules40K11th);
   assert.equal(available.some(ability => ability.id === 'waaagh'), true);
+
+  assert.deepEqual(availableArmyAbilities(battle, 0, 'command-phase', rules40K11th).map(ability => ability.id), ['waaagh']);
+  const armyUsed = useArmyAbility(battle, 0, 'waaagh', 'command-phase', rules40K11th);
+  assert.equal(armyUsed.abilityUses?.[0]?.sourceUnitId, ork.id);
+  assert.deepEqual(availableArmyAbilities(armyUsed, 0, 'command-phase', rules40K11th), []);
 
   const used = useUnitAbility(battle, ork.id, 0, 'waaagh', 'command-phase', rules40K11th);
   assert.deepEqual(used.activeArmyAbilities, [['waaagh'], []]);
@@ -7766,6 +7793,32 @@ test('shooting applies target Stealth ability as a hit modifier', () => {
   }
 });
 
+test('11th-edition Stealth grants Benefit of Cover through the shared cover rules', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const shooter = losTestUnit('stealth-11e-shooter', 0, { x: 10, y: 10 });
+  shooter.profile = {
+    ...shooter.profile,
+    weapons: [
+      { name: 'Test Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+  };
+  const target = losTestUnit('stealth-11e-target', 1, { x: 15, y: 10 }, 6);
+  target.profile = {
+    ...target.profile,
+    abilities: [{
+      name: 'Stealth',
+      description: 'If every model in a unit has this ability, each time a ranged attack targets that unit, that unit has the benefit of cover against that attack (13.08).',
+    }],
+  };
+  battle.units = [shooter, target];
+
+  const preview = playCombatHitPreview(battle, shooter.id, 0, target.id, 0, rules40K11th);
+  assert.equal(preview?.commonHitTarget, 4);
+  assert.equal(preview?.groups.some(group => group.modifiers.some(modifier => modifier.label === 'Benefit of Cover')), true);
+  assert.equal(preview?.groups.some(group => group.modifiers.some(modifier => modifier.label === 'Stealth')), false);
+});
+
 test('play Shooting lets the defender remove selected casualty models', () => {
   const battle = state('shooting');
   battle.activeArmy = 0;
@@ -7961,6 +8014,15 @@ test('damage allocation applies Feel No Pain before wounds are removed', () => {
     assert.equal(allocatedTarget.pendingDamageAllocations, undefined);
     assert.match(messages, /Feel No Pain \(5\+\): \[6, 1, 5\] -> 2 ignored, 1 damage remains/);
     assert.match(messages, /allocates 1 damage to model 1 \(2W remaining\)/);
+    const damageEvent = [...(allocated.events ?? [])].reverse().find(event =>
+      event.type === 'damage-applied' && event.data.targetUnitId === target.id,
+    );
+    assert.deepEqual(damageEvent?.data.feelNoPainRolls, [6, 1, 5]);
+    assert.equal(damageEvent?.data.feelNoPainTarget, 5);
+    assert.equal(damageEvent?.data.feelNoPainIgnored, 2);
+    assert.deepEqual(allocated.pendingFeelNoPainReroll?.rolls, [6, 1, 5]);
+    assert.equal(allocated.pendingFeelNoPainReroll?.target, 5);
+    assert.equal(allocated.pendingFeelNoPainReroll?.ignored, 2);
   } finally {
     Math.random = originalRandom;
   }
@@ -8262,6 +8324,93 @@ test('Multiple ranged weapon profiles choose only one profile when shooting all 
     assert.equal(allocatedBothProfiles.units.find(unit => unit.id === shooter.id)?.activated, true);
     assert.match(allocatedMessages, /Frag Missile/);
     assert.equal(allocatedMessages.includes('Krak Missile'), false);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('interactive multi-weapon shooting advances every weapon into wound rolls', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Dakkarig',
+    move: 10,
+    toughness: 8,
+    save: 3,
+    wounds: 10,
+    leadership: 7,
+    oc: 3,
+    baseModelCount: 1,
+    keywords: ['Vehicle'],
+    factionKeywords: ['Orks'],
+    weapons: [
+      { name: 'Blitzkannon', range: 24, attacks: '2', skill: 3, strength: 8, ap: -2, damage: '2', keywords: [], isMelee: false },
+      { name: 'Rokkit Launcha', range: 24, attacks: '1', skill: 3, strength: 8, ap: -2, damage: '3', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('dakkarig', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('dakkarig-target', 1, { x: 12, y: 10 }, 7);
+  target.profile = { ...profile, name: 'Target Dummy', toughness: 8, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const staged = shootPlayUnitWeapons(battle, shooter.id, shooter.side, [
+      { weaponIndex: 0, targetUnitId: target.id, modelCount: 1 },
+      { weaponIndex: 1, targetUnitId: target.id, modelCount: 1 },
+    ], rules40K10th);
+    assert.equal(staged.pendingCombatResolution?.continuationQueue?.length, 1);
+
+    const afterWounds = advancePlayCombatResolution(staged, 'shooting', shooter.id);
+    assert.equal(afterWounds.pendingCombatResolution?.stage, 'wounds');
+    const results = afterWounds.lastShootingResolution?.weapons.filter(result => result.targetUnitId === target.id) ?? [];
+    assert.equal(results.length, 2);
+    assert.equal(results.every(result => result.groups.some(group => group.kind === 'wound')), true);
+    const logs = afterWounds.log.map(entry => entry.message).join(' ');
+    assert.match(logs, /Blitzkannon/);
+    assert.match(logs, /Rokkit Launcha/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('interactive shooting ends at Done when every wound fails', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Failed Wound Shooter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [{ name: 'Test Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false }],
+    abilities: [],
+  };
+  const shooter = losTestUnit('failed-wound-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('failed-wound-target', 1, { x: 12, y: 10 }, 8);
+  target.profile = { ...profile, name: 'Target Dummy', toughness: 8, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  const rolls = [0.5, 0];
+  Math.random = () => rolls.shift() ?? 0;
+  try {
+    const staged = shootPlayUnitWeapons(battle, shooter.id, shooter.side, [
+      { weaponIndex: 0, targetUnitId: target.id, modelCount: 1 },
+    ], rules40K10th);
+    const terminal = advancePlayCombatResolution(staged, 'shooting', shooter.id);
+    assert.equal(terminal.pendingCombatResolution?.stage, 'damage');
+    assert.equal(terminal.pendingCombatResolution?.rolls.length, 0);
+    assert.equal(terminal.units.find(unit => unit.id === target.id)?.pendingDamageAllocations?.length ?? 0, 0);
   } finally {
     Math.random = originalRandom;
   }
@@ -11934,14 +12083,14 @@ test('11th Fight can skip all remaining optional Consolidation moves for a side'
   assert.equal(skipped.phaseStepActions?.actions.find(action => action.id === `consolidate:0:${source.id}`)?.status, 'skipped');
 });
 
-test('11th Fight allows a side to pass when all eligible fighters are more than 5 inches away', () => {
+test('11th Fight allows a side to pass eligible fighters', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.phaseStep = PHASE_STEP.FightUnits;
   battle.fightStepStarted = true;
-  const first = losTestUnit('pass-first', 0, { x: 0, y: 10 });
+  const first = losTestUnit('pass-first', 0, { x: 10, y: 10 });
   first.charged = true;
-  const second = losTestUnit('pass-second', 1, { x: 10, y: 10 });
+  const second = losTestUnit('pass-second', 1, { x: 11.2, y: 10 });
   battle.units = [first, second];
   // The opposing unit is eligible because it was engaged when this Fight
   // step started, not because its prior player turn happened in the same
@@ -11967,10 +12116,10 @@ test('11th Fight allows a side to pass when all eligible fighters are more than 
   ledgerBattle.fightPileInSide = 1;
   const ledgerFight = startPlayFightStep(ledgerBattle, rules40K11th);
   const ledgerPassed = passPlayFight(ledgerFight, 0, rules40K11th);
-  // At the actual Fight-step snapshot the distant opponent is not engaged
-  // and did not charge in this player turn, so passing the lone legal
-  // fighter ends the selection step.
-  assert.equal(ledgerPassed.phaseStep, PHASE_STEP.FightConsolidate);
+  // Both units are now engaged in the recorded Fight-step snapshot, so each
+  // side must explicitly decline its own remaining opportunity.
+  assert.equal(ledgerPassed.phaseStep, PHASE_STEP.FightUnits);
+  assert.equal(passPlayFight(ledgerPassed, 1, rules40K11th).phaseStep, PHASE_STEP.FightConsolidate);
 });
 
 test('11th Consolidation can reopen a Fight opportunity for a side that previously passed', () => {
@@ -12263,6 +12412,37 @@ test('11th Fight target choices expose one target per attached group', () => {
   assert.deepEqual(playFightConsolidationOptions(battle, source.id, 0, rules40K11th), [
     { mode: 'ongoing', targetUnitIds: [target.id] },
   ]);
+});
+
+test('11th melee engagement counts models touching an attached target Leader', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightUnits;
+  battle.fightStepStarted = true;
+  const choppa = { name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const destroyers = losTestUnit('destroyers', 0, { x: 10, y: 10 });
+  destroyers.charged = true;
+  destroyers.profile = {
+    ...destroyers.profile,
+    name: 'Lokhust Destroyers',
+    baseModelCount: 3,
+    weapons: [choppa],
+    modelWeaponLoadouts: [[0], [0], [0]],
+  };
+  destroyers.remainingModels = 3;
+  destroyers.modelPositions = [{ x: 10, y: 10 }, { x: 10.5, y: 10 }, { x: 11, y: 10 }];
+  const bodyguard = losTestUnit('target-bodyguard', 1, { x: 30, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  const leader = losTestUnit('target-leader', 1, { x: 11.8, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.profile = { ...leader.profile, keywords: ['Infantry', 'Character'] };
+  battle.units = [destroyers, bodyguard, leader];
+
+  const option = playFightWeaponOptions(battle, destroyers.id, 0, rules40K11th)[0];
+  assert.deepEqual(option?.targetIds, [bodyguard.id]);
+  assert.equal(option?.modelCount, 3);
+  assert.deepEqual(option?.targetModelIndexes?.[bodyguard.id], [0, 1, 2]);
 });
 
 test('11th attached Feel No Pain only shares unit-scoped sources and expires with its source', () => {
@@ -14972,4 +15152,53 @@ test('pending damage transfers from a destroyed bodyguard to its surviving leade
   const leaderDamaged = allocatePlayDamageToModel(bodyguardDestroyed, leader.id, 1, 0);
   assert.equal(leaderDamaged.units.find(unit => unit.id === leader.id)?.woundsOnLeadModel, 3);
   assert.equal(leaderDamaged.units.find(unit => unit.id === leader.id)?.pendingDamageAllocations, undefined);
+});
+
+test('pending normal damage continues to a second attached Leader and uses its Feel No Pain', () => {
+  const battle = state('shooting');
+  const bodyguard = losTestUnit('bodyguard', 1, { x: 12, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  bodyguard.profile = { ...bodyguard.profile, name: 'Bodyguard', wounds: 3, baseModelCount: 1 };
+  bodyguard.remainingModels = 1;
+  bodyguard.woundsOnLeadModel = 3;
+  const firstLeader = losTestUnit('leader-one', 1, { x: 12.5, y: 10 });
+  firstLeader.tabletopUnitId = bodyguard.id;
+  firstLeader.attachedToUnitId = bodyguard.id;
+  firstLeader.profile = { ...firstLeader.profile, name: 'First Leader', keywords: ['Infantry', 'Character'], wounds: 4, baseModelCount: 1 };
+  firstLeader.woundsOnLeadModel = 4;
+  const secondLeader = losTestUnit('leader-two', 1, { x: 13, y: 10 });
+  secondLeader.tabletopUnitId = bodyguard.id;
+  secondLeader.attachedToUnitId = bodyguard.id;
+  secondLeader.profile = {
+    ...secondLeader.profile,
+    name: 'Second Leader',
+    keywords: ['Infantry', 'Character'],
+    wounds: 4,
+    baseModelCount: 1,
+    abilities: [{ name: 'Feel No Pain 2+', description: 'Each time this model would lose a wound, roll one D6; on a 2+, that wound is not lost.' }],
+  };
+  secondLeader.woundsOnLeadModel = 4;
+  bodyguard.pendingDamageAllocations = [
+    { targetUnitId: bodyguard.id, damage: 3, noCarryOver: true, source: 'Test Damage' },
+    { targetUnitId: bodyguard.id, damage: 4, noCarryOver: true, source: 'Test Damage' },
+    { targetUnitId: bodyguard.id, damage: 1, noCarryOver: true, source: 'Test Damage' },
+  ];
+  battle.units = [bodyguard, firstLeader, secondLeader];
+
+  const bodyguardDestroyed = allocatePlayDamageToModel(battle, bodyguard.id, 1, 0);
+  const firstLeaderDestroyed = allocatePlayDamageToModel(bodyguardDestroyed, firstLeader.id, 1, 0);
+  assert.equal(firstLeaderDestroyed.units.find(unit => unit.id === firstLeader.id)?.destroyed, true);
+  assert.deepEqual(firstLeaderDestroyed.units.find(unit => unit.id === secondLeader.id)?.pendingDamageAllocations, [
+    { targetUnitId: secondLeader.id, damage: 1, noCarryOver: true, source: 'Test Damage' },
+  ]);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const allocated = allocatePlayDamageToModel(firstLeaderDestroyed, secondLeader.id, 1, 0);
+    assert.equal(allocated.units.find(unit => unit.id === secondLeader.id)?.woundsOnLeadModel, 4);
+    assert.match(allocated.log.map(entry => entry.message).join(' '), /Feel No Pain \(2\+\): \[6\] -> 1 ignored/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });

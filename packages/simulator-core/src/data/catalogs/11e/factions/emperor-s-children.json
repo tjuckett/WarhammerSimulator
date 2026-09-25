@@ -1,0 +1,66 @@
+{
+  "id": "emperor-s-children",
+  "name": "Emperor's Children",
+  "edition": "11e",
+  "unitRefs": [
+    "emperor-s-children.lucius-the-eternal",
+    "emperor-s-children.fulgrim",
+    "emperor-s-children.shalaxi-helbane",
+    "emperor-s-children.lord-exultant",
+    "emperor-s-children.lord-kakophonist",
+    "emperor-s-children.sorcerer",
+    "emperor-s-children.daemon-prince-of-slaanesh",
+    "emperor-s-children.daemon-prince-of-slaanesh-with-wings",
+    "emperor-s-children.keeper-of-secrets",
+    "emperor-s-children.daemonettes",
+    "emperor-s-children.infractors",
+    "emperor-s-children.tormentors",
+    "emperor-s-children.chaos-rhino",
+    "emperor-s-children.chaos-spawn",
+    "emperor-s-children.fiends",
+    "emperor-s-children.chaos-terminators",
+    "emperor-s-children.flawless-blades",
+    "emperor-s-children.noise-marines",
+    "emperor-s-children.seekers",
+    "emperor-s-children.chaos-land-raider",
+    "emperor-s-children.heldrake",
+    "emperor-s-children.defiler",
+    "emperor-s-children.maulerfiend"
+  ],
+  "ruleRefs": [
+    "emperor-s-children.army-rule.thrill-seekers",
+    "emperor-s-children.army-rule.pact-of-excess"
+  ],
+  "detachmentRefs": [
+    "emperor-s-children.detachment.mercurial-host",
+    "emperor-s-children.detachment.peerless-bladesmen",
+    "emperor-s-children.detachment.rapid-evisceration",
+    "emperor-s-children.detachment.carnival-of-excess",
+    "emperor-s-children.detachment.coterie-of-the-conceited",
+    "emperor-s-children.detachment.slaaneshs-chosen",
+    "emperor-s-children.detachment.court-of-the-phoenician",
+    "emperor-s-children.detachment.elegant-brutes",
+    "emperor-s-children.detachment.frenzied-host",
+    "emperor-s-children.detachment.spectacle-of-slaughter"
+  ],
+  "factionKeywords": [
+    "emperor-s-children",
+    "Emperor's Children"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Emperor's Children faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 23,
+    "normalizedEntryCount": 23,
+    "excludedLegendCount": 0,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

@@ -16,6 +16,7 @@ import {
   terrainCenter,
 } from './terrainGeometry';
 import { centroid } from './unitModelState';
+import { applyDefaultPreBattleFormations, pendingPreBattleFormations } from './preBattleFormations';
 
 export type DeploymentStrategy = 'balanced' | 'refused-flank' | 'objective-push';
 
@@ -454,7 +455,7 @@ export function placePlayUnit(
   modelPositions?: Position[],
 ): BattleState {
   const next = context.clone(state);
-  if (next.phase !== 'deployment') return next;
+  if (next.phase !== 'deployment' || next.pendingPreBattleFormations?.length) return next;
   const profile = next.unplacedUnits[side][unitIndex];
   if (!profile) return next;
   const board = context.boardFormatForState(next);
@@ -515,6 +516,7 @@ export interface AutomatedDeploymentContext extends ManualDeploymentContext {
 
 export function placeNextUnit(state: BattleState, context: AutomatedDeploymentContext): BattleState {
   const next = context.clone(state);
+  if (next.pendingPreBattleFormations?.length) return next;
   const board = context.boardFormatForState(next);
   let side = next.activeArmy;
   if (!next.unplacedUnits[side].length) side = (1 - side) as 0 | 1;
@@ -603,7 +605,10 @@ export function createBattleState(
   rules: { metadata: { edition: string }; objectiveControl: BattleState['objectiveControl'] }, context: BattleSetupContext,
 ): BattleState {
   context.reset();
-  const armies: [ImportedArmy, ImportedArmy] = [army1, army2];
+  const armies: [ImportedArmy, ImportedArmy] = [
+    applyDefaultPreBattleFormations(army1),
+    applyDefaultPreBattleFormations(army2),
+  ];
   const strategies: [DeploymentStrategy, DeploymentStrategy] = [strategy1, strategy2];
   const board = context.boardFormatForId(setup?.boardFormat);
   const objectives = (objectivesOverride ?? context.defaultObjectives).map(position => ({ ...position }));
@@ -651,9 +656,11 @@ export function createDeploymentState(
   const state = initialBattleState('deployment', armies, [color1, color2], terrain, [strategy1, strategy2], setup, objectives, board, rules, [], [
     context.deployableProfiles(army1, rules.metadata.edition), context.deployableProfiles(army2, rules.metadata.edition),
   ], context);
+  state.pendingPreBattleFormations = pendingPreBattleFormations(armies);
   if (rules.metadata.edition === '11e') armies.forEach((army, side) => context.addAircraftStrategicReserves(state.units, army, side as 0 | 1, board));
   const deploymentRollOff = rollOff(context);
   state.activeArmy = deploymentRollOff.winner;
+  if (state.pendingPreBattleFormations.length) state.activeArmy = state.pendingPreBattleFormations[0].side;
   state.currentActivePlayer = deploymentRollOff.winner;
   state.log = [context.log(state, 0, '', '═══ DEPLOYMENT PHASE ═══', 'phase')];
   const rollSummary = deploymentRollOff.rolls.map(([roll0, roll1]) => `${state.armies[0].name} ${roll0} vs ${state.armies[1].name} ${roll1}`).join('; ');
@@ -684,6 +691,9 @@ export interface DeploymentLegalityContext {
 export function deploymentIssues(state: BattleState, context: DeploymentLegalityContext): string[] {
   if (state.phase !== 'deployment') return [];
   const issues: string[] = [];
+  if (state.pendingPreBattleFormations?.length) {
+    issues.push(`${state.pendingPreBattleFormations.length} pre-battle formation choice${state.pendingPreBattleFormations.length === 1 ? '' : 's'} still unresolved.`);
+  }
   const unplacedCount = state.unplacedUnits[0].length + state.unplacedUnits[1].length;
   if (unplacedCount > 0) issues.push(`${unplacedCount} unit${unplacedCount === 1 ? '' : 's'} still undeployed.`);
   for (const list of context.coherencyLists(state)) {

@@ -1,42 +1,241 @@
 {
   "catalogId": "warhammer-40k",
   "edition": "11e",
-  "catalogRevision": "2026-08-29.1",
+  "catalogRevision": "2026-09-25.1",
   "schemaVersion": 1,
   "gameSystem": "warhammer-40k",
   "factions": [
-    "orks"
+    "adepta-sororitas",
+    "adeptus-custodes",
+    "adeptus-mechanicus",
+    "adeptus-titanicus",
+    "aeldari",
+    "astra-militarum",
+    "chaos-daemons",
+    "chaos-knights",
+    "chaos-space-marines",
+    "death-guard",
+    "drukhari",
+    "emperor-s-children",
+    "genestealer-cults",
+    "grey-knights",
+    "imperial-agents",
+    "imperial-knights",
+    "leagues-of-votann",
+    "necrons",
+    "orks",
+    "space-marines",
+    "t-au-empire",
+    "thousand-sons",
+    "tyranids",
+    "world-eaters"
   ],
   "unitFiles": [
-    "units/orks.json"
+    "units/adepta-sororitas.json",
+    "units/adeptus-custodes.json",
+    "units/adeptus-mechanicus.json",
+    "units/adeptus-titanicus.json",
+    "units/aeldari.json",
+    "units/astra-militarum.json",
+    "units/chaos-daemons.json",
+    "units/chaos-knights.json",
+    "units/chaos-space-marines.json",
+    "units/death-guard.json",
+    "units/drukhari.json",
+    "units/emperor-s-children.json",
+    "units/genestealer-cults.json",
+    "units/grey-knights.json",
+    "units/imperial-agents.json",
+    "units/imperial-knights.json",
+    "units/leagues-of-votann.json",
+    "units/necrons.json",
+    "units/orks.json",
+    "units/space-marines.json",
+    "units/t-au-empire.json",
+    "units/thousand-sons.json",
+    "units/tyranids.json",
+    "units/world-eaters.json"
   ],
   "ruleFiles": [
-    "rules/orks.json"
+    "rules/adepta-sororitas.json",
+    "rules/adeptus-custodes.json",
+    "rules/adeptus-mechanicus.json",
+    "rules/adeptus-titanicus.json",
+    "rules/aeldari.json",
+    "rules/astra-militarum.json",
+    "rules/chaos-daemons.json",
+    "rules/chaos-knights.json",
+    "rules/chaos-space-marines.json",
+    "rules/death-guard.json",
+    "rules/drukhari.json",
+    "rules/emperor-s-children.json",
+    "rules/genestealer-cults.json",
+    "rules/grey-knights.json",
+    "rules/imperial-agents.json",
+    "rules/imperial-knights.json",
+    "rules/leagues-of-votann.json",
+    "rules/necrons.json",
+    "rules/orks.json",
+    "rules/space-marines.json",
+    "rules/t-au-empire.json",
+    "rules/thousand-sons.json",
+    "rules/tyranids.json",
+    "rules/world-eaters.json"
   ],
   "reviewStatus": "working",
-  "parserVersion": "wahapedia-reference-normalizer-2-wargear",
+  "parserVersion": "wahapedia-reference-normalizer-3-source-refresh",
   "sources": [
+    {
+      "title": "Wahapedia Adepta Sororitas faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Adeptus Custodes faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Adeptus Mechanicus faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-mechanicus/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Adeptus Titanicus faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Aeldari faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Astra Militarum faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Chaos Daemons faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Chaos Knights faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Chaos Space Marines faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-space-marines/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Death Guard faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Drukhari faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Emperor's Children faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Genestealer Cults faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Grey Knights faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/grey-knights/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Imperial Agents faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-agents/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Imperial Knights faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Leagues of Votann faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Necrons faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
     {
       "title": "Wahapedia Orks faction reference",
       "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-      "capturedAt": "2026-08-29",
-      "sourceRevision": "Faction Pack. Orks (11th edition, version 1.2)"
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
     },
     {
-      "title": "Chapter Approved Tournament Companion - Base Size Guide",
-      "capturedAt": "2026-08-29",
-      "page": "41-42",
-      "sourceRevision": "June 2025"
+      "title": "Wahapedia Space Marines faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/space-marines/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia T'au Empire faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Thousand Sons faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/thousand-sons/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia Tyranids faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    },
+    {
+      "title": "Wahapedia World Eaters faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
     }
   ],
   "coverage": {
-    "sourceEntryCount": 58,
-    "normalizedEntryCount": 58,
-    "excludedLegendCount": 30,
+    "sourceEntryCount": 55,
+    "normalizedEntryCount": 55,
+    "excludedLegendCount": 12,
     "notes": [
-      "All current non-Legends datasheets are selectable.",
-      "Structured model loadouts and unit upgrades are available for the current Ork datasheets with wargear options; Deff Dread replacement slots are represented without enumerating every combination.",
-      "Remaining entries retain source-derived partial profiles pending executable-effect review."
+      "All current non-Legends datasheets are selectable. Profiles, weapons, abilities, points, and base sizes are regenerated from the saved Wahapedia capture; model-specific loadouts and executable effects remain source-scoped work."
     ]
   }
 }

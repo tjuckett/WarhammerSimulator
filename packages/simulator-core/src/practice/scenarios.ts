@@ -2,10 +2,11 @@ import type { BattleSetup, BattleState } from '../types/battle';
 import { battleRound } from '../engine/battleRound';
 import type { RulesetMetadata } from '../engine/rulesEngine';
 import { clone } from '../engine/clone';
-import { createPracticeTimeline, currentTimelineState, type PracticeTimeline } from './timeline';
+import { PRACTICE_TIMELINE_VERSION, createPracticeTimeline, currentTimelineState, type PracticeTimeline } from './timeline';
 
 export const PRACTICE_SCENARIO_VERSION = 1;
 export type PracticeCheckpointKind = 'play' | 'auto-phase';
+const CHECKPOINT_LOG_ENTRY_LIMIT = 500;
 
 const LEGACY_PLAY_CHECKPOINT_KIND = 'man' + 'ual';
 
@@ -224,6 +225,64 @@ export function scenarioFromTimeline(
     },
     initialState: clone(savedState),
     timeline: clone(timeline),
+  };
+}
+
+/**
+ * Create a checkpoint directly from the live state without cloning its full
+ * in-memory undo timeline. Checkpoint persistence is snapshot-based, so the
+ * history is intentionally omitted from the saved payload.
+ */
+export function scenarioFromCheckpointState(
+  state: BattleState,
+  timeline: Pick<PracticeTimeline, 'metadata' | 'cursor'>,
+  options: CreatePracticeScenarioOptions = {},
+): PracticeScenario {
+  const createdAt = options.createdAt ?? nowIso();
+  const name = options.name ?? timeline.metadata.title;
+  const gameId = options.gameId ?? timeline.metadata.id;
+  const checkpointKind = normalizePracticeCheckpointKind(options.checkpointKind) ?? 'auto-phase';
+  // Logs are display history, not resolver input. Persisting an unbounded
+  // dice log makes checkpoint creation increasingly expensive for no game
+  // state benefit.
+  const snapshot = clone({
+    ...state,
+    log: state.log.slice(-CHECKPOINT_LOG_ENTRY_LIMIT),
+    events: state.events?.slice(-CHECKPOINT_LOG_ENTRY_LIMIT),
+  });
+  return {
+    version: PRACTICE_SCENARIO_VERSION,
+    metadata: {
+      id: options.id ?? makeId('scenario'),
+      name,
+      createdAt,
+      updatedAt: createdAt,
+      ruleset: clone(timeline.metadata.ruleset),
+      setup: snapshot.setup ? clone(snapshot.setup) : undefined,
+      tags: options.tags ?? timeline.metadata.tags,
+      notes: options.notes ?? timeline.metadata.notes,
+      gameId,
+      branchId: options.branchId,
+      parentCheckpointId: options.parentCheckpointId,
+      checkpointKind,
+      checkpointLabel: options.checkpointLabel,
+      sequence: options.sequence,
+      timelineCursor: options.timelineCursor ?? timeline.cursor,
+      parentScenarioId: options.parentScenarioId,
+      forkedFromTimelineEntryId: options.forkedFromTimelineEntryId,
+    },
+    initialState: snapshot,
+    timeline: {
+      version: PRACTICE_TIMELINE_VERSION,
+      metadata: {
+        ...clone(timeline.metadata),
+        title: name,
+        updatedAt: createdAt,
+      },
+      initialState: clone(snapshot),
+      entries: [],
+      cursor: 0,
+    },
   };
 }
 

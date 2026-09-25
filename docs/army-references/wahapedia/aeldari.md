@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/aeldari/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/aeldari/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -111,12 +111,16 @@
 | ranged | -- | Bloody Twins | assault pistol | 24" | 6 | 2+ | 5 | -1 | 2 |
 | melee | -- | Sword of Asur | devastating wounds | Melee | 6 | 2+ | 6 | -3 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Tactical Acumen: While this model is leading a unit, in your Shooting phase, after that unit has shot, it can make a Normal move of up to 6". If it does, until the end of the turn, that unit is not eligible to declare a charge.
-  Hand of Asuryan: Once per battle, when this model is selected to shoot, it can use this ability. If it does, until the end of the phase, its Bloody Twins weapon has a Damage characteristic of 3 and the [ANTI-INFANTRY 5+] and [DEVASTATING WOUNDS] abilities.
+- Hand of Asuryan: Once per battle, when this model is selected to shoot, it can use this ability. If it does, until the end of the phase, its Bloody Twins weapon has a Damage characteristic of 3 and the [ANTI-INFANTRY 5+] and [DEVASTATING WOUNDS] abilities.
 
 #### Unit Composition
 - 1 Asurmen - EPIC HERO
@@ -151,12 +155,17 @@ ASURYANI
 | ranged | -- | Fury of the Tempest | assault lethal hits | 24" | 4 | 2+ | 6 | -1 | 2 |
 | melee | -- | Shining Blade | sustained hits 1 | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Battle Focus
 - Cloudstrider: While this model is leading a unit, at the end of your opponent's turn, if that unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves. In addition, while this model is leading a unit, when that unit is set up on the battlefield using the Deep Strike ability, in your movement phase, it can use this ability. If it does, that unit can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy models, but until the end of the turn, it is not eligible to declare a charge.'
-  Cry of the Wind: Each time this model is set up on the battlefield, until the end of the turn, each time this model makes a ranged attack, a successful unmodified Hit roll scores a Critical Hit.
+- Cry of the Wind: Each time this model is set up on the battlefield, until the end of the turn, each time this model makes a ranged attack, a successful unmodified Hit roll scores a Critical Hit.
 
 #### Unit Composition
 - 1 Baharroth - EPIC HERO
@@ -192,12 +201,16 @@ ASURYANI
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Staff of Ulthamar and witchblade | anti-infantry 2+ psychic | Melee | 3 | 2+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Diviner of Futures: At the start of your Command phase, if this model is on the battlefield, you gain 1CP.
-  Doom (Psychic): At the end of your Movement phase, select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a friendly AELDARI model makes an attack that targets that enemy unit, add 1 to the Wound roll.
+- Doom (Psychic): At the end of your Movement phase, select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a friendly AELDARI model makes an attack that targets that enemy unit, add 1 to the Wound roll.
 
 #### Unit Composition
 - 1 Eldrad Ulthran - EPIC HERO
@@ -235,12 +248,16 @@ ASURYANI
 | ranged | -- | Searsong - lance | assault melta 6 | 18" | 1 | 2+ | 14 | -4 | D6 |
 | melee | -- | Fire Axe | -- | Melee | 6 | 2+ | 5 | -4 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Burning Lance: While this model is leading a unit, add 6" to the Range characteristic of Melta weapons equipped by models in that unit.
-  Unquenchable Resolve: The first time this model is destroyed, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with its full wounds remaining.
+- Unquenchable Resolve: The first time this model is destroyed, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with its full wounds remaining.
 
 #### Unit Composition
 - 1 Fuegan - EPIC HERO
@@ -275,12 +292,17 @@ ASURYANI
 | ranged | -- | Silent Death | assault | 12" | 6 | 2+ | 6 | -2 | 1 |
 | melee | -- | Blade of Destruction | anti-infantry 3+ | Melee | 8 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Fights First
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Leader
-- FACTION: Battle Focus
 - Whirling Death: While this model is leading a unit, each time that unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6" to the Move characteristic of models in that unit and each time a model in that unit makes an Advance move, ignore any vertical distance when determining the total distance that model can be moved during that move.
-  Storm of Silence: Each time this model makes an attack that targets a CHARACTER unit, you can re-roll the Wound roll.
+- Storm of Silence: Each time this model makes an attack that targets a CHARACTER unit, you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Jain Zar - EPIC HERO
@@ -315,12 +337,20 @@ ASURYANI
 | ranged | -- | Dread of the Deep Void | anti-infantry 2+ blast hazardous ignores cover psychic | 24" | D6+2 | 3+ | 3 | -2 | 1 |
 | melee | -- | Waystave | anti-infantry 2+ psychic | Melee | 3 | 2+ | 3 | 0 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 7"
-- FACTION: Battle Focus
 - Aethersense (Psychic): Enemy units that are set up on the battlefield from Reserves cannot be set up within 12" of this model.
-  Fury of the Void (Psychic): In your Shooting phase, after this model's unit has shot, select one enemy unit hit by one or more attacks made with this model's Dread of the Deep Void. Until the end of the turn, that unit is riven. Each time an AELDARI model from your army makes an attack that targets a riven unit, add 1 to the Strength characteristic of that attack.
+- Fury of the Void (Psychic): In your Shooting phase, after this model's unit has shot, select one enemy unit hit by one or more attacks made with this model's Dread of the Deep Void. Until the end of the turn, that unit is riven. Each time an AELDARI model from your army makes an attack that targets a riven unit, add 1 to the Strength characteristic of that attack.
 
 #### Unit Composition
 - 1 Kharseth - EPIC HERO
@@ -367,12 +397,17 @@ ASURYANI
 | melee | -- | Spider's Fangs | extra attacks lethal hits | Melee | 5 | 2+ | 4 | -2 | 1 |
 | melee | -- | Weaverender | lethal hits | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Battle Focus
 - Empyric Ambush: While this model is leading a unit, that unit is eligible to declare a charge in a turn in which it used its Flickerjump ability.
-  Whispering Web: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly Aeldari model makes an attack that targets that unit, an unmodified Hit roll of 5+ scores a Critical Hit.
+- Whispering Web: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly Aeldari model makes an attack that targets that unit, an unmodified Hit roll of 5+ scores a Critical Hit.
 
 #### Unit Composition
 - 1 Lhykhis - EPIC HERO
@@ -407,12 +442,16 @@ ASURYANI
 | ranged | -- | Maugetar | devastating wounds ignores cover | 36" | 6 | 2+ | 7 | -2 | 2 |
 | melee | -- | Maugetar | -- | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Harvester of Souls: While this model is leading a unit, in your Shooting phase, after selecting targets for that unit's attacks, if every attack targets the same unit, roll one D6 for the target unit and one D6 for every other enemy unit within 3" of the target unit. On a 5+, the unit being rolled for is struck by explosive debris; after resolving all of that unit's attacks against the target unit, each unit struck by explosive debris suffers D3 mortal wounds.
-  Face of Death: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test, subtracting 1 from the result.
+- Face of Death: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test, subtracting 1 from the result.
 
 #### Unit Composition
 - 1 Maugan Ra
@@ -448,12 +487,20 @@ ASURYANI
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Spear of Twilight | lance | Melee | 5 | 2+ | 7 | -3 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 7"
-- FACTION: Battle Focus
 - Piratical Hero: While this model is leading a unit, each time a model in that unit makes an attack, that attack has the [SUSTAINED HITS 1] ability and add 1 to the Hit roll.
-  Prince of Corsairs: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), select up to three AELDARI units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
+- Prince of Corsairs: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), select up to three AELDARI units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
 
 #### Unit Composition
 - 1 Prince Yriel - EPIC HERO
@@ -499,14 +546,19 @@ ASURYANI
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Solitaire weapons | precision | Melee | 9 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Fights First
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Lone Operative, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Blitz: Once per battle, in your Movement phase, before this model makes a Normal move, it can use this ability. If it does, until the end of the turn, add 2D6" to this model's Move characteristic and add 3 to the Attacks characteristic of this model's Solitaire weapons.
-  Blur of Movement: This model is eligible to declare a charge in a turn in which it Advanced.
-
-#### Wargear Abilities
+- Blur of Movement: This model is eligible to declare a charge in a turn in which it Advanced.
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -539,12 +591,17 @@ HARLEQUINS
 | melee | -- | Asu-var - duellist stance | devastating wounds precision | Melee | 6 | 2+ | 5 | -2 | 2 |
 | melee | -- | Asu-var - mythic stance | anti-epic hero 2+ precision | Melee | 4 | 2+ | 3 | -4 | 3 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Battle Focus, Disparate Paths
 - Way of the Blade: While this model is leadings unit, models in that unit have the Fights First ability.
-  Yvraine's Champion: While this model is leading a unit, other CHARACTER models attached to that unit have the Feel No Pain 4+ ability.
+- Yvraine's Champion: While this model is leading a unit, other CHARACTER models attached to that unit have the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Visarch - EPIC HERO
@@ -557,7 +614,6 @@ HARLEQUINS
   - CORSAIR VOIDSCARRED
   - GUARDIAN DEFENDERS
   - STORM GUARDIANS
-  - YNNARI INCUBI
   - YNNARI KABALITE WARRIORS
   - YNNARI WYCHES
   You can attach this unit to one of the above units, even if YVRAINE has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.
@@ -587,12 +643,17 @@ YNNARI
 | ranged | -- | Storm of Whispers | anti-infantry 2+ devastating wounds psychic | 12" | D6+3 | 2+ | 2 | -2 | 1 |
 | melee | -- | Kha-vir | devastating wounds | Melee | 5 | 2+ | 4 | -3 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus, Disparate Paths
 - Word of the Phoenix (Psychic): While this model is leading a unit, in your Command phase, roll one D6: on a 2+, D3+1 destroyed Bodyguard models (excluding SUPPORT WEAPON models) are returned to that unit with their full wounds remaining.
-  Herald of Ynnead: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. Until the end of the phase, each time a friendly AELDARI model makes an attack that targets that unit, you can re-roll a Wound roll of 1.
+- Herald of Ynnead: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. Until the end of the phase, each time a friendly AELDARI model makes an attack that targets that unit, you can re-roll a Wound roll of 1.
 
 #### Unit Composition
 - 1 Yvraine - EPIC HERO
@@ -635,12 +696,16 @@ YNNARI
 | melee | -- | The Wailing Doom - strike | -- | Melee | 6 | 2+ | 16 | -4 | D6+2 |
 | melee | -- | The Wailing Doom - sweep | -- | Melee | 12 | 2+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Battle Focus
 - Molten Form: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
-  The Bloody-Handed (Aura): While a friendly AELDARI unit is within 6" of this model, add 1 to Advance and Charge rolls made for that unit.
+- The Bloody-Handed (Aura): While a friendly AELDARI unit is within 6" of this model, add 1 to Advance and Charge rolls made for that unit.
 
 #### Unit Composition
 - 1 Avatar of Khaine - EPIC HERO
@@ -675,12 +740,18 @@ ASURYANI
 | melee | -- | Vilith-zhar - strike | -- | Melee | 5 | 2+ | 12 | -4 | D6+1 |
 | melee | -- | Vilith-zhar - sweep | -- | Melee | 10 | 2+ | 6 | -4 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Battle Focus, Disparate Paths
 - Inevitable Death: Once in each of your opponent's turns, if this model is on the battlefield when another friendly AELDARI unit is destroyed, just after removing the last model in that unit, you can remove this model from the battlefield and set it up as close as possible to where that destroyed model was destroyed and not within Engagement Range of one or more enemy units. Doing so does not prevent this model from being eligible to move.
-  Ethereal Form: Each time this model destroys an enemy unit, it regains up to D3 lost wounds.
+- Ethereal Form: Each time this model destroys an enemy unit, it regains up to D3 lost wounds.
 
 #### Unit Composition
 - 1 Yncarne - EPIC HERO
@@ -718,12 +789,26 @@ YNNARI
 | melee | -- | Scorpion chainsword | sustained hits 1 | Melee | 7 | 2+ | 4 | -1 | 1 |
 | melee | -- | Star glaive | -- | Melee | 4 | 2+ | 6 | -3 | 3 |
 
+#### Wargear options
+- This model's shuriken pistol can be replaced with one of the following:
+  - 1 death spinner
+  - 1 Dragon fusion gun
+  - 1 Dragon fusion pistol
+  - 1 Reaper launcher
+- This model's star glaive can be replaced with one of the following:
+  - 1 Banshee blade
+  - 1 Scorpion chainsword
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Superlative Strategist: While this model is leading a unit, you can re-roll Advance rolls made for that unit, and you can re-roll any rolls made for that unit while it is performing an Agile Manoeuvre.
-  Path of Command: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
+- Path of Command: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Autarch
@@ -787,12 +872,27 @@ ASURYANI, YNNARI
 | melee | -- | Scorpion chainsword | sustained hits 1 | Melee | 7 | 2+ | 4 | -1 | 1 |
 | melee | -- | Star glaive | -- | Melee | 4 | 2+ | 6 | -3 | 3 |
 
+#### Wargear options
+- This model's shuriken pistol can be replaced with one of the following:
+  - 1 death spinner
+  - 1 Dragon fusion gun
+  - 1 Dragon fusion pistol
+  - 1 Reaper launcher
+- This model's star glaive can be replaced with one of the following:
+  - 1 Banshee blade
+  - 1 Scorpion chainsword
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Battle Focus
 - Indomitable Strength of Will: While this model is leading a unit, each time you spend a Battle Focus token to enable that unit to perform an Agile Manoeuvre, roll one D6: on a 3+, you gain 1 Battle Focus token.
-  Path of Command: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
+- Path of Command: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Autarch Wayleaper
@@ -842,17 +942,20 @@ ASURYANI, YNNARI
 | ranged | -- | Shrieker cannon | -- | 24" | 3 | 2+ | 6 | -2 | 2 |
 | melee | -- | Jester's blade | -- | Melee | 4 | 2+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Lone Operative
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative
-- FACTION: Battle Focus, Disparate Paths
 - Death is Not Enough: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. That enemy unit must take a Battle-shock test. If one or more of those attacks destroyed a model in that enemy unit, subtract 1 from that test.
-  Cruel Amusement: In your Shooting phase, each time this model is selected to shoot, select one of the abilities below. Until the end of the phase, this model's shrieker cannon has that ability.
+- Cruel Amusement: In your Shooting phase, each time this model is selected to shoot, select one of the abilities below. Until the end of the phase, this model's shrieker cannon has that ability.
   - [IGNORES COVER]
   - [PRECISION]
   - [SUSTAINED HITS 3]
-
-#### Wargear Abilities
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -896,12 +999,19 @@ HARLEQUINS
 | melee | -- | Singing spear | psychic | Melee | 2 | 2+ | 3 | 0 | 3 |
 | melee | -- | Witchblade | anti-infantry 2+ psychic | Melee | 2 | 2+ | 3 | 0 | 2 |
 
+#### Wargear options
+- This model's witchblade can be replaced with 1 singing spear.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Branching Fates (Psychic): While this model is leading a unit, once per phase, you can change the result of one Hit roll, one Wound roll or one Damage roll made for a model in that unit (excluding SUPPORT WEAPON models) to an unmodified 6.
-  Guide (Psychic): At the end of your Movement phase, select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a friendly AELDARI model makes an attack that targets that enemy unit, add 1 to the Hit roll. Each unit can only be selected for this ability once per turn.
+- Guide (Psychic): At the end of your Movement phase, select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a friendly AELDARI model makes an attack that targets that enemy unit, add 1 to the Hit roll. Each unit can only be selected for this ability once per turn.
 
 #### Unit Composition
 - 1 Farseer
@@ -959,14 +1069,21 @@ ASURYANI, YNNARI
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Miststave | psychic | Melee | 4 | 2+ | 5 | -1 | D3 |
 
+#### Wargear options
+- This model's shuriken pistol can be replaced with 1 neuro disruptor.
+
+#### Core Abilities
+- Leader
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Fog of Dreams (Psychic): While this model is leading a unit, that unit can only be selected as the target of a ranged attack if the attacking model is within 18".
-  Treacherous Illusion (Psychic): Melee weapons equipped by enemy models have the [HAZARDOUS] ability while targeting this model's unit.
-
-#### Wargear Abilities
+- Treacherous Illusion (Psychic): Melee weapons equipped by enemy models have the [HAZARDOUS] ability while targeting this model's unit.
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -1014,13 +1131,17 @@ HARLEQUINS
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Witch staff | anti-infantry 2+ psychic | Melee | 2 | 2+ | 3 | 0 | D3 |
 
+#### Core Abilities
+- Stealth
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Stealth
-- FACTION: Battle Focus
 - Spiritseer: While this model is within 3" of one or more friendly WRAITH CONSTRUCT units, this model has the Lone Operative ability.
-  Spirit Mark (Psychic): Once per turn, in your Movement phase, when this model starts or ends a move, select one friendly WRAITH CONSTRUCT unit within 6" of this model (excluding TITANIC units) and one enemy unit visible to this model. Until the start of your next Movement phase, weapons equipped by models in that friendly unit have the [SUSTAINED HITS 1] ability while targeting that enemy unit.
-  Tears of Isha (Psychic): In your Command phase, select one friendly WRAITH CONSTRUCT unit within 6" of this model. If one or more models in that unit are destroyed, you can return one destroyed model to that unit. Otherwise, one model in that unit regains up to D3 lost wounds. Each unit can only be selected for this ability once per turn.
+- Spirit Mark (Psychic): Once per turn, in your Movement phase, when this model starts or ends a move, select one friendly WRAITH CONSTRUCT unit within 6" of this model (excluding TITANIC units) and one enemy unit visible to this model. Until the start of your next Movement phase, weapons equipped by models in that friendly unit have the [SUSTAINED HITS 1] ability while targeting that enemy unit.
+- Tears of Isha (Psychic): In your Command phase, select one friendly WRAITH CONSTRUCT unit within 6" of this model. If one or more models in that unit are destroyed, you can return one destroyed model to that unit. Otherwise, one model in that unit regains up to D3 lost wounds. Each unit can only be selected for this ability once per turn.
 
 #### Unit Composition
 - 1 Spiritseer
@@ -1076,14 +1197,23 @@ ASURYANI, YNNARI
 | melee | -- | Harlequin's special weapon | devastating wounds | Melee | 6 | 2+ | 4 | -1 | 2 |
 | melee | -- | Troupe Master's blade | devastating wounds | Melee | 5 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's shuriken pistol can be replaced with one of the following:
+  - 1 fusion pistol
+  - 1 neuro disruptor
+- This model's Troupe Master's blade can be replaced with 1 Harlequin's special weapon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus, Disparate Paths
 - Choreographer of War: While this model is leading a unit, each time a model in that unit makes a Pile-in or Consolidation move, it can move up to 6" instead of up to 3". In addition, it does not need to end that move closer to the closest enemy model, provided it ends it as close as possible to the closest enemy unit.
-  Cegorach's Favour: Each time this model makes a melee attack, you can re-roll a Hit roll of 1 and add 1 to the Wound roll.
-
-#### Wargear Abilities
+- Cegorach's Favour: Each time this model makes a melee attack, you can re-roll a Hit roll of 1 and add 1 to the Wound roll.
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -1132,12 +1262,19 @@ HARLEQUINS
 | melee | -- | Singing spear | psychic | Melee | 2 | 3+ | 3 | 0 | 3 |
 | melee | -- | Witchblade | anti-infantry 2+ psychic | Melee | 2 | 3+ | 3 | 0 | 2 |
 
+#### Wargear options
+- This model's witchblade can be replaced with 1 singing spear.
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Battle Focus
 - Runes of Fortune (Psychic): Each time an enemy unit declares a charge, if one or more units with this ability are selected as a target of that charge, subtract 2 from the Charge roll.
-  Psychic Communion (Psychic): Each time this model is selected to shoot, until the end of the phase, add 1 to the Attacks and Strength characteristics of its Destructor weapon for each other friendly AELDARI PSYKER model within 6" of this model (to a maximum of +2).
+- Psychic Communion (Psychic): Each time this model is selected to shoot, until the end of the phase, add 1 to the Attacks and Strength characteristics of its Destructor weapon for each other friendly AELDARI PSYKER model within 6" of this model (to a maximum of +2).
 
 #### Unit Composition
 - 1 Warlock
@@ -1195,14 +1332,20 @@ ASURYANI, YNNARI
 | ranged | -- | Splinter pistol | anti-infantry 3+ assault pistol | 12" | 1 | 2+ | 2 | 0 | 1 |
 | melee | -- | Huskblade | anti-infantry 3+ | Melee | 5 | 2+ | 3 | -2 | 2 |
 
+#### Wargear options
+- This model's splinter pistol can be replaced with 1 blast pistol.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus, Disparate Paths
 - Overlord: While this model is leading a unit, each time a model in that unit makes an attack, re-roll a Wound roll of 1. While that unit is below its Starting Strength, each time a model in that unit makes an attack, you can re-roll the Wound roll instead.
-  Reborn Mastermind: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
-
-#### Wargear Abilities
+- Reborn Mastermind: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
 - Shadow Field: You cannot re-roll invulnerable saving throws made for the bearer. The first time an invulnerable saving throw made for the bearer is failed, until the end of the battle, the bearer has no invulnerable save.
 
 #### Unit Composition
@@ -1243,12 +1386,22 @@ YNNARI
 | ranged | -- | Splinter pistol | anti-infantry 3+ assault pistol | 12" | 1 | 2+ | 2 | 0 | 1 |
 | melee | -- | Succubus weapons | anti-infantry 3+ | Melee | 6 | 2+ | 3 | -2 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 blast pistol
+  - 1 splinter pistol
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus, Disparate Paths
 - Storm of Blades: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Empowered by Death: At the start of the Fight phase, if this model's unit is below its Starting Strength, until the end of the phase, models in that unit have the Fights First ability.
+- Empowered by Death: At the start of the Fight phase, if this model's unit is below its Starting Strength, until the end of the phase, models in that unit have the Fights First ability.
 
 #### Unit Composition
 - 1 Succubus
@@ -1287,12 +1440,16 @@ YNNARI
 | melee | -- | Drakesteed Fangs and Talons | Extra Attacks | Melee | 3 | 3+ | 5 | -1 | 1 |
 | melee | -- | Moonblades | Lethal Hits Twin-linked | Melee | 5 | 2+ | 4 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Blade of the Clans: This unit's melee attacks have [Sustained Hits 1].
-  Cornered Prey: When an enemy unit engaged with this unit is selected to make a fall-back move, that enemy unit must use the desperate escape mode. If that enemy unit is battle-shocked, -1 from those hazard rolls.
+- Cornered Prey: When an enemy unit engaged with this unit is selected to make a fall-back move, that enemy unit must use the desperate escape mode. If that enemy unit is battle-shocked, -1 from those hazard rolls.
 
 #### Unit Composition
 - 1 Clanblade model
@@ -1343,12 +1500,19 @@ ASURYANI, YNNARI
 | melee | -- | Singing spear | psychic | Melee | 2 | 2+ | 3 | 0 | 3 |
 | melee | -- | Witchblade | anti-infantry 2+ psychic | Melee | 2 | 2+ | 3 | 0 | 2 |
 
+#### Wargear options
+- This model's witchblade can be replaced with 1 singing spear.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus
 - Branching Fates (Psychic): While this model is leading a unit, once per phase, you can change the result of one Hit roll, one Wound roll or one Damage roll made for a model in that unit to an unmodified 6.
-  Misfortune (Psychic): At the end of your Movement phase, select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a model in that unit makes an attack, subtract 1 from the Wound roll. Each unit can only be selected for this ability once per turn.
+- Misfortune (Psychic): At the end of your Movement phase, select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a model in that unit makes an attack, subtract 1 from the Wound roll. Each unit can only be selected for this ability once per turn.
 
 #### Unit Composition
 - 1 Farseer Skyrunner
@@ -1409,12 +1573,18 @@ ASURYANI, YNNARI
 | melee | -- | Drakesteed Fangs and Talons | Extra Attacks | Melee | 3 | 3+ | 5 | -1 | 1 |
 | melee | -- | Hunting Blades | -- | Melee | 2 | 3+ | 3 | -1 | 1 |
 
+#### Core Abilities
+- Lone Operative
+- Scouts 9"
+- Stealth
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative, Scouts 9", Stealth
-- FACTION: Battle Focus
 - Panicked Quarry: In your Shooting phase, when this unit has shot, select one enemy unit (excluding MONSTER/VEHICLE units) hit by those attacks. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll.
-  Drakolithe (Once per battle, per token): When an enemy unit ends a move within 8" of this unit, if this unit is unengaged or if that enemy unit ended that move engaged with this unit, you can use this ability. If you do, roll one D6:
+- Drakolithe (Once per battle, per token): When an enemy unit ends a move within 8" of this unit, if this unit is unengaged or if that enemy unit ended that move engaged with this unit, you can use this ability. If you do, roll one D6:
   - On a 3+, that enemy unit suffers 1 mortal wound.
   Place one Drakolithe token next to the unit for each Drakolithe the unit is equipped with, removing one each time this ability is used.
 
@@ -1462,10 +1632,14 @@ ASURYANI, YNNARI
 | melee | -- | Drakesteed Fangs and Talons | Extra Attacks | Melee | 3 | 3+ | 5 | -1 | 1 |
 | melee | -- | Stone Stave | ANTI-non-MONSTER/VEHICLE 2+ PSYCHIC | Melee | 3 | 3+ | 3 | -1 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Battle Focus
 - Elemental Ensnarement: At the end of your Fight phase, if this unit is not battle-shocked, you can use this ability. If you do, roll one D6:
   - On a 1, this unit is battle-shocked.
   - Select one visible enemy MONSTER/VEHICLE unit (excluding TITANIC units) within 18" of this unit. That enemy unit is ensnared until the start of your next turn:
@@ -1531,13 +1705,29 @@ ASURYANI, YNNARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power sword | -- | Melee | 2 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Voidreaver Felarch's shuriken pistol can be replaced with one of the following:
+  - 1 neuro disruptor
+  - 1 shuriken rifle
+- The Voidreaver Felarch can be equipped with:
+  - 1 mistshield
+- Any number of Corsair Voidreavers in this unit can each have their shuriken pistol and power sword replaced with 1 shuriken rifle.
+- For every 5 models in this unit, 1 Corsair Voidreaver's power sword or shuriken rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 shredder
+- If this unit contains 10 models, 1 Corsair Voidreaver's shuriken rifle can be replaced with one of the following:
+  - 1 shuriken cannon
+  - 1 wraithcannon
+
+#### Core Abilities
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
-- FACTION: Battle Focus
 - Reavers of the Void: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack is within range of an objective marker, you can re-roll the Hit roll instead.
-
-#### Wargear Abilities
 - Mistshield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -1586,11 +1776,20 @@ ASURYANI, YNNARI
 | ranged | -- | Starcannon | -- | 36" | 2 | 3+ | 8 | -3 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Heavy Weapon Platform's shuriken cannon can be replaced with one of the following:
+  - 1 missile launcher
+  - 1 bright lance
+  - 1 scatter laser
+  - 1 starcannon
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Fleet of Foot: This unit can perform the Fade Back Agile Manoeuvre without spending a Battle Focus token to do so. It can do so even if other units have done so in the same phase, and doing so does not prevent other units from performing the same Agile Manoeuvre in the same phase.
-  Crewed Platform: When the last Guardian Defender model in this unit is destroyed, any remaining Heavy Weapon Platform models in this unit are also destroyed.
+- Crewed Platform: When the last Guardian Defender model in this unit is destroyed, any remaining Heavy Weapon Platform models in this unit are also destroyed.
 
 #### Unit Composition
 - 10 Guardian Defenders
@@ -1627,13 +1826,18 @@ ASURYANI, YNNARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power sword | -- | Melee | 2 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Up to 2 Storm Guardians can each have their shuriken pistol replaced with 1 flamer.
+- Up to 2 Storm Guardians can each have their shuriken pistol replaced with 1 fusion gun.
+- Up to 2 Storm Guardians can each have their close combat weapon replaced with 1 power sword.
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Stormblades: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
-  Crewed Platform: When the last Storm Guardian model in this unit is destroyed, any remaining Serpent's Scale Platform models in this unit are also destroyed.
-
-#### Wargear Abilities
+- Crewed Platform: When the last Storm Guardian model in this unit is destroyed, any remaining Serpent's Scale Platform models in this unit are also destroyed.
 - Serpent Shield: Models in the bearer's unit have a 5+ invulnerable save.
 
 #### Unit Composition
@@ -1674,12 +1878,24 @@ ASURYANI, YNNARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Sybarite weapon | anti-infantry 3+ | Melee | 3 | 3+ | 3 | -1 | 1 |
 
+#### Wargear options
+- The Sybarite's close combat weapon can be replaced with 1 Sybarite weapon.
+- The Sybarite can be equipped with 1 phantasm grenade launcher.
+- The Sybarite's splinter rifle can be replaced with one of the following:
+  - 1 blast pistol
+  - 1 splinter pistol
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 blaster.
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 dark lance.
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 shredder.
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 splinter cannon.
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Sadistic Raiders: At the end of your Command phase, if you control an objective marker that this unit (or a TRANSPORT it is embarked within) is within range of, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
-
-#### Wargear Abilities
 - Phantasm Grenade Launcher: The bearer's unit has the GRENADES keyword.
 
 #### Unit Composition
@@ -1713,9 +1929,15 @@ YNNARI
 | ranged | -- | Splinter pistol | anti-infantry 3+ assault pistol | 12" | 1 | 3+ | 2 | 0 | 1 |
 | melee | -- | Hekatarii blade | -- | Melee | 3 | 3+ | 3 | -1 | 1 |
 
+#### Wargear options
+- The Hekatrix's splinter pistol can be replaced with 1 blast pistol.
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - No Escape: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability is selected to Fall Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
 
 #### Unit Composition
@@ -1748,18 +1970,24 @@ YNNARI
 | ranged | -- | Shuriken cannon | lethal hits | 24" | 3 | 3+ | 6 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Firing Deck 6
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Firing Deck 6
-- FACTION: Battle Focus, Disparate Paths
 - Rapid Embarkation: At the end of the Fight phase, if there are no models currently embarked within this TRANSPORT, you can select one friendly HARLEQUINS INFANTRY unit that has 6 or fewer models that is wholly within 6" of this TRANSPORT. Unless that unit is within Engagement Range of one or more enemy units, it can embark within this TRANSPORT. That unit can embark within this TRANSPORT in a turn it disembarked from this TRANSPORT.
+
+#### Transport
+- This model has a transport capacity of 6 HARLEQUINS INFANTRY models.
 
 #### Unit Composition
 - 1 Starweaver
   This model is equipped with: 2 shuriken cannons; close combat weapon.
-
-#### Transport
-- This model has a transport capacity of 6 HARLEQUINS INFANTRY models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **70 pts**
@@ -1794,11 +2022,26 @@ HARLEQUINS
 | ranged | -- | Twin starcannon | twin-linked | 36" | 2 | 3+ | 8 | -3 | 2 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin shuriken cannon can be replaced with one of the following:
+  - 1 twin missile launcher
+  - 1 twin bright lance
+  - 1 twin scatter laser
+  - 1 twin starcannon
+- This model's twin shuriken catapult can be replaced with 1 shuriken cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Battle Focus
 - Wave Serpent Shield: Each time a ranged attack targets this model, if the Strength characteristic of that attack is greater than the Toughness characteristic of this model, subtract 1 from the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 12 ASURYANI INFANTRY models. Each WRAITH CONSTRUCT model takes the space of 2 models. It cannot transport JUMP PACK models or YNNARI models (excluding ASURYANI, YVRAINE and THE VISARCH models).
 
 #### Unit Composition
 - 1 Wave Serpent
@@ -1806,9 +2049,6 @@ HARLEQUINS
 
 #### Damaged: 1-4 Wounds Remaining
 - While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 ASURYANI INFANTRY models. Each WRAITH CONSTRUCT model takes the space of 2 models. It cannot transport JUMP PACK models or YNNARI models (excluding ASURYANI, YVRAINE and THE VISARCH models).
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **115 pts**
@@ -1837,18 +2077,28 @@ ASURYANI, YNNARI
 | ranged | -- | Disintegrator cannon | -- | 36" | 3 | 3+ | 5 | -2 | 2 |
 | melee | -- | Bladevanes | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's dark lance can be replaced with 1 disintegrator cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+- Firing Deck 11
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike, Firing Deck 11
-- FACTION: Battle Focus, Disparate Paths
 - Aethersails: Each time this model Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6" to the Move characteristic of this model.
+
+#### Transport
+- This model has a transport capacity of 11 models from the following units: THE VISARCH, YNNARI ARCHON, YNNARI INCUBI, YNNARI KABALITE WARRIORS, YNNARI SUCCUBUS, YNNARI WYCHES, YVRAINE
 
 #### Unit Composition
 - 1 Raider
   This model is equipped with: dark lance; bladevanes.
-
-#### Transport
-- This model has a transport capacity of 11 models from the following units: THE VISARCH, YNNARI ARCHON, YNNARI INCUBI, YNNARI KABALITE WARRIORS, YNNARI SUCCUBUS, YNNARI WYCHES, YVRAINE
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **70 pts**
@@ -1877,19 +2127,30 @@ YNNARI
 | ranged | -- | Twin splinter rifle | anti-infantry 3+ assault rapid fire 1 twin-linked | 24" | 2 | 3+ | 2 | 0 | 1 |
 | melee | -- | Bladevanes | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- This model's twin splinter rifle can be replaced with 1 splinter cannon.
+
+#### Core Abilities
+- Deadly Demise 1
+- Deep Strike
+- Firing Deck 6
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Deep Strike, Firing Deck 6, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Lithe Embarkation: At the end of the Fight phase, if there are no models currently embarked within this TRANSPORT, you can select one friendly YNNARI INFANTRY unit that only includes models from the units listed in this unit's Transport section, that has 6 or fewer models and that is wholly within 6" of this TRANSPORT. Unless that unit is within Engagement Range of one or more enemy units, it can embark within this TRANSPORT. That unit can embark within this TRANSPORT in a turn it disembarked from this TRANSPORT.
-
-#### Unit Composition
-- 1 Venom
-  This model is equipped with: splinter cannon; twin splinter rifle; bladevanes.
 
 #### Transport
 - This model has a transport capacity of 6 models from the following units: THE VISARCH, YNNARI ARCHON, YNNARI INCUBI, YNNARI KABALITE WARRIORS, YNNARI SUCCUBUS, YNNARI WYCHES, YVRAINE.
   Before the battle, at the start of the Declare Battle Formations step, you can select one YNNARI KABALITE WARRIORS or YNNARI WYCHES unit from your army that has not already been split. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units). One of these units must start the battle embarked within this TRANSPORT; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.
+
+#### Unit Composition
+- 1 Venom
+  This model is equipped with: splinter cannon; twin splinter rifle; bladevanes.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -1918,6 +2179,9 @@ YNNARI
 | ranged | -- | Pulse laser | -- | 48" | 3 | 3+ | 9 | -2 | D6 |
 | ranged | -- | Starcannon | -- | 36" | 2 | 3+ | 8 | -3 | 2 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
+
+#### Wargear options
+- This model's 2 starcannons can be replaced with 2 bright lances.
 
 #### Abilities
 **ABILITIES:**
@@ -1998,10 +2262,25 @@ ASURYANI, YNNARI
 | melee | -- | Corsair blade | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Skyreaver Felarch can replace its shuriken pistol with one of the following:
+  - 1 blast pistol
+  - 1 neuro disruptor
+- For every 5 models in the unit, up to 2 Skyreaver models can each have their shuriken pistol and Corsair blade replaced with one of the following*:
+  - 1 blaster and 1 close combat weapon
+  - 1 flamer and 1 close combat weapon
+  - 1 fusion gun and 1 close combat weapon
+  - 1 shredder and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Scouts 7"
-- FACTION: Battle Focus
 - Raid and Run: At the end of the Fight phase, if this unit was eligible to fight this phase, and is not within Engagement Range of one or more enemy units, it can make a Normal move of up to D3+3". Otherwise, if this unit was eligible to fight this phase, this unit can make a Fall Back move of up to D3+3".
 
 #### Unit Composition
@@ -2055,13 +2334,31 @@ ASURYANI, YNNARI
 | melee | -- | Power sword | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 | melee | -- | Witch staff | anti-infantry 2+ psychic | Melee | 2 | 2+ | 3 | 0 | D3 |
 
+#### Wargear options
+- Any number of Corsair Voidscarred can each have their shuriken pistol and power sword replaced with 1 shuriken rifle.
+- The Voidscarred Felarch's shuriken pistol can be replaced with one of the following:
+  - 1 neuro disruptor
+  - 1 shuriken rifle
+- The Voidscarred Felarch can be equipped with 1 mistshield.
+- For every 5 models in this unit, 1 Corsair Voidscarred's shuriken rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 shredder
+- If this unit contains 10 models, 1 Corsair Voidscarred's shuriken rifle can be replaced with one of the following:
+  - 1 shuriken cannon
+  - 1 wraithcannon
+- If this unit contains 10 models, 1 Corsair Voidscarred's shuriken rifle can be replaced with 1 long rifle.
+- If this unit contains 10 models, 1 Corsair Voidscarred's power sword can be replaced with 1 fusion pistol.
+- 1 Corsair Voidscarred model equipped with a shuriken pistol and power sword can be equipped with 1 Faolchu.
+
+#### Core Abilities
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
-- FACTION: Battle Focus
 - Piratical Raiders: At the start of the battle, select one unit from your opponent's army. Weapons equipped by models in this unit have the [LETHAL HITS] and [PRECISION] abilities while targeting that unit.
-
-#### Wargear Abilities
 - Channeller Stones: Once per turn, the first time a saving throw is failed for the bearer's unit, change the Damage characteristic of that attack to 0.
 - Faolchu: Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 - Mistshield: The bearer has a 4+ invulnerable save.
@@ -2116,7 +2413,7 @@ ASURYANI, YNNARI
 #### Abilities
 **ABILITIES:**
 - Support Weapon: Each time an attack targets this model's unit, if that unit contains one or more other models, until that attack is resolved, this model has a Toughness characteristic of 3.
-  Structural Collapse: Each time this model makes an attack with its D-cannon, re-roll a Damage roll of 1. If that attack targets a TITANIC unit, you can re-roll the Damage roll instead.
+- Structural Collapse: Each time this model makes an attack with its D-cannon, re-roll a Damage roll of 1. If that attack targets a TITANIC unit, you can re-roll the Damage roll instead.
 
 #### Unit Composition
 - 1 D-cannon Platform
@@ -2140,7 +2437,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| DARK REAPER | (diameter 28.5mm) | 6" | 3 | 3+ | 1 | 6+ | 1 | 5+ |
+| DARK REAPER | (diameter 28.5mm) | 6" | 3 | 3+ | 1 | 6+ | 1 | -- |
 | DARK REAPER EXARCH | (diameter 28.5mm) | 6" | 3 | 3+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2154,12 +2451,19 @@ ASURYANI, YNNARI
 | ranged | -- | Tempest launcher | blast indirect fire | 36" | 2D6 | 3+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Dark Reaper Exarch's Reaper launcher can be replaced with 1 of the following:
+  - 1 missile launcher
+  - 1 shuriken cannon
+  - 1 tempest launcher
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Inescapable Accuracy: Each time a model in this unit makes a ranged attack, you can ignore any or all modifiers to that attack's Ballistic Skill characteristic and any or all modifiers to the Hit roll.
-
-#### Wargear Abilities
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
 
@@ -2186,7 +2490,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| DIRE AVENGER | (diameter 28.5mm) | 7" | 3 | 4+ | 1 | 6+ | 1 | 5+ |
+| DIRE AVENGER | (diameter 28.5mm) | 7" | 3 | 4+ | 1 | 6+ | 1 | -- |
 | DIRE AVENGER EXARCH | (diameter 28.5mm) | 7" | 3 | 4+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2198,12 +2502,20 @@ ASURYANI, YNNARI
 | melee | -- | Diresword | -- | Melee | 4 | 3+ | 4 | -2 | 1 |
 | melee | -- | Power glaive | -- | Melee | 3 | 3+ | 5 | -3 | 1 |
 
+#### Wargear options
+- The Dire Avenger Exarch's Avenger shuriken catapult can be replaced with 1 shuriken pistol and one of the following:
+  - 1 diresword
+  - 1 power glaive
+- If this unit's Dire Avenger Exarch is equipped with 1 Avenger shuriken catapult, it can be equipped with 1 additional Avenger shuriken catapult.
+- The Dire Avenger Exarch's shuriken pistol can be replaced with 1 shimmershield.
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Bladestorm: Ranged weapons equipped by models in this unit have the [SUSTAINED HITS 1] ability while targeting an enemy unit within half range.
-
-#### Wargear Abilities
 - Shimmershield: The bearer has a 4+ invulnerable save.
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
@@ -2231,7 +2543,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| FIRE DRAGON | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | 5+ |
+| FIRE DRAGON | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | -- |
 | FIRE DRAGON EXARCH | (diameter 28.5mm) | 7" | 3 | 3+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2245,12 +2557,19 @@ ASURYANI, YNNARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Dragon axe | -- | Melee | 3 | 3+ | 6 | -4 | D6 |
 
+#### Wargear options
+- The Fire Dragon Exarch model's Exarch's Dragon fusion gun can be replaced with 1 of the following:
+  - 1 Dragon's breath flamer
+  - 1 Dragon fusion pistol and 1 Dragon axe
+  - 1 firepike
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Assured Destruction: In your Shooting phase, each time a model in this unit makes a ranged attack that targets a MONSTER or VEHICLE unit, you can re-roll the Hit roll, you can re-roll the Wound roll and you can re-roll the Damage roll.
-
-#### Wargear Abilities
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
 
@@ -2280,7 +2599,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| HOWLING BANSHEE | (diameter 28.5mm) | 8" | 3 | 4+ | 1 | 6+ | 1 | 5+ |
+| HOWLING BANSHEE | (diameter 28.5mm) | 8" | 3 | 4+ | 1 | 6+ | 1 | -- |
 | HOWLING BANSHEE EXARCH | (diameter 28.5mm) | 8" | 3 | 4+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2293,13 +2612,22 @@ ASURYANI, YNNARI
 | melee | -- | Mirrorswords | anti-infantry 3+ | Melee | 4 | 2+ | 4 | -2 | 2 |
 | melee | -- | Triskele | anti-infantry 3+ | Melee | 6 | 2+ | 3 | -1 | 1 |
 
+#### Wargear options
+- The Howling Banshee Exarch's Banshee blade can be replaced with 1 of the following:
+  - 1 executioner
+  - 1 triskele
+- The Howling Banshee Exarch's shuriken pistol and Banshee blade can be replaced with 1 mirrorswords.
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Core Abilities
+- Fights First
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First
-- FACTION: Battle Focus
 - Acrobatic: This unit is eligible to declare a charge in a turn in which it Advanced or Fell Back.
-
-#### Wargear Abilities
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
 
@@ -2335,10 +2663,18 @@ ASURYANI, YNNARI
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Stealth
-- FACTION: Battle Focus
 - Path of the Outcast: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
 
 #### Unit Composition
@@ -2379,7 +2715,7 @@ ASURYANI, YNNARI
 #### Abilities
 **ABILITIES:**
 - Support Weapon: Each time an attack targets this model's unit, if that unit contains one or more other models, until that attack is resolved, this model has a Toughness characteristic of 3.
-  Monofilament Snare: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with its shadow weaver. Until the start of your next turn, that enemy unit is snared. While a unit is snared, each time that unit makes a Normal, Advance or Fall Back move, roll one D6 for each model in that unit: for each 1, that unit suffers 1 mortal wound.
+- Monofilament Snare: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with its shadow weaver. Until the start of your next turn, that enemy unit is snared. While a unit is snared, each time that unit makes a Normal, Advance or Fall Back move, roll one D6 for each model in that unit: for each 1, that unit suffers 1 mortal wound.
 
 #### Unit Composition
 - 1 Shadow Weaver Platform
@@ -2402,7 +2738,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| STRIKING SCORPION | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | 5+ |
+| STRIKING SCORPION | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | -- |
 | STRIKING SCORPION EXARCH | (diameter 28.5mm) | 7" | 3 | 3+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2415,13 +2751,23 @@ ASURYANI, YNNARI
 | melee | -- | Scorpion chainsword | sustained hits 1 | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Scorpion's claw | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Striking Scorpion Exarch's shuriken pistol, Scorpion chainsword and Scorpion's claw can be replaced with one of the following:
+  - 1 biting blade and 1 shuriken pistol
+  - 1 chainsabres
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Core Abilities
+- Infiltrators
+- Scouts 7"
+- Stealth
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Scouts 7", Stealth
-- FACTION: Battle Focus
 - Mandiblasters: Each time a model in this unit makes a melee attack, if it made a Charge move this turn, an unmodified Hit roll of 5+ scores a Critical Hit.
-
-#### Wargear Abilities
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
 
@@ -2449,7 +2795,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| SWOOPING HAWK | (diameter 32mm) | 14" | 3 | 4+ | 1 | 6+ | 1 | 5+ |
+| SWOOPING HAWK | (diameter 32mm) | 14" | 3 | 4+ | 1 | 6+ | 1 | -- |
 | SWOOPING HAWK EXARCH | (diameter 32mm) | 14" | 3 | 4+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2463,13 +2809,22 @@ ASURYANI, YNNARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power sword | -- | Melee | 5 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Swooping Hawk Exarch's Hawk's talon can be replaced with one of the following:
+  - 1 Exarch's lasblaster
+  - 1 sunpistol and 1 power sword
+  - 1 scatter laser
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Battle Focus
 - Grenade Pack Flyover: Once per turn, in your Movement phase, when this unit is set up on the battlefield or ends a Normal, Advance or Fall Back move, it can use this ability. If it does, select one enemy unit within 8" of and visible to this unit and roll one D6 for each SWOOPING HAWKS model in this unit: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds). Each time this unit uses this ability, until the end of the turn, you cannot target this unit with the Explosives Stratagem.
-
-#### Wargear Abilities
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
 
@@ -2511,15 +2866,26 @@ ASURYANI, YNNARI
 | melee | -- | Harlequin's special weapon | devastating wounds | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Power sword | devastating wounds | Melee | 5 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their Harlequin's blade replaced with 1 Harlequin's special weapon.
+- The Lead Player's Harlequin's blade can be replaced with 1 power sword.
+- If this unit contains 9 or fewer models:
+  - Up to 2 models can each have their shuriken pistol replaced with 1 neuro disruptor
+  - Up to 2 models can each have their shuriken pistol replaced with 1 fusion pistol
+- If this unit contains 10 or more models:
+  - Up to 4 models can each have their shuriken pistol replaced with 1 neuro disruptor
+  - Up to 4 models can each have their shuriken pistol replaced with 1 fusion pistol
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Dance of Death: At the start of the Fight phase, select one of the following abilities for this unit to gain until the end of the phase:
   - Hero's Prowess: Each time a model in this unit makes an attack, re-roll a Hit roll of 1.
   - Villain's Doom: Each time a model in this unit makes an attack, add 1 to the Wound roll.
   - Trickster's Grace: Each time an attack targets this unit, subtract 1 from the Hit roll.
-
-#### Wargear Abilities
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -2562,7 +2928,7 @@ HARLEQUINS
 #### Abilities
 **ABILITIES:**
 - Support Weapon: Each time an attack targets this model's unit, if that unit contains one or more other models, until that attack is resolved, this model has a Toughness characteristic of 3.
-  Sonic Destruction: In your Shooting phase, each time this model makes an attack with its vibro cannon that targets an enemy unit, improve the Strength, Armour Penetration and Damage characteristics of that attack by 1 for each other friendly VIBRO CANNON PLATFORM model that made one or more attacks with its vibro cannon that also targeted that enemy unit this phase.
+- Sonic Destruction: In your Shooting phase, each time this model makes an attack with its vibro cannon that targets an enemy unit, improve the Strength, Armour Penetration and Damage characteristics of that attack by 1 for each other friendly VIBRO CANNON PLATFORM model that made one or more attacks with its vibro cannon that also targeted that enemy unit this phase.
 
 #### Unit Composition
 - 1 Vibro Cannon Platform
@@ -2596,16 +2962,28 @@ ASURYANI, YNNARI
 | melee | -- | Singing spear | psychic | Melee | 2 | 3+ | 3 | 0 | 3 |
 | melee | -- | Witchblade | anti-infantry 2+ psychic | Melee | 2 | 3+ | 3 | 0 | 2 |
 
+#### Wargear options
+- Any number of models can each have their witchblade replaced with 1 singing spear.
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Battle Focus
 - Protect (Psychic): While a FARSEER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
-  Psychic Communion (Psychic): Each time this unit is selected to shoot, for each WARLOCK model in this unit, until the end of the phase, add 1 to the Attacks and Strength characteristics of that model's Destructor weapon for each other friendly AELDARI PSYKER model within 6" of that model (to a maximum of +2).
+- Psychic Communion (Psychic): Each time this unit is selected to shoot, for each WARLOCK model in this unit, until the end of the phase, add 1 to the Attacks and Strength characteristics of that model's Destructor weapon for each other friendly AELDARI PSYKER model within 6" of that model (to a maximum of +2).
 
 #### Unit Composition
 - 2-4 Warlocks
   Every model is equipped with: Destructor; shuriken pistol; witchblade.
+
+#### Support
+- This model can be attached to the following units:
+  - GUARDIAN DEFENDERS
+  - STORM GUARDIANS
 
 #### Points
 - YOUR UNIT COSTS: 2 models -- **55 pts**
@@ -2625,7 +3003,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| WARP SPIDER | (diameter 28.5mm) | 12" | 3 | 3+ | 1 | 6+ | 1 | 5+ |
+| WARP SPIDER | (diameter 28.5mm) | 12" | 3 | 3+ | 1 | 6+ | 1 | -- |
 | WARP SPIDER EXARCH | (diameter 28.5mm) | 12" | 3 | 3+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2639,13 +3017,22 @@ ASURYANI, YNNARI
 | melee | -- | Powerblade array | lethal hits twin-linked | Melee | 10 | 3+ | 4 | -2 | 1 |
 | melee | -- | Powerblades | lethal hits twin-linked | Melee | 5 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Warp Spider Exarch's Exarch's death spinner can be replaced with one of the following:
+  - 1 spinneret rifle and 1 death weavers
+  - 1 powerblades and 1 death weavers
+  - 1 powerblade array
+- For every 5 models in this unit, it can have 1 Aspect Shrine token.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Battle Focus
 - Flickerjump: In your Movement phase, each time this unit is selected to make a Normal move, it can use this ability. If it does, until the end of the turn, this unit is not eligible to declare a charge and models in it have a Move characteristic of 24". Each time this unit uses this ability, at the end of the phase, roll one D6 for each model in this unit: for each 1, this unit suffers 1 mortal wound.
-
-#### Wargear Abilities
 - Aspect Shrine Token: Once per battle for each Aspect Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a model in this unit (excluding CHARACTER models) to an unmodified 6.
   Designer's Note: Place an Aspect Shrine token next to the unit for each Aspect Shrine token it has, removing one each time this ability is used.
 
@@ -2683,12 +3070,13 @@ ASURYANI, YNNARI
 | melee | -- | Ghostaxe | -- | Melee | 3 | 4+ | 7 | -2 | 2 |
 | melee | -- | Ghostswords | -- | Melee | 5 | 4+ | 5 | -2 | 2 |
 
+#### Wargear options
+- All of the models in this unit can each have their ghostswords replaced with 1 ghostaxe and 1 forceshield.
+
 #### Abilities
 **ABILITIES:**
 - Malevolent Souls: Each time a model in this unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 3+, do not remove it from play; that destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
-  Psychic Guidance: While this unit is within 12" of one or more friendly AELDARI PSYKER models, models in this unit have a Leadership characteristic of 6+ and each time a model in this unit makes an attack, add 1 to the Hit roll.
-
-#### Wargear Abilities
+- Psychic Guidance: While this unit is within 12" of one or more friendly AELDARI PSYKER models, models in this unit have a Leadership characteristic of 6+ and each time a model in this unit makes an attack, add 1 to the Hit roll.
 - Forceshield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -2721,10 +3109,13 @@ ASURYANI, YNNARI
 | ranged | -- | D-scythe | torrent | 12" | D6 | N/A | 7 | -3 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- All of the models in this unit can each have their wraithcannon replaced with 1 D-scythe.
+
 #### Abilities
 **ABILITIES:**
 - War Construct: This unit is eligible to shoot in a turn in which it Fell Back.
-  Psychic Guidance: While this unit is within 12" of one or more friendly AELDARI PSYKER models, models in this unit have a Leadership characteristic of 6+ and each time a model in this unit makes an attack, add 1 to the Hit roll.
+- Psychic Guidance: While this unit is within 12" of one or more friendly AELDARI PSYKER models, models in this unit have a Leadership characteristic of 6+ and each time a model in this unit makes an attack, add 1 to the Hit roll.
 
 #### Unit Composition
 - 5 Wraithguard
@@ -2747,7 +3138,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| INCUBI | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | 5+ |
+| INCUBI | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | -- |
 | KLAIVEX | (diameter 28.5mm) | 7" | 3 | 3+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -2757,9 +3148,15 @@ ASURYANI, YNNARI
 | melee | -- | Demiklaives - dual blades | twin-linked | Melee | 6 | 3+ | 4 | -1 | 1 |
 | melee | -- | Klaive | -- | Melee | 3 | 3+ | 4 | -2 | 2 |
 
+#### Wargear options
+- The Klaivex's klaive can be replaced with 1 demilklaives.
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Tormentors: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units from your army with this ability must take a Battle-shock test.
 
 #### Unit Composition
@@ -2799,16 +3196,26 @@ YNNARI
 | ranged | -- | Suncannon | blast | 48" | D6+4 | 3+ | 10 | -3 | 3 |
 | melee | -- | Titanic feet | -- | Melee | 5 | 3+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's suncannon can be replaced with 1 heavy wraithcannon.
+- This model's scattershield can be replaced with 1 heavy wraithcannon.
+- This model can be equipped with up to two of the following:
+  - 1 scatter laser
+  - 1 shuriken cannon
+  - 1 starcannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Battle Focus
 - Titanic Strides: Each time this model makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4" or less in height. When doing so:
   - It can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them.
   - It can also move through sections of terrain features that are more than 4" in height, but if it does, after it has moved, roll one D6: on a 1, this model is Battle-shocked.
-  Point-blank Devastation: Each time this model's heavy wraithcannon or suncannon targets a unit within half range, you can re-roll the dice to determine the number of attacks made.
-
-#### Wargear Abilities
+- Point-blank Devastation: Each time this model's heavy wraithcannon or suncannon targets a unit within half range, you can re-roll the dice to determine the number of attacks made.
 - Scattershield: The bearer has a 4+ invulnerable save and each time an attack is allocated to the bearer, subtract 1 from the Damage characteristic of that attack.
 
 #### Unit Composition
@@ -2849,13 +3256,22 @@ ASURYANI, YNNARI
 | melee | -- | Titanic ghostglaive - strike | -- | Melee | 5 | 3+ | 16 | -3 | 6 |
 | melee | -- | Titanic ghostglaive - sweep | -- | Melee | 15 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's scattershield can be replaced with 1 heavy wraithcannon.
+- This model can be equipped with up to two of the following:
+  - 1 scatter laser
+  - 1 shuriken cannon
+  - 1 starcannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Battle Focus
 - Titanic Agility: Each time this model makes a Normal, Advance or Fall Back move, it can move through models and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them.
-
-#### Wargear Abilities
 - Scattershield: The bearer has a 4+ invulnerable save and each time an attack is allocated to the bearer, subtract 1 from the Damage characteristic of that attack.
 
 #### Unit Composition
@@ -2900,11 +3316,23 @@ ASURYANI, YNNARI
 | melee | -- | Ghostglaive - sweep | -- | Melee | 8 | 4+ | 7 | -2 | 2 |
 | melee | -- | Wraithbone fists | -- | Melee | 4 | 4+ | 7 | -2 | 2 |
 
+#### Wargear options
+- Each of this model's shuriken catapults can be replaced with 1 flamer.
+- This model can be equipped with 1 ghostglaive.
+- This model can be equipped with up to two of the following:
+  - 1 missile launcher
+  - 1 bright lance
+  - 1 scatter laser
+  - 1 shuriken cannon
+  - 1 starcannon
+
+#### Core Abilities
+- Deadly Demise 1
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
 - Fated Hero: At the start of the battle, select one of the following keywords: INFANTRY; MONSTER; MOUNTED; VEHICLE. Each time this model makes an attack that targets a unit with the selected keyword, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
-  Psychic Guidance: While this model is within 12" of one or more friendly AELDARI PSYKER models, improve the Ballistic Skill and Weapon Skill characteristics of weapons equipped by this model by 1 and it has a Leadership characteristic of 6+.
+- Psychic Guidance: While this model is within 12" of one or more friendly AELDARI PSYKER models, improve the Ballistic Skill and Weapon Skill characteristics of weapons equipped by this model by 1 and it has a Leadership characteristic of 6+.
 
 #### Unit Composition
 - 1 Wraithlord
@@ -2941,13 +3369,30 @@ ASURYANI, YNNARI
 | melee | -- | Wraith glaive - strike | -- | Melee | 6 | 3+ | 18 | -4 | 12 |
 | melee | -- | Wraith glaive - sweep | -- | Melee | 12 | 3+ | 8 | -3 | 4 |
 
+#### Wargear options
+- This model's D-bombard can be replaced with one of the following:
+  - 2 Phantom starcannons and 1 wraith glaive
+  - 1 Phantom starcannon, 1 pulse laser and 1 wraith glaive
+  - 2 pulse lasers and 1 wraith glaive
+  - 1 Phantom pulsar
+- This model's Phantom pulsar can be replaced with one of the following:
+  - 1 D-bombard
+  - 2 Phantom starcannons and 1 wraith glaive
+  - 1 Phantom starcannon, 1 pulse laser and 1 wraith glaive
+  - 2 pulse lasers and 1 wraith glaive
+- This model's Phantom starcannon can be replaced with 1 pulse laser.
+
+#### Core Abilities
+- Deadly Demise D6+6
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+6
-- FACTION: Battle Focus
 - Titanic Advance: Each time this model makes a Normal, Advance or Fall Back move, it can move over models (excluding TITANIC models) and terrain features that are 4" or less in height as if they were not there.
-  Towering Wraith Construct: Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.
-  Flawless Poise: This model is eligible to shoot and declare a charge in a turn in which it Fell Back.
+- Towering Wraith Construct: Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.
+- Flawless Poise: This model is eligible to shoot and declare a charge in a turn in which it Fell Back.
 
 #### Unit Composition
 - 1 Phantom Titan
@@ -2983,13 +3428,21 @@ ASURYANI, YNNARI
 | ranged | -- | Sonic lance | anti-monster 4+ anti-vehicle 4+ assault torrent | 18" | D6+6 | N/A | 8 | -3 | 2 |
 | melee | -- | Revenant feet | -- | Melee | 8 | 3+ | 10 | -1 | 3 |
 
+#### Wargear options
+- This model's Revenant pulsar can be replaced with 1 sonic lance.
+- This model's sonic lance can be replaced with 1 Revenant pulsar.
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Battle Focus
 - Titanic Advance: Each time this model makes a Normal, Advance or Fall Back move, it can move over models (excluding TITANIC models) and terrain features that are 4" or less in height as if they were not there.
-  Towering Wraith Construct: Each time you target this model with a Stratagem, you must spend twice that Stratagem's stated CP cost to do so.
-  Revenant Jet Pack: Each time this model Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 8" to the Move characteristic of this model.
+- Towering Wraith Construct: Each time you target this model with a Stratagem, you must spend twice that Stratagem's stated CP cost to do so.
+- Revenant Jet Pack: Each time this model Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 8" to the Move characteristic of this model.
 
 #### Unit Composition
 - 1 Revenant Titan
@@ -3025,12 +3478,17 @@ ASURYANI, YNNARI
 | melee | -- | Drakesteed Fangs and Talons | Extra Attacks | Melee | 3 | 3+ | 5 | -1 | 1 |
 | melee | -- | Laser Lance | Lance | Melee | 3 | 3+ | 6 | -2 | 3 |
 
+#### Wargear options
+- For every 3 models in this unit, this unit can be equipped with 2 Drakolithe.
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - On the Hunt: When this unit is selected to make a fall-back move, that fall-back move does not prevent this unit from being eligible to shoot and eligible to declare a charge.
-  Agile Reach: When this unit is selected to fight, melee weapons equipped by unengaged models in this unit that are within 3" of an enemy unit that is engaged with this unit can target that enemy unit.
-  Drakolithe (Once per battle, per token): When an enemy unit ends a move within 8" of this unit, if this unit is unengaged or if that enemy unit ended that move engaged with this unit, you can use this ability. If you do, roll one D6:
+- Agile Reach: When this unit is selected to fight, melee weapons equipped by unengaged models in this unit that are within 3" of an enemy unit that is engaged with this unit can target that enemy unit.
+- Drakolithe (Once per battle, per token): When an enemy unit ends a move within 8" of this unit, if this unit is unengaged or if that enemy unit ended that move engaged with this unit, you can use this ability. If you do, roll one D6:
   - On a 3+, that enemy unit suffers 1 mortal wound.
   Place one Drakolithe token next to the unit for each Drakolithe the unit is equipped with, removing one each time this ability is used.
 
@@ -3057,7 +3515,7 @@ ASURYANI, YNNARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| SHINING SPEAR | (diameter 60mm flying base) | 14" | 4 | 3+ | 2 | 6+ | 2 | 5+ |
+| SHINING SPEAR | (diameter 60mm flying base) | 14" | 4 | 3+ | 2 | 6+ | 2 | -- |
 | SHINING SPEAR EXARCH | (diameter 60mm flying base) | 14" | 4 | 3+ | 3 | 6+ | 2 | 5+ |
 
 #### Weapons
@@ -3071,12 +3529,19 @@ ASURYANI, YNNARI
 | melee | -- | Paragon sabre | -- | Melee | 6 | 3+ | 5 | -2 | 2 |
 | melee | -- | Star lance | anti-monster 3+ anti-vehicle 3+ lance | Melee | 4 | 3+ | 5 | -3 | 3 |
 
+#### Wargear options
+- The Shining Spear Exarch's laser lance can be replaced with one of the following:
+  - 1 paragon sabre
+  - 1 star lance
+- The Shining Spear Exarch's twin shuriken catapult can be replaced with 1 shuriken cannon.
+- The Shining Spear Exarch can be equipped with 1 shimmershield.
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Extreme Mobility: Each time this unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance models in this unit can be moved during that move.
-
-#### Wargear Abilities
 - Shimmershield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -3112,10 +3577,15 @@ ASURYANI, YNNARI
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Scouts 9"
+- Stealth
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 9", Stealth
-- FACTION: Battle Focus
 - Target Acquisition: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks made with a long rifle. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -3154,9 +3624,16 @@ ASURYANI, YNNARI
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 3 | 0 | 1 |
 | melee | -- | Zephyrglaive | -- | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their shuriken cannon replaced with 1 Skyweaver haywire cannon.
+- Any number of models can each have their star bolas replaced with 1 zephyrglaive.
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Acrobatic Grace:
   - This unit has Stealth.
   - Melee attacks that target this unit have -1 to hit rolls.
@@ -3195,16 +3672,27 @@ HARLEQUINS
 | melee | -- | Singing spear | psychic | Melee | 2 | 3+ | 3 | 0 | 3 |
 | melee | -- | Witchblade | anti-infantry 2+ psychic | Melee | 2 | 3+ | 3 | 0 | 2 |
 
+#### Wargear options
+- Any number of models can each have their witchblade replaced with 1 singing spear.
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Battle Focus
 - Runes of Battle (Psychic): Weapons equipped by models in this unit have the [IGNORES COVER] ability.
-  Psychic Communion (Psychic): Each time this unit is selected to shoot, for each WARLOCK model in this unit, until the end of the phase, add 1 to the Attacks and Strength characteristics of that model's Destructor weapon for each other friendly AELDARI PSYKER model within 6" of that model (to a maximum of +2).
+- Psychic Communion (Psychic): Each time this unit is selected to shoot, for each WARLOCK model in this unit, until the end of the phase, add 1 to the Attacks and Strength characteristics of that model's Destructor weapon for each other friendly AELDARI PSYKER model within 6" of that model (to a maximum of +2).
 
 #### Unit Composition
 - 1-2 Warlock Skyrunners
   Every model is equipped with: Destructor; shuriken pistol; twin shuriken catapult; witchblade.
+
+#### Support
+- This model can be attached to the following unit:
+  - WINDRIDERS
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **45 pts**
@@ -3234,9 +3722,16 @@ ASURYANI, YNNARI
 | ranged | -- | Twin shuriken catapult | assault twin-linked | 18" | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their twin shuriken catapult replaced with one of the following:
+  - 1 scatter laser
+  - 1 shuriken cannon
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus
 - Swift Demise: Each time a model in this unit makes a ranged attack, re-roll a Hit roll of 1. If the target of that attack is the closest eligible target, you can re-roll the Hit roll instead.
 
 #### Unit Composition
@@ -3273,12 +3768,22 @@ ASURYANI, YNNARI
 | melee | -- | Agoniser | anti-infantry 3+ | Melee | 4 | 3+ | 3 | -1 | 1 |
 | melee | -- | Bladevanes | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- The Arena Champion can be equipped with 1 agoniser.
+- For every 3 models in this unit, 1 model's splinter rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 heat lance
+- For every 3 models in this unit, 1 model can be equipped with one of the following:
+  - 1 grav-talon
+  - 1 cluster caltrops
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Eviscerating Fly-by: Each time this unit ends a Normal move, you can select one enemy unit (excluding MONSTERS and VEHICLES) that it moved over during that move. If you do, roll one D6 for each model in this unit: for each 4+, that enemy unit suffers 1 mortal wound.
-
-#### Wargear Abilities
 - Cluster Caltrops: Each time you roll a D6 for the bearer while resolving this unit's Eviscerating Fly-by ability, you can re-roll the result.
 - Grav-talon: The bearer's melee weapons have the [LANCE] ability.
 
@@ -3320,11 +3825,27 @@ YNNARI
 | ranged | -- | Twin shuriken catapult | assault twin-linked | 18" | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's scatter laser can be replaced with one of the following:
+  - 1 missile launcher
+  - 1 bright lance
+  - 1 shuriken cannon
+  - 1 starcannon
+- This model's twin shuriken catapult can be replaced with 1 shuriken cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Battle Focus
 - Fire Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 6 AELDARI INFANTRY models. Each WRAITH CONSTRUCT model takes the space of 2 models. It cannot transport JUMP PACK models or YNNARI models (excluding ASURYANI, YVRAINE and THE VISARCH models).
 
 #### Unit Composition
 - 1 Falcon
@@ -3332,9 +3853,6 @@ YNNARI
 
 #### Damaged: 1-4 Wounds Remaining
 - While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 6 AELDARI INFANTRY models. Each WRAITH CONSTRUCT model takes the space of 2 models. It cannot transport JUMP PACK models or YNNARI models (excluding ASURYANI, YVRAINE and THE VISARCH models).
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **130 pts**
@@ -3364,10 +3882,17 @@ ASURYANI, YNNARI
 | ranged | -- | Twin shuriken catapult | assault twin-linked | 18" | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin shuriken catapult can be replaced with 1 shuriken cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Battle Focus
 - Crystal Matrix: Each time this model is selected to shoot, you can re-roll one Hit roll and you can re-roll one Wound roll when resolving those attacks.
 
 #### Unit Composition
@@ -3404,10 +3929,17 @@ ASURYANI, YNNARI
 | ranged | -- | Twin shuriken catapult | assault twin-linked | 18" | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin shuriken catapult can be replaced with 1 shuriken cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Battle Focus
 - Monofilament Web: In your Shooting phase, after this model has shot, if one or more of those attacks made with its doomweaver scored a hit against an enemy unit, until the start of your next turn, that enemy unit is pinned. While a unit is pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for it.
 
 #### Unit Composition
@@ -3444,10 +3976,18 @@ ASURYANI, YNNARI
 | ranged | -- | Starfang grenade launcher | assault blast | 36" | D3 | 3+ | 6 | -3 | 2 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 1
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Scouts 7"
-- FACTION: Battle Focus
 - Hallucinogen Grenades: At the start of your opponent's Shooting phase, this unit can use this ability. If it does, select one AELDARI INFANTRY unit from your army visible to and within 36" of this unit: until the end of the phase, that unit has the Stealth ability.
 
 #### Unit Composition
@@ -3489,10 +4029,19 @@ ASURYANI, YNNARI
 | ranged | -- | Voidweaver haywire cannon | anti-vehicle 4+ devastating wounds | 24" | 3 | 3+ | 4 | -1 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- This model's Voidweaver haywire cannon can be replaced with 1 prismatic cannon.
+
+#### Core Abilities
+- Deadly Demise 1
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Polychromatic Camouflage: This unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 #### Unit Composition
@@ -3529,10 +4078,20 @@ HARLEQUINS
 | ranged | -- | Starcannon | -- | 36" | 2 | 2+ | 8 | -3 | 2 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their bright lance replaced with one of the following:
+  - 1 scatter laser
+  - 1 starcannon
+- Any number of models can each have their shuriken cannon replaced with 1 missile launcher.
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Battle Focus
 - Harassment Fire: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -3570,10 +4129,21 @@ ASURYANI, YNNARI
 | ranged | -- | Starcannon | -- | 36" | 2 | 3+ | 8 | -3 | 2 |
 | melee | -- | War Walker feet | -- | Melee | 3 | 3+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Each model can have each shuriken cannon it is equipped with replaced with one of the following:
+  - 1 missile launcher
+  - 1 bright lance
+  - 1 scatter laser
+  - 1 starcannon
+
+#### Core Abilities
+- Scouts 9"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 9"
-- FACTION: Battle Focus
 - Crystalline Targeting: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly AELDARI unit makes an attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. Each unit can only be selected for this ability once per turn.
 
 #### Unit Composition
@@ -3592,6 +4162,8 @@ ASURYANI, YNNARI
 ## Detachments
 
 ### Warhost (3 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Martial Grace
 - At the start of the battle round, you receive 1 additional Battle Focus token.
   - Each time a unit from your army performs the Swift as the Wind Agile Manoeuvre, until the end of the phase, add an additional 1" to the Move characteristic of models in that unit.
@@ -3647,6 +4219,8 @@ ASURYANI, YNNARI
   EFFECT: If your unit is not within Engagement Range of one or more enemy units, remove it from the battlefield and place it into Strategic Reserves.
 
 ### Windrider Host (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Ride the Wind
 - In the Declare Battle Formations step you can set up ASURYANI MOUNTED and VYPER units from your army in Reserves. During the battle, such units can be set up on the battlefield as if they were arriving from Strategic Reserves. For the purposes of setting up ASURYANI MOUNTED or VYPER units from your army on the battlefield, treat the current battle round number as being one higher than it actually is.
   In addition, at the end of your opponent's turn, you can select a number of ASURYANI MOUNTED or VYPER units from your army (excluding units within Engagement Range of one or more enemy units), then remove those units from the battlefield and place them into Strategic Reserves. The maximum number of units you can select depends on the battle size, as shown below.
@@ -3706,6 +4280,8 @@ ASURYANI, YNNARI
   EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.
 
 ### Spirit Conclave (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Shepherds of the Dead
 - Each time an ASURYANI PSYKER model from your army is destroyed by an enemy unit, that enemy unit gains a Vengeful Dead token. Each time a WRAITH CONSTRUCT model from your army makes an attack that targets a unit with one or more Vengeful Dead tokens, add 1 to the Hit roll and add 1 to the Wound roll.
   ASURYANI PSYKER models from your army have the following ability:
@@ -3762,6 +4338,8 @@ ASURYANI, YNNARI
   EFFECT: Select one enemy unit within Engagement Range of your unit and roll one D6 for each WRAITHBLADES model in your unit, or roll four D6 if your unit has the WRAITHLORD keyword, or roll six D6 if your unit has the WRAITHKNIGHT keyword: for each 3+, that enemy unit suffers 1 mortal wound.
 
 ### Guardian Battlehost (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Defend at All Costs
 - Each time a DIRE AVENGER, GUARDIAN, SUPPORT WEAPON or WAR WALKER model from your army makes an attack, if that model's unit and/or the target unit are within range of one or more objective markers, add 1 to the Hit roll.
 
@@ -3815,6 +4393,8 @@ ASURYANI, YNNARI
   EFFECT: If your unit is not within Engagement Range of one or more enemy units, remove it from the battlefield and place it into Strategic Reserves. When doing so, return every destroyed GUARDIANS model to your unit.
 
 ### Ghosts of the Webway (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Acrobatic Onslaught
 - Each time a HARLEQUINS model from your army makes a Charge move, it can move through enemy models.
   TRAVELLING PLAYERS
@@ -3873,6 +4453,8 @@ ASURYANI, YNNARI
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Devoted of Ynnead (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Strength from Death
 - You can use the following rules:
   Lethal Intent
@@ -3935,6 +4517,8 @@ ASURYANI, YNNARI
   EFFECT: Your unit can shoot as if it were your Shooting phase.
 
 ### Seer Council (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Strands of Fate
 - At the start of the first battle round, you generate Fate dice by rolling a number of D6 based on the battle size, as shown below. Keep your Fate dice to one side - this is your Fate dice pool.
   BATTLE SIZENUMBER OF D6
@@ -4003,6 +4587,8 @@ ASURYANI, YNNARI
   EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 ### Aspect Host (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Path of the Warrior
 - Each time an ASPECT WARRIORS or AVATAR OF KHAINE unit from your army is selected to shoot or fight, select one of the following abilities for it to gain until the end of the phase:
   - Each time a model in this unit makes an attack, re-roll a Hit roll of 1.
@@ -4057,12 +4643,16 @@ ASURYANI, YNNARI
   EFFECT: All models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
 
 ### Armoured Warhost (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Skilled Crews
 - Friendly AELDARI VEHICLE units' ranged attacks have [ASSAULT].
 
 #### Enhancements
 - Spirit Stone of Raelyth 20 pts
 - AELDARI PSYKER model only.
+  - While this model is within 3" of a friendly AELDARI VEHICLE unit, this model has Lone Operative.
+  - In your Movement phase, at the start or end of this unit's move, you can select one friendly AELDARI VEHICLE model within 3" of this model. That VEHICLE model heals D3 wounds.
 - Guiding Presence 25 pts
 - AELDARI PSYKER model only. At the start of your Shooting phase, select one visible friendly AELDARI VEHICLE unit within 6" of this model. That VEHICLE unit's ranged attacks have +1 to hit rolls.
 
@@ -4090,6 +4680,8 @@ ASURYANI, YNNARI
   EFFECT: That move does not prevent your unit from being eligible to shoot.
 
 ### Fateful Performance (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Acrobatic Onslaught
 - While a friendly HARLEQUINS unit is making a charge move, that unit can move through enemy models.
   This detachment has the ACROBATIC tag and cannot be taken with another ACROBATIC detachment.
@@ -4122,6 +4714,8 @@ ASURYANI, YNNARI
   EFFECT: Your unit can make a normal move of up to D3+3".
 
 ### Path of the Outcast (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Far-Reaching Doom
 - When a friendly RANGERS/SHROUD RUNNERS unit is selected to shoot, enemy units have +6" detection range until that friendly unit has shot.
 
@@ -4154,6 +4748,8 @@ ASURYANI, YNNARI
   - Your unit is not eligible to declare a charge or embark within a TRANSPORT until the end of the turn.
 
 ### Twilight Flickers (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Dance of Distortion
 - Friendly HARLEQUINS units have Stealth.
   This detachment has the ACROBATIC tag and cannot be taken with another ACROBATIC detachment.
@@ -4187,6 +4783,8 @@ ASURYANI, YNNARI
   - Your unit is not eligible to declare a charge until the end of the turn.
 
 ### Serpent's Brood (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Boons of the Brood
 - Weapons equipped by HARLEQUINS MOUNTED and HARLEQUINS VEHICLE models from your army have the [SUSTAINED HITS 1] ability.
   Each time a HARLEQUINS unit from your army disembarks from a TRANSPORT, until the end of the turn, that unit's weapons have the [SUSTAINED HITS 1] ability.
@@ -4244,6 +4842,8 @@ ASURYANI, YNNARI
   EFFECT: If your unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 
 ### Eldritch Raiders (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Yriel's Own
 - AELDARI units in your army are eligible to declare a charge in a turn in which they Advanced. In addition, each time an ANHRATHE, RANGERS or SHROUD RUNNERS unit from your army Advances, you can re-roll the Advance roll.
 #### Detachment rule -- Veterans of the Void
@@ -4288,6 +4888,8 @@ ASURYANI, YNNARI
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves. If that unit is below Starting Strength, return all destroyed models (excluding CHARACTER models) to that unit.
 
 ### Corsair Coterie (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Relentless Raiders
 - While an objective marker is under your control, each time an enemy unit ends a Normal, Advance, Fall Back or Charge move within range of that objective marker, roll one D6: on a 2+, that enemy unit suffers D3 mortal wounds.
   ANHRATHE units from your army have the following ability:

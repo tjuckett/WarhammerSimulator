@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -106,14 +106,20 @@
 | ranged | -- | Scalding roar | ignores cover torrent | 12" | D6+3 | N/A | 5 | -1 | 1 |
 | melee | -- | Soul-rending fangs | anti-character 3+ precision | Melee | 6 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Pack Leader: While this model is leading a unit, you can re-roll Advance and Charge rolls made for that unit.
-  Prey of the Blood God: At the start of the first battle round, select one enemy unit to be this model's prey. Each time a model in this model's unit makes a melee attack that targets its prey, you can re-roll the Wound roll. Each time this model's prey is destroyed, select one new enemy unit to be this model's prey.
-
-#### Wargear Abilities
+- Prey of the Blood God: At the start of the first battle round, select one enemy unit to be this model's prey. Each time a model in this model's unit makes a melee attack that targets its prey, you can re-roll the Wound roll. Each time this model's prey is destroyed, select one new enemy unit to be this model's prey.
 - Brass Collar of Bloody Vengeance: The bearer has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
 
 #### Unit Composition
@@ -148,12 +154,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Balesword and Nurgling attendants | lethal hits | Melee | D6+3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Blessed by the Plague God: While this model is leading a unit, models in that unit have a 4+ invulnerable save.
-  Tally of Pestilence: Keep a tally of how many enemy models are destroyed by NURGLE LEGIONES DAEMONICA models from your army during the battle. At the start of your Command phase, if this tally is 7 or more, you gain 1CP and the tally is reset to 0.
+- Tally of Pestilence: Keep a tally of how many enemy models are destroyed by NURGLE LEGIONES DAEMONICA models from your army during the battle. At the start of your Command phase, if this tally is 7 or more, you gain 1CP and the tally is reset to 0.
 
 #### Unit Composition
 - 1 Epidemius - EPIC HERO
@@ -187,12 +201,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | The Slayer Sword | devastating wounds precision | Melee | 6 | 2+ | 6 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Lord of Decapitations: While this model is leading a unit, melee weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability.
-  Skulls for Khorne: Each time this model makes an attack that targets a Character unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model destroys an enemy Character unit, you gain 1CP.
+- Skulls for Khorne: Each time this model makes an attack that targets a Character unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model destroys an enemy Character unit, you gain 1CP.
 
 #### Unit Composition
 - 1 Skulltaker - EPIC HERO
@@ -228,12 +250,21 @@ LEGIONES DAEMONICA
 | ranged | -- | Infernal Flames - focused witchfire | ignores cover hazardous psychic torrent | 12" | D6+3 | N/A | 6 | -1 | D3 |
 | melee | -- | The Trickster's Staff | psychic | Melee | 3 | 4+ | 4 | -1 | D3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative, Stealth
-- FACTION: The Shadow of Chaos
 - Formless Horror: Each time an enemy unit wishes to select this model as the target of an attack, that unit must first take a Battle-shock test. If that test is failed, in addition to being Battle-shocked, that enemy unit cannot target this model this phase.
-  Mischief and Confusion: At the start of your opponent's Shooting phase, select one enemy unit within 12" of and visible to this model and roll one D6: on a 2-5, until the end of the phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll; on a 6, that enemy unit is not eligible to shoot this phase.
+- Mischief and Confusion: At the start of your opponent's Shooting phase, select one enemy unit within 12" of and visible to this model and roll one D6: on a 2-5, until the end of the phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll; on a 6, that enemy unit is not eligible to shoot this phase.
 
 #### Unit Composition
 - 1 The Changeling - EPIC HERO
@@ -263,14 +294,23 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Serrated claws | devastating wounds | Melee | 6 | 2+ | 4 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Lone Operative
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Lone Operative
-- FACTION: The Shadow of Chaos
 - The Eternal Dance: At the start of the Fight phase, select one enemy unit within 6" of this model. Until the end of the phase:
   - Each time a friendly SLAANESH LEGIONES DAEMONICA model makes a melee attack that targets that enemy unit, add 1 to the Wound roll.
   - Each time a model in that enemy unit makes a melee attack, subtract 1 from the Wound roll.
-  Dazzling Acrobatics: This model is eligible to declare a charge in a turn in which it Advanced or Fell Back.
+- Dazzling Acrobatics: This model is eligible to declare a charge in a turn in which it Advanced or Fell Back.
 
 #### Unit Composition
 - 1 The Masque of Slaanesh - EPIC HERO
@@ -303,12 +343,21 @@ LEGIONES DAEMONICA
 | melee | -- | The Blade of Shadows - strike | devastating wounds | Melee | 7 | 2+ | 14 | -4 | D6+1 |
 | melee | -- | The Blade of Shadows - sweep | sustained hits 1 | Melee | 14 | 2+ | 8 | -3 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+- Stealth
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike, Stealth
-- FACTION: The Shadow of Chaos
 - The Dark Master (Aura): The area of the battlefield within 6" of this model is within your army's Shadow of Chaos.
-  Shadow Form: At the start of the battle round, select one Shadow Form ability (see below). Until the end of the battle round, this model has that ability.
+- Shadow Form: At the start of the battle round, select one Shadow Form ability (see below). Until the end of the battle round, this model has that ability.
 
 #### Unit Composition
 - 1 Be'lakor - EPIC HERO
@@ -346,13 +395,21 @@ LEGIONES DAEMONICA
 | ranged | -- | Infernal Gateway - focused witchfire | blast indirect fire hazardous psychic | 24" | D3+6 | 2+ | 9 | -2 | 3 |
 | melee | -- | Staff of Tomorrow | psychic | Melee | 5 | 3+ | 8 | -2 | 2D3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: The Shadow of Chaos
 - Greater Daemon of Tzeentch (Aura): While a friendly TZEENTCH LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
-  One Head Looks Forward: At the end of your Command phase, if this model is on the battlefield, take a Leadership test for this model; if that test is passed, you gain 1CP.
-  One Head Looks Back: Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do, increase the CP cost of the use of that stratagem by 1CP.
+- One Head Looks Forward: At the end of your Command phase, if this model is on the battlefield, take a Leadership test for this model; if that test is passed, you gain 1CP.
+- One Head Looks Back: Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do, increase the CP cost of the use of that stratagem by 1CP.
 
 #### Unit Composition
 - 1 Kairos Fateweaver - EPIC HERO
@@ -387,13 +444,22 @@ LEGIONES DAEMONICA
 | melee | -- | Gnarlrod - strike | lethal hits psychic | Melee | 7 | 2+ | 10 | -3 | 3 |
 | melee | -- | Gnarlrod - sweep | lethal hits psychic | Melee | 14 | 2+ | 8 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+- Feel No Pain 6+
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike, Feel No Pain 6+
-- FACTION: The Shadow of Chaos
 - Greater Daemon of Nurgle (Aura): While a friendly NURGLE LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
-  Virulent Blessing (Psychic): At the start of the Fight phase, you can select one enemy unit within 24" and visible to this model. Until the end of the phase, each time an attack made by a NURGLE LEGIONES DAEMONICA model is allocated to a model in that unit, add 1 to the Damage characteristic of that attack.
-  Deluge of Nurgle (Aura): While an enemy unit is within 6" of this model, subtract 2 from the Move characteristic and subtract 1 from the Objective Control characteristic of models in that unit.
+- Virulent Blessing (Psychic): At the start of the Fight phase, you can select one enemy unit within 24" and visible to this model. Until the end of the phase, each time an attack made by a NURGLE LEGIONES DAEMONICA model is allocated to a model in that unit, add 1 to the Damage characteristic of that attack.
+- Deluge of Nurgle (Aura): While an enemy unit is within 6" of this model, subtract 2 from the Move characteristic and subtract 1 from the Objective Control characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Rotigus - EPIC HERO
@@ -430,13 +496,21 @@ LEGIONES DAEMONICA
 | melee | -- | Snapping claws | devastating wounds extra attacks | Melee | 4 | 2+ | 6 | -2 | 3 |
 | melee | -- | Soulpiercer | precision | Melee | 6 | 2+ | 12 | -3 | D6+2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: The Shadow of Chaos
 - Greater Daemon of Slaanesh (Aura): While a friendly SLAANESH LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
-  No Prey Can Evade: You can re-roll Advance and Charge rolls made for this model.
-  Monarch of the Hunt: At the start of the first battle round, select one enemy unit to be this model's quarry. Each time this model makes a melee attack that targets its quarry, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's quarry is destroyed, select one new enemy unit to be this model's quarry.
+- No Prey Can Evade: You can re-roll Advance and Charge rolls made for this model.
+- Monarch of the Hunt: At the start of the first battle round, select one enemy unit to be this model's quarry. Each time this model makes a melee attack that targets its quarry, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's quarry is destroyed, select one new enemy unit to be this model's quarry.
 
 #### Unit Composition
 - 1 Shalaxi Helbane - EPIC HERO
@@ -471,13 +545,21 @@ LEGIONES DAEMONICA
 | melee | -- | Slaughter and Carnage - strike | -- | Melee | 8 | 2+ | 16 | -4 | 6 |
 | melee | -- | Slaughter and Carnage - sweep | -- | Melee | 16 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: The Shadow of Chaos
 - Greater Daemon of Khorne (Aura): While a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
-  Rage Embodied (Aura): While a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this model, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit.
-  Murderlust: This unit is eligible to declare a charge in a turn in which it Advanced.
+- Rage Embodied (Aura): While a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this model, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit.
+- Murderlust: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
 - 1 Skarbrand - EPIC HERO
@@ -514,12 +596,20 @@ LEGIONES DAEMONICA
 | melee | -- | Axe of Dominion | -- | Melee | 6 | 3+ | 7 | -2 | 3 |
 | melee | -- | Scourging whip | extra attacks | Melee | 6 | 2+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Prince of Slaanesh: While this model is leading a unit, each time a model in that unit makes a melee attack, a successful unmodified Wound roll of 5+ scores a Critical Wound.
-  Delightful Agonies: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
+- Delightful Agonies: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
 
 #### Unit Composition
 - 1 Syll'Esske - EPIC HERO
@@ -554,14 +644,22 @@ LEGIONES DAEMONICA
 | melee | -- | Acidic maw | devastating wounds extra attacks | Melee | 2 | 4+ | 7 | -4 | 3 |
 | melee | -- | Lopping shears | lethal hits | Melee | 4 | 3+ | 6 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Beast Handler: While this model is leading a unit, you can re-roll charge rolls made for that unit. In addition, once per battle, you can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
-  Seed the Garden of Nurgle: At the end of your Movement phase, if this model is within one Area Terrain feature, until the end of the battle, that AREA TERRAIN feature is considered to be within your army's Shadow of Chaos.
+- Seed the Garden of Nurgle: At the end of your Movement phase, if this model is within one Area Terrain feature, until the end of the battle, that AREA TERRAIN feature is considered to be within your army's Shadow of Chaos.
 
 #### Unit Composition
 - 1 Horticulous Slimux - EPIC HERO
@@ -597,12 +695,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Sharp quills | anti-psyker 2+ | Melee | 4 | 5+ | 2 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative
-- FACTION: The Shadow of Chaos
 - P'tarix's Sorcerous Syphon (Aura): While an enemy unit is within 12" of this model, each time a model in that unit makes a Psychic Attack, subtract 1 from the Wound roll.
-  Xirat'p's Sorcerous Barrages (Psychic): At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model: on a 2-3, that unit suffers 1 mortal wound; on a 4-5, that unit suffers D3 mortal wounds; on a 6, that unit suffers D6 mortal wounds.
+- Xirat'p's Sorcerous Barrages (Psychic): At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model: on a 2-3, that unit suffers 1 mortal wound; on a 4-5, that unit suffers D3 mortal wounds; on a 6, that unit suffers D6 mortal wounds.
 
 #### Unit Composition
 - 1 The Blue Scribes - EPIC HERO
@@ -632,12 +738,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Blade of blood | -- | Melee | 5 | 2+ | 6 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Bloodmaster: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Wound roll.
-  A Gory Path: Each time this model's unit Consolidates, it can move up to 6" instead of up to 3".
+- A Gory Path: Each time this model's unit Consolidates, it can move up to 6" instead of up to 3".
 
 #### Unit Composition
 - 1 Bloodmaster
@@ -687,12 +801,20 @@ LEGIONES DAEMONICA
 | ranged | -- | Arcane Fireball - focused witchfire | devastating wounds hazardous psychic | 18" | 3 | 3+ | 6 | -2 | D3 |
 | melee | -- | Herald combat weapon | psychic | Melee | 3 | 4+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Changecaster: While this model is leading a unit, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Storm of Mutating Sorcery (Psychic): In your Shooting phase, after this model has shot, select one enemy Infantry unit hit by one or more of those attacks. That unit must take a Battle-shock test.
+- Storm of Mutating Sorcery (Psychic): In your Shooting phase, after this model has shot, select one enemy Infantry unit hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Changecaster
@@ -700,7 +822,8 @@ LEGIONES DAEMONICA
 
 #### Leader
 - This model can be attached to the following units:
-  - BLUE HORROR
+  - BLUE HORRORS
+  - PINK HORRORS
 
 #### Enhancements
 - The Everstave 25 pts
@@ -741,12 +864,21 @@ LEGIONES DAEMONICA
 | melee | -- | Coiled tentacles | extra attacks | Melee | D6 | 4+ | 5 | -1 | 2 |
 | melee | -- | Ravaging claws | devastating wounds | Melee | 8 | 2+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Leader
-- FACTION: The Shadow of Chaos
 - Swallow Energy (Psychic): While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against mortal wounds and Psychic Attacks.
-  Horrible Fascination(Psychic): At the start of your opponent's Shooting phase, one PSYKER model from your army with this ability can use it. If it does, select one enemy unit within 12" of and visible to that PSYKER model and roll one D6: on a 1, that PSYKER model suffers D3 mortal wounds; on a 2-5, until the end of the phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll; on a 6, that enemy unit is not eligible to shoot this phase.
+- Horrible Fascination(Psychic): At the start of your opponent's Shooting phase, one PSYKER model from your army with this ability can use it. If it does, select one enemy unit within 12" of and visible to that PSYKER model and roll one D6: on a 1, that PSYKER model suffers D3 mortal wounds; on a 2-5, until the end of the phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll; on a 6, that enemy unit is not eligible to shoot this phase.
 
 #### Unit Composition
 - 1 Contorted Epitome
@@ -797,12 +929,20 @@ LEGIONES DAEMONICA
 | ranged | -- | Fire of Tzeentch - pink fire | ignores cover psychic torrent | 12" | 2D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Flamer mouths | -- | Melee | 4 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Blazing Warpfire (Psychic): While this model is leading a unit, ranged weapons equipped by models in that unit have the [ASSAULT] ability.
-  Flames of Change (Psychic): In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks, and roll one D6. On a 4+, until the end of your opponent's next turn, that enemy unit is aflame. While a unit is aflame, subtract 2" from its Move characteristic and subtract 2 from Advance and Charge rolls made for it.
+- Flames of Change (Psychic): In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks, and roll one D6. On a 4+, until the end of your opponent's next turn, that enemy unit is aflame. While a unit is aflame, subtract 2" from its Move characteristic and subtract 2 from Advance and Charge rolls made for it.
 
 #### Unit Composition
 - 1 Exalted Flamer
@@ -855,12 +995,21 @@ LEGIONES DAEMONICA
 | ranged | -- | Heartstring lyre - euphonic blast | assault | 24" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Ravaging claws | devastating wounds | Melee | 5 | 2+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Leader
-- FACTION: The Shadow of Chaos
 - Harmonic Alignment: While this model is leading a unit, in your Command phase, you can return D3 destroyed Bodyguard models to that unit.
-  Discordant Disruption (Aura): While an enemy PSYKER unit is within 12" of this model, Psychic weapons equipped by models in that unit have the [HAZARDOUS] ability.
+- Discordant Disruption (Aura): While an enemy PSYKER unit is within 12" of this model, Psychic weapons equipped by models in that unit have the [HAZARDOUS] ability.
 
 #### Unit Composition
 - 1 Infernal Enrapturess
@@ -908,12 +1057,21 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Foul balesword | lethal hits | Melee | 4 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+, Leader
-- FACTION: The Shadow of Chaos
 - Poxbringer: While this model is leading a unit, each time a model in that unit makes an attack, a successful unmodified Hit roll of 5+ scores a Critical Hit.
-  Feculent Despair (Aura, Psychic): While an enemy unit is within 6" of this model, each time that unit takes a Battle-shock test, subtract 1 from that test.
+- Feculent Despair (Aura, Psychic): While an enemy unit is within 6" of this model, each time that unit takes a Battle-shock test, subtract 1 from that test.
 
 #### Unit Composition
 - 1 Poxbringer
@@ -962,12 +1120,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Marotter | lethal hits | Melee | 4 | 3+ | 5 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Jolly Gutpipes: While this model is leading a unit, add 1 to the Move characteristic of models in that unit and you can re-roll Advance rolls made for that unit.
-  Disease of Mirth (Aura): At the start of the Fight phase, every enemy unit (excluding MONSTERS and VEHICLES) within 6" of this model must take a Battle-shock test.
+- Disease of Mirth (Aura): At the start of the Fight phase, every enemy unit (excluding MONSTERS and VEHICLES) within 6" of this model must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Sloppity Bilepiper
@@ -1016,12 +1182,20 @@ LEGIONES DAEMONICA
 | ranged | -- | Disgusting sneezes | pistol torrent | 6" | D6 | N/A | 3 | 0 | 1 |
 | melee | -- | Plaguesword and distended maw | lethal hits | Melee | 6 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Keep Counting!: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Meet Your Quota!: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
+- Meet Your Quota!: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Spoilpox Scrivener
@@ -1069,12 +1243,21 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Ravaging claws | devastating wounds | Melee | 6 | 2+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Leader
-- FACTION: The Shadow of Chaos
 - Tranceweaver: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack is within range of an objective marker, you can re-roll the Hit roll instead.
-  Symphony of Pain (Psychic): At the end of your Movement phase, you can select one enemy unit that is Battle-shocked and within 12" of this model. Until the end of the turn, each time a SLAANESH LEGIONES DAEMONICA model from your army makes an attack that targets that enemy unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
+- Symphony of Pain (Psychic): At the end of your Movement phase, you can select one enemy unit that is Battle-shocked and within 12" of this model. Until the end of the turn, each time a SLAANESH LEGIONES DAEMONICA model from your army makes an attack that targets that enemy unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Tranceweaver
@@ -1127,12 +1310,22 @@ LEGIONES DAEMONICA
 | melee | -- | Daemon hammer | devastating wounds | Melee | 5 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's daemon hammer can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+- This model's plasma pistol can be replaced with 1 power fist.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Lord of Chaos: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Chance for Glory: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength, Attacks, Armour Penetration and Damage characteristics of melee weapons equipped by this model by 1.
+- Chance for Glory: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength, Attacks, Armour Penetration and Damage characteristics of melee weapons equipped by this model by 1.
 
 #### Unit Composition
 - 1 Chaos Lord
@@ -1178,12 +1371,24 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 7 | 2+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's combi-bolter can be replaced with 1 combi-weapon.
+- This model's exalted weapon can be replaced with one of the following:
+  - 1 chainfist
+  - 1 power fist
+- This model's combi-bolter and exalted weapon can be replaced with 1 paired accursed weapons.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Lord of Chaos: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Formidably Resilient: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
+- Formidably Resilient: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
 
 #### Unit Composition
 - 1 Chaos Lord in Terminator Armour
@@ -1228,12 +1433,22 @@ HERETIC ASTARTES
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | TWIN-LINKED | Melee | 6 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- This model's bolt pistol can be replaced with 1 plasma pistol.
+- This model's accursed weapon can be replaced with 1 power fist.
+- This model's bolt pistol and accursed weapon can be replaced with 1 twin lightning claws.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Lord of Chaos: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Cruel Hunter: While this model is leading a unit, each time that unit Piles In or Consolidates, each model in that unit can move up to 6" instead of up to 3".
+- Cruel Hunter: While this model is leading a unit, each time that unit Piles In or Consolidates, each model in that unit can move up to 6" instead of up to 3".
 
 #### Unit Composition
 - 1 Chaos Lord
@@ -1274,12 +1489,16 @@ HERETIC ASTARTES
 | ranged | -- | Balefire pike | IGNORES COVER TORRENT | 12" | D6+3 | N/A | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 4+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Fiery Faith: While this model is leading a unit, you can re-roll Leadership tests taken for that unit.
-  Cursed Flames: In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
+- Cursed Flames: In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Cultist Firebrand
@@ -1315,7 +1534,7 @@ HERETIC ASTARTES
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| DARK APOSTLE | (diameter 40mm) | 6" | 4 | 3+ | 4 | 5+ | 1 | 4+ |
+| DARK APOSTLE | (diameter 40mm) | 6" | 4 | 3+ | 4 | 5+ | 1 | -- |
 | DARK DISCIPLE | (diameter 25mm) | 6" | 4 | 6+ | 1 | 7+ | 1 | 4+ |
 
 #### Weapons
@@ -1325,13 +1544,17 @@ HERETIC ASTARTES
 | melee | -- | Accursed crozius | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Dark Zealotry: While this unit is leading a unit and contains a DARK APOSTLE model, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Demagogue: Once per battle, at the start of any phase, you can select one friendly HERETIC ASTARTES unit that is Battle-shocked and within 12" of this unit's DARK APOSTLE model. That unit is no longer Battle-shocked.
-  Malign Sacrifice: At the start of the Fight phase, if this unit contains one or more Dark Disciple models, you can select one of those models and one enemy unit within Engagement Range of this unit, then roll one D6: on a 2-5, that enemy unit suffers 1 mortal wound; on a 6, that enemy unit suffers D3 mortal wounds. That Dark Disciple model is then destroyed.
+- Demagogue: Once per battle, at the start of any phase, you can select one friendly HERETIC ASTARTES unit that is Battle-shocked and within 12" of this unit's DARK APOSTLE model. That unit is no longer Battle-shocked.
+- Malign Sacrifice: At the start of the Fight phase, if this unit contains one or more Dark Disciple models, you can select one of those models and one enemy unit within Engagement Range of this unit, then roll one D6: on a 2-5, that enemy unit suffers 1 mortal wound; on a 6, that enemy unit suffers D3 mortal wounds. That Dark Disciple model is then destroyed.
 
 #### Unit Composition
 - 1 Dark Apostle
@@ -1383,14 +1606,16 @@ HERETIC ASTARTES
 | melee | -- | Commune blade | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 | melee | -- | Commune stave | devastating wounds | Melee | 2 | 4+ | 3 | 0 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Faithful Flock: While this unit is leading a unit and contains a CULT DEMAGOGUE model, models in that unit have a 5+ invulnerable save.
-  Dark Ritual: Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.
-
-#### Wargear Abilities
+- Dark Ritual: Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -1443,12 +1668,16 @@ HERETIC ASTARTES
 | ranged | -- | Rite of Possession - focused witchfire | anti-psyker 2+ hazardous pistol precision psychic | 18" | 2 | 3+ | 6 | -3 | 3 |
 | melee | -- | Staff of possession | anti-psyker 2+ psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Daemonkin (Psychic): While this model is leading a unit, add 1 to Advance and Charge rolls made for that unit.
-  Sacrificial Dagger: Once per phase, when this model is selected to shoot or fight, it can use this ability. If it does, this model's unit suffers 1 mortal wound and, until the end of the phase, each time this model makes a Psychic Attack, add 1 to the Hit roll and add 1 to the Wound roll.
+- Sacrificial Dagger: Once per phase, when this model is selected to shoot or fight, it can use this ability. If it does, this model's unit suffers 1 mortal wound and, until the end of the phase, each time this model makes a Psychic Attack, add 1 to the Hit roll and add 1 to the Wound roll.
 
 #### Unit Composition
 - 1 Master of Possession
@@ -1493,12 +1722,16 @@ HERETIC ASTARTES
 | ranged | -- | Infernal Gaze - focused witchfire | devastating wounds hazardous psychic | 24" | D6 | 3+ | 6 | -2 | D3 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Prescience (Psychic): While this model is leading a unit, each time an attack targets that unit, subtract 1 from the Hit roll.
-  Gift of Chaos (Psychic): Each time this model is selected to shoot or fight, after resolving its attacks, select one enemy unit hit by one or more of those attacks that had the [PSYCHIC] ability. That unit must take a Leadership test: if that test is failed, that unit suffers D3 mortal wounds.
+- Gift of Chaos (Psychic): Each time this model is selected to shoot or fight, after resolving its attacks, select one enemy unit hit by one or more of those attacks that had the [PSYCHIC] ability. That unit must take a Leadership test: if that test is failed, that unit suffers D3 mortal wounds.
 
 #### Unit Composition
 - 1 Sorcerer
@@ -1543,14 +1776,21 @@ HERETIC ASTARTES
 | ranged | -- | Infernal Gaze - focused witchfire | devastating wounds hazardous psychic | 24" | D6 | 3+ | 6 | -2 | D3 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Wargear options
+- This model's combi-bolter can be replaced with 1 combi-weapon.
+- This model can be equipped with 1 Chaos familiar.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Warptime (Psychic): While this model is leading a unit, you can re-roll Advance and Charge rolls made for that unit.
-  Death Hex (Psychic): At the start of your Shooting phase, one PSYKER with this ability can use it. If it does, select one enemy unit within 12" of and visible to that PSYKER and roll one D6: on a 1, that PSYKER's unit suffers D3 mortal wounds; on a 2+, until the start of your next Movement phase, each time an attack targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1.
-
-#### Wargear Abilities
+- Death Hex (Psychic): At the start of your Shooting phase, one PSYKER with this ability can use it. If it does, select one enemy unit within 12" of and visible to that PSYKER and roll one D6: on a 1, that PSYKER's unit suffers D3 mortal wounds; on a 2+, until the start of your next Movement phase, each time an attack targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1.
 - Chaos Familiar: Once per battle, when an attack is allocated to the bearer, you can change the Damage characteristic to 0.
 
 #### Unit Composition
@@ -1584,8 +1824,8 @@ HERETIC ASTARTES
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| TRAITOR ENFORCER | (diameter 32mm) | 6" | 3 | 5+ | 3 | 6+ | 1 | 5+ |
-| TRAITOR OGRYN | (diameter 40mm) | 6" | 6 | 5+ | 4 | 7+ | 1 | -- |
+| TRAITOR ENFORCER | (diameter 32mm) | 6" | 3 | 5+ | 3 | 6+ | 1 | -- |
+| TRAITOR OGRYN | (diameter 40mm) | 6" | 6 | 5+ | 4 | 7+ | 1 | 5+ |
 
 #### Weapons
 | Type | Applies to | Weapon | Weapon keywords | Range | A | BS/WS | S | AP | D |
@@ -1594,12 +1834,19 @@ HERETIC ASTARTES
 | melee | -- | Ogryn weapons | -- | Melee | 5 | 3+ | 7 | -1 | 2 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Brutal Example: Once per turn, while this unit is leading a unit and contains a TRAITOR ENFORCER model, you can target that unit with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted a different unit from your army with that Stratagem this turn. Each time you use this ability, one Bodyguard model in that unit is destroyed.
-  Mutated Bodyguard: While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.
+- Mutated Bodyguard: While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Traitor Enforcer
@@ -1647,13 +1894,23 @@ HERETIC ASTARTES
 | melee | -- | Great axe of Khorne - strike | -- | Melee | 7 | 2+ | 16 | -4 | D6+2 |
 | melee | -- | Great axe of Khorne - sweep | -- | Melee | 14 | 2+ | 10 | -2 | 2 |
 
+#### Wargear options
+- This model's great axe of Khorne can be replaced with 1 axe of Khorne and one of the following:
+  - 1 bloodflail
+  - 1 lash of Khorne
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: The Shadow of Chaos
 - Daemon Lord of Khorne (Aura): While a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this model, each time a model in that unit makes a melee attack, add 1 to the Hit roll.
-  Relentless Carnage: At the end of the Fight phase, you can select one enemy unit within Engagement Range of this model and roll eight D6: for each 4+, that enemy unit suffers 1 mortal wound.
-  Greater Daemon of Khorne (Aura): While a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
+- Relentless Carnage: At the end of the Fight phase, you can select one enemy unit within Engagement Range of this model and roll eight D6: for each 4+, that enemy unit suffers 1 mortal wound.
+- Greater Daemon of Khorne (Aura): While a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
 
 #### Unit Composition
 - 1 Bloodthirster
@@ -1702,13 +1959,21 @@ LEGIONES DAEMONICA
 | melee | -- | Hellforged weapons - strike | -- | Melee | 6 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | -- | Melee | 14 | 2+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: The Shadow of Chaos
 - Daemonic Lord: While this model is within 3" of one or more friendly LEGIONES DAEMONICA INFANTRY units, this model has the Lone Operative ability.
-  Prince of Darkness (Aura): While a friendly LEGIONES DAEMONICA unit is within 6" of this model, models in that unit have the Stealth ability.
-  Unholy Vigour: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 3+ invulnerable save.
+- Prince of Darkness (Aura): While a friendly LEGIONES DAEMONICA unit is within 6" of this model, models in that unit have the Stealth ability.
+- Unholy Vigour: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 3+ invulnerable save.
 
 #### Unit Composition
 - 1 Daemon Prince of Chaos
@@ -1754,12 +2019,20 @@ LEGIONES DAEMONICA
 | melee | -- | Hellforged weapons - strike | -- | Melee | 6 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | -- | Melee | 14 | 2+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: The Shadow of Chaos
 - Malefic Destruction: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of this model's hellforged weapons.
-  Harbinger of Death: Each time this model is selected to fight, select one of the following abilities. Until the end of the phase, this model's hellforged weapons have that ability:
+- Harbinger of Death: Each time this model is selected to fight, select one of the following abilities. Until the end of the phase, this model's hellforged weapons have that ability:
   - [LETHAL HITS]
   - [PRECISION]
   - [SUSTAINED HITS 1]
@@ -1811,13 +2084,23 @@ LEGIONES DAEMONICA
 | melee | -- | Bilesword - sweep | lethal hits | Melee | 12 | 2+ | 7 | -1 | 1 |
 | melee | -- | Doomsday bell | lethal hits Reverberating summons | Melee | 6 | 2+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's plague flail can be replaced with 1 bileblade.
+- This model's bilesword can be replaced with 1 doomsday bell.
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+- Feel No Pain 6+
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike, Feel No Pain 6+
-- FACTION: The Shadow of Chaos
 - Greater Daemon of Nurgle (Aura): While a friendly NURGLE LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
-  Daemon Lord of Nurgle (Aura): While a friendly NURGLE LEGIONES DAEMONICA unit is within 6" of this model, add 1 to the Toughness characteristic of models in that unit.
-  Nurgle's Rot (Psychic): At the end of your Movement phase, you can select one enemy unit within 12" of this model. Until the start of your next Movement phase, subtract 1 from the Toughness characteristic of models in that unit.
+- Daemon Lord of Nurgle (Aura): While a friendly NURGLE LEGIONES DAEMONICA unit is within 6" of this model, add 1 to the Toughness characteristic of models in that unit.
+- Nurgle's Rot (Psychic): At the end of your Movement phase, you can select one enemy unit within 12" of this model. Until the start of your next Movement phase, subtract 1 from the Toughness characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Great Unclean One
@@ -1869,15 +2152,24 @@ LEGIONES DAEMONICA
 | melee | -- | Snapping claws | devastating wounds extra attacks | Melee | 4 | 2+ | 6 | -2 | 3 |
 | melee | -- | Witstealer sword | -- | Melee | 6 | 2+ | 8 | -2 | 3 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - Living whip
+  - Ritual knife
+  - Shining aegis
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: The Shadow of Chaos
 - Daemon Lord of Slaanesh (Aura): While a friendly SLAANESH LEGIONES DAEMONICA unit is within 6" of this model, improve the Armour Penetration of melee weapons in that unit by 1.
-  Mesmerising Form: Each time an attack targets this model, subtract 1 from the Hit roll.
-  Greater Daemon of Slaanesh (Aura): While a friendly SLAANESH LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
-
-#### Wargear Abilities
+- Mesmerising Form: Each time an attack targets this model, subtract 1 from the Hit roll.
+- Greater Daemon of Slaanesh (Aura): While a friendly SLAANESH LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
 - Shining Aegis: The bearer has a Save characteristic of 3+.
 
 #### Unit Composition
@@ -1927,13 +2219,23 @@ LEGIONES DAEMONICA
 | melee | -- | Baleful sword | extra attacks | Melee | 3 | 3+ | 7 | -2 | 3 |
 | melee | -- | Staff of Tzeentch | psychic | Melee | 5 | 3+ | 6 | -1 | 3 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 rod of sorcery
+  - 1 baleful sword
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: The Shadow of Chaos
 - Daemon Lord of Tzeentch (Aura): While a friendly TZEENTCH LEGIONES DAEMONICA unit is within 6" of this model, each time a model in that unit makes a ranged attack, add 1 to the Strength characteristic of that attack.
-  Master of Magicks (Psychic): In your Shooting phase, select one of the following abilities: [IGNORES COVER]; [LETHAL HITS]; [SUSTAINED HITS D3]. Until the end of the phase, this model's Bolt of Change has that ability.
-  Greater Daemon of Tzeentch (Aura): While a friendly TZEENTCH LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
+- Master of Magicks (Psychic): In your Shooting phase, select one of the following abilities: [IGNORES COVER]; [LETHAL HITS]; [SUSTAINED HITS D3]. Until the end of the phase, this model's Bolt of Change has that ability.
+- Greater Daemon of Tzeentch (Aura): While a friendly TZEENTCH LEGIONES DAEMONICA unit is within 6" of this model, that unit is within your army's Shadow of Chaos.
 
 #### Unit Composition
 - 1 Lord of Change
@@ -1983,12 +2285,20 @@ LEGIONES DAEMONICA
 | melee | -- | Herald combat weapon | psychic | Melee | 3 | 4+ | 4 | -1 | 1 |
 | melee | -- | Screamer bites | anti-monster 4+ anti-vehicle 4+ extra attacks | Melee | 6 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Fateskimmer: While this model is leading a unit, melee weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Rider of the Immaterial Winds: Once per battle, at the end of your opponent's turn, if this model's unit is not within Engagement Range of one or more enemy units, you can remove that unit from the battlefield and place it into Strategic Reserves.
+- Rider of the Immaterial Winds: Once per battle, at the end of your opponent's turn, if this model's unit is not within Engagement Range of one or more enemy units, you can remove that unit from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
 - 1 Fateskimmer
@@ -2036,14 +2346,22 @@ LEGIONES DAEMONICA
 | ranged | -- | Arcane Fireball - focused witchfire | devastating wounds hazardous psychic | 18" | 3 | 3+ | 6 | -2 | D3 |
 | melee | -- | Herald combat weapon | psychic | Melee | 3 | 4+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Fluxmaster:
   - This unit has Stealth.
   - Melee attacks that target this unit have -1 to hit rolls.
-  Altered Reality (Psychic): Once per battle round, after a Hit roll, a Wound roll, or a saving throw is made for this model, you can change the result of that roll to a 6.
+- Altered Reality (Psychic): Once per battle round, after a Hit roll, a Wound roll, or a saving throw is made for this model, you can change the result of that roll to a 6.
 
 #### Unit Composition
 - 1 Fluxmaster
@@ -2091,12 +2409,19 @@ LEGIONES DAEMONICA
 | melee | -- | Attendants' hellblades | extra attacks | Melee | 4 | 3+ | 5 | -2 | 2 |
 | melee | -- | Blade of blood | -- | Melee | 5 | 2+ | 6 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Blood Throne: At the start of the Fight phase, select one enemy unit within 18" of and visible to this model. Until the end of the phase, each time a friendly KHORNE LEGIONES DAEMONICA unit makes an attack that targets that unit, improve the Strength, Armour Penetration and Damage characteristics of that attack by 1.
-  Champion Slayer: Each time this model makes a melee attack that targets a CHARACTER or MONSTER unit, you can re-roll the Wound roll. Each time this model destroys an enemy CHARACTER or MONSTER unit, this model regains up to D6 lost wounds.
+- Champion Slayer: Each time this model makes a melee attack that targets a CHARACTER or MONSTER unit, you can re-roll the Wound roll. Each time this model destroys an enemy CHARACTER or MONSTER unit, this model regains up to D6 lost wounds.
 
 #### Unit Composition
 - 1 Rendmaster on Blood Throne
@@ -2140,12 +2465,20 @@ LEGIONES DAEMONICA
 | melee | -- | Blade of blood | -- | Melee | 5 | 2+ | 6 | -2 | 3 |
 | melee | -- | Juggernaut's bladed horn | extra attacks lance | Melee | 4 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: The Shadow of Chaos
 - Skullmaster's Fury: While this model is leading a unit, each time that unit ends a Charge move, until the end of the turn, Juggernaut's bladed horns equipped by models in that unit have the [DEVASTATING WOUNDS] ability.
-  Devastating Charge: Each time this model's unit ends a Charge move, each enemy unit within Engagement Range of that unit must take a Battle-shock test.
+- Devastating Charge: Each time this model's unit ends a Charge move, each enemy unit within Engagement Range of that unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Skullmaster
@@ -2194,12 +2527,19 @@ LEGIONES DAEMONICA
 | melee | -- | Seeker tongues | extra attacks lethal hits | Melee | 4 | 4+ | 4 | 0 | 1 |
 | melee | -- | Slashing claws | devastating wounds | Melee | 8 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Tormentbringer (Aura): While a friendly SLAANESH LEGIONES DAEMONICA unit is within 6" of this model, melee weapons in that unit have the [SUSTAINED HITS 1] ability.
-  Hysterical Frenzy (Psychic): Each time a model in this model's unit is destroyed, if that model has not fought this phase, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
+- Hysterical Frenzy (Psychic): Each time a model in this model's unit is destroyed, if that model has not fought this phase, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
 
 #### Unit Composition
 - 1 Tormentbringer
@@ -2245,13 +2585,19 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hellblade | -- | Melee | 2 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- 1 Bloodletter that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Bloodletter that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Bane of Cowards: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is also Battle-shocked, subtract 1 from each of those Desperate Escape tests.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -2291,13 +2637,21 @@ LEGIONES DAEMONICA
 | melee | -- | Blue claws | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 | melee | -- | Yellow claws | -- | Melee | 2 | 5+ | 2 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators
-- FACTION: The Shadow of Chaos
 - Split: Each time a BLUE HORROR model in this unit is destroyed, after the attacking unit has finished making its attacks, if this unit is not destroyed, roll one D6 for that model. On a 4+, add one BRIMSTONE HORROR model to this unit.
-  Sullen Malevolence (Aura): While an enemy unit is within 6" of this unit, if this unit contains one or more BLUE HORROR models, worsen the Leadership characteristic of models in that enemy unit by 1.
-  Exploding Horrors: Each time this unit is selected to fight, you can select one enemy unit within Engagement Range of it, then select one or more BRIMSTONE HORROR models in this unit. For each BRIMSTONE HORROR model you select, roll one D6: on a 4+, that model is destroyed and that enemy unit suffers 1 mortal wound.
+- Sullen Malevolence (Aura): While an enemy unit is within 6" of this unit, if this unit contains one or more BLUE HORROR models, worsen the Leadership characteristic of models in that enemy unit by 1.
+- Exploding Horrors: Each time this unit is selected to fight, you can select one enemy unit within Engagement Range of it, then select one or more BRIMSTONE HORROR models in this unit. For each BRIMSTONE HORROR model you select, roll one D6: on a 4+, that model is destroyed and that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
 - 10 Blue Horrors
@@ -2332,13 +2686,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Slashing claws | devastating wounds | Melee | 3 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Daemonette that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Daemonette that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+- Fights First
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First
-- FACTION: The Shadow of Chaos
 - Horrifying Beauty: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units from your army with this ability must take a Battle-shock test, subtracting 1 from the result if that enemy unit is Below Half-strength.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -2375,10 +2736,18 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Diseased claws and teeth | lethal hits | Melee | 4 | 5+ | 2 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators
-- FACTION: The Shadow of Chaos
 - Mischief Makers: Each time an enemy unit (excluding TITANIC units) within Engagement Range of one or more units with this ability is selected to fight, until the end of the phase, each time a model in that enemy unit makes a melee attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -2407,7 +2776,7 @@ LEGIONES DAEMONICA
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| PINK HORROR | (diameter 32mm) | 6" | 3 | 7+ | 1 | 7+ | 2 | 4+ |
+| PINK HORROR | (diameter 32mm) | 6" | 3 | 7+ | 1 | 7+ | 2 | -- |
 | BLUE HORROR/BRIMSTONE HORROR | (diameter 25mm) | 6" | 3 | 7+ | 1 | 8+ | 1 | 4+ |
 
 #### Weapons
@@ -2420,13 +2789,19 @@ LEGIONES DAEMONICA
 | melee | -- | Blue claws | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 | melee | -- | Yellow claws | -- | Melee | 2 | 5+ | 2 | 0 | 1 |
 
+#### Wargear options
+- 1 Pink Horror that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Pink Horror that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Split: Each time a PINK HORROR or BLUE HORROR model in this unit is destroyed, after the attacking unit has finished making its attacks, if this unit is not destroyed, roll one D6 for that model. On a 4+, if it was a PINK HORROR, add two BLUE HORROR models to this unit, and if it was a BLUE HORROR, add one BRIMSTONE HORROR model to this unit.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -2468,13 +2843,19 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Plaguesword | lethal hits | Melee | 2 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Plaguebearer that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Plaguebearer that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Infected Outbreak: If you control an objective marker at the end of your Command phase and this unit is within range of that objective marker, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -2513,9 +2894,14 @@ LEGIONES DAEMONICA
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Brutal assault weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Cultist Champion's autopistol can be replaced with 1 bolt pistol.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - For the Dark Gods: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
 
 #### Unit Composition
@@ -2566,12 +2952,38 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Heavy melee weapon | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Aspiring Champion's boltgun can be replaced with one of the following:
+  - 1 plasma pistol*
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+  - 1 heavy melee weapon
+- The Aspiring Champion's bolt pistol can be replaced with one of the following:
+  - 1 plasma pistol*
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+  - 1 heavy melee weapon
+- 1 model can be equipped with 1 Chaos icon.
+- Any number of Legionaries can each have their boltgun replaced with 1 Astartes chainsword.
+- One Legionary's boltgun can be replaced with 1 heavy melee weapon.
+- One Legionary's boltgun can be replaced with 1 balefire tome.
+- For every 5 models in this unit, 1 Legionary's boltgun can be replaced with one of the following (duplicates are not allowed):
+  - 1 plasma pistol and 1 Astartes chainsword
+  - 1 flamer
+  - 1 havoc autocannon
+  - 1 heavy bolter
+  - 1 lascannon
+  - 1 meltagun
+  - 1 missile launcher
+  - 1 plasma gun
+  - 1 reaper chaincannon
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Veterans of the Long War: Each time a model in this unit targets an enemy unit with a melee attack, re-roll a Wound roll of 1. If that enemy unit is within range of an objective marker, you can re-roll the Wound roll instead.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -2604,10 +3016,19 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Putrid appendages | devastating wounds | Melee | 6 | 4+ | 6 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 1
+- Deep Strike
+- Scouts 6"
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Deep Strike, Scouts 6"
-- FACTION: The Shadow of Chaos
 - Grotesque Regeneration: At the end of each phase, if a Beasts of Nurgle model in this unit has lost any wounds but is not destroyed, that model regains all of its lost wounds.
 
 #### Unit Composition
@@ -2639,10 +3060,17 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Barbed tail and dissecting claws | devastating wounds | Melee | 5 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Soporific Musk: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is also Battle-shocked, subtract 1 from each of those Desperate Escape tests.
 
 #### Unit Composition
@@ -2678,13 +3106,18 @@ LEGIONES DAEMONICA
 | ranged | -- | Burning roar | ignores cover torrent | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Gore-drenched fangs | -- | Melee | 3 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Hunters from the Warp: At the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
 - Collar of Khorne: The bearer has the Feel No Pain 3+ ability against Psychic Attacks.
 
 #### Unit Composition
@@ -2718,10 +3151,17 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lamprey bite | anti-monster 4+ anti-vehicle 4+ | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Slashing Dive: In your Movement phase, after this unit ends a Normal move, you can select one enemy unit it moved over during that move and roll one D6 for each model in this unit: for each 4+, that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
@@ -2754,10 +3194,17 @@ LEGIONES DAEMONICA
 | ranged | -- | Flickering Flames | ignores cover psychic torrent | 12" | D6 | N/A | 4 | -1 | 1 |
 | melee | -- | Flamer mouths | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Bounding Leaps: This unit is eligible to shoot in a turn in which it Fell Back.
 
 #### Unit Composition
@@ -2792,10 +3239,15 @@ LEGIONES DAEMONICA
 | melee | -- | Blasphemous appendages | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Hideous mutations | -- | Melee | D6+2 | 4+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Scouts 6"
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Scouts 6"
-- FACTION: Dark Pacts
 - Accursed Horde: In your opponent's Shooting phase, when an enemy unit has shot, if a model from this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6".
 
 #### Unit Composition
@@ -2838,10 +3290,23 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 5 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Terminator's combi-bolter can be replaced with one of the following:
+  - 1 heavy flamer
+  - 1 reaper autocannon
+- Any number of models can each have their combi-bolter replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 model's combi-bolter and accursed weapon can be replaced with 1 paired accursed weapons.
+- For every 5 models in this unit, up to 3 models can each have their accursed weapon replaced with 1 power fist.
+- For every 5 models in this unit, 1 model's accursed weapon can be replaced with 1 chainfist.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Despoilers: Each time this unit makes a Dark Pact, until the end of the phase, each time a model in this unit makes an attack, you can re-roll the Hit roll.
 
 #### Unit Composition
@@ -2881,12 +3346,19 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 5 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 4 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 2 models can each have their bolt pistol replaced with 1 plasma pistol.
+- For every 5 models in this unit, up to 2 models can each have their boltgun replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 model's boltgun and accursed weapon can be replaced with 1 paired accursed weapons.
+- For every 5 models in this unit, 1 model equipped with a boltgun can have its accursed weapon replaced with 1 power fist. That model's boltgun cannot be replaced.
+- 1 model can be equipped with 1 Chaos icon.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Chosen Marauders: This unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -2929,9 +3401,16 @@ HERETIC ASTARTES
 | melee | -- | Corrupted stave | devastating wounds psychic | Melee | 2 | 4+ | 4 | -1 | D3 |
 | melee | -- | Great weapon | -- | Melee | 2 | 5+ | 8 | -1 | 2 |
 
+#### Wargear options
+- The Fellgor Champion's bolt pistol can be replaced with 1 plasma pistol.
+- 1 Fellgor Beastman's close combat weapon can be replaced with 1 great weapon.
+- 1 Fellgor Beastman's close combat weapon can be replaced with 1 corrupted stave.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Bestial Raiders: If this unit starts the game in Strategic Reserves, it can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. If this unit is in Strategic Reserves, for the purposes of setting up this unit on the battlefield, treat the current battle round number as being one higher than it actually is.
 
 #### Unit Composition
@@ -2980,9 +3459,29 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Havoc Champion's Astartes chainsword can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 power fist
+- The Havoc Champion's flamer can be replaced with one of the following:
+  - 1 boltgun
+  - 1 meltagun
+  - 1 plasma gun
+  - 1 plasma pistol
+  - 1 accursed weapon
+  - 1 power fist
+- Any number of Havocs can each have their Havoc autocannon or Havoc lascannon replaced with one of the following:
+  - 1 Havoc autocannon
+  - 1 Havoc heavy bolter
+  - 1 Havoc lascannon
+  - 1 Havoc missile launcher
+  - 1 Havoc reaper chaincannon
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Stabilisation Talons: Each time a model in this unit makes an attack with a ranged weapon, you can ignore any or all modifiers to the Hit roll and any or all modifiers to the Ballistic Skill characteristic of that weapon.
 
 #### Unit Composition
@@ -3017,12 +3516,15 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hideous mutations | -- | Melee | 4 | 3+ | 5 | -1 | 2 |
 
+#### Wargear options
+- 1 model can be equipped with 1 Chaos icon.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Unholy Bloodshed: Once per battle, when this unit makes a Dark Pact, until the end of the phase, weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -3068,12 +3570,33 @@ HERETIC ASTARTES
 | melee | -- | Heavy melee weapon | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Mutations | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Raptor Champion's bolt pistol can be replaced with 1 plasma pistol.
+- The Raptor Champion's Astartes chainsword can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 heavy melee weapon
+- For every 5 models in this unit, up to 2 Raptors can each have their bolt pistol replaced with 1 plasma pistol (these models' Astartes chainswords cannot be replaced).
+- For every 5 models in this unit, up to 2 Raptors can each have their Astartes chainsword replaced with 1 heavy melee weapon.
+- For every 5 models in this unit, 1 Raptor can replace their Astartes chainsword with 1 mutations.
+- Up to 2 Raptors can each have their Astartes chainsword replaced with one of the following options (you cannot select the same option more than once):
+  - 1 flamer and 1 close combat weapon
+  - 1 meltagun and 1 close combat weapon
+  - 1 plasma gun and 1 close combat weapon
+- If this unit contains 10 models, up to 2 additional Raptors can each have their Astartes chainsword replaced with one of the following options (you cannot select the same option more than once):
+  - 1 flamer and 1 close combat weapon
+  - 1 meltagun and 1 close combat weapon
+  - 1 plasma gun and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Fearsome (Aura): While an enemy unit is within 6" of this unit, each time that enemy unit takes a Battle-shock or Leadership test, subtract 1 from the result.
-  Terrifying Assault: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test.
+- Terrifying Assault: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Raptor Champion
@@ -3119,9 +3642,23 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Up to 3 Traitor Guardsmen can each have their lasgun replaced with one of the following (duplicates are not allowed):
+  - 1 Cultist grenade launcher
+  - 1 flamer
+  - 1 meltagun
+  - 1 plasma gun
+  - 1 Cultist sniper rifle
+- The Traitor Sergeant's close combat weapon can be replaced with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- The Traitor Sergeant's corrupted pistol can be replaced with 1 boltgun.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Twisted Defence Force: While this unit is within range of an objective, this unit has +1 Sv against ranged attacks.
 
 #### Unit Composition
@@ -3154,10 +3691,17 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Warp claws | twin-linked | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Warp Strike: At the end of the Fight phase, if this unit destroyed one or more enemy units this phase and is not within Engagement Range of one or more enemy units, you can remove this unit from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
@@ -3193,13 +3737,19 @@ HERETIC ASTARTES
 | melee | -- | Hellblade | -- | Melee | 2 | 3+ | 5 | -2 | 2 |
 | melee | -- | Juggernaut's bladed horn | extra attacks lance | Melee | 4 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- 1 Bloodcrusher that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Bloodcrusher that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Brass Stampede: Each time this unit ends a Charge move, select one enemy unit within Engagement Range of this unit and roll one D6 for each model in this unit: for each 4+, that enemy unit suffers D3 mortal wounds.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -3242,10 +3792,17 @@ LEGIONES DAEMONICA
 | melee | -- | Flamer mouths | -- | Melee | 6 | 4+ | 5 | 0 | 1 |
 | melee | -- | Screamer bites | anti-monster 4+ anti-vehicle 4+ extra attacks | Melee | 6 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Eldritch Flames (Psychic): In your Shooting phase, after this model has shot, select one enemy unit that was hit by one or more of those attacks. Until the end of the phase, that unit cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -3283,10 +3840,17 @@ LEGIONES DAEMONICA
 | melee | -- | Seeker tongues | extra attacks lethal hits | Melee | 4 | 4+ | 4 | 0 | 1 |
 | melee | -- | Slashing claws | devastating wounds | Melee | 8 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Cutting Down the Foe: Each time a model in this unit makes a melee attack, if this unit made a Charge move this turn, improve the Strength and Damage characteristics of that attack by 1.
 
 #### Unit Composition
@@ -3324,13 +3888,19 @@ LEGIONES DAEMONICA
 | melee | -- | Foul mouthparts | extra attacks lethal hits | Melee | 2 | 4+ | 5 | -1 | 2 |
 | melee | -- | Plaguesword | lethal hits | Melee | 2 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Plague Drone that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Plague Drone that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Death's Heads: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly NURGLE LEGIONES DAEMONICA unit makes an attack that targets that unit, you can re-roll the Wound roll.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -3369,13 +3939,20 @@ LEGIONES DAEMONICA
 | melee | -- | Lashing tongue | extra attacks lethal hits | Melee | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Slashing claws | devastating wounds | Melee | 3 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Seeker that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Seeker that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+- Scouts 9"
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Scouts 9"
-- FACTION: The Shadow of Chaos
 - Unholy Speed: You can re-roll Advance and Charge rolls made for this unit.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -3415,10 +3992,17 @@ LEGIONES DAEMONICA
 | melee | -- | Attendants' hellblades | extra attacks | Melee | 4 | 3+ | 5 | -2 | 2 |
 | melee | -- | Biting maw | -- | Melee | 2 | 4+ | 6 | 0 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: The Shadow of Chaos
 - Skulls of the Fallen: In your Shooting phase, after this model has shot, select one enemy unit that was hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
@@ -3460,10 +4044,18 @@ LEGIONES DAEMONICA
 | melee | -- | Warpclaw | extra attacks | Melee | 6 | 3+ | 8 | -1 | 2 |
 | melee | -- | Warpsword | extra attacks | Melee | 3 | 3+ | 8 | -2 | D6 |
 
+#### Wargear options
+- This model's warpsword can be replaced with 1 warpclaw.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: The Shadow of Chaos
 - Scuttling Walker: Each time this model makes a Normal or Advance move, it can move over friendly MONSTER and VEHICLE models and terrain features that are 4" or less in height as if they were not there.
 
 #### Unit Composition
@@ -3498,13 +4090,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: The Shadow of Chaos
 - Shroud of Flies (Aura): While a friendly NURGLE LEGIONES DAEMONICA unit is within 6" of this FORTIFICATION, models in that unit have the Stealth ability.
-  Diseased Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
-  Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
+- Diseased Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
 
@@ -3536,13 +4135,20 @@ LEGIONES DAEMONICA
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- The Shadow of Chaos
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: The Shadow of Chaos
 - Shadow of Khorne (Aura): The area of the battlefield within 6" of this FORTIFICATION is considered to be within your army's Shadow of Chaos. In addition, while a friendly KHORNE LEGIONES DAEMONICA unit is within 6" of this FORTIFICATION, each time you take a Battle-shock test for that unit, you can re-roll that test.
-  Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
-  Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
+- Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
 
@@ -3561,6 +4167,8 @@ LEGIONES DAEMONICA
 ## Detachments
 
 ### Daemonic Incursion (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Warp Rifts
 - Each time a LEGIONES DAEMONICA unit from your army is set up on the battlefield using the Deep Strike ability, if it is set up wholly within your army's Shadow of Chaos, and/or if it is set up wholly within 6" of one or more friendly BLOODTHIRSTER, GREAT UNCLEAN ONE, KAIROS FATEWEAVER, KEEPER OF SECRETS, LORD OF CHANGE, ROTIGUS, SHALAXI HELBANE or SKARBRAND units with which it shares the KHORNE, TZEENTCH, NURGLE or SLAANESH keyword, it can be set up anywhere that is more than 6" horizontally away from all enemy models, instead of more than 8".
 
@@ -3616,6 +4224,8 @@ LEGIONES DAEMONICA
   EFFECT: Until the end of the phase, each time an invulnerable saving throw is made for a model in your unit, re-roll a saving throw of 1.
 
 ### Shadow Legion (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Thralls of the First Prince
 - When mustering your army, you cannot include any DAEMON PRINCE, DAEMON PRINCE WITH WINGS or EPIC HERO units (excluding BE'LAKOR), but you can include the following HERETIC ASTARTES units:
   - CHAOS LORD
@@ -3628,7 +4238,7 @@ LEGIONES DAEMONICA
   - HAVOCS
   - LEGIONARIES
   - MASTER OF POSSESSION
-  - Possessed
+  - POSSESSED
   - RAPTORS
   - SORCERER
   - SORCERER IN TERMINATOR ARMOUR
@@ -3704,6 +4314,8 @@ LEGIONES DAEMONICA
   EFFECT: Remove those selected units from the battlefield and place them into Strategic Reserves.
 
 ### Blood Legion (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Murdercall
 - In your opponent's movement phase, each time an enemy unit (excluding AIRCRAFT) ends a move within 8" of one or more LEGIONES DAEMONICA KHORNE units from your army, one of those LEGIONES DAEMONICA KHORNE units can make a surge move of up to D6".
 #### Detachment rule -- Blood Tainted
@@ -3758,6 +4370,8 @@ LEGIONES DAEMONICA
   EFFECT: Until the end of the phase, models in your unit have a Save characteristic of 3+.
 
 ### Legion of Excess (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Beguiling Aura
 - LEGIONES DAEMONICA SLAANESH units from your army are eligible to declare a charge in a turn in which they Fell Back.
 #### Detachment rule -- Seductive Gambit
@@ -3814,6 +4428,8 @@ LEGIONES DAEMONICA
   EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.
 
 ### Plague Legion (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Melancholic Miasma
 - While an enemy unit is within 9" of one or more LEGIONES DAEMONICA NURGLE units from your army, that enemy unit is within your army's Shadow of Chaos. In each player's Command phase, select one enemy unit within your army's Shadow of Chaos. That unit must take a Battle-shock test.
 
@@ -3866,6 +4482,8 @@ LEGIONES DAEMONICA
   EFFECT: Until the end of the phase, after an enemy unit takes a Battle-shock test as a result of the Melancholic Miasma Detachment rule, select one other enemy unit within 9" of your unit; that enemy unit must take a Battle-shock test.
 
 ### Scintillating Legion (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Fates in Flux
 - You start the battle with three Flux tokens (we recommend using a dice to track how many Flux tokens you have). You can spend one Flux token just after an Advance roll, Hit roll, Wound roll, Damage roll, saving throw or Hazardous test is made for a LEGIONES DAEMONICA TZEENTCH model or LEGIONES DAEMONICA TZEENTCH unit from your army to re-roll the result of that roll, throw or test. Flux tokens can also be spent to enhance the effect of some Stratagems. Each time you spend a Flux token, reduce the number of Flux tokens you have by one and your opponent gains one Flux token.
   Whenever your opponent has one or more Flux tokens, they can spend one Flux token after an Advance roll, Hit roll, Wound roll or saving throw is made for a model or unit from their army, to re-roll the result of that roll or throw. If they do, they reduce the number of Flux tokens they have by one and you gain one Flux token. This is ignored if your opponent has the Fates in Flux Detachment rule.
@@ -3922,6 +4540,8 @@ LEGIONES DAEMONICA
   EFFECT: Remove your units from the battlefield and place them into Strategic Reserves.
 
 ### Cavalcade of Chaos (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Unholy Avalanche
 - If a friendly LEGIONES DAEMONICA MOUNTED unit made a fall-back move this turn, that move does not prevent that unit from being eligible to shoot/eligible to declare a charge.
 
@@ -3952,6 +4572,8 @@ LEGIONES DAEMONICA
   EFFECT: When an enemy unit engaged with your unit is selected to make a fall-back move, that enemy unit must use the desperate escape mode. If that enemy unit is battle-shocked, -1 from those hazard rolls.
 
 ### Lords of the Warp (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Loci of Power
 - Friendly LEGIONES DAEMONICA CHARACTER models (excluding MONSTER models) have +1 Ld and OC.
 
@@ -3987,6 +4609,8 @@ LEGIONES DAEMONICA
   EFFECT: Your unit's ranged attacks have [LETHAL HITS].
 
 ### Warptide (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Shudderblink
 - When a friendly LEGIONES DAEMONICA BATTLELINE unit is selected to make an advance move:
   - That unit's ranged attacks have [ASSAULT] until the end of the turn.

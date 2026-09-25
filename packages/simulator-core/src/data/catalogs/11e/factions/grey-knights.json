@@ -1,0 +1,67 @@
+{
+  "id": "grey-knights",
+  "name": "Grey Knights",
+  "edition": "11e",
+  "unitRefs": [
+    "grey-knights.castellan-crowe",
+    "grey-knights.grand-master-voldus",
+    "grey-knights.brother-captain",
+    "grey-knights.brotherhood-champion",
+    "grey-knights.brotherhood-chaplain",
+    "grey-knights.brotherhood-librarian",
+    "grey-knights.brotherhood-techmarine",
+    "grey-knights.grand-master",
+    "grey-knights.grand-master-in-nemesis-dreadknight",
+    "grey-knights.venerable-dreadnought",
+    "grey-knights.brotherhood-terminator-squad",
+    "grey-knights.strike-squad",
+    "grey-knights.razorback",
+    "grey-knights.rhino",
+    "grey-knights.stormhawk-interceptor",
+    "grey-knights.stormtalon-gunship",
+    "grey-knights.interceptor-squad",
+    "grey-knights.paladin-squad",
+    "grey-knights.purgation-squad",
+    "grey-knights.purifier-squad",
+    "grey-knights.grey-knights-thunderhawk-gunship",
+    "grey-knights.land-raider",
+    "grey-knights.land-raider-crusader",
+    "grey-knights.land-raider-redeemer",
+    "grey-knights.stormraven-gunship",
+    "grey-knights.nemesis-dreadknight"
+  ],
+  "ruleRefs": [
+    "grey-knights.army-rule.gate-of-infinity"
+  ],
+  "detachmentRefs": [
+    "grey-knights.detachment.brotherhood-strike",
+    "grey-knights.detachment.hallowed-conclave",
+    "grey-knights.detachment.banishers",
+    "grey-knights.detachment.sanctic-spearhead",
+    "grey-knights.detachment.augurium-task-force",
+    "grey-knights.detachment.warpbane-task-force",
+    "grey-knights.detachment.argent-assault",
+    "grey-knights.detachment.fires-of-purgation",
+    "grey-knights.detachment.immaterial-interdiction"
+  ],
+  "factionKeywords": [
+    "grey-knights",
+    "Grey Knights"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Grey Knights faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/grey-knights/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 26,
+    "normalizedEntryCount": 26,
+    "excludedLegendCount": 5,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/adeptus-mechanicus/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/adeptus-mechanicus/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -89,12 +89,14 @@
 | melee | -- | Cawl's Omnissian axe | -- | Melee | 4 | 2+ | 8 | -2 | 2 |
 | melee | -- | Mechadendrite hive | extra attacks | Melee | 2D6 | 3+ | 4 | 0 | 1 |
 
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Canticles of the Omnissiah: At the start of your Command phase, select one of the abilities in the Canticles of the Omnissiah section. Until the start of your next Command phase, this model has that ability.
-  Mechanicus Bodyguard: While this model is within 3" of one or more other friendly ADEPTUS MECHANICUS units, this model has the Lone Operative ability.
-  Self-repair Mechanisms: At the start of your Command phase, this model regains up to D3 lost wounds.
+- Mechanicus Bodyguard: While this model is within 3" of one or more other friendly ADEPTUS MECHANICUS units, this model has the Lone Operative ability.
+- Self-repair Mechanisms: At the start of your Command phase, this model regains up to D3 lost wounds.
 
 #### Unit Composition
 - 1 Belisarius Cawl - EPIC HERO
@@ -130,12 +132,14 @@ ADEPTUS MECHANICUS
 | melee | -- | Rod of the War Forge - strike | -- | Melee | 6 | 2+ | 10 | -2 | 3 |
 | melee | -- | Rod of the War Forge - sweep | -- | Melee | 12 | 2+ | 6 | -1 | 1 |
 
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Rod of the War Forge: In your Command phase, select one of the abilities in the Icon of War section (see next page). Until the start of your next Command phase, this model has that ability.
-  Mechanicus Bodyguard: While this model is within 3" of one or more other friendly ADEPTUS MECHANICUS units, this model has the Lone Operative ability.
-  Secutor of Olympus: At the start of your Shooting phase, select one enemy VEHICLE unit within 12" of this model and roll one D6: on a 2+, that enemy unit suffers D3+1 mortal wounds.
+- Mechanicus Bodyguard: While this model is within 3" of one or more other friendly ADEPTUS MECHANICUS units, this model has the Lone Operative ability.
+- Secutor of Olympus: At the start of your Shooting phase, select one enemy VEHICLE unit within 12" of this model and roll one D6: on a 2+, that enemy unit suffers D3+1 mortal wounds.
 
 #### Unit Composition
 - 1 Archmagos Terminus Thulia Ghuld - EPIC HERO
@@ -169,12 +173,16 @@ ADEPTUS MECHANICUS
 | ranged | -- | Mechanicus pistol | devastating wounds pistol | 12" | 1 | 3+ | 6 | -1 | 1 |
 | melee | -- | Control stave | -- | Melee | 4 | 3+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Doctrina Imperatives
 - Control Edict: While this model is leading a unit, each time a model in that unit makes an attack, you can re-roll the Hit roll.
-  Servo-skull Uplink: Once per battle, at the start of any phase, you can select one friendly SKITARII unit that is Battle-shocked and within 6" of this model. That unit is no longer Battle-shocked.
+- Servo-skull Uplink: Once per battle, at the start of any phase, you can select one friendly SKITARII unit that is Battle-shocked and within 6" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Skitarii Marshal
@@ -236,12 +244,20 @@ ADEPTUS MECHANICUS
 | ranged | -- | Skatros transuranic arquebus | ANTI-MONSTER 4+ ANTI-VEHICLE 4+ HEAVY PRECISION | 36" | 1 | 3+ | 7 | -2 | D3 |
 | melee | -- | Sydonian feet | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- This model's radium jezzail can be replaced with 1 Skatros transuranic arquebus.
+
+#### Core Abilities
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative, Stealth
-- FACTION: Doctrina Imperatives
 - Dread Snipers: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. That unit must take a Battle-shock test.
-  Achillan Eye: Each time this model makes an attack with a radium jezzail that targets an INFANTRY unit, you can re-roll the Wound roll. Each time this model makes an attack with a Skatros transuranic arquebus that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll.
+- Achillan Eye: Each time this model makes an attack with a radium jezzail that targets an INFANTRY unit, you can re-roll the Wound roll. Each time this model makes an attack with a Skatros transuranic arquebus that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Sydonian Skatros
@@ -290,12 +306,20 @@ ADEPTUS MECHANICUS
 | ranged | -- | Volkite blaster | devastating wounds | 24" | 3 | 3+ | 5 | 0 | 2 |
 | melee | -- | Omnissian axe | -- | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- This model's macrostubber can be replaced with 1 phosphor serpenta.
+- This model's volkite blaster can be replaced with 1 eradication ray.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Doctrina Imperatives
 - Lord of the Machine Cult: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability. If that unit has the ELECTRO-PRIESTS keyword, models in that unit have the Feel No Pain 4+ ability instead.
-  Data-spike: At the start of the Fight phase, you can select one enemy VEHICLE unit within Engagement Range of this model's unit and roll one D6: on a 4+, that enemy unit suffers D6 mortal wounds and, until the end of the phase, the Weapon Skill characteristic of melee weapons equipped by that enemy unit is worsened by 1.
+- Data-spike: At the start of the Fight phase, you can select one enemy VEHICLE unit within Engagement Range of this model's unit and roll one D6: on a 4+, that enemy unit suffers D6 mortal wounds and, until the end of the phase, the Weapon Skill characteristic of melee weapons equipped by that enemy unit is worsened by 1.
 
 #### Unit Composition
 - 1 Tech-Priest Dominus
@@ -371,13 +395,17 @@ ADEPTUS MECHANICUS
 | melee | -- | Omnissian axe | -- | Melee | 3 | 4+ | 6 | -2 | 2 |
 | melee | -- | Servo-arm | extra attacks | Melee | 1 | 4+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Doctrina Imperatives
 - Enginseer: While this model is within 3" of one or more friendly ADEPTUS MECHANICUS VEHICLE units, unless it is leading a unit, this model has the Lone Operative ability.
-  Omnissiah's Blessing: In your Command phase, select one friendly ADEPTUS MECHANICUS model within 3" of this model. That model regains up to D3 lost wounds and, if it is a VEHICLE model, until the start of your next Command phase, that model has the Feel No Pain 5+ ability. Each model can only be selected for this ability once per Command phase.
-  Vengeance for the Omnissiah: If a friendly ADEPTUS MECHANICUS VEHICLE model is destroyed within 12" of this model, until the end of the battle, this model's Omnissian axe has an Attacks characteristic of 6.
+- Omnissiah's Blessing: In your Command phase, select one friendly ADEPTUS MECHANICUS model within 3" of this model. That model regains up to D3 lost wounds and, if it is a VEHICLE model, until the start of your next Command phase, that model has the Feel No Pain 5+ ability. Each model can only be selected for this ability once per Command phase.
+- Vengeance for the Omnissiah: If a friendly ADEPTUS MECHANICUS VEHICLE model is destroyed within 12" of this model, until the end of the battle, this model's Omnissian axe has an Attacks characteristic of 6.
 
 #### Unit Composition
 - 1 Tech-Priest Enginseer
@@ -452,12 +480,19 @@ ADEPTUS MECHANICUS
 | ranged | -- | Transonic cannon | devastating wounds torrent | 12" | D6 | N/A | 4 | 0 | 2 |
 | melee | -- | Omnissian staff | -- | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Wargear options
+- This model's magnarail lance can be replaced with 1 transonic cannon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Doctrina Imperatives
 - Galvanic Field: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Defend the Divine Work: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, all models in this model's unit have a 4+ invulnerable save.
+- Defend the Divine Work: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, all models in this model's unit have a 4+ invulnerable save.
 
 #### Unit Composition
 - 1 Tech-Priest Manipulus
@@ -532,12 +567,16 @@ ADEPTUS MECHANICUS
 | ranged | -- | Mechanicus pistol | devastating wounds pistol | 12" | 1 | 3+ | 6 | -1 | 1 |
 | melee | -- | Servo-arc claw | anti-vehicle 4+ devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Doctrina Imperatives
 - Seekers of Divine Arcana: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
-  Cogitative Instincts: Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" horizontally of this model.
+- Cogitative Instincts: Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" horizontally of this model.
 
 #### Unit Composition
 - 1 Technoarcheologist
@@ -611,15 +650,19 @@ ADEPTUS MECHANICUS
 | ranged | -- | Mechanicus pistol | devastating wounds pistol | 12" | 1 | 3+ | 6 | -1 | 1 |
 | melee | -- | Power fist | -- | Melee | 2 | 3+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Doctrina Imperatives
 - Battle Protocols: At the start of the battle, if this model is leading a KASTELAN ROBOTS unit, that unit enters Aegis Protocols (see below). In your Command phase, if this model is leading a KASTELAN ROBOTS unit, you can select one protocol from those listed below for that unit to enter. Once a unit enters a protocol, it remains in that protocol until it enters a different one.
   - Protector Protocol: Add 2 to the Attacks characteristic of ranged weapons equipped by KASTELAN ROBOT models in that unit.
   - Conqueror Protocol: Add 2 to the Attacks characteristic of melee weapons equipped by KASTELAN ROBOT models in that unit.
   - Aegis Protocol: Add 1 to the Toughness characteristic of KASTELAN ROBOT models in that unit.
-  Data-severed: If there are no KASTELAN ROBOT models in this unit:
+- Data-severed: If there are no KASTELAN ROBOT models in this unit:
   - This unit loses VEHICLE.
   - This unit has INFANTRY.
 
@@ -688,13 +731,25 @@ ADEPTUS MECHANICUS
 | melee | -- | Alpha combat weapon | -- | Melee | 2 | 4+ | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Skitarii Ranger Alpha can be equipped with 1 Alpha combat weapon.
+- The Skitarii Ranger Alpha's galvanic rifle can be replaced with 1 Mechanicus pistol.
+- 1 Skitarii Ranger's galvanic rifle can be replaced with 1 arc rifle.
+- 1 Skitarii Ranger's galvanic rifle can be replaced with 1 plasma caliver.
+- 1 Skitarii Ranger's galvanic rifle can be replaced with 1 transuranic arquebus.
+- 1 Skitarii Ranger equipped with a galvanic rifle can be equipped with one of the following:
+  - 1 enhanced data-tether*
+  - 1 omnispex*
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Doctrina Imperatives
 - Objective Scouted: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-
-#### Wargear Abilities
 - Enhanced data-tether: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Omnispex: Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 
@@ -734,12 +789,22 @@ ADEPTUS MECHANICUS
 | melee | -- | Alpha combat weapon | -- | Melee | 2 | 4+ | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Skitarii Vanguard Alpha can be equipped with 1 Alpha combat weapon.
+- The Skitarii Vanguard Alpha's radium carbine can be replaced with 1 Mechanicus pistol.
+- 1 Skitarii Vanguard's radium carbine can be replaced with 1 arc rifle.
+- 1 Skitarii Vanguard's radium carbine can be replaced with 1 plasma caliver.
+- 1 Skitarii Vanguard's radium carbine can be replaced with 1 transuranic arquebus.
+- 1 Skitarii Vanguard equipped with a radium carbine can be equipped with one of the following:
+  - 1 enhanced data-tether*
+  - 1 omnispex*
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Rad-saturation (Aura): While an enemy unit (excluding VEHICLE units) is within 3" of this unit, subtract 1 from the Objective Control characteristic of models in that unit.
-
-#### Wargear Abilities
 - Enhanced data-tether: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Omnispex: Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 
@@ -773,19 +838,24 @@ ADEPTUS MECHANICUS
 | ranged | -- | Cognis heavy stubber array | rapid fire 9 sustained hits 1 twin-linked | 36" | 9 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Doctrina Imperatives
 - Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
-  Fire Support: In your Shooting phase, after this model has shot, select one enemy unit it scored one or more hits against this phase. Until the end of the phase, each time a friendly model that disembarked from this Transport this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+- Fire Support: In your Shooting phase, after this model has shot, select one enemy unit it scored one or more hits against this phase. Until the end of the phase, each time a friendly model that disembarked from this Transport this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTUS MECHANICUS INFANTRY models. It cannot transport JUMP PACK, KATAPHRON or SYDONIAN SKATROS models.
 
 #### Unit Composition
 - 1 Skorpius Dunerider
   This model is equipped with: cognis heavy stubber array; armoured hull.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTUS MECHANICUS INFANTRY models. It cannot transport JUMP PACK, KATAPHRON or SYDONIAN SKATROS models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -813,13 +883,18 @@ ADEPTUS MECHANICUS
 | ranged | -- | Cognis heavy stubber array | rapid fire 9 sustained hits 1 twin-linked | 36" | 9 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's command uplink can be replaced with 1 chaff launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Doctrina Imperatives
 - Bomb Rack: At the end of your opponent's Fight phase, select one visible enemy unit (excluding Lone Operative units) within 24" of this unit, and roll six D6 for that unit: for each 4+, that unit suffers 1 mortal wound.
-
-#### Wargear Abilities
 - Chaff Launcher: The bearer has the SMOKE keyword.
 - Command Uplink: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
@@ -854,13 +929,18 @@ ADEPTUS MECHANICUS
 | ranged | -- | Twin cognis lascannon | sustained hits 1 twin-linked | 48" | 1 | 4+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's command uplink can be replaced with 1 chaff launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Doctrina Imperatives
 - Strafing Run: Each time this model makes a ranged attack that targets an enemy unit (excluding units that can FLY), add 1 to the Hit roll.
-
-#### Wargear Abilities
 - Chaff Launcher: The bearer has the SMOKE keyword.
 - Command Uplink: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
@@ -893,10 +973,14 @@ ADEPTUS MECHANICUS
 | ranged | -- | Electrostatic gauntlets | pistol sustained hits 2 | 12" | 3 | 3+ | 5 | 0 | 1 |
 | melee | -- | Electrostatic gauntlets | sustained hits 2 | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+
-- FACTION: Doctrina Imperatives
 - Electro-shock: In your Shooting phase, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the end of your opponent's next turn, that enemy unit is shocked. While a unit is shocked, subtract 2" from its Move characteristic and subtract 2 from Advance and Charge rolls made for it.
 
 #### Unit Composition
@@ -928,10 +1012,14 @@ ADEPTUS MECHANICUS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Electroleech stave | devastating wounds | Melee | 2 | 3+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 5+
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+
-- FACTION: Doctrina Imperatives
 - Electro-infusion: While a CHARACTER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
 
 #### Unit Composition
@@ -967,9 +1055,14 @@ ADEPTUS MECHANICUS
 | melee | -- | Close-combat weapon | -- | Melee | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 5 | -2 | 1 |
 
+#### Wargear options
+- None
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Broad-spectrum Targeting Augurs: Each time a model in this unit makes an attack with an eradication caster that targets a unit (excluding MONSTER and VEHICLE units), that attack has the [SUSTAINED HITS 1] ability.
 
 #### Unit Composition
@@ -1006,9 +1099,14 @@ ADEPTUS MECHANICUS
 | melee | -- | Close-combat weapon | -- | Melee | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 5 | -2 | 1 |
 
+#### Wargear options
+- None
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Monocular Targeting Helms: Each time a model in this unit makes an attack with a neutron fusil against a MONSTER or VEHICLE unit, that attack has the [IGNORES COVER] ability.
 
 #### Unit Composition
@@ -1045,9 +1143,15 @@ ADEPTUS MECHANICUS
 | melee | -- | Arc claw | anti-vehicle 4+ | Melee | 4 | 4+ | 5 | -1 | 1 |
 | melee | -- | Hydraulic claw | -- | Melee | 2 | 4+ | 8 | -2 | 3 |
 
+#### Wargear options
+- Any number of models can each have their heavy arc rifle replaced with 1 torsion cannon.
+- Any number of models can each have their arc claw replaced with 1 hydraulic claw.
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Breaching Command: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. While this unit is within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units, you can re-roll the Hit roll instead.
 
 #### Unit Composition
@@ -1084,9 +1188,15 @@ ADEPTUS MECHANICUS
 | ranged | -- | Phosphor blaster | ignores cover rapid fire 1 | 24" | 1 | 4+ | 5 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their heavy grav-cannon replaced with 1 Kataphron plasma culverin.
+- Any number of models can each have their phosphor blaster replaced with 1 cognis flamer.
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Sentinel Directives: Each time you target this unit with the Fire Overwatch Stratagem, hits are scored on unmodified Hit rolls of 5+ when resolving that Stratagem.
 
 #### Unit Composition
@@ -1121,10 +1231,14 @@ ADEPTUS MECHANICUS
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 | melee | -- | Taser goad | sustained hits 2 | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Doctrina Imperatives
 - Ride the Thermals: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can do one of the following:
   - Make a Normal move of up to 6".
   - Make a Normal move of up to 12", provided every model in this unit ends that move wholly within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units.
@@ -1166,10 +1280,14 @@ ADEPTUS MECHANICUS
 | melee | -- | Pteraxii talons | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Taser goad | sustained hits 2 | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Doctrina Imperatives
 - Searing Conflagration: Each time a model in this unit makes an attack with a phosphor torch that targets an enemy unit within range of an objective marker, re-roll a Wound roll of 1. If this unit is also within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units, each time such an attack targets such a unit, you can re-roll the Wound roll instead.
 
 #### Unit Composition
@@ -1198,7 +1316,7 @@ ADEPTUS MECHANICUS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Servitor Underseer | (diameter 32mm) | 6" | 4 | 4+ | 2 | 7+ | 1 | 6+ |
+| Servitor Underseer | (diameter 32mm) | 6" | 4 | 4+ | 2 | 7+ | 1 | -- |
 | Combat Servitors and Gun Servitors | (diameter 25mmGun servitors 32mm) | 6" | 4 | 4+ | 1 | 8+ | 1 | 6+ |
 
 #### Weapons
@@ -1213,9 +1331,15 @@ ADEPTUS MECHANICUS
 | melee | -- | Dataspikes | -- | Melee | 4 | 4+ | 4 | 0 | 1 |
 | melee | -- | Servo-claw | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- 1 Combat Servitor model can have its 1 phosphor blaster replaced with 1 meltagun.
+- Up to 3 Combat Servitor models can each have their 1 phosphor blaster replaced with 1 incendine igniter.
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Network Override: While this unit contains one or more Tech-Priest models, this unit is:
   - Eligible to perform an Action in a turn in which it Advanced.
   - Eligible to shoot in a turn in which it started an Action.
@@ -1257,12 +1381,20 @@ ADEPTUS MECHANICUS
 | melee | -- | Power weapon | -- | Melee | 4 | 4+ | 4 | -2 | 1 |
 | melee | -- | Taser goad | sustained hits 2 | Melee | 3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their stubcarbine and power weapon replaced with 1 flechette blaster and 1 taser goad.
+
+#### Core Abilities
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Stealth
-- FACTION: Doctrina Imperatives
 - Voices in the Code: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test.
-  Neurostatic Interference (Aura): While an enemy unit is within 6" of this unit, each time a Battle-shock or Leadership test is taken for that unit, subtract 1 from that test. While this unit is within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units, subtract 2 from that test instead.
+- Neurostatic Interference (Aura): While an enemy unit is within 6" of this unit, each time a Battle-shock or Leadership test is taken for that unit, subtract 1 from that test. While this unit is within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units, subtract 2 from that test instead.
 
 #### Unit Composition
 - 1 Sicarian Infiltrator Princeps
@@ -1298,10 +1430,18 @@ ADEPTUS MECHANICUS
 | melee | -- | Transonic blades and chordclaw | anti-infantry 3+ devastating wounds precision | Melee | 5 | 4+ | 5 | -2 | 1 |
 | melee | -- | Transonic razor and chordclaw | anti-infantry 3+ precision | Melee | 3 | 4+ | 5 | -2 | 2 |
 
+#### Wargear options
+- Any number of Sicarian Ruststalkers can each have their transonic razor and chordclaw replaced with 1 transonic blades.
+- The Sicarian Ruststalker Princeps' transonic razor and chordclaw can be replaced with 1 transonic blades and chordclaw.
+
+#### Core Abilities
+- Stealth
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Stealth
-- FACTION: Doctrina Imperatives
 - Optimised Gait: Add 1 to Advance and Charge rolls made for this unit. While this unit is within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units, add 2 to Advance and Charge rolls made for this unit instead.
 
 #### Unit Composition
@@ -1338,15 +1478,20 @@ ADEPTUS MECHANICUS
 | ranged | -- | Galvanic carbine | devastating wounds | 18" | 3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Cavalry sabre and clawed limbs | -- | Melee | 4 | 4+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Serberys Raider can be equipped with 1 enhanced data-tether.
+
+#### Core Abilities
+- Scouts 9"
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 9"
-- FACTION: Doctrina Imperatives
 - Tactica Obliqua: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, it can do one of the following:
   - Make a Normal move of up to D6"
   - Make a Normal move of up to 6" provided every model in this unit ends that move wholly within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units.
-
-#### Wargear Abilities
 - Enhanced data-tether: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
 #### Unit Composition
@@ -1388,9 +1533,14 @@ ADEPTUS MECHANICUS
 | melee | -- | Cavalry arc maul | anti-vehicle 4+ devastating wounds extra attacks | Melee | 1 | 4+ | 5 | -1 | 1 |
 | melee | -- | Clawed limbs | -- | Melee | 4 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- For every 3 models in this unit, 1 Serberys Sulphurhound's 2 phosphor pistols can be replaced with 1 phosphor blast carbine and 1 phosphor pistol.
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Line-breakers: Each time this unit ends a Charge move, select one enemy unit within Engagement Range of it and roll one D6 for each model in this unit that is within Engagement Range of that enemy unit, adding 2 to the result if this unit started its Charge move within 6" of one or more friendly ADEPTUS MECHANICUS BATTLELINE units. For each 4+, that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
@@ -1425,22 +1575,29 @@ ADEPTUS MECHANICUS
 | ranged | -- | Cognis heavy stubber array | rapid fire 9 sustained hits 1 twin-linked | 36" | 9 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's command uplink can be replaced with 1 chaff launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+- Hover
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike, Hover
-- FACTION: Doctrina Imperatives
 - Aerial Deployment: In your first Movement phase, this unit can make an ingress move.
-
-#### Wargear Abilities
 - Chaff Launcher: The bearer has the SMOKE keyword.
 - Command Uplink: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
+
+#### Transport
+- This model has a transport capacity of 11 SKITARII INFANTRY or TECH-PRIEST INFANTRY models. It cannot transport JUMP PACK or KATAPHRON models.
 
 #### Unit Composition
 - 1 Archaeopter Transvector
   This model is equipped with: cognis heavy stubber array; armoured hull; command uplink.
-
-#### Transport
-- This model has a transport capacity of 11 SKITARII INFANTRY or TECH-PRIEST INFANTRY models. It cannot transport JUMP PACK or KATAPHRON models.
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **145 pts**
@@ -1470,12 +1627,19 @@ ADEPTUS MECHANICUS
 | ranged | -- | Ferrumite cannon | -- | 48" | 3 | 4+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's belleros energy cannon can be replaced with 1 ferrumite cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Doctrina Imperatives
 - Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
-  Blistering Salvoes: Each time this model makes an attack with a belleros energy cannon that targets an INFANTRY unit, add 1 to the Hit roll. Each time this model makes an attack with a ferrumite cannon that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll.
+- Blistering Salvoes: Each time this model makes an attack with a belleros energy cannon that targets an INFANTRY unit, add 1 to the Hit roll. Each time this model makes an attack with a ferrumite cannon that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll.
 
 #### Unit Composition
 - 1 Skorpius Disintegrator
@@ -1511,12 +1675,19 @@ ADEPTUS MECHANICUS
 | ranged | -- | Twin cognis lascannon | sustained hits 1 twin-linked | 48" | 2 | 4+ | 12 | -3 | D6+1 |
 | melee | -- | Ironstrider feet | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their twin cognis autocannon replaced with 1 twin cognis lascannon.
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Doctrina Imperatives
 - Elevated Strider: This unit is eligible to shoot in a turn in which it Fell Back or Advanced, and you can re-roll Desperate Escape tests taken for models in this unit.
-  Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
+- Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
 #### Unit Composition
 - 1-3 Ironstrider Ballistarii
@@ -1558,12 +1729,22 @@ ADEPTUS MECHANICUS
 | melee | -- | Kastelan fist | -- | Melee | 4 | 4+ | 12 | -2 | 3 |
 | melee | -- | Twin Kastelan fist | twin-linked | Melee | 4 | 4+ | 12 | -2 | 3 |
 
+#### Wargear options
+- Any number of models can each have their twin Kastelan fist replaced with one of the following:
+  - 1 Kastelan phosphor blaster and 1 Kastelan fist
+  - 1 twin Kastelan phosphor blaster and 1 close combat weapon
+- Any number of models can each have their incendine combustor replaced with 1 heavy phosphor blaster.
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Doctrina Imperatives
 - Robotic Bodyguard: While a CYBERNETICA DATASMITH model is leading this unit, that model has the Feel No Pain 4+ ability.
-  Repulsor Grid: When an enemy unit targets this unit with ranged attacks, until that enemy unit has shot, when this unit makes a save roll:
+- Repulsor Grid: When an enemy unit targets this unit with ranged attacks, until that enemy unit has shot, when this unit makes a save roll:
   - On an unmodified 6, that enemy unit suffers 1 mortal wound after that enemy unit has shot.
 
 #### Unit Composition
@@ -1604,14 +1785,24 @@ ADEPTUS MECHANICUS
 | ranged | -- | Twin Onager heavy phosphor blaster | ignores cover twin-linked | 36" | 12 | 4+ | 6 | -1 | 2 |
 | melee | -- | Dunecrawler legs | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's eradication beamer can be replaced with one of the following:
+  - 1 daedalus missile launcher and 1 Icarus array
+  - 1 neutron laser and 1 cognis heavy stubber
+  - 1 twin Onager heavy phosphor blaster
+- This model can be equipped with 1 additional cognis heavy stubber.
+- This model can be equipped with 1 broad spectrum data-tether.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Doctrina Imperatives
 - Emanatus Force Field (Aura): While a friendly ADEPTUS MECHANICUS BATTLELINE model is wholly within 6" of this model, that BATTLELINE model has a 4+ invulnerable save against ranged attacks.
-  Scuttling Walker: Each time this model makes a Normal, Advance or Fall Back move, it can move through friendly MONSTER and Vehicle models and sections of terrain features that are 4" or less in height.
-
-#### Wargear Abilities
+- Scuttling Walker: Each time this model makes a Normal, Advance or Fall Back move, it can move through friendly MONSTER and VEHICLE models and sections of terrain features that are 4" or less in height.
 - Broad spectrum data-tether: The bearer loses the SMOKE keyword, but each time you target the bearer with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
 #### Unit Composition
@@ -1647,12 +1838,17 @@ ADEPTUS MECHANICUS
 | ranged | -- | Radium jezzail | ANTI-INFANTRY 3+ HEAVY PRECISION | 36" | 1 | 4+ | 5 | -2 | 3 |
 | melee | -- | Ironstrider feet | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Stealth
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Stealth
-- FACTION: Doctrina Imperatives
 - Focused Hunters: At the start of the battle, select one unit from your opponent's army. Until the end of the battle, each time a model in this unit makes an attack that targets that unit, you can re-roll the Hit roll.
-  Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
+- Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
 #### Unit Composition
 - 1-3 Sydonian Dragoons
@@ -1685,12 +1881,17 @@ ADEPTUS MECHANICUS
 | ranged | -- | Phosphor serpenta | ignores cover pistol | 18" | 1 | 4+ | 5 | -1 | 2 |
 | melee | -- | Taser lance | anti-walker 2+ lance sustained hits 2 | Melee | 4 | 4+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Stealth
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Stealth
-- FACTION: Doctrina Imperatives
 - Dynamic Efficiency: This unit is eligible to declare a charge in a turn in which it Advanced or Fell Back, and you can re-roll Desperate Escape tests taken for models in this unit.
-  Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
+- Broad Spectrum Data-tether: Each time you target this unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
 #### Unit Composition
 - 1-3 Sydonian Dragoons
@@ -1709,6 +1910,8 @@ ADEPTUS MECHANICUS
 ## Detachments
 
 ### Rad-Zone Corps (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Rad-bombardment
 - BATTLE ROUND
   1
@@ -1737,7 +1940,7 @@ ADEPTUS MECHANICUS
 - 2CP
 - Rad-Zone Corps - Battle Tactic Stratagem
 - WHEN: Fight phase, just after an enemy unit has selected its targets.
-  TARGET: One ADEPTUS MECHANICUS unit from your army (excluding Vehicle units) that was selected as the target of one or more of that enemy unit's attacks. If that unit is BATTLELINE, you can also target one friendly SKITARII unit (excluding BATTLELINE units) within 6" of it.
+  TARGET: One ADEPTUS MECHANICUS unit from your army (excluding VEHICLE units) that was selected as the target of one or more of that enemy unit's attacks. If that unit is BATTLELINE, you can also target one friendly SKITARII unit (excluding BATTLELINE units) within 6" of it.
   EFFECT: Until the end of the turn, each time an attack is made that targets your unit, subtract 1 from the Wound roll.
 - EXTINCTION ORDER
 - 1CP
@@ -1771,6 +1974,8 @@ ADEPTUS MECHANICUS
   EFFECT: Until the end of the phase, models in those units from your army have a 4+ invulnerable save.
 
 ### Skitarii Hunter Cohort (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Stealth Optimisation
 - Friendly SKITARII INFANTRY, SKITARII MOUNTED and IRONSTRIDER BALLISTARII units have Stealth.
 
@@ -1826,6 +2031,8 @@ ADEPTUS MECHANICUS
   RESTRICTIONS: Each unit targeted with this Stratagem must be more than 3" away from all enemy units.
 
 ### Data-Psalm Conclave (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Benedictions Of The Omnissiah
 - At the start of the first battle round, select one of the following Benedictions of the Omnissiah to be active for CULT MECHANICUS units from your army until the end of the battle:
   Panegyric Procession
@@ -1882,6 +2089,8 @@ ADEPTUS MECHANICUS
   EFFECT: Until the end of the phase, CULT MECHANICUS models in your unit have a 4+ invulnerable save.
 
 ### Explorator Maniple (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Acquisition At Any Cost
 - At the start of your Command phase, select one objective marker. Until the start of your next Command phase, that objective marker is your Acquisition objective marker. Each time an ADEPTUS MECHANICUS model from your army makes an attack, if that model's unit is within range of your Acquisition objective marker, or if the target of that attack is within range of your Acquisition objective marker, re-roll a Wound roll of 1.
 
@@ -1938,6 +2147,8 @@ ADEPTUS MECHANICUS
   RESTRICTIONS: Every model in your unit must be within 3" of that TRANSPORT and there must be sufficient transport capacity to embark the entire unit.
 
 ### Cohort Cybernetica (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Cyber-Psalm Programming
 - Add 2" to the Move characteristic of models in LEGIO CYBERNETICA units from your army. In addition, unless that unit is Battle-shocked, add 1 to the Objective Control characteristic of models in that unit.
 
@@ -1990,6 +2201,8 @@ ADEPTUS MECHANICUS
   EFFECT: Until the start of your next Command phase, models in your unit have the Feel No Pain 6+ ability, which is improved to Feel No Pain 5+ against mortal wounds.
 
 ### Eradication Cohort (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Murderous Imperative
 - Each time a model in a SKITARII unit from your army makes an attack:
   - If the Protector Imperative is active for that unit, re-roll a Hit roll of 1.
@@ -2044,6 +2257,8 @@ ADEPTUS MECHANICUS
   EFFECT: Your unit can shoot as if it were your Shooting phase, but must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Haloscreed Battle Clade (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Noospheric Transference
 - In your Command phase, select one or more ADEPTUS MECHANICUS units from your army (including units that are embarked within TRANSPORTS). The maximum number of units you can select depends on the battle size, as follows:
   INCURSION:1 UNIT
@@ -2109,6 +2324,8 @@ ADEPTUS MECHANICUS
   EFFECT: Your unit can make a Normal move of up to D6", or up to 6" instead if it is a HALO OVERRIDE unit.
 
 ### Cohort Acquisitus (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Noospheric Recon
 - Friendly PTERAXII/INFILTRATORS/RANGERS/SERBERYS RAIDERS/ SERBERYS SULPHURHOUNDS units have RECON AUGURY.
   - Friendly RECON AUGURY units have the following ability:
@@ -2142,6 +2359,8 @@ ADEPTUS MECHANICUS
   EFFECT: Place your unit in strategic reserves.
 
 ### Lords of the Forge (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- War-Form Mantles
 - Friendly TECH-PRIEST models have:
   - 4+ InSv.
@@ -2155,6 +2374,22 @@ ADEPTUS MECHANICUS
 - Vingh's Wafers of Dynamism 25 pts
 - CYBERNETICA DATASMITH model only. At the start of the first battle round, if this unit is an attached unit, this unit has MOBILE until the end of the battle.
 - TL-49 30 pts
+- TECH-PRIEST model only. This model has the following weapon:
+  RANGED WEAPONS
+  RANGE
+  A
+  BS
+  S
+  AP
+  D
+  TL-49 DEVASTATING WOUNDS HAZARDOUS
+  TL-49 DEVASTATING WOUNDS HAZARDOUS
+  24"
+  3
+  2+
+  11
+  -2
+  D3+2
 
 #### Stratagems
 - SCRIPTURAL PROGNOSIS
@@ -2177,6 +2412,8 @@ ADEPTUS MECHANICUS
   EFFECT: That action does not prevent your unit from being eligible to shoot.
 
 ### Luminen Auto-choir (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Cyber-Static Canticles
 - Friendly CORPUSCARII units' ranged attacks have [LETHAL HITS].
   - When a friendly FULGURITE unit has fought, that unit heals D3 wounds.

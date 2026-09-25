@@ -318,7 +318,16 @@ export function playChargeRoll(
   const rolledUnit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
   if (!rolledUnit) return state;
   const maximumDistance = Math.max(0, roll - context.takeToSkiesDistanceCost(rolledUnit));
-  next.chargeResolution = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
+  next.chargeResolution = {
+    unitId,
+    side,
+    dice: [r1, r2],
+    rawTotal: rawRoll,
+    total: roll,
+    maximumDistance,
+    status: 'pending-target',
+    ...(rolledUnit.heroicInterventionMode ? { heroicInterventionMode: rolledUnit.heroicInterventionMode } : {}),
+  };
   next.pendingChargeRoll = { unitId, side, maximumDistance };
   recordBattleEvent(next, {
     type: BATTLE_EVENT_TYPE.DiceRolled,

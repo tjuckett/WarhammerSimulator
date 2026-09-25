@@ -1,0 +1,1640 @@
+{
+  "factionId": "genestealer-cults",
+  "rules": [
+    {
+      "id": "genestealer-cults.army-rule.cult-ambush",
+      "name": "Cult Ambush",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is GENESTEALER CULTS, you start the battle with a number of Resurgence points, depending on the battle size, as shown below. Incursion: 6 Resurgence points Strike Force: 10 Resurgence points Onslaught: 14 Resurgence points Each time a unit from your army is destroyed, if every model (excluding CHARACTER models) in that unit has this ability, you can spend the relevant number of Resurgence points shown below based on that unit's Starting Strength (not including attached CHARACTER models). Aberrants 5 models4 Resurgence points 10 models8 Resurgence points Acolyte Hybrids with Autopistols, Acolyte Hybrids with Hand Flamers, Hybrid Metamorphs 5 models2 Resurgence points 10 models4 Resurgence points Atalan Jackals 5 models2 Resurgence points 10 models6 Resurgence points Neophyte Hybrids 10 models3 Resurgence points 20 models6 Resurgence points Purestrain Genestealers 5 models2 Resurgence points 10 models6 Resurgence points If you do: Add a new unit to your army identical to your destroyed unit (excluding CHARACTER models), in Cult Ambush, at its Starting Strength, with all of its wounds remaining and any [ONE SHOT] weapons those models are equipped with considered as not having been shot. Place one Cult Ambush marker (see below) anywhere on the battlefield that is more than 9\" horizontally away from all enemy units (if this is not possible, no marker is placed). Units in Cult Ambush Cult Ambush is a type of Strategic Reserves. Units in Cult Ambush cannot be targeted with the Rapid Ingress Stratagem, but can be set up on the battlefield using a Cult Ambush marker as described below, or by following the rules for Strategic Reserves in a subsequent turn. Units in Cult Ambush are not automically destroyed at the end of the third battle round. Cult Ambush Markers Use a circular 32mm diameter marker for Cult Ambush markers. If an enemy model (excluding AIRCRAFT) ends any kind of move within 8\" of a Cult Ambush marker you placed, that Cult Ambush marker is removed from the battlefield. At the end of your opponent's next Movement phase, for each of your Cult Ambush markers still on the battlefield, you can select one unit from your army that is in Cult Ambush to make an ingress move. For that ingress move, set that unit up with at least one model in that unit in base contact with that Cult Ambush marker and all other models placed wholly within 3\" of that Cult Ambush marker (that Cult Ambush marker is then removed from the battlefield). Units in Cult Ambush can make an ingress move in the first battle round using this rule.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Cult Ambush",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Cult Ambush"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension",
+      "name": "Host of Ascension - A Perfect Ambush",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time a GENESTEALER CULTS unit from your army is set up on the battlefield as Reinforcements, until the end of your next Fight phase, weapons equipped by models in that unit have the [SUSTAINED HITS 1] and [IGNORES COVER] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.enhancement.prowling-agitant",
+      "name": "Prowling Agitant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "15 pts. GENESTEALER CULTS model only. In your opponent's Movement phase, if an enemy unit ends a move within 8\" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.enhancement.a-chink-in-their-armour",
+      "name": "A Chink in Their Armour",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "20 pts. GENESTEALER CULTS model only. Each time the bearer is set up on the battlefield as Reinforcements, until the end of your next Fight phase, ranged weapons equipped by models in the bearer's unit have the [LETHAL HITS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.enhancement.our-time-is-nigh",
+      "name": "Our Time Is Nigh",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "20 pts. GENESTEALER CULTS model only. Once per battle, when the bearer's unit declares a charge, the bearer can use this Enhancement. If it does, until the end of the phase, add 2 to Charge rolls made for the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.enhancement.assassination-edict",
+      "name": "Assassination Edict",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "15 pts. GENESTEALER CULTS model only. Each time a model in the bearer's unit makes an attack that targets a CHARACTER unit, add 1 to the Hit roll",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.stratagem.coordinated-trap",
+      "name": "COORDINATED TRAP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "2CP. Host of Ascension - Battle Tactic Stratagem. WHEN: The start of your Shooting phase or the start of the Fight phase. TARGET: Two GENESTEALER CULTS units from your army that have not been selected to shoot or fight this phase. EFFECT: Select one enemy unit (if this Stratagem is used in the Fight phase, that enemy unit must be within Engagement Range of both of your units). Until the end of the phase, each time a model in either of your units makes an attack, it can only target that enemy unit (and only if it is an eligible target for that attack), and when resolving that attack, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension - COORDINATED TRAP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension - COORDINATED TRAP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.stratagem.primed-and-readied",
+      "name": "PRIMED AND READIED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "2CP. Host of Ascension - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One GENESTEALER CULTS units from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, a Critical Hit is scored on an unmodified Hit roll of 5+, instead of only a 6.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension - PRIMED AND READIED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension - PRIMED AND READIED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.stratagem.tunnel-crawlers",
+      "name": "TUNNEL CRAWLERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "1CP. Host of Ascension - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One GENESTEALER CULTS unit from your army that is arriving using the Deep Strike ability this phase. EFFECT: Your unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy units. RESTRICTIONS: A unit targeted by this Stratagem is not eligible to declare a charge in the same turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension - TUNNEL CRAWLERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension - TUNNEL CRAWLERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.stratagem.lying-in-wait",
+      "name": "LYING IN WAIT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "1CP. Host of Ascension - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase. TARGET: One GENESTEALER CULTS BATTLELINE unit from your army in Cult Ambush. EFFECT: Until the end of the phase, when setting your unit up using a Cult Ambush marker, set your unit up anywhere on the battlefield wholly within 6\" of that Cult Ambush marker and not within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension - LYING IN WAIT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension - LYING IN WAIT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.stratagem.return-to-the-shadows",
+      "name": "RETURN TO THE SHADOWS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "1CP. Host of Ascension - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One GENESTEALER CULTS INFANTRY unit from your army that is not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension - RETURN TO THE SHADOWS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension - RETURN TO THE SHADOWS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.host-of-ascension.stratagem.a-deadly-snare",
+      "name": "A DEADLY SNARE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.host-of-ascension",
+      "description": "1CP. Host of Ascension - Strategic Ploy Stratagem. WHEN: Your opponent's Charge phase, just after an enemy unit declares a charge. TARGET: One GENESTEALER CULTS INFANTRY unit from your army that was selected as a target of that charge. EFFECT: Roll one D6: on a 2-4, that enemy unit suffers D3 mortal wounds; on a 5+, that enemy unit suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Host of Ascension - A DEADLY SNARE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Host of Ascension - A DEADLY SNARE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation",
+      "name": "Xenocreed Congregation - Unquestioning Fanaticism",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "For each ACOLYTE HYBRIDS, HYBRID METAMORPHS and NEOPHYTE HYBRIDS unit from your army, while one or more CHARACTER models are leading that unit, you can re-roll Advance and Charge rolls made for it. If that CHARACTER model is a MAGUS, PRIMUS or ACOLYTE ICONWARD, that model has the Feel No Pain 3+ ability while leading that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.enhancement.gene-sires-reliquant",
+      "name": "Gene-sire's Reliquant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "5 pts. MAGUS, PRIMUS or ACOLYTE ICONWARD model only. You can re-roll Battle-shock tests taken for the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.enhancement.denunciator-of-tyrants",
+      "name": "Denunciator of Tyrants",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "25 pts. MAGUS, PRIMUS or ACOLYTE ICONWARD model only. Each time a model in the bearer's unit makes an attack that targets a CHARACTER unit, add 1 to the Hit roll and add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.enhancement.deeds-that-speak-to-the-masses",
+      "name": "Deeds That Speak to the Masses",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "25 pts. MAGUS, PRIMUS or ACOLYTE ICONWARD model only. You start the battle with 2 additional Resurgence points.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.enhancement.incendiary-inspiration",
+      "name": "Incendiary Inspiration",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "15 pts. MAGUS, PRIMUS or ACOLYTE ICONWARD model only. The bearer's unit is eligible to declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.stratagem.vengeance-for-the-martyr",
+      "name": "VENGEANCE FOR THE MARTYR!",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "1CP. Xenocreed Congregation - Epic Deed Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit destroys a GENESTEALER CULTS CHARACTER model from your army. TARGET: One other GENESTEALER CULTS CHARACTER model from your army. EFFECT: Until the end of the battle, each time a friendly ACOLYTE HYBRIDS, Hybrid Metamorphs or Neophyte Hybrids model makes an attack that targets that enemy unit, re-roll a Hit roll of 1. If the destroyed model was a MAGUS, PRIMUS or ACOLYTE ICONWARD, you can re-roll the Hit roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation - VENGEANCE FOR THE MARTYR!",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation - VENGEANCE FOR THE MARTYR!"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.stratagem.frenzied-devotion",
+      "name": "FRENZIED DEVOTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "1CP. Xenocreed Congregation - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One ACOLYTE HYBRIDS, HYBRID METAMORPHS or NEOPHYTE HYBRIDS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, improve the Attacks and Weapon Skill characteristics of melee weapons equipped by models (excluding CHARACTERS) in your unit by 1 and those weapons have the [HAZARDOUS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation - FRENZIED DEVOTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation - FRENZIED DEVOTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.stratagem.tireless-fervour",
+      "name": "TIRELESS FERVOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "1CP. Xenocreed Congregation - Strategic Ploy Stratagem. WHEN: Your Charge phase. TARGET: One ACOLYTE HYBRIDS, HYBRID METAMORPHS or NEOPHYTE HYBRIDS unit from your army that has not declared a charge this phase. EFFECT: If your unit made an advance/fall-back move this turn, that advance/fall-back move does not prevent your unit from being eligible to declare a charge. When your unit declares a charge, you can use this part of this stratagem. If you do: Your unit can re-roll charge rolls. Your unit must end that charge move engaged with an enemy unit engaged with a friendly CHARACTER unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation - TIRELESS FERVOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation - TIRELESS FERVOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.stratagem.transcendent-celerity",
+      "name": "TRANSCENDENT CELERITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "1CP. Xenocreed Congregation - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One ACOLYTE HYBRIDS, HYBRID METAMORPHS or NEOPHYTE HYBRIDS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [ASSAULT] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation - TRANSCENDENT CELERITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation - TRANSCENDENT CELERITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.stratagem.the-downtrodden-rise",
+      "name": "THE DOWNTRODDEN RISE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "2CP. Xenocreed Congregation - Strategic Ploy Stratagem. WHEN: End of your opponent's Movement phase. TARGET: One ACOLYTE HYBRIDS, HYBRID METAMORPHS or NEOPHYTE HYBRIDS unit from your army in Cult Ambush. EFFECT: Until the end of the phase, you can set up your unit on the battlefield without using a Cult Ambush marker. When doing so, set up your unit anywhere on the battlefield that is more than 6\" horizontally away from all enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation - THE DOWNTRODDEN RISE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation - THE DOWNTRODDEN RISE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocreed-congregation.stratagem.the-path-of-anguish",
+      "name": "THE PATH OF ANGUISH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocreed-congregation",
+      "description": "1CP. Xenocreed Congregation - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One ACOLYTE HYBRIDS or NEOPHYTE HYBRIDS unit from your army that had one or more of its models destroyed as a result of the attacking unit's attacks. EFFECT: Your unit can make a move of up to D6\", but it unit must end that move as close as possible to the closest enemy unit (excluding AIRCRAFT), When doing so, models in your unit can be moved within Engagement Range of that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocreed Congregation - THE PATH OF ANGUISH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocreed Congregation - THE PATH OF ANGUISH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "name": "Biosanctic Broodsurge - Hypermorphic Fury",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Add 1 to Charge rolls made for ABERRANTS, BIOPHAGUS and PURESTRAIN GENESTEALERS units from your army. In addition, each time such a unit is selected to fight, if it made a Charge move this turn, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.enhancement.predatory-instincts",
+      "name": "Predatory Instincts",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "20 pts. ABOMINANT, BIOPHAGUS or PATRIARCH model only. Models in the bearer's unit have the Infiltrators ability. You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do: That use is -1 CP. That use does not prevent any uses of that stratagem on other units this phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.enhancement.biomorph-adaptation",
+      "name": "Biomorph Adaptation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "25 pts. ABOMINANT or PATRIARCH model only. Improve the Armour Penetration and Damage characteristics of melee weapons equipped by the bearer by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.enhancement.mutagenic-regeneration",
+      "name": "Mutagenic Regeneration",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "10 pts. ABOMINANT, BIOPHAGUS or PATRIARCH model only. In each Command phase, one model in the bearer's unit regains 1 lost wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.enhancement.alien-majesty",
+      "name": "Alien Majesty",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "15 pts. ABOMINANT, BIOPHAGUS or PATRIARCH model only. While an enemy unit is within Engagement Range of the bearer's unit, subtract 1 from the Objective Control characteristic of models in that enemy unit (to a minimum of 1).",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.stratagem.evasive-vanguard",
+      "name": "EVASIVE VANGUARD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "1CP. Biosanctic Broodsurge - Strategic Ploy Stratagem. WHEN: Any phase, just after an enemy unit ends a move within 8\" of one or more of your Cult Ambush markers, before removing those markers from the battlefield. TARGET: Select one of those Cult Ambush markers. EFFECT: You can set up that Cult Ambush marker anywhere on the battlefield that is more than 8\" horizontally away from all enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge - EVASIVE VANGUARD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge - EVASIVE VANGUARD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.stratagem.saintly-paroxysm",
+      "name": "SAINTLY PAROXYSM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "1CP. Biosanctic Broodsurge - Epic Deed Stratagem. WHEN: Fight phase, just after an enemy unit destroys a GENESTEALER CULTS CHARACTER model from your army. TARGET: That destroyed CHARACTER model. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Roll one D6: on a 2+, that enemy unit suffers D3 mortal wounds. If that Character model is an ABOMINANT or PATRIARCH, that enemy unit suffers 2D3 mortal wounds instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge - SAINTLY PAROXYSM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge - SAINTLY PAROXYSM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.stratagem.gene-twisted-muscle",
+      "name": "GENE-TWISTED MUSCLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "1CP. Biosanctic Broodsurge - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One ABERRANTS, BIOPHAGUS or PURESTRAIN GENESTEALERS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a MONSTER or VEHICLE, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge - GENE-TWISTED MUSCLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge - GENE-TWISTED MUSCLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.stratagem.hyper-metabolic-vigour",
+      "name": "HYPER-METABOLIC VIGOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "1CP. Biosanctic Broodsurge - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One ABERRANTS, BIOPHAGUS or PURESTRAIN GENESTEALERS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in or Consolidation move, it can move up to 6\" instead of up to 3\". In addition, it does not need to end that move closer to the closest enemy model, provided it ends it as close as possible to the closest enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge - HYPER-METABOLIC VIGOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge - HYPER-METABOLIC VIGOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.stratagem.stimulated-bio-surge",
+      "name": "STIMULATED BIO-SURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "1CP. Biosanctic Broodsurge - Battle Tactic Stratagem. WHEN: Your Charge phase. TARGET: One ABERRANTS, BIOPHAGUS or PURESTRAIN GENESTEALERS unit from your army that has not declared a charge this phase. EFFECT: Your unit has +2 to charge rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge - STIMULATED BIO-SURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge - STIMULATED BIO-SURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.biosanctic-broodsurge.stratagem.bio-horror-revelation",
+      "name": "BIO-HORROR REVELATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.biosanctic-broodsurge",
+      "description": "1CP. Biosanctic Broodsurge - Strategic Ploy Stratagem. WHEN: Start of your opponent's Shooting phase. TARGET: One ABERRANTS, BIOPHAGUS or PURESTRAIN GENESTEALERS unit from your army. EFFECT: Until the end of the phase, each time an enemy unit within 9\" of your unit is selected to shoot, it must take a Leadership test, subtracting 1 from the result. If that test is failed, until the end of the phase, each time a model in that enemy unit makes an attack that targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Biosanctic Broodsurge - BIO-HORROR REVELATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Biosanctic Broodsurge - BIO-HORROR REVELATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw",
+      "name": "Outlander Claw - Rapid Takeover",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "While a GENESTEALER CULTS MOUNTED/VEHICLE model from your army is not Battle-shocked, add 1 to its Objective Control characteristic. In addition, at the end of your Command phase, if one or more ATALAN JACKALS units from your army are within range of an objective you control, that objective remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.enhancement.serpentine-tactics",
+      "name": "Serpentine Tactics",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "10 pts. GENESTEALER CULTS MOUNTED model only. The bearer's unit is eligible to shoot in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.enhancement.cartographic-data-leech",
+      "name": "Cartographic Data-leech",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "10 pts. GENESTEALER CULTS model only. While the bearer is embarked within a TRANSPORT, each time that TRANSPORT is selected to shoot, until the end of the phase, improve the Ballistic Skill characteristic of ranged weapons equipped by that TRANSPORT as a result of the Firing Deck ability by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.enhancement.starfall-shells",
+      "name": "Starfall Shells",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "10 pts. GENESTEALER CULTS MOUNTED model only. In your Shooting phase, after the bearer has shot, select one enemy unit hit by one or more of those attacks made with a cult sniper rifle. Until the start of your next Shooting phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.enhancement.assault-commando",
+      "name": "Assault Commando",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "15 pts. GENESTEALER CULTS model only. Each time a model in the bearer's unit makes a ranged attack, if it disembarked from a TRANSPORT this turn, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.stratagem.along-shadowed-trails",
+      "name": "ALONG SHADOWED TRAILS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "1CP. Outlander Claw - Strategic Ploy Stratagem. WHEN: Any phase, just after an enemy unit ends a move within 8\" of one or more of your Cult Ambush markers. TARGET: Select one of those Cult Ambush markers. EFFECT: You can set up that Cult Ambush marker anywhere on the battlefield that is more than 8\" horizontally away from all enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw - ALONG SHADOWED TRAILS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw - ALONG SHADOWED TRAILS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.stratagem.devoted-crew",
+      "name": "DEVOTED CREW",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "1CP. Outlander Claw - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One GOLIATH ROCKGRINDER or GOLIATH TRUCK unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw - DEVOTED CREW",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw - DEVOTED CREW"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.stratagem.close-range-shoot-out",
+      "name": "CLOSE-RANGE SHOOT-OUT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "1CP. Outlander Claw - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One GENESTEALER CULTS MOUNTED or GENESTEALER CULTS VEHICLE unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [LETHAL HITS] ability while targeting an enemy unit within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw - CLOSE-RANGE SHOOT-OUT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw - CLOSE-RANGE SHOOT-OUT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.stratagem.rapid-feint",
+      "name": "RAPID FEINT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "1CP. Outlander Claw - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One ACHILLES RIDGERUNNERS or ATALAN JACKALS unit from your army that is within 8\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw - RAPID FEINT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw - RAPID FEINT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.stratagem.deft-manoeuvring",
+      "name": "DEFT MANOEUVRING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "1CP. Outlander Claw - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ACHILLES RIDGERUNNERS or ATALAN JACKALS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw - DEFT MANOEUVRING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw - DEFT MANOEUVRING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.outlander-claw.stratagem.encircling-the-prey",
+      "name": "ENCIRCLING THE PREY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.outlander-claw",
+      "description": "1CP. Outlander Claw - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One GENESTEALER CULTS MOUNTED or GENESTEALER CULTS VEHICLE unit from your army that is not within Engagement Range of one or more enemy units and is wholly within 9\" of one or more battlefield edges. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Outlander Claw - ENCIRCLING THE PREY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Outlander Claw - ENCIRCLING THE PREY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia",
+      "name": "Brood Brother Auxilia - Integrated Tactics",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time an ASTRA MILITARUM unit from your army (see below) is selected to shoot, you can select one enemy unit within 18\" of and visible to that unit. If you do, until the end of the phase, models in that ASTRA MILITARUM unit can only target that enemy unit (and only if it is an eligible target) and that enemy unit is caught in overlapping fire. While an enemy unit is caught in overlapping fire, each time a GENESTEALER CULTS model from your army targets that enemy unit with a ranged attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.enhancement.martial-espionage",
+      "name": "Martial Espionage",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "25 pts. GENESTEALER CULTS INFANTRY model only. Once per turn, when a friendly ASTRA MILITARUM INFANTRY or ASTRA MILITARUM MOUNTED unit within 9\" of the bearer is selected to shoot, the bearer can use this Enhancement. If it does, until the end of the phase, improve the Armour Penetration characteristic of ranged weapons equipped by models in that unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.enhancement.adaptive-reprisal",
+      "name": "Adaptive Reprisal",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "15 pts. GENESTEALER CULTS INFANTRY model only. When you target this unit with the Heroic Intervention stratagem, that use is -1 CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.enhancement.the-hero-returned",
+      "name": "The Hero Returned",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "20 pts. GENESTEALER CULTS INFANTRY model only. Improve the Leadership and Objective Control characteristics of models in the bearer's unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.enhancement.firepoint-commander",
+      "name": "Firepoint Commander",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "10 pts. GENESTEALER CULTS INFANTRY model only. Each time you target the bearer's unit with the Fire Overwatch Stratagem, while resolving that Stratagem, hits are scored on unmodified Hit rolls of 5+.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.stratagem.in-the-shadow-of-iron",
+      "name": "IN THE SHADOW OF IRON",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "1CP. Brood Brother Auxilia - Strategic Ploy Stratagem. WHEN: Any phase, just after an enemy unit ends a move within 8\" of one or more of your Cult Ambush markers. TARGET: One ASTRA MILITARUM VEHICLE unit from your army. EFFECT: Select one of those Cult Ambush markers. You can set up that Cult Ambush marker anywhere on the battlefield that is more than 8\" horizontally away from all enemy units and wholly within 6\" of your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia - IN THE SHADOW OF IRON",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia - IN THE SHADOW OF IRON"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.stratagem.regimental-reinforcements",
+      "name": "REGIMENTAL REINFORCEMENTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "1CP. Brood Brother Auxilia - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an ASTRA MILITARUM INFANTRY REGIMENT unit from your army (excluding ARTILLERY and CHARACTER units) is destroyed. TARGET: That INFANTRY unit. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Roll one D6: on a 3+, place one Cult Ambush marker anywhere on the battlefield that is more than 8\" horizontally away from all enemy units (if this is not possible, no marker is placed) and add a new unit to your army identical to your destroyed unit, in Cult Ambush, at its Starting Strength, with all of its wounds remaining and any [ONE SHOT] weapons those models are equipped with considered as not having been shot. RESTRICTIONS: You can only use this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia - REGIMENTAL REINFORCEMENTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia - REGIMENTAL REINFORCEMENTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.stratagem.suppress-and-overwhelm",
+      "name": "SUPPRESS AND OVERWHELM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "1CP. Brood Brother Auxilia - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after an ASTRA MILITARUM unit from your army has shot. TARGET: That ASTRA MILITARUM unit. EFFECT: Select one enemy unit hit by one or more of those attacks. Until the end of the turn, that enemy unit cannot be targeted with the Fire Overwatch Stratagem and each time a GENESTEALER CULTS unit from your army selects that enemy unit as a target of a charge, you can re-roll the Charge roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia - SUPPRESS AND OVERWHELM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia - SUPPRESS AND OVERWHELM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.stratagem.acceptable-losses",
+      "name": "ACCEPTABLE LOSSES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "2CP. Brood Brother Auxilia - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM unit from your army. EFFECT: Select one enemy unit within Engagement Range of one or more GENESTEALER CULTS units from your army. Until the end of the phase, your unit can make ranged attacks that target that enemy unit. If it does, after it has resolved those attacks, roll one D6 for each of those GENESTEALER CULTS units: on a 5+, the unit being rolled for suffers D3+1 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia - ACCEPTABLE LOSSES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia - ACCEPTABLE LOSSES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.stratagem.symbiotic-destruction",
+      "name": "SYMBIOTIC DESTRUCTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "1CP. Brood Brother Auxilia - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM and one GENESTEALER CULTS unit from your army that have not been selected to shoot this phase. EFFECT: Select one enemy unit that is visible to both of those selected units and within range of at least one ranged weapon from each of those units. Until the end of the phase, models in those units can only make attacks that target that enemy unit (and only if it is an eligible target). When doing so, each time such a model makes an attack, re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia - SYMBIOTIC DESTRUCTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia - SYMBIOTIC DESTRUCTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.brood-brother-auxilia.stratagem.a-dark-network",
+      "name": "A DARK NETWORK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.brood-brother-auxilia",
+      "description": "1CP. Brood Brother Auxilia - Strategic Ploy Stratagem. WHEN: Reinforcements step of your opponent's Movement phase, just after an enemy unit is set up on the battlefield from Reserves. TARGET: One ASTRA MILITARUM or GENESTEALER CULTS unit from your army (excluding MONSTERS and VEHICLES) within 12\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Brood Brother Auxilia - A DARK NETWORK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Brood Brother Auxilia - A DARK NETWORK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day",
+      "name": "Final Day - Psionic Parasitism",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "At the end of your Movement phase, for each TYRANIDS SYNAPSE unit from your army, you can select one friendly GENESTEALER CULTS unit (excluding PURESTRAIN GENESTEALER and PATRIARCH units) and one friendly TYRANIDS unit each within 9\" of and visible to that SYNAPSE unit. If you do, that GENESTEALER CULTS unit from your army suffers D3+1 mortal wounds and one model in the selected TYRANIDS unit regains up to that many lost wounds and until the start of your next Movement phase, each time a model in the selected TYRANIDS unit makes an attack, add 1 to the Hit roll. TYRANIDS units from your army have the following ability: Catalyst (Aura): While an enemy unit is within 6\" of this unit, each time a friendly GENESTEALER CULTS unit makes an attack that targets that enemy unit, add 1 to the Hit roll. The Star Children's Blessings You can include TYRANIDS VANGUARD INVADER units (excluding AIRCRAFT, BROODLORD and GENESTEALERS units) in your army. The combined points cost of such units depends on your battle size: Incursion: Up to 500 pts Strike Force: Up to 1000 pts Onslaught: Up to 1500 pts No TYRANIDS models from your army can be your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.enhancement.synaptic-auger",
+      "name": "Synaptic Auger",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "15 pts. TYRANIDS model only. Each time the bearer would regain one or more lost wounds from the Psionic Parasitism Detachment rule, it regains up to twice that number of lost wounds instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.enhancement.enraptured-damnation",
+      "name": "Enraptured Damnation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "10 pts. GENESTEALER CULTS model only. Enemy units cannot use the Fire Overwatch Stratagem to shoot at the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.enhancement.vanguard-tyrant",
+      "name": "Vanguard Tyrant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "25 pts. WINGED HIVE TYRANT model only. Improve the Strength and Armour Penetration characteristics of melee weapons equipped by the bearer by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.enhancement.inhuman-integration",
+      "name": "Inhuman Integration",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "20 pts. GENESTEALER CULTS model only. Weapons equipped by models in the bearer's unit have the [SUSTAINED HITS 1] ability while targeting an enemy unit within 6\" of one or more friendly TYRANIDS units.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.stratagem.hyperferocity",
+      "name": "HYPERFEROCITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "1CP. Final Day - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One GENESTEALER CULTS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit, re-roll a Wound roll of 1. If one or more friendly TYRANIDS units are within 6\" of that enemy unit, you can re-roll the Wound roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day - HYPERFEROCITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day - HYPERFEROCITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.stratagem.psi-surge",
+      "name": "PSI SURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "1CP. Final Day - Strategic Ploy Stratagem. WHEN: Start of any phase. TARGET: One TYRANIDS unit from your army. EFFECT: Until the start of your next Command phase, increase the range of your unit's Catalyst ability by 3\". RESTRICTIONS: Each time you use this Stratagem, until the end of your next Command phase, you cannot use this Stratagem again.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day - PSI SURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day - PSI SURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.stratagem.avenge-the-star-children",
+      "name": "AVENGE THE STAR CHILDREN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "1CP. Final Day - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has shot or fought. TARGET: One TYRANIDS CHARACTER unit from your army that was destroyed by that enemy unit this phase. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Until the end of the battle, each time a GENESTEALER CULTS model from your army makes an attack that targets that enemy unit, add 1 to the Hit roll and add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day - AVENGE THE STAR CHILDREN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day - AVENGE THE STAR CHILDREN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.stratagem.divine-imperative",
+      "name": "DIVINE IMPERATIVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "1CP. Final Day - Battle Tactic Stratagem. WHEN: Your Charge phase, when a friendly GENESTEALER CULTS unit within 12\" of a friendly engaged TYRANIDS unit declares a charge. TARGET: That GENESTEALER CULTS unit. EFFECT: Your unit has +1 to charge rolls. You can use this part of this stratagem. If you do: Your unit can re-roll charge rolls. Your unit must end that charge move engaged with an enemy unit engaged with that friendly TYRANIDS unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day - DIVINE IMPERATIVE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day - DIVINE IMPERATIVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.stratagem.darting-attacks",
+      "name": "DARTING ATTACKS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "1CP. Final Day - Strategic Ploy Stratagem. WHEN: Your Shooting phase or your Charge phase. TARGET: One TYRANIDS unit from your army. EFFECT: Until the end of the phase, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day - DARTING ATTACKS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day - DARTING ATTACKS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.final-day.stratagem.resistance-tunnels",
+      "name": "RESISTANCE TUNNELS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.final-day",
+      "description": "1CP. Final Day - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One GENESTEALER CULTS or TYRANIDS unit from your army that is not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Final Day - RESISTANCE TUNNELS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Final Day - RESISTANCE TUNNELS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "name": "Heroes of the Uprising - Killer Reputation",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly KELERMORPH/LOCUS/REDUCTUS SABOTEUR/SANCTUS models have KILLER. Friendly KILLER models' attacks can: Re-roll hit rolls of 1. Re-roll wound rolls of 1",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Heroes of the Uprising",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Heroes of the Uprising"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.heroes-of-the-uprising.enhancement.gene-tailored-toxins",
+      "name": "Gene-Tailored Toxins",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "description": "35 pts. LOCUS/SANCTUS model only. This model's attacks have +1 D.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Heroes of the Uprising enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Heroes of the Uprising enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.heroes-of-the-uprising.enhancement.contraband-munitions",
+      "name": "Contraband Munitions",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "description": "20 pts. KELERMORPH/REDUCTUS SABOTEUR model only. This unit's ranged attacks have +2 S.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Heroes of the Uprising enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Heroes of the Uprising enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.heroes-of-the-uprising.stratagem.living-up-to-legend",
+      "name": "LIVING UP TO LEGEND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "description": "1CP. Heroes of the Uprising Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly KILLER unit has attacked, if those attacks destroyed an enemy unit or an enemy CHARACTER model. TARGET: That KILLER unit. EFFECT: Each visible friendly battle-shocked GENESTEALER CULTS unit within 12\" of your unit is no longer battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Heroes of the Uprising - LIVING UP TO LEGEND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Heroes of the Uprising - LIVING UP TO LEGEND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.heroes-of-the-uprising.stratagem.surging-broodworship",
+      "name": "SURGING BROODWORSHIP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "description": "1CP. Heroes of the Uprising Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly KILLER unit is selected to attack. TARGET: That KILLER unit. EFFECT: Attacks made by KILLER models in your unit have [DEVASTATING WOUNDS].",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Heroes of the Uprising - SURGING BROODWORSHIP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Heroes of the Uprising - SURGING BROODWORSHIP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.heroes-of-the-uprising.stratagem.loyal-to-the-end",
+      "name": "LOYAL TO THE END",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.heroes-of-the-uprising",
+      "description": "1CP. Heroes of the Uprising Stratagem. WHEN: Fight phase, when an enemy unit targets a friendly KILLER unit. TARGET: That KILLER unit. EFFECT: When a KILLER model in your unit is destroyed, if your unit has not been selected to fight this phase, roll one D6: On a 1, that enemy unit suffers 1 mortal wound. On a 2+, do not remove that model from the battlefield. When your unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Heroes of the Uprising - LOYAL TO THE END",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Heroes of the Uprising - LOYAL TO THE END"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.purestrain-broodswarm",
+      "name": "Purestrain Broodswarm - Enemy Within",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.purestrain-broodswarm",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "At the end of your opponent's Fight phase, friendly unengaged PURESTRAIN GENESTEALER units can be placed in strategic reserves. This detachment has the PURESTRAIN tag and cannot be taken with another PURESTRAIN detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Purestrain Broodswarm",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Purestrain Broodswarm"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.purestrain-broodswarm.enhancement.mark-of-the-star-childrenupgrade",
+      "name": "Mark of the Star ChildrenUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.purestrain-broodswarm",
+      "maximumSelections": 3,
+      "description": "30 pts. PURESTRAIN GENESTEALERS unit only. This unit has: +1 T. 4+ Sv. This unit's melee attacks have +1 S.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Purestrain Broodswarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Purestrain Broodswarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.purestrain-broodswarm.enhancement.talons-of-the-sire",
+      "name": "Talons of the Sire",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.purestrain-broodswarm",
+      "description": "15 pts. PATRIARCH model only. This unit's attacks can re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Purestrain Broodswarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Purestrain Broodswarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.purestrain-broodswarm.stratagem.lurk-and-strike",
+      "name": "LURK AND STRIKE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.purestrain-broodswarm",
+      "description": "1CP. Purestrain Broodswarm Stratagem. WHEN: Your Movement phase, when a friendly PURESTRAIN GENESTEALERS unit is selected to make a fall-back move. TARGET: That PURESTRAIN GENESTEALERS unit. EFFECT: That move does not prevent your unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Purestrain Broodswarm - LURK AND STRIKE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Purestrain Broodswarm - LURK AND STRIKE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.purestrain-broodswarm.stratagem.crawling-horror",
+      "name": "CRAWLING HORROR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.purestrain-broodswarm",
+      "description": "1CP. Purestrain Broodswarm Stratagem. WHEN: Start of your opponent's Movement phase. TARGET: One friendly PURESTRAIN GENESTEALERS unit. EFFECT: Your unit has -6\" detection range until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Purestrain Broodswarm - CRAWLING HORROR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Purestrain Broodswarm - CRAWLING HORROR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.purestrain-broodswarm.stratagem.inhuman-reactions",
+      "name": "INHUMAN REACTIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.purestrain-broodswarm",
+      "description": "1CP. Purestrain Broodswarm Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move within 8\" of a friendly unengaged PURESTRAIN GENESTEALERS unit. TARGET: That PURESTRAIN GENESTEALERS unit. EFFECT: Your unit can make a normal move of up to D3+3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Purestrain Broodswarm - INHUMAN REACTIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Purestrain Broodswarm - INHUMAN REACTIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocult-masses",
+      "name": "Xenocult Masses - Hordes of the Faithful",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocult-masses",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "In your Command phase, if a friendly NEOPHYTE HYBRIDS unit is within a terrain area, that unit heals 3 wounds. This detachment has the HOSTS tag and cannot be taken with another HOSTS detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocult Masses",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocult Masses"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocult-masses.enhancement.inspired-to-greatness",
+      "name": "Inspired to Greatness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocult-masses",
+      "description": "15 pts. MAGUS/PRIMUS model only. This unit's attacks can re-roll damage rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocult Masses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocult Masses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocult-masses.enhancement.devious-disguisesupgrade",
+      "name": "Devious DisguisesUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocult-masses",
+      "maximumSelections": 3,
+      "description": "15 pts. NEOPHYTE HYBRIDS unit only. This unit has -3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocult Masses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocult Masses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocult-masses.stratagem.eyes-of-the-cult",
+      "name": "EYES OF THE CULT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocult-masses",
+      "description": "1CP. Xenocult Masses Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly NEOPHYTE HYBRIDS unit within a terrain area. EFFECT: Enemy units within that terrain area have +6\" detection range",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocult Masses - EYES OF THE CULT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocult Masses - EYES OF THE CULT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocult-masses.stratagem.fanatical-hail",
+      "name": "FANATICAL HAIL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocult-masses",
+      "description": "1CP. Xenocult Masses Stratagem. WHEN: Your Shooting phase, when a friendly NEOPHYTE HYBRIDS unit is selected to shoot. TARGET: That NEOPHYTE HYBRIDS unit. EFFECT: Select one enemy unit. Your unit's ranged attacks that target that enemy unit can re-roll hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocult Masses - FANATICAL HAIL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocult Masses - FANATICAL HAIL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "genestealer-cults.detachment.xenocult-masses.stratagem.slunk-from-the-underbelly",
+      "name": "SLUNK FROM THE UNDERBELLY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "genestealer-cults.detachment.xenocult-masses",
+      "description": "1CP. Xenocult Masses Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly NEOPHYTE HYBRIDS unit with every model within a terrain area. TARGET: That NEOPHYTE HYBRIDS unit. EFFECT: Ranged attacks that target your unit have -1 AP until that unit has attacked",
+      "sources": [
+        {
+          "title": "Wahapedia Genestealer Cults Xenocult Masses - SLUNK FROM THE UNDERBELLY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/",
+          "capturedAt": "2026-09-25",
+          "section": "Xenocult Masses - SLUNK FROM THE UNDERBELLY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

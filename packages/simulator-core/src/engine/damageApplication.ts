@@ -11,6 +11,7 @@ export interface DamageApplicationOptions {
   targetModelIndex?: number;
   sourceObjectiveIndexesWithinRange?: number[];
   sourceTags?: Array<'psychic'>;
+  combatResult?: { weaponIndex: number; groupIndex: number };
 }
 
 export interface DamageApplicationContext {
@@ -37,6 +38,7 @@ export function applyDamage(
       ...(options.targetModelIndex !== undefined ? { targetModelIndex: options.targetModelIndex } : {}),
       ...(options.sourceObjectiveIndexesWithinRange ? { sourceObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange } : {}),
       ...(options.sourceTags?.length ? { sourceTags: [...options.sourceTags] } : {}),
+      ...(options.combatResult ? { combatResult: { ...options.combatResult } } : {}),
     }];
     recordBattleEvent(state, { type: BATTLE_EVENT_TYPE.DamagePending, side: attackerSide, source: options.sourceUnitId,
       data: { targetUnitId: unit.id, damage: totalDamage, noCarryOver: options.noCarryOver ?? false, source: options.source ?? 'attack' } });

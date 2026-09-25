@@ -1,0 +1,1869 @@
+{
+  "factionId": "tyranids",
+  "rules": [
+    {
+      "id": "tyranids.army-rule.synapse",
+      "name": "Synapse",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is TYRANIDS, while a TYRANIDS unit from your army is within 6\" of one or more friendly SYNAPSE models, that TYRANIDS unit is said to be within Synapse Range of that model and of your army. While a TYRANIDS unit from your army is within Synapse Range of your army: Each time that unit takes a Battle-shock test, take that test on 3D6 instead of 2D6. Each time a model in that unit makes a melee attack, add 1 to the Strength characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synapse",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synapse"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.army-rule.shadow-in-the-warp",
+      "name": "Shadow in the Warp",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is TYRANIDS, once per battle, in either player's Command phase, if one or more units from your army with this ability are on the battlefield, you can unleash the Shadow in the Warp. When you do, each enemy unit on the battlefield must take a Battle-shock test. Each time an enemy unit takes such a Battle-shock test, if it is within 6\" of one or more SYNAPSE units from your army, subtract 1 from that test.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Shadow in the Warp",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow in the Warp"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet",
+      "name": "Invasion Fleet - Hyper-adaptations",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "At the start of the first battle round, select one of the following Hyper-adaptations to be active for TYRANIDS units from your army until the end of the battle: Swarming Instincts Each time a TYRANIDS model with this Hyper-adaptation makes an attack that targets an INFANTRY or SWARM unit, that attack has the [SUSTAINED HITS 1] ability. Hyper-aggression Each time a TYRANIDS model with this Hyper-adaptation makes an attack that targets a MONSTER or VEHICLE unit, that attack has the [LETHAL HITS] ability. Hive Predators Each time a TYRANIDS model with this Hyper-adaptation makes an attack that targets a CHARACTER unit, on a Critical Hit, that attack has the [PRECISION] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.enhancement.alien-cunning",
+      "name": "Alien Cunning",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "30 pts. TYRANIDS model only. After both players have deployed their armies, select up to three TYRANIDS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.enhancement.perfectly-adapted",
+      "name": "Perfectly Adapted",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "15 pts. TYRANIDS model only. Once per turn, you can re-roll one Hit roll, one Wound roll, one Damage roll, one Advance roll, one Charge roll or one saving throw made for the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.enhancement.synaptic-linchpin",
+      "name": "Synaptic Linchpin",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "20 pts. TYRANIDS model only. While a friendly TYRANIDS unit is within 9\" of the bearer, that unit is within Synapse Range of your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.enhancement.adaptive-biology",
+      "name": "Adaptive Biology",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "25 pts. TYRANIDS model only. The bearer has the Feel No Pain 5+ ability. At the start of any turn, if the bearer has fewer than its starting number of wounds remaining, until the end of the battle, it has the Feel No Pain 4+ ability instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.stratagem.rapid-regeneration",
+      "name": "RAPID REGENERATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "1CP. Invasion Fleet - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One TYRANIDS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 6+ ability. If your unit is within Synapse Range of your army, models in your unit have the Feel No Pain 5+ ability instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet - RAPID REGENERATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet - RAPID REGENERATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.stratagem.adrenal-surge",
+      "name": "ADRENAL SURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "2CP. Invasion Fleet - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: Up to two TYRANIDS units from your army that are within Synapse Range of your army and are eligible to fight, or one other TYRANIDS unit from your army that is eligible to fight. EFFECT: Until the end of the phase, each time a model in any of those selected units makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet - ADRENAL SURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet - ADRENAL SURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.stratagem.death-frenzy",
+      "name": "DEATH FRENZY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "1CP. Invasion Fleet - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One TYRANIDS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet - DEATH FRENZY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet - DEATH FRENZY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.stratagem.overrun",
+      "name": "OVERRUN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "1CP. Invasion Fleet - Strategic Ploy Stratagem. WHEN: Fight phase, just before a TYRANIDS unit from your army Consolidates. TARGET: That TYRANIDS unit. EFFECT: Until the end of the phase, each time your unit Consolidates, models in it can move an additional 3\" as long as your unit can end that move within Engagement Range of one or more enemy units. If your unit is within Synapse Range of your army and not within Engagement Range of any enemy units, instead of making that Consolidation move, it can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet - OVERRUN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet - OVERRUN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.stratagem.predatory-imperative",
+      "name": "PREDATORY IMPERATIVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "1CP. Invasion Fleet - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: Up to two TYRANIDS units from your army that are within Synapse Range of your army, or one other TYRANIDS unit from your army. EFFECT: Select one Hyper-adaptation. Until the start of your next Command phase, that Hyper-adaptation is active for those selected units in addition to any other that may be active for your army. RESTRICTIONS: You cannot select the same Hyper-adaptation you selected at the start of the first battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet - PREDATORY IMPERATIVE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet - PREDATORY IMPERATIVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.invasion-fleet.stratagem.endless-swarm",
+      "name": "ENDLESS SWARM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.invasion-fleet",
+      "description": "1CP. Invasion Fleet - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: Up to two ENDLESS MULTITUDE units from your army that are within Synapse Range of your army, or one other ENDLESS MULTITUDE unit from your army. EFFECT: You can return up to D3+3 destroyed models to each of the selected units.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Invasion Fleet - ENDLESS SWARM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Invasion Fleet - ENDLESS SWARM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede",
+      "name": "Crusher Stampede - Enraged Behemoths",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Each time a TYRANIDS MONSTER model from your army makes an attack, add 1 to the Hit roll if that model's unit is below its Starting Strength, and add 1 to the Wound roll as well if that model's unit is Below Half-strength. In addition, while a TYRANIDS MONSTER unit from your army (excluding Battle-shocked units) is at its Starting Strength, add 2 to the Objective Control characteristic of models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.enhancement.ominous-presence",
+      "name": "Ominous Presence",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "15 pts. TYRANIDS MONSTER model only. Add 3 to the bearer's Objective Control characteristic.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.enhancement.enraged-reserves",
+      "name": "Enraged Reserves",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "20 pts. TYRANIDS MONSTER model only. If the bearer is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 3+, do not remove it from play. It can fight after the attacking model's unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.enhancement.null-nodules",
+      "name": "Null Nodules",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "10 pts. TYRANIDS MONSTER model only. Once per battle, when a Psychic Attack is allocated to the bearer, it can use this ability. If it does, until the end of the phase, the bearer has the Feel No Pain 5+ ability against Psychic Attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.enhancement.monstrous-nemesis",
+      "name": "Monstrous Nemesis",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "25 pts. TYRANIDS MONSTER model only. Each time the bearer makes a melee attack that targets a MONSTER or VEHICLE unit, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.stratagem.corrosive-viscera",
+      "name": "CORROSIVE VISCERA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "1CP. Crusher Stampede - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after a TYRANIDS MONSTER model from your army with the Deadly Demise ability that cannot FLY is destroyed. TARGET: That TYRANIDS MONSTER model. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Do not roll one D6 to determine whether mortal wounds are inflicted by your model's Deadly Demise ability. Instead, mortal wounds are automatically inflicted.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede - CORROSIVE VISCERA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede - CORROSIVE VISCERA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.stratagem.rampaging-monstrosities",
+      "name": "RAMPAGING MONSTROSITIES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "1CP. Crusher Stampede - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One TYRANIDS MONSTER unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede - RAMPAGING MONSTROSITIES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede - RAMPAGING MONSTROSITIES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.stratagem.savage-roar",
+      "name": "SAVAGE ROAR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "1CP. Crusher Stampede - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One TYRANIDS MONSTER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: That enemy unit must take a Battle-shock test and, until the end of the phase, each time a model in that enemy unit makes an attack that targets your unit, subtract 1 from the Hit roll. If that Battle-shock test was failed, subtract 1 from the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede - SAVAGE ROAR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede - SAVAGE ROAR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.stratagem.untrammelled-ferocity",
+      "name": "UNTRAMMELLED FEROCITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "1CP. Crusher Stampede - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One TYRANIDS MONSTER unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4\" or less in height. When doing so: It can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them. It can also move through sections of terrain features that are more than 4\" in height, but if it does, after its unit has moved, roll one D6: on a 1, your unit is Battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede - UNTRAMMELLED FEROCITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede - UNTRAMMELLED FEROCITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.stratagem.swarm-guided-salvoes",
+      "name": "SWARM-GUIDED SALVOES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "1CP. Crusher Stampede - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One TYRANIDS MONSTER unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability, and until the end of the phase each time a model in your unit makes an attack, you can ignore any or all modifiers to that model's Ballistic Skill characteristic and any or all modifiers to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede - SWARM-GUIDED SALVOES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede - SWARM-GUIDED SALVOES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.crusher-stampede.stratagem.massive-impact",
+      "name": "MASSIVE IMPACT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.crusher-stampede",
+      "description": "1CP. Crusher Stampede - Epic Deed Stratagem. WHEN: Your Charge phase, just after a TYRANIDS MONSTER model from your army ends a Charge move. TARGET: That TYRANIDS MONSTER model. EFFECT: Select one enemy unit within Engagement Range of your model and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Crusher Stampede - MASSIVE IMPACT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Crusher Stampede - MASSIVE IMPACT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm",
+      "name": "Unending Swarm - Insurmountable Odds",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "In your opponent's Shooting phase, when an enemy unit has shot, if a model from a friendly ENDLESS MULTITUDE unit was destroyed as a result of those attacks, that friendly unit can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.enhancement.relentless-hunger",
+      "name": "Relentless Hunger",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "20 pts. TYRANIDS model only. Add 2\" to the Move characteristic of models in the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.enhancement.naturalised-camouflage",
+      "name": "Naturalised Camouflage",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "30 pts. TYRANIDS model only. At the start of the first battle round, select up to three friendly ENDLESS MULTITUDE units within 9\" of the bearer. Until the end of the battle round, each time a ranged attack targets one of those units, models in that unit have the Benefit of Cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.enhancement.piercing-talons",
+      "name": "Piercing Talons",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "25 pts. TYRANIDS model only. Each time a model in the bearer's unit makes an attack, on a Critical Wound, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.enhancement.adrenalised-onslaught",
+      "name": "Adrenalised Onslaught",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "15 pts. TYRANIDS model only. Each time the bearer's unit Piles In or Consolidates, models in this unit can move an additional 3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.stratagem.synaptic-goading",
+      "name": "SYNAPTIC GOADING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "1CP. Unending Swarm - Strategic Ploy Stratagem. WHEN: Any phase, just before an ENDLESS MULTITUDE unit from your army that is within Synapse Range of your army makes a surge move. TARGET: That ENDLESS MULTITUDE unit. EFFECT: When making that surge move, you can re-roll the D6 to determine how far your unit moves, and your unit can end that move as close as possible to the closest objective marker (instead of as close as possible to the closest enemy unit]. All other rules for making surge moves still apply.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm - SYNAPTIC GOADING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm - SYNAPTIC GOADING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.stratagem.unending-waves",
+      "name": "UNENDING WAVES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "2CP. Unending Swarm - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One ENDLESS MULTITUDE unit from your army that was just destroyed. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Add a new unit to your army identical to your destroyed unit, in Strategic Reserves, at its Starting Strength. RESTRICTIONS: Any destroyed CHARACTER units that were attached to your unit are not returned. You can only use this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm - UNENDING WAVES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm - UNENDING WAVES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.stratagem.teeming-masses",
+      "name": "TEEMING MASSES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "1CP. Unending Swarm - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One ENDLESS MULTITUDE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm - TEEMING MASSES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm - TEEMING MASSES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.stratagem.swarming-masses",
+      "name": "SWARMING MASSES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "1CP. Unending Swarm - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One ENDLESS MULTITUDE unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, weapons equipped by models in your unit have the [SUSTAINED HITS 1] ability, and If your unit contains 15 or more models, each time a model in your unit makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm - SWARMING MASSES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm - SWARMING MASSES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.stratagem.bounding-advance",
+      "name": "BOUNDING ADVANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "1CP. Unending Swarm - Battle Tactic Stratagem. WHEN: Your Movement phase. TARGET: One ENDLESS MULTITUDE unit from your army. EFFECT: Until the end of the phase, each time your unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6\" to the Move characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm - BOUNDING ADVANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm - BOUNDING ADVANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.unending-swarm.stratagem.preservation-imperative",
+      "name": "PRESERVATION IMPERATIVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.unending-swarm",
+      "description": "1CP. Unending Swarm - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ENDLESS MULTITUDE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit is treated as containing fewer than five models for the purpose of the [BLAST] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Unending Swarm - PRESERVATION IMPERATIVE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Unending Swarm - PRESERVATION IMPERATIVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm",
+      "name": "Assimilation Swarm - Feed the Swarm",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "In your Command phase, each HARVESTER unit from your army can Regenerate one friendly TYRANIDS unit that is within 6\" of it. A unit can only be regenerated once per phase. Each time a unit regenerates, do one of the following: One model in that unit regains up to D3+1 lost wounds. One destroyed INFANTRY model (excluding CHARACTERS) is returned to that unit with its full wounds remaining. If that unit is an ENDLESS MULTITUDE unit, up to 3 destroyed models are returned instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.enhancement.regenerating-monstrosity",
+      "name": "Regenerating Monstrosity",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "20 pts. TYRANIDS model only (excluding MONSTERS models). The bearer's unit can be regenerated up to twice per phase, instead of once.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.enhancement.instinctive-defence",
+      "name": "Instinctive Defence",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "15 pts. TYRANIDS model only. While the bearer is within 6\" of one or more friendly HARVESTER units, when you target this unit with the Heroic Intervention stratagem, that use is -1 CP. In addition, while the bearer is within 6\" of one or more friendly HARVESTER units, models in the bearer's unit have the Fights First ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.enhancement.biophagic-flow-aura",
+      "name": "Biophagic Flow (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "10 pts. TYRANIDS model only. While a friendly HARVESTER model is within 12\" of the bearer, when using the Feed the Swarm ability, that HARVESTER model can Regenerate one friendly TYRANIDS unit that is within 9\" of it, instead of one within 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.enhancement.parasitic-biomorphology",
+      "name": "Parasitic Biomorphology",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "25 pts. TYRANIDS model only. Add 1 to the Strength characteristic of melee weapons equipped by models in the bearer's unit. The first time the bearer's unit destroys an enemy unit in the Fight phase while the bearer is within 6\" of one or more friendly HARVESTER units, until the end of the battle, add 1 to the Attacks characteristic of melee weapons equipped by models in the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.stratagem.broodguard-impulse",
+      "name": "BROODGUARD IMPULSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "1CP. Assimilation Swarm - Epic Deed Stratagem. WHEN: Any phase. TARGET: One HARVESTER unit from your army that was just destroyed. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Until the end of the battle, each time a friendly TYRANIDS model makes an attack that targets the enemy unit that just destroyed your HARVESTER unit, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm - BROODGUARD IMPULSE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm - BROODGUARD IMPULSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.stratagem.reclaim-biomass",
+      "name": "RECLAIM BIOMASS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "1CP. Assimilation Swarm - Strategic Ploy Stratagem. WHEN: Any phase, when a TYRANIDS unit from your army is destroyed, before the last model in it is removed from play. TARGET: One HARVESTER unit from your army that is within 6\" of that destroyed unit. EFFECT: Regenerate one friendly TYRANIDS unit within 6\" of your HARVESTER unit (See Feed the Swarm).",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm - RECLAIM BIOMASS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm - RECLAIM BIOMASS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.stratagem.tyrannoformed",
+      "name": "TYRANNOFORMED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "1CP. Assimilation Swarm - Strategic Ploy Stratagem. WHEN: Command phase. TARGET: One HARVESTER unit from your army that is within range of an objective marker you control. EFFECT: That objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm - TYRANNOFORMED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm - TYRANNOFORMED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.stratagem.ablative-carapace",
+      "name": "ABLATIVE CARAPACE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "2CP. Assimilation Swarm - Epic Deed Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One HARVESTER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 5+ ability. If your unit is within range of an objective marker you control, until the end of the phase models in your unit have the Feel No Pain 4+ ability instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm - ABLATIVE CARAPACE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm - ABLATIVE CARAPACE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.stratagem.secure-biomass",
+      "name": "SECURE BIOMASS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "1CP. Assimilation Swarm - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One TYRANIDS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [LETHAL HITS] ability. If your unit is a HARVESTER unit, each time a model in that unit makes a melee attack, a successful unmodified Hit roll of 5+ scores a Critical Hit as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm - SECURE BIOMASS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm - SECURE BIOMASS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.assimilation-swarm.stratagem.rapacious-hunger",
+      "name": "RAPACIOUS HUNGER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.assimilation-swarm",
+      "description": "1CP. Assimilation Swarm - Battle Tactic Stratagem. WHEN: Your Fight phase. TARGET: One TYRANIDS unit from your army that just destroyed an enemy unit. EFFECT: Your unit immediately Regenerates (See Feed the Swarm). When doing so, if your unit is a HARVESTER unit and you choose for one model to regain up to D3 lost wounds, that model regains up to 3 lost wounds instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Assimilation Swarm - RAPACIOUS HUNGER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Assimilation Swarm - RAPACIOUS HUNGER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught",
+      "name": "Vanguard Onslaught - Questing Tendrils",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "TYRANIDS units with this ability are eligible to charge in a turn in which they Fell Back. VANGUARD INVADER units with this ability are eligible to charge in a turn in which they Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.enhancement.hunting-grounds",
+      "name": "Hunting Grounds",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "30 pts. TYRANIDS model only. While the bearer is on the battlefield, each time your opponent sets up a Reserves unit on the battlefield, roll one D6: on a 2+, that unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.enhancement.chameleonic",
+      "name": "Chameleonic",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "15 pts. VANGUARD INVADER model only. This unit has Stealth.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.enhancement.stalker",
+      "name": "Stalker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "10 pts. VANGUARD INVADER model only. At the start of the battle, select one enemy unit. Each time the bearer makes an attack that targets that enemy unit, add 1 to the Hit roll and add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.enhancement.neuronode",
+      "name": "Neuronode",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "20 pts. TYRANIDS model only. After both players have deployed their armies, you can select up to three VANGUARD INVADER units from your army and redeploy all of those units. When doing so, any of those units can be placed into Strategic Reserves, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.stratagem.surprise-assault",
+      "name": "SURPRISE ASSAULT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "1CP. Vanguard Onslaught - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase, just after a VANGUARD INVADER unit from your army has selected its targets. TARGET: That VANGUARD INVADER unit. EFFECT: Select one enemy unit that was selected as the target of one or more of your unit's attacks. That enemy unit must take a Battle-shock test. Until the end of the phase, each time a model in your unit makes an attack that targets that enemy unit, add 1 to the Hit roll. If the Battle-shock test was failed, add 1 to the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught - SURPRISE ASSAULT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught - SURPRISE ASSAULT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.stratagem.assassin-beasts",
+      "name": "ASSASSIN BEASTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "1CP. Vanguard Onslaught - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One VANGUARD INVADER INFANTRY unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [PRECISION] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught - ASSASSIN BEASTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught - ASSASSIN BEASTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.stratagem.seeded-broods",
+      "name": "SEEDED BROODS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "1CP. Vanguard Onslaught - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One TYRANIDS unit from your army that is in Reserves, or up to two VANGUARD INVADER units from your army that are in Reserves. EFFECT: Until the end of the phase, for the purposes of setting up those selected units on the battlefield, treat the current battle round number as being one higher than it actually is.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught - SEEDED BROODS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught - SEEDED BROODS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.stratagem.hypersensory-scillia",
+      "name": "HYPERSENSORY SCILLIA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "2CP. Vanguard Onslaught - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: Up to two VANGUARD INVADER units from your army that are within 8\" of that enemy unit, or one other TYRANIDS INFANTRY unit from your army that is within 8\" of that enemy unit. EFFECT: Those selected units can each make a Normal move of up to 6\". RESTRICTIONS: You cannot target units that are within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught - HYPERSENSORY SCILLIA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught - HYPERSENSORY SCILLIA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.stratagem.unseen-lurkers",
+      "name": "UNSEEN LURKERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "1CP. Vanguard Onslaught - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One VANGUARD INVADER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18\" or, if your unit has the Lone Operative ability, if the attacking model is within 6\". Your opponent can select new targets for the attacking unit's attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught - UNSEEN LURKERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught - UNSEEN LURKERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.vanguard-onslaught.stratagem.invisible-hunter",
+      "name": "INVISIBLE HUNTER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.vanguard-onslaught",
+      "description": "1CP. Vanguard Onslaught - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: Up to two VANGUARD INVADER units from your army, or one TYRANIDS INFANTRY unit from your army. EFFECT: Remove the targeted units from the battlefield and place them into Strategic Reserves. RESTRICTIONS: The targeted units must be more than 3\" away from all enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Vanguard Onslaught - INVISIBLE HUNTER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Vanguard Onslaught - INVISIBLE HUNTER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus",
+      "name": "Synaptic Nexus - Synaptic Imperatives",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "At the start of the battle round, you can select one of the Synaptic Imperatives shown below. Until the end of the battle round, that Synaptic Imperative is active for your army and while a TYRANIDS unit from your army is within Synapse Range of your army, it will benefit from it. Each Synaptic Imperative can only be selected once per battle. Synaptic Augmentation: While this unit is within Synapse Range of your army, models in this unit have a 5+ invulnerable save. Surging Vitality: While this unit is within Synapse Range of your army, add 1 to Advance and Charge rolls made for this unit. Goaded to Slaughter: While this unit is within Synapse Range of your army, each time a model in this unit makes a melee attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.enhancement.power-of-the-hive-mind",
+      "name": "Power of the Hive Mind",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "10 pts. TYRANIDS PSYKER model only. Improve the Strength and Armour Penetration characteristics of psychic weapons equipped by the bearer by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.enhancement.psychostatic-disruption",
+      "name": "Psychostatic Disruption",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "30 pts. TYRANIDS SYNAPSE model only. Enemy units that arrive on the battlefield from Reserves cannot be set up within 12\" of the bearer. In addition, once per battle, during the first or second battle round, when your opponent declares that a unit will arrive on the battlefield from Strategic Reserves, the bearer can use this Enhancement. If it does, roll one D6: on a 4+, that enemy unit cannot arrive on the battlefield this turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.enhancement.synaptic-control",
+      "name": "Synaptic Control",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "20 pts. TYRANIDS SYNAPSE model only. Each time an attack is allocated to the bearer, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.enhancement.the-dirgeheart-of-kharis-aura",
+      "name": "The Dirgeheart of Kharis (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "15 pts. TYRANIDS SYNAPSE model only. While an enemy unit is within 9\" of the bearer, worsen that units Leadership characteristic by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.stratagem.the-smothering-shadow",
+      "name": "THE SMOTHERING SHADOW",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "1CP. Synaptic Nexus - Strategic Ploy Stratagem. WHEN: Any phase, just after an enemy unit fails a Battle-shock test. TARGET: One SYNAPSE unit from your army within 12\" of that enemy unit. EFFECT: Roll six D6: for each 3+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus - THE SMOTHERING SHADOW",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus - THE SMOTHERING SHADOW"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.stratagem.synaptic-channelling",
+      "name": "SYNAPTIC CHANNELLING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "1CP. Synaptic Nexus - Battle Tactic Stratagem. WHEN: Command phase. TARGET: One SYNAPSE unit from your army. EFFECT: Until the end of the turn, while a friendly TYRANIDS unit is within 9\" of the selected unit, that unit is within Synapse Range of your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus - SYNAPTIC CHANNELLING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus - SYNAPTIC CHANNELLING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.stratagem.irresistible-will",
+      "name": "IRRESISTIBLE WILL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "1CP. Synaptic Nexus - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One SYNAPSE unit from your army that has not been selected to shoot or fight this phase, and one enemy unit within 24\" of and visible to the SYNAPSE unit. EFFECT: Until the end of the phase, each time a friendly TYRANIDS model makes an attack that targets that enemy unit, if the attacking model's unit is within 6\" of your SYNAPSE unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus - IRRESISTIBLE WILL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus - IRRESISTIBLE WILL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.stratagem.reinforced-hive-node",
+      "name": "REINFORCED HIVE NODE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "1CP. Synaptic Nexus - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One SYNAPSE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus - REINFORCED HIVE NODE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus - REINFORCED HIVE NODE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.stratagem.imperative-dominance",
+      "name": "IMPERATIVE DOMINANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "1CP. Synaptic Nexus - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One TYRANIDS unit from your army that is within Synapse Range of your army. EFFECT: Select one Synaptic Imperative, even if you have already selected that imperative this battle. Until the start of your next Command phase, that Synaptic Imperative is active for your unit instead of any other Synaptic Imperative that is active for your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus - IMPERATIVE DOMINANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus - IMPERATIVE DOMINANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.synaptic-nexus.stratagem.override-instincts",
+      "name": "OVERRIDE INSTINCTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.synaptic-nexus",
+      "description": "1CP. Synaptic Nexus - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One TYRANIDS unit from your army that is within Synapse Range of your army and made a Fall Back move this phase. EFFECT: Your unit is eligible to shoot and declare a charge this turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Synaptic Nexus - OVERRIDE INSTINCTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Synaptic Nexus - OVERRIDE INSTINCTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault",
+      "name": "Subterranean Assault - Surprise Assault",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Each time a TYRANIDS model from your army makes an attack, re-roll a Hit roll of 1. Each time a BURROWER unit from your army is set up on the battlefield from Reserves, place a circular 40mm Tunnel Marker anywhere on the battlefield within 1\" of that unit and more than 3\" horizontally away from all enemy units. In the Reinforcements step of your Movement phase, when you set up a unit on the battlefield from Reserves, you can set that unit up wholly within 9\" of one of your Tunnel Markers and more than 6\" horizontally away from any enemy units. If an enemy model (excluding AIRCRAFT) ends any kind of move within 3\" of one of your Tunnel Markers, that Tunnel Marker is removed from the battlefield. KEYWORDS MAWLOC and TRYGON units from your army have the BURROWER keyword. In the Muster Armies step, you can select up to 2 TRYGON models from your army. The selected units gain the CHARACTER keyword. Designer's Note: This means that the selected models can be given Enhancements and one of them can be selected as your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.enhancement.synaptic-strategy",
+      "name": "Synaptic Strategy",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "15 pts. TYRANIDS model only. Once per battle, you can target the bearer's unit with the Rapid Ingress stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.enhancement.tremor-senses",
+      "name": "Tremor Senses",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "20 pts. TYRANIDS model only. After both players have deployed their armies, select up to three friendly TYRANIDS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.enhancement.vanguard-intellect",
+      "name": "Vanguard Intellect",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "15 pts. TYRANIDS model with the Deep Strike ability only. The bearer's unit can be set up using the Deep Strike ability in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.enhancement.trygon-prime",
+      "name": "Trygon Prime",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "20 pts. TRYGON model only. The bearer gains the SYNAPSE keyword. Improve the Strength and Weapon Skill characteristics of melee weapons equipped by the bearer by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.stratagem.adaptive-optimisation",
+      "name": "ADAPTIVE OPTIMISATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "1CP. Subterranean Assault - Wargear Stratagem. WHEN: Command phase. TARGET: One MAWLOC or TRYGON unit from your army. EFFECT: Until the start of your next Command phase, your unit has the SYNAPSE keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault - ADAPTIVE OPTIMISATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault - ADAPTIVE OPTIMISATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.stratagem.replenishing-swarms",
+      "name": "REPLENISHING SWARMS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "1CP. Subterranean Assault - Wargear Stratagem. WHEN: Your Movement phase. TARGET: One TYRANIDS unit from your army, wholly within 9\" of one or more Tunnel Markers you placed. EFFECT: One model in your unit regains up to D3+1 lost wounds, or you can return up to D3+1 destroyed models with a Wounds characteristic of 1 to your unit, with their full wounds remaining, instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault - REPLENISHING SWARMS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault - REPLENISHING SWARMS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.stratagem.enfilading-emergence",
+      "name": "ENFILADING EMERGENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "1CP. Subterranean Assault - Strategic Ploy Stratagem. WHEN: End of your Movement phase. TARGET: One TYRANIDS unit from your army that was set up as Reinforcements this turn. EFFECT: Until the end of your next Fight phase, weapons equipped by models in your unit have the [SUSTAINED HITS 1] and [IGNORES COVER] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault - ENFILADING EMERGENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault - ENFILADING EMERGENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.stratagem.tunnel-network",
+      "name": "TUNNEL NETWORK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "1CP. Subterranean Assault - Strategic Ploy Stratagem. WHEN: End of your Movement phase. TARGET: One TYRANIDS unit from your army that is wholly within 9\" of one or more of your Tunnel Markers and not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and set it up again, wholly within 9\" of another Tunnel Marker you placed, and more than 6\" horizontally away from all enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault - TUNNEL NETWORK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault - TUNNEL NETWORK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.stratagem.swarming-assault",
+      "name": "SWARMING ASSAULT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "1CP. Subterranean Assault - Strategic Ploy Stratagem. WHEN: Your Charge phase. TARGET: One TYRANIDS MONSTER unit from your army that was set up as Reinforcements this turn. EFFECT: Until the end of the phase, friendly TYRANIDS units within 6\" of your unit can re-roll Charge rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault - SWARMING ASSAULT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault - SWARMING ASSAULT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.subterranean-assault.stratagem.retreat-below",
+      "name": "RETREAT BELOW",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.subterranean-assault",
+      "description": "1CP. Subterranean Assault - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One TYRANIDS unit or up to two BURROWER units from your army that are not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Subterranean Assault - RETREAT BELOW",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Subterranean Assault - RETREAT BELOW"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.ambush-predators",
+      "name": "Ambush Predators - Mindhunger",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.ambush-predators",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly DEATHLEAPER/LICTOR/NEUROLICTOR units have Deep Strike. Friendly LICTOR/NEUROLICTOR units' attacks that target a CHARACTER unit can re-roll hit rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Ambush Predators",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Ambush Predators"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.ambush-predators.enhancement.encircling-horrorsupgrade",
+      "name": "Encircling HorrorsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.ambush-predators",
+      "maximumSelections": 3,
+      "description": "20 pts. NEUROLICTOR/LICTOR/VON RYAN'S LEAPERS unit only. In your opponent's Movement phase, when an enemy unit ends a move within 8\" of this unit, this unit can make a normal move of up to D3+3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Ambush Predators enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Ambush Predators enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.ambush-predators.enhancement.cryptophotaic-camouflageupgrade",
+      "name": "Cryptophotaic CamouflageUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.ambush-predators",
+      "maximumSelections": 3,
+      "description": "15 pts. VON RYAN'S LEAPERS unit only. This unit has -3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Ambush Predators enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Ambush Predators enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.ambush-predators.stratagem.counterpredation",
+      "name": "COUNTERPREDATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.ambush-predators",
+      "description": "1CP. Ambush Predators Stratagem. WHEN: Fight phase, when a friendly DEATHLEAPER/LICTOR/ NEUROLICTOR/VON RYAN'S LEAPERS unit is selected to fight. TARGET: That DEATHLEAPER/LICTOR/NEUROLICTOR/VON RYAN'S LEAPERS unit. EFFECT: Your unit's attacks that target a hidden unit have +1 S and AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Ambush Predators - COUNTERPREDATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Ambush Predators - COUNTERPREDATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.ambush-predators.stratagem.hypersensory-adaptations",
+      "name": "HYPERSENSORY ADAPTATIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.ambush-predators",
+      "description": "1CP. Ambush Predators Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly DEATHLEAPER/LICTOR/NEUROLICTOR/VON RYAN'S LEAPERS unit. EFFECT: Select one visible enemy unit within 12\" of your unit. That enemy unit has +6\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Ambush Predators - HYPERSENSORY ADAPTATIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Ambush Predators - HYPERSENSORY ADAPTATIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.ambush-predators.stratagem.scanner-gheist",
+      "name": "SCANNER GHEIST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.ambush-predators",
+      "description": "1CP. Ambush Predators Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One friendly unengaged DEATHLEAPER/LICTOR/ NEUROLICTOR unit. EFFECT: Place your unit in strategic reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Ambush Predators - SCANNER GHEIST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Ambush Predators - SCANNER GHEIST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.talons-of-the-norn-queen",
+      "name": "Talons of the Norn Queen - Higher Imperatives",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.talons-of-the-norn-queen",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly NORN EMISSARY/NORN ASSIMILATOR units have the following ability: Protean Purpose: (Once per battle, per unit) In your Command phase, you can use this ability. If you do, this unit can make a selection for its Singular Purpose ability (this replaces the previous selection).",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Talons of the Norn Queen",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons of the Norn Queen"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.talons-of-the-norn-queen.enhancement.destabilising-predationupgrade",
+      "name": "Destabilising PredationUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.talons-of-the-norn-queen",
+      "maximumSelections": 3,
+      "description": "20 pts. NORN EMISSARY unit only. This unit's ranged attacks have [ANTI-CHARACTER 2+].",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Talons of the Norn Queen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons of the Norn Queen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.talons-of-the-norn-queen.enhancement.synaptoprescienceupgrade",
+      "name": "SynaptoprescienceUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.talons-of-the-norn-queen",
+      "maximumSelections": 3,
+      "description": "30 pts. NORN ASSIMILATOR unit only. This unit has 4+ InSv.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Talons of the Norn Queen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons of the Norn Queen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.talons-of-the-norn-queen.stratagem.catalytic-biofortification",
+      "name": "CATALYTIC BIOFORTIFICATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.talons-of-the-norn-queen",
+      "description": "1CP. Talons of the Norn Queen Stratagem. WHEN: Any phase, when a friendly NORN ASSIMILATOR unit suffers a mortal wound. TARGET: That NORN ASSIMILATOR unit. EFFECT: Your unit has Feel No Pain 4+ against mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Talons of the Norn Queen - CATALYTIC BIOFORTIFICATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons of the Norn Queen - CATALYTIC BIOFORTIFICATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.talons-of-the-norn-queen.stratagem.lesser-prey",
+      "name": "LESSER PREY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.talons-of-the-norn-queen",
+      "description": "1CP. Talons of the Norn Queen Stratagem. WHEN: Fight phase, when a friendly NORN ASSIMILATOR/NORN EMISSARY unit is selected to fight. TARGET: That NORN ASSIMILATOR/NORN EMISSARY unit. EFFECT: Your unit's melee attacks have +2 S.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Talons of the Norn Queen - LESSER PREY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons of the Norn Queen - LESSER PREY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.talons-of-the-norn-queen.stratagem.tanglestrike-rounds",
+      "name": "TANGLESTRIKE ROUNDS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.talons-of-the-norn-queen",
+      "description": "1CP. Talons of the Norn Queen Stratagem. WHEN: Your Shooting phase, when a friendly NORN ASSIMILATOR unit has shot. TARGET: That NORN ASSIMILATOR unit. EFFECT: Select one enemy unit hit by those attacks. That enemy unit is tethered until the start of your next Command phase: While a unit is tethered, that unit has -2\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Talons of the Norn Queen - TANGLESTRIKE ROUNDS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons of the Norn Queen - TANGLESTRIKE ROUNDS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.warrior-bioform-onslaught",
+      "name": "Warrior Bioform Onslaught - Leader-beasts",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.warrior-bioform-onslaught",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly TYRANID WARRIORS WITH RANGED BIO-WEAPONS/TYRANID WARRIORS WITH MELEE BIO-WEAPONS units have: TYRANID WARRIORS. BATTLELINE. TYRANID WARRIORS/TYRANID PRIME WITH LASH WHIP/WINGED TYRANID PRIME models from your army have 5+ InSv.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Warrior Bioform Onslaught",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Warrior Bioform Onslaught"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.warrior-bioform-onslaught.enhancement.elevated-might",
+      "name": "Elevated Might",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.warrior-bioform-onslaught",
+      "description": "30 pts. WINGED TYRANID PRIME/TYRANID PRIME WITH LASH WHIP model only. This model's melee attacks: Can re-roll wound rolls. Have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Warrior Bioform Onslaught enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Warrior Bioform Onslaught enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.warrior-bioform-onslaught.enhancement.ocular-adaptation",
+      "name": "Ocular Adaptation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.warrior-bioform-onslaught",
+      "description": "20 pts. WINGED TYRANID PRIME/TYRANID PRIME WITH LASH WHIP model only. This unit's melee attacks have +1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Warrior Bioform Onslaught enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Warrior Bioform Onslaught enhancements"
+        }
+      ]
+    },
+    {
+      "id": "tyranids.detachment.warrior-bioform-onslaught.stratagem.alien-physiology",
+      "name": "ALIEN PHYSIOLOGY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.warrior-bioform-onslaught",
+      "description": "1CP. Warrior Bioform Onslaught Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly TYRANID WARRIORS unit. TARGET: That TYRANID WARRIORS unit. EFFECT: Attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Warrior Bioform Onslaught - ALIEN PHYSIOLOGY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Warrior Bioform Onslaught - ALIEN PHYSIOLOGY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.warrior-bioform-onslaught.stratagem.synaptic-micronodes",
+      "name": "SYNAPTIC MICRONODES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.warrior-bioform-onslaught",
+      "description": "1CP. Warrior Bioform Onslaught Stratagem. WHEN: End of your Movement phase. TARGET: One friendly TYRANID WARRIORS unit. EFFECT: Select one objective your unit is controlling. That objective is secured.",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Warrior Bioform Onslaught - SYNAPTIC MICRONODES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Warrior Bioform Onslaught - SYNAPTIC MICRONODES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "tyranids.detachment.warrior-bioform-onslaught.stratagem.parasitic-payload",
+      "name": "PARASITIC PAYLOAD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "tyranids.detachment.warrior-bioform-onslaught",
+      "description": "1CP. Warrior Bioform Onslaught Stratagem. WHEN: Your Shooting phase, when a friendly TYRANID WARRIORS unit is selected to shoot. TARGET: That TYRANID WARRIORS unit. EFFECT: Your unit's ranged attacks have [IGNORE COVER].",
+      "sources": [
+        {
+          "title": "Wahapedia Tyranids Warrior Bioform Onslaught - PARASITIC PAYLOAD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+          "capturedAt": "2026-09-25",
+          "section": "Warrior Bioform Onslaught - PARASITIC PAYLOAD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

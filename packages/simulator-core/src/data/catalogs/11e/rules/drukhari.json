@@ -1,0 +1,1655 @@
+{
+  "factionId": "drukhari",
+  "rules": [
+    {
+      "id": "drukhari.army-rule.power-from-pain",
+      "name": "Power from Pain",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "Pain Abilities All DRUKHARI units have a Pain ability, tagged with the word 'Pain'. Pain abilities only apply to a unit while it is Empowered. If your Army Faction is DRUKHARI, you can Empower units from your army with Pain abilities by spending Pain tokens (see below). Designer's Note: You can also spend Pain tokens to activate additional effects in certain other rules such as Enhancements and Stratagems. Gaining Pain Tokens If your Army Faction is DRUKHARI, you gain Pain tokens as follows: 1 Pain token at the start of your Command phase. 1 Pain token each time an enemy unit is destroyed. 1 Pain token each time an enemy unit fails a Battle-shock test. Each time you gain a Pain token, keep it to one side - this is your Pain token pool. Each time you spend a Pain token, reduce your Pain token pool by the same amount. Empowered Through Pain Each Pain ability will state when you can spend Pain tokens to Empower that unit. When you do, until the end of the phase, that unit is Empowered and all Pain abilities it has take effect. While an Attached unit is Empowered, the Pain abilities of all Leader and Bodyguard units in that unit take effect - you do not need to spend additional Pain tokens to activate each of those Pain abilities. Example: At the start of your Charge phase, you spend 1 Pain token to Empower a unit of Wyches. The unit becomes Empowered, and so its Acrobatic Gladiators ability takes effect until the end of the phase. A Succubus is leading the unit, and so its Lithe Agility ability also takes effect until the end of the phase (no additional Pain token is required to activate that ability as well).",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Power from Pain",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Power from Pain"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.army-rule.corsairs-and-travelling-players",
+      "name": "Corsairs and Travelling Players",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is DRUKHARI, you can include HARLEQUINS and ANHRATHE units in your army, even though they do not have the DRUKHARI Faction keyword. The combined points value of HARLEQUINS and/or ANHRATHE units you can include in your army depends on the battle size, as follows: Incursion: Up to 250 pts Strike Force: Up to 500 pts Onslaught: Up to 750 pts No HARLEQUINS or ANHRATHE models included in your army in this way can be your WARLORD, and they cannot be given Enhancements.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Corsairs and Travelling Players",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsairs and Travelling Players"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders",
+      "name": "Realspace Raiders - Alliance of Agony",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "At the start of the battle, you gain 2 Pain tokens for each of the following combinations your army contains (these do not need to be in the same Attached unit): One or more ARCHON models and one or more KABALITE WARRIORS units. One or more SUCCUBUS models and one or more WYCHES units. One or more HAEMONCULUS models and one or more WRACKS units. Designer's Note: These are all cumulative, so if your army contains at least one of all of the combinations listed above, you start the battle with 6 Pain tokens.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.enhancement.dark-vitality",
+      "name": "Dark Vitality",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "20 pts. DRUKHARI model only. The bearer's unit is always Empowered - you do not need to spend any Pain tokens to activate that unit's Pain abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.enhancement.labyrinthine-cunning",
+      "name": "Labyrinthine Cunning",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "25 pts. ARCHON model only. At the start of your Command phase, if the bearer is on the battlefield, you can do one of the following: Spend 1 Pain token and gain 1CP. Roll one D6: on a 4+, you gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.enhancement.eye-of-spite",
+      "name": "Eye of Spite",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "15 pts. SUCCUBUS model only. Improve the Attacks and Armour Penetration characteristics of the bearer's melee weapons by 1. Each time the bearer's unit is selected to fight, you can spend 1 Pain token; if you do, until the end of the phase, improve the Attacks and Armour Penetration characteristics of the bearer's melee weapons by 2 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.enhancement.crucible-of-malediction",
+      "name": "Crucible of Malediction",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "15 pts. HAEMONCULUS model only. Once per battle, in your Shooting phase, the bearer can use this Enhancement. If it does, you can spend 1 Pain token. Then, each enemy unit within 12\" of the bearer must take a Battle-shock test, subtracting 1 from that test if you spent 1 Pain token. Each time a PSYKER unit fails that test, it suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.stratagem.insensible-to-pain",
+      "name": "INSENSIBLE TO PAIN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "2CP. Realspace Raiders - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One HAEMONCULUS COVENS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders - INSENSIBLE TO PAIN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders - INSENSIBLE TO PAIN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.stratagem.fighting-shadows",
+      "name": "FIGHTING SHADOWS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "1CP. Realspace Raiders - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DRUKHARI unit from your army (excluding HAEMONCULUS COVENS units) that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders - FIGHTING SHADOWS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders - FIGHTING SHADOWS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.stratagem.instinctive-spite",
+      "name": "INSTINCTIVE SPITE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "1CP. Realspace Raiders - Battle Tactic Stratagem. WHEN: Start of your Shooting phase or the start of the Fight phase. TARGET: Up to two DRUKHARI BATTLELINE units from your army, or one other DRUKHARI unit from your army. EFFECT: You can spend 1 Pain token. Until the end of the phase, each time a model in each of those units makes an attack that targets an enemy unit that is Below Half-strength, add 1 to the Hit roll. If you spent 1 Pain token, add 1 to the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders - INSTINCTIVE SPITE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders - INSTINCTIVE SPITE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.stratagem.dark-harvest",
+      "name": "DARK HARVEST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "1CP. Realspace Raiders - Strategic Ploy Stratagem. WHEN: Start of the Fight phase. TARGET: Up to two WRACKS units from your army, or one other DRUKHARI unit from your army. EFFECT: Until the end of the phase, melee weapons equipped by models in each of those units have the [LETHAL HITS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders - DARK HARVEST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders - DARK HARVEST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.stratagem.eager-for-the-kill",
+      "name": "EAGER FOR THE KILL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "1CP. Realspace Raiders - Battle Tactic Stratagem. WHEN: Start of your Movement phase. TARGET: Up to two WYCHES units from your army, or one other DRUKHARI unit from your army, that have not been selected to move this phase. EFFECT: Until the end of the phase, each time one of those units Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6\" to the Move characteristic of models in that unit (this is not cumulative with the REAVERS' Matchless Swiftness ability).",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders - EAGER FOR THE KILL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders - EAGER FOR THE KILL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.realspace-raiders.stratagem.raid-and-fade",
+      "name": "RAID AND FADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.realspace-raiders",
+      "description": "2CP. Realspace Raiders - Strategic Ploy Stratagem. WHEN: End of your Shooting phase. TARGET: Up to two KABALITE WARRIORS units from your army, or one other DRUKHARI unit from your army (excluding SCOURGES and AIRCRAFT). EFFECT: Each of those units can make a Normal move of up to 6\". RESTRICTIONS: You cannot select units that are within Engagement Range of one or more enemy units. Until the end of the turn, those units are not eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Realspace Raiders - RAID AND FADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Realspace Raiders - RAID AND FADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault",
+      "name": "Skysplinter Assault - Rain Of Cruelty",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Each time a DRUKHARI unit from your army disembarks from a TRANSPORT, until the end of the turn: Ranged weapons equipped by models in that disembarking unit have the [ignores cover] ability. Melee weapons equipped by models in that disembarking unit have the [lance] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.enhancement.phantasmal-smoke",
+      "name": "Phantasmal Smoke",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "15 pts. DRUKHARI model only. While the bearer's unit is wholly within 6\" of a friendly DRUKHARI TRANSPORT: Models in the bearer's unit have the Stealth ability. Each time a ranged attack targets the bearer's unit, models in that unit have the Benefit of Cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.enhancement.sadistic-fulcrum",
+      "name": "Sadistic Fulcrum",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "15 pts. DRUKHARI model only. Each time you spend 1 Pain token to Empower the bearer's unit in the Shooting phase, select one friendly DRUKHARI TRANSPORT within 6\" of the bearer's unit; until the end of the phase, each time that TRANSPORT makes an attack, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.enhancement.spiteful-raider",
+      "name": "Spiteful Raider",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "10 pts. DRUKHARI model only. Each time the bearer's unit destroys an enemy unit in the Fight phase, if that enemy unit was within range of one or more objective markers when the bearer's unit was selected to fight, you gain 1 additional Pain token.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.enhancement.nightmare-shroud",
+      "name": "Nightmare Shroud",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "20 pts. DRUKHARI model only. Each time the bearer's unit disembarks from a TRANSPORT, until the end of the turn, enemy units cannot use the Fire Overwatch Stratagem to shoot at the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.stratagem.vicious-blades",
+      "name": "VICIOUS BLADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "1CP. Skysplinter Assault - Strategic Ploy Stratagem. WHEN: Fight phase, just after a DRUKHARI TRANSPORT from your army has selected its targets. TARGET: That TRANSPORT. EFFECT: After your TRANSPORT has fought, select one enemy unit that was the target of one or more of those attacks and roll one D6 for each model embarked within your TRANSPORT, adding 1 to the result if that embarked model is a WRACKS model: for each 5+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault - VICIOUS BLADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault - VICIOUS BLADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.stratagem.wraithlike-retreat",
+      "name": "WRAITHLIKE RETREAT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "1CP. Skysplinter Assault - Strategic Ploy Stratagem. WHEN: End of the Fight phase. TARGET: One DRUKHARI INFANTRY unit from your army that fought this phase. EFFECT: Your unit can make a Normal or Fall Back move, but unless it is a WYCHES unit, it must end that move wholly within 3\" horizontally and 5\" vertically of a friendly DRUKHARI TRANSPORT and must embark within that TRANSPORT at the end of that move (otherwise, it cannot make that move). Your unit can embark within that TRANSPORT in a turn it disembarked from that TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault - WRAITHLIKE RETREAT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault - WRAITHLIKE RETREAT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.stratagem.pounce-on-the-prey",
+      "name": "POUNCE ON THE PREY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "1CP. Skysplinter Assault - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a DRUKHARI INFANTRY unit from your army disembarks from a TRANSPORT that made a Normal move this phase. TARGET: That INFANTRY unit. EFFECT: Your unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault - POUNCE ON THE PREY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault - POUNCE ON THE PREY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.stratagem.skyborne-annihilation",
+      "name": "SKYBORNE ANNIHILATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "1CP. Skysplinter Assault - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One DRUKHARI unit from your army that has not been selected to shoot this phase and that disembarked from a TRANSPORT this turn. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [SUSTAINED HITS 1] ability, or the [SUSTAINED HITS 2] ability if your unit is a KABALITE WARRIORS or HAND OF THE ARCHON unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault - SKYBORNE ANNIHILATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault - SKYBORNE ANNIHILATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.stratagem.swooping-mockery",
+      "name": "SWOOPING MOCKERY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "1CP. Skysplinter Assault - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One DRUKHARI TRANSPORT from your army that is within 8\" of that enemy unit. EFFECT: Your TRANSPORT can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault - SWOOPING MOCKERY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault - SWOOPING MOCKERY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.skysplinter-assault.stratagem.night-shield",
+      "name": "NIGHT SHIELD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.skysplinter-assault",
+      "description": "1CP. Skysplinter Assault - Wargear Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One DRUKHARI VEHICLE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Skysplinter Assault - NIGHT SHIELD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Skysplinter Assault - NIGHT SHIELD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite",
+      "name": "Spectacle of Spite - Combat Drugs",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "At the start of your Command phase, select which Combat Drugs will be active for your army until the start of your next Command phase. To do so, either select one from the list below (you cannot select the same Combat Drug more than once per battle), or randomly select two by rolling two D6. When doing so randomly, Combat Drugs you have previously selected can become active again, but if you randomly select one that is already active for your army, it has no additional effect. 1. Adrenalight Add 1 to the Attacks characteristic of melee weapons equipped by WYCH CULT models from your army. 2. Hypex Add 2\" to the Move characteristic of WYCH CULT models from your army. 3. Serpentin Improve the Weapon Skill characteristic of melee weapons equipped by WYCH CULT models from your army by 1. 4. Painbringer Add 1 to the Toughness characteristic of WYCH CULT models from your army. 5. Grave Lotus Add 1 to the Strength characteristic of melee weapons equipped by WYCH CULT models from your army. 6. Splintermind Improve the Leadership characteristic of WYCH CULT models from your army by 1, and improve the Ballistic Skill characteristic of ranged weapons equipped by WYCH CULT models from your army by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.enhancement.pharmacophex",
+      "name": "Pharmacophex",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "15 pts. SUCCUBUS model only. At the start of your Command phase, after selecting which Combat Drugs will be active for your army, roll one D6 and consult the Combat Drugs list. The result rolled applies to the bearer's unit until the start of your next Command phase in addition to any other Combat Drugs that are active for your army. If you randomly select one that is already active for your army, it has no additional effect.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.enhancement.chronoshard",
+      "name": "Chronoshard",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "15 pts. SUCCUBUS model only. Once per battle, at the start of the Fight phase, the bearer can use this Enhancement. If it does, until the end of the phase, models in the bearer's unit have the Fights First ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.enhancement.periapt-of-torments",
+      "name": "Periapt of Torments",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "25 pts. SUCCUBUS model only. Enemy units cannot use the Fire Overwatch Stratagem to shoot at the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.enhancement.morghennas-curse",
+      "name": "Morghenna's Curse",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "20 pts. SUCCUBUS model only. Improve the Armour Penetration and Damage characteristics of the bearers melee weapons by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.stratagem.berserk-fugue",
+      "name": "BERSERK FUGUE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "2CP. Spectacle of Spite - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One WYCH CULT unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite - BERSERK FUGUE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite - BERSERK FUGUE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.stratagem.deadly-debut",
+      "name": "DEADLY DEBUT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "1CP. Spectacle of Spite - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One DRUKHARI unit from your army that made a Charge move this turn and has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [LETHAL HITS] ability. If your unit is a WYCHES unit, until the end of the phase, improve the Armour Penetration characteristic of melee weapons equipped by models in your unit by 1 as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite - DEADLY DEBUT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite - DEADLY DEBUT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.stratagem.feigned-weakness",
+      "name": "FEIGNED WEAKNESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "1CP. Spectacle of Spite - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a DRUKHARI unit from your army Falls Back. TARGET: That DRUKHARI unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite - FEIGNED WEAKNESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite - FEIGNED WEAKNESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.stratagem.preternatural-agility",
+      "name": "PRETERNATURAL AGILITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "1CP. Spectacle of Spite - Strategic Ploy Stratagem. WHEN: Start of your Movement or Charge phase. TARGET: One WYCH CULT unit from your army. EFFECT: Until the end of the phase, each time your unit makes a Normal, Advance or Charge move, you can ignore any or all modifiers to its Move characteristic and to Advance and Charge rolls made for it and, until the end of the turn, each time a model in your unit makes such a move, it can move horizontally through models (when doing so, such a model can move within Engagement Range of such models but cannot end a Normal or Advance move within Engagement Range of them).",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite - PRETERNATURAL AGILITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite - PRETERNATURAL AGILITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.stratagem.a-challenge-met",
+      "name": "A CHALLENGE MET",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "2CP. Spectacle of Spite - Battle Tactic Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a fall-back move. TARGET: One friendly unengaged WYCH CULT unit that is within 6\" of that enemy unit. EFFECT: Declare a charge with your unit. When selecting charge targets, you can only select enemy units that made a fall-back move this phase and are within the maximum distance.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite - A CHALLENGE MET",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite - A CHALLENGE MET"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.spectacle-of-spite.stratagem.acrobatic-display",
+      "name": "ACROBATIC DISPLAY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.spectacle-of-spite",
+      "description": "1CP. Spectacle of Spite - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One WYCH CULT unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 5+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Spectacle of Spite - ACROBATIC DISPLAY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Spite - ACROBATIC DISPLAY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie",
+      "name": "Covenite Coterie - Stitchflesh Abominations",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time an attack targets a HAEMONCULUS COVENS unit from your army, if the Strength characteristic of that attack is greater than the Toughness characteristic of your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.enhancement.master-regenesist",
+      "name": "Master Regenesist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "25 pts. HAEMONCULUS model only. Each time the bearer uses its Fleshcraft ability, you can return up to D3+3 destroyed Bodyguard models to the bearer's unit instead of D3+1.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.enhancement.master-nemesine",
+      "name": "Master Nemesine",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "5 pts. HAEMONCULUS model only. The bearer's weapons have the [anti-beast 2+] and [anti-monster 4+] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.enhancement.master-artisan",
+      "name": "Master Artisan",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "20 pts. HAEMONCULUS model only. Add 1 to the bearers Wounds characteristic and add 1 to the Toughness characteristic of models in the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.enhancement.master-repugnomancer-aura",
+      "name": "Master Repugnomancer (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "15 pts. HAEMONCULUS model only. Add 3\" to the range of the bearer's Fear Incarnate ability, and each time a friendly DRUKHARI unit within 9\" of the bearer fails a Battle-shock test or is destroyed, roll one D6: on a 4+, you gain 1 Pain token.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.stratagem.postmortality",
+      "name": "POSTMORTALITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "1CP. Covenite Coterie - Epic Deed Stratagem. WHEN: Any phase. TARGET: One HAEMONCULUS model from your army that was just destroyed. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Spend 1-3 Pain tokens. At the end of the phase, set up the destroyed model on the battlefield, unengaged and as close as possible to where it was destroyed. That model is not part of an attached unit and its unit has a starting strength of 1. That model has a number of wounds remaining equal to the number of Pain tokens you just spent. RESTRICTION: You cannot use this Stratagem if you have 0 Pain tokens, and you cannot target the same HAEMONCULUS model with this Stratagem more than once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie - POSTMORTALITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie - POSTMORTALITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.stratagem.symphony-of-suffering",
+      "name": "SYMPHONY OF SUFFERING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "1CP. Covenite Coterie - Epic Deed Stratagem. WHEN: Fight phase, just after a DRUKHARI unit from your army destroys an enemy unit. TARGET: That DRUKHARI unit. EFFECT: Each enemy unit within 9\" of and visible to your unit must take a Battle-shock test, subtracting 1 from that test if your unit is a HAEMONCULUS COVENS unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie - SYMPHONY OF SUFFERING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie - SYMPHONY OF SUFFERING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.stratagem.poisoners-art",
+      "name": "POISONER'S ART",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "1CP. Covenite Coterie - Epic Deed Stratagem. WHEN: Fight phase, just after a HAEMONCULUS COVENS unit from your army has fought. TARGET: That HAEMONCULUS COVENS unit. EFFECT: Select one enemy unit (excluding VEHICLES) hit by one or more of your unit's attacks this phase. Until the end of the battle, that enemy unit is poisoned. At the start of each Command phase, roll one D6 for each poisoned unit on the battlefield: on a 4+, that unit suffers D3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie - POISONER'S ART",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie - POISONER'S ART"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.stratagem.distillers-of-fear",
+      "name": "DISTILLERS OF FEAR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "2CP. Covenite Coterie - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One HAEMONCULUS COVENS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit that is Battle-shocked, that attack has the [DEVASTATING WOUNDS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie - DISTILLERS OF FEAR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie - DISTILLERS OF FEAR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.stratagem.connoisseurs-of-pain",
+      "name": "CONNOISSEURS OF PAIN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "1CP. Covenite Coterie - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DRUKHARI unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Spend 1 Pain token. Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1. At the end of the phase, if your unit is still on the battlefield and it is a HAEMONCULUS COVENS unit, you gain 1 Pain token.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie - CONNOISSEURS OF PAIN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie - CONNOISSEURS OF PAIN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.covenite-coterie.stratagem.enfolding-nightmare",
+      "name": "ENFOLDING NIGHTMARE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.covenite-coterie",
+      "description": "1CP. Covenite Coterie - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One HAEMONCULUS COVENS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Your unit can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Covenite Coterie - ENFOLDING NIGHTMARE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Covenite Coterie - ENFOLDING NIGHTMARE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel",
+      "name": "Kabalite Cartel - Murderous Agenda",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "At the start of the first battle round, select one of the Contracts below, then select one unit from your opponent's army that matches the 'Contract' description in that Contract. Until that Contract is completed, that unit is your Contract unit and KABAL and BLADES FOR HIRE units from your army have the ability stated in that Contract. At the start of your Command phase, if your Contract unit is destroyed, that Contract is completed and you gain 3 Pain tokens. Trophy Hunters Contract: One CHARACTER unit. Ability: Each time a KABAL or BLADES FOR HIRE model in this unit makes an attack that targets the Contract unit, that attack has the [precision] ability. Sow Fear and Terror Contract: One INFANTRY or MOUNTED unit (excluding units containing only CHARACTER models). At the start of your Command phase, this Contract is completed if all non-CHARACTER models in that unit are destroyed. Ability: Each time a KABAL or BLADES FOR HIRE model in this unit makes an attack that targets an INFANTRY or MOUNTED unit, that attack has the [sustained hits 1] ability. Show of Strength Contract: One MONSTER or VEHICLE unit. Ability: Each time a KABAL or BLADES FOR HIRE model in this unit makes an attack that targets a MONSTER or VEHICLE unit, that attack has the [lethal hits] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.enhancement.leechbite-plate",
+      "name": "Leechbite Plate",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "5 pts. ARCHON model only. The bearer has a Save characteristic of 3+. At the start of either player's Command phase, you can spend 1 Pain token: if you do, the bearer regains all of its lost wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.enhancement.webway-awl",
+      "name": "Webway Awl",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "25 pts. ARCHON model only. Models in the bearer's unit have the Deep Strike ability, and you can target the bearer's unit with the Rapid Ingress Stratagem for 0CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.enhancement.informant-network",
+      "name": "Informant Network",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "30 pts. ARCHON model only. At the start of the Declare Battle Formations step, select up to three KABALITE WARRIORS and/or HAND OF THE ARCHON units from your army; those units gain the Infiltrators ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.enhancement.towering-arrogance",
+      "name": "Towering Arrogance",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "20 pts. ARCHON model only. While the bearer is leading a unit, improve the Leadership and Objective Control characteristics of models in that unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.stratagem.double-cross",
+      "name": "DOUBLE-CROSS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "1CP. Kabalite Cartel - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One KABAL or BLADES FOR HIRE unit from your army that was selected as the target of one or more of the attacking unit's attacks, and one friendly DRUKHARI unit (excluding VEHICLES). EFFECT: Until the end of the phase, each time you would allocate an attack to a model in your KABAL or BLADES FOR HIRE unit, if your DRUKHARI unit is within Engagement Range of the attacking model, no saving throw is made for that attack; instead, your DRUKHARI unit suffers a number of mortal wounds equal to the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel - DOUBLE-CROSS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel - DOUBLE-CROSS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.stratagem.taken-alive",
+      "name": "TAKEN ALIVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "1CP. Kabalite Cartel - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One DRUKHARI unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Hit roll. If your Contract unit is destroyed as a result of those attacks, every unit in your opponent's army must take a Battle-shock test. You cannot gain more than 3 Pain tokens as a result of failed Battle-shock tests caused by this Stratagem.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel - TAKEN ALIVE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel - TAKEN ALIVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.stratagem.tailored-toxins",
+      "name": "TAILORED TOXINS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "1CP. Kabalite Cartel - Epic Deed Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One KABAL or BLADES FOR HIRE unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets your Contract unit, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel - TAILORED TOXINS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel - TAILORED TOXINS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.stratagem.enemies-without-number",
+      "name": "ENEMIES WITHOUT NUMBER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "1CP. Kabalite Cartel - Epic Deed Stratagem. WHEN: Your Command phase, just after you complete a Contract. TARGET: One ARCHON WARLORD from your army. EFFECT: Select one new Contract (this can be one you have already completed), then select one unit from your opponent's army that is on the battlefield and matches the 'Contract' description in that Contract. Until that Contract is completed, that unit is your Contract unit and the Murderous Agenda Detachment rule applies as normal.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel - ENEMIES WITHOUT NUMBER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel - ENEMIES WITHOUT NUMBER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.stratagem.making-a-point",
+      "name": "MAKING A POINT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "1CP. Kabalite Cartel - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One KABALITE WARRIORS or HAND OF THE ARCHON unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, improve the Ballistic Skill and Armour Penetration characteristics of ranged weapons equipped by models in your unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel - MAKING A POINT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel - MAKING A POINT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-cartel.stratagem.deadly-deceivers",
+      "name": "DEADLY DECEIVERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-cartel",
+      "description": "1CP. Kabalite Cartel - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One KABAL or BLADES FOR HIRE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Cartel - DEADLY DECEIVERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Cartel - DEADLY DECEIVERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager",
+      "name": "Reaper's Wager - Callous Competition",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "At the start of the battle, DRUKHARI units from your army are winning the wager. Each time a DRUKHARI unit from your army destroys an enemy unit, DRUKHARI units from your army are winning the wager. Each time a HARLEQUINS unit from your army destroys an enemy unit, HARLEQUIN units from your army are winning the wager. While DRUKHARI units from your army are winning the wager, HARLEQUIN units from your army are losing the wager, and vice versa. Each time a DRUKHARI or HARLEQUINS model from your army makes an attack, if that model's unit is winning the wager, re-roll a Hit roll of 1. If that model's unit is losing the wager, re-roll a Hit roll of 1 and re-roll a Wound roll of 1 instead. HARLEQUINS You can include HARLEQUINS units in your army (see Codex: Aeldari). The combined points cost of such units depends on your battle size: Incursion: Up to 500 pts Strike Force: Up to 1000 pts Onslaught: Up to 1500 pts No HARLEQUINS models from your army can be your WARLORD. If you select this Detachment, you cannot use the Corsairs and Travelling Players army rule.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.enhancement.archraider",
+      "name": "Archraider",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "15 pts. HARLEQUINS or DRUKHARI model only. In the Declare Battle Formations step, if the bearer starts the battle embarked within a DEDICATED TRANSPORT, that DEDICATED TRANSPORT has the Scouts 9\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.enhancement.webway-walker",
+      "name": "Webway Walker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "15 pts. HARLEQUINS or DRUKHARI model only. Models in the bearer's unit have the Deep Strike ability. Each time the bearer's unit is set up on the battlefield using the Deep Strike ability, if that unit is currently losing the wager, until the end of the turn, you can re-roll Charge rolls made for that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.enhancement.reapers-cowl",
+      "name": "Reaper's Cowl",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "25 pts. HARLEQUINS model only. Models in the bearer's unit have the Stealth and Infiltrators abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.enhancement.conductor-of-torment",
+      "name": "Conductor of Torment",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "20 pts. DRUKHARI model only. In your Command phase, you can do one of the following: If your DRUKHARI units are currently losing the wager, you can gain 1 Pain token. If you do, DRUKHARI units from your army are now winning the wager. If your DRUKHARI units are currently winning the wager, you can discard 1 Pain token. If you do, HARLEQUINS units from your army are now winning the wager.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.stratagem.malicious-frenzy",
+      "name": "MALICIOUS FRENZY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "1CP. Reaper's Wager - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One DRUKHARI or HARLEQUINS unit from your army that has not been selected to shoot or fight this phase. EFFECT: Select [LETHAL HITS] or [SUSTAINED HITS 1]. Until the end of the phase, weapons equipped by models in your unit have the selected ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager - MALICIOUS FRENZY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager - MALICIOUS FRENZY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.stratagem.fateful-role",
+      "name": "FATEFUL ROLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "1CP. Reaper's Wager - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One DRUKHARI or HARLEQUINS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 to the result if that unit is losing the wager: on a 4+, do not remove it from play. That destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager - FATEFUL ROLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager - FATEFUL ROLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.stratagem.murderers-circus",
+      "name": "MURDERER'S CIRCUS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "1CP. Reaper's Wager - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One DRUKHARI or HARLEQUINS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager - MURDERER'S CIRCUS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager - MURDERER'S CIRCUS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.stratagem.shorten-the-odds",
+      "name": "SHORTEN THE ODDS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "1CP. Reaper's Wager - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a DRUKHARI or HARLEQUINS unit from your army has Advanced. TARGET: That unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager - SHORTEN THE ODDS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager - SHORTEN THE ODDS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.stratagem.scintillating-tempo",
+      "name": "SCINTILLATING TEMPO",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "1CP. Reaper's Wager - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase, just after a DRUKHARI or HARLEQUINS unit from your army is selected to make a Normal, Advance or Fall Back move, is set up on the battlefield, or declares a charge. TARGET: That unit. EFFECT: Until the end of the turn, enemy units cannot use the Fire Overwatch Stratagem to shoot at your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager - SCINTILLATING TEMPO",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager - SCINTILLATING TEMPO"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.reapers-wager.stratagem.dance-macabre",
+      "name": "DANCE MACABRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.reapers-wager",
+      "description": "2CP. Reaper's Wager - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One DRUKHARI INFANTRY or HARLEQUINS INFANTRY unit from your army that is within 8\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to D6\". If your unit is currently losing the wager, it can make a Normal move of up to 6\" instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Reaper's Wager - DANCE MACABRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Reaper's Wager - DANCE MACABRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.exhibition-of-slaughter",
+      "name": "Exhibition of Slaughter - Exacting Cruelty",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.exhibition-of-slaughter",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly WYCH CULT units' melee attacks have [LETHAL HITS: non-MONSTER/VEHICLE]. This detachment has the WYCH CULT tag and cannot be taken with another WYCH CULT detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Exhibition of Slaughter",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Exhibition of Slaughter"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.exhibition-of-slaughter.enhancement.periapt-of-torments",
+      "name": "Periapt of Torments",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.exhibition-of-slaughter",
+      "description": "20 pts. SUCCUBUS model only. Enemy units cannot target this unit with snap shooting attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Exhibition of Slaughter enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Exhibition of Slaughter enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.exhibition-of-slaughter.enhancement.hyperstimm-trafficker",
+      "name": "Hyperstimm Trafficker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.exhibition-of-slaughter",
+      "description": "20 pts. SUCCUBUS model only. This unit has +1 T.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Exhibition of Slaughter enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Exhibition of Slaughter enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.exhibition-of-slaughter.stratagem.planned-strikes",
+      "name": "PLANNED STRIKES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.exhibition-of-slaughter",
+      "description": "1CP. Exhibition of Slaughter Stratagem. WHEN: Fight phase, when a friendly WYCH CULT unit is selected to fight. TARGET: That WYCH CULT unit. EFFECT: Your unit's melee attacks have [LETHAL HITS].",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Exhibition of Slaughter - PLANNED STRIKES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Exhibition of Slaughter - PLANNED STRIKES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.exhibition-of-slaughter.stratagem.sculpting-the-stage",
+      "name": "SCULPTING THE STAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.exhibition-of-slaughter",
+      "description": "1CP. Exhibition of Slaughter Stratagem. WHEN: Your Movement phase, when a friendly WYCH CULT unit is selected to make an advance/fall-back move. TARGET: That WYCH CULT unit. EFFECT: That move does not prevent your unit from being eligible to start an action.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Exhibition of Slaughter - SCULPTING THE STAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Exhibition of Slaughter - SCULPTING THE STAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.exhibition-of-slaughter.stratagem.acrobatic-display",
+      "name": "ACROBATIC DISPLAY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.exhibition-of-slaughter",
+      "description": "1CP. Exhibition of Slaughter Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly WYCH CULT unit. TARGET: That WYCH CULT unit. EFFECT: Your unit has 5+ InSv.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Exhibition of Slaughter - ACROBATIC DISPLAY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Exhibition of Slaughter - ACROBATIC DISPLAY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-agonysts",
+      "name": "Kabalite Agonysts - Contracted Harvest",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-agonysts",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly BLADES FOR HIRE/KABAL units' ranged attacks have [SUSTAINED HITS 1: non-MONSTER/VEHICLE]. This detachment has the KABAL tag and cannot be taken with another KABAL detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Agonysts",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Agonysts"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-agonysts.enhancement.towering-arrogance",
+      "name": "Towering Arrogance",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-agonysts",
+      "description": "15 pts. ARCHON model only. This unit has: +1 Ld and OC.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Agonysts enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Agonysts enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-agonysts.enhancement.contempt-for-rivals",
+      "name": "Contempt for Rivals",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-agonysts",
+      "description": "20 pts. ARCHON model only. This unit's attacks have [PRECISION].",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Agonysts enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Agonysts enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-agonysts.stratagem.prioritised-victim",
+      "name": "PRIORITISED VICTIM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-agonysts",
+      "description": "1CP. Kabalite Agonysts Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly BLADES FOR HIRE/KABAL unit targets a CHARACTER unit. TARGET: That BLADES FOR HIRE/KABAL unit. EFFECT: Your unit's attacks that target a CHARACTER unit can: Re-roll hit rolls of 1. Re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Agonysts - PRIORITISED VICTIM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Agonysts - PRIORITISED VICTIM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-agonysts.stratagem.shadows-reach",
+      "name": "SHADOWS' REACH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-agonysts",
+      "description": "1CP. Kabalite Agonysts Stratagem. WHEN: Your Shooting phase, when a friendly BLADES FOR HIRE/KABAL unit has shot. TARGET: That BLADES FOR HIRE/KABAL unit. EFFECT: Those attacks do not prevent your unit from being hidden.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Agonysts - SHADOWS' REACH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Agonysts - SHADOWS' REACH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.kabalite-agonysts.stratagem.killers-from-the-dark-spires",
+      "name": "KILLERS FROM THE DARK SPIRES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.kabalite-agonysts",
+      "description": "1CP. Kabalite Agonysts Stratagem. WHEN: Your Shooting phase, when a friendly KABALITE WARRIORS unit is selected to shoot. TARGET: That KABALITE WARRIORS unit. EFFECT: Your unit's ranged attacks have [IGNORES COVER].",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Kabalite Agonysts - KILLERS FROM THE DARK SPIRES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Kabalite Agonysts - KILLERS FROM THE DARK SPIRES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.tools-of-torment",
+      "name": "Tools of Torment - Darkest Artifice",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.tools-of-torment",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Attacks that target friendly CRONOS/TALOS units with a S greater than that unit's T have -1 to wound rolls. This detachment has the COVENS tag and cannot be taken with another COVENS detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Tools of Torment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Tools of Torment"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.tools-of-torment.enhancement.gnarlskin-experimentor",
+      "name": "Gnarlskin Experimentor",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.tools-of-torment",
+      "description": "20 pts. HAEMONCULUS model only. Attacks that target this unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Tools of Torment enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Tools of Torment enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.tools-of-torment.enhancement.elixir-of-the-corpse-courtsupgrade",
+      "name": "Elixir of the Corpse CourtsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.tools-of-torment",
+      "maximumSelections": 3,
+      "description": "15 pts. CRONOS/TALOS unit only. This unit has 5+ InSv.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Tools of Torment enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Tools of Torment enhancements"
+        }
+      ]
+    },
+    {
+      "id": "drukhari.detachment.tools-of-torment.stratagem.salting-the-wound",
+      "name": "SALTING THE WOUND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.tools-of-torment",
+      "description": "1CP. Tools of Torment Stratagem. WHEN: Fight phase, when a friendly CRONOS/TALOS unit is selected to fight. TARGET: That CRONOS/TALOS unit. EFFECT: Your unit's attacks that target a battle-shocked unit have [DEVASTATING WOUNDS].",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Tools of Torment - SALTING THE WOUND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Tools of Torment - SALTING THE WOUND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.tools-of-torment.stratagem.dividends-of-agony",
+      "name": "DIVIDENDS OF AGONY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.tools-of-torment",
+      "description": "1CP. Tools of Torment Stratagem. WHEN: Fight phase, when a friendly HAEMONCULUS COVENS unit destroys an enemy unit. TARGET: That HAEMONCULUS COVENS unit. EFFECT: Select one visible enemy unit within 12\" of your unit. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Tools of Torment - DIVIDENDS OF AGONY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Tools of Torment - DIVIDENDS OF AGONY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "drukhari.detachment.tools-of-torment.stratagem.urgent-metamorphosis",
+      "name": "URGENT METAMORPHOSIS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "drukhari.detachment.tools-of-torment",
+      "description": "1CP. Tools of Torment Stratagem. WHEN: Your Movement phase, when a friendly HAEMONCULUS COVENS unit is selected to make a fall-back move. TARGET: That HAEMONCULUS COVENS unit. EFFECT: That move does not prevent your unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Drukhari Tools of Torment - URGENT METAMORPHOSIS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+          "capturedAt": "2026-09-25",
+          "section": "Tools of Torment - URGENT METAMORPHOSIS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

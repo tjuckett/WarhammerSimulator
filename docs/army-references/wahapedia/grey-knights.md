@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/grey-knights/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/grey-knights/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -82,12 +82,17 @@
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | Black Blade of Antwyr | devastating wounds precision | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Champion of the Order of Purifiers (Psychic): While this model is leading a unit, add 1 to the Attacks characteristic of Purifying Flame weapons equipped by models in that unit.
-  Foresight (Psychic): Each time this model makes an attack that targets a CHARACTER unit, you can re-roll the Hit roll.
+- Foresight (Psychic): Each time this model makes an attack that targets a CHARACTER unit, you can re-roll the Hit roll.
 
 #### Unit Composition
 - 1 Castellan Crowe - EPIC HERO
@@ -123,14 +128,19 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | Malleus Argyrum | psychic | Melee | 5 | 2+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Sanctuary (Psychic):
   - This unit has Stealth.
   - Melee attacks that target this unit have 1 to hit rolls.
-  Hammer Aflame (Psychic): Each time this model's unit is selected to fight, you can select one enemy unit within Engagement Range of this model's unit and roll one D6: on a 2-3, that enemy unit suffers 1 mortal wound; on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
+- Hammer Aflame (Psychic): Each time this model's unit is selected to fight, you can select one enemy unit within Engagement Range of this model's unit and roll one D6: on a 2-3, that enemy unit suffers 1 mortal wound; on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
 - 1 Grand Master Voldus - EPIC HERO
@@ -169,12 +179,23 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 4 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- This model's storm bolter can be replaced with one of the following:
+  - 1 incinerator
+  - 1 psilencer
+  - 1 psycannon
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Hammerhand (Psychic): While this model is leading a unit, melee weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Eye of Judgement (Psychic): Each time this model makes an attack, you can re-roll the Wound roll.
+- Eye of Judgement (Psychic): Each time this model makes an attack, you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Brother-Captain
@@ -241,12 +262,17 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | precision psychic | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Clarion of Haste (Psychic): While this model is leading a unit, that unit is eligible to declare a charge in a turn in which it Advanced.
-  Inspiring Exemplar: Each time this model destroys an enemy CHARACTER model in the Fight phase, you gain 1CP and until the end of the battle, add 1 to the Attacks characteristic of its Nemesis force weapon.
+- Inspiring Exemplar: Each time this model destroys an enemy CHARACTER model in the Fight phase, you gain 1CP and until the end of the battle, add 1 to the Attacks characteristic of its Nemesis force weapon.
 
 #### Unit Composition
 - 1 Brotherhood Champion
@@ -307,12 +333,17 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Zealous Path: While this model is leading a unit, you can re-roll Charge rolls made for that unit.
-  Litanies of Sanctity: Once per battle, at the start of any phase, you can select one friendly GREY KNIGHTS unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
+- Litanies of Sanctity: Once per battle, at the start of any phase, you can select one friendly GREY KNIGHTS unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Brotherhood Chaplain
@@ -381,12 +412,22 @@ GREY KNIGHTS
 | ranged | -- | Vortex of Doom | blast psychic | 18" | D6+3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 4 | 2+ | 6 | -1 | 2 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-weapon
+  - 1 storm bolter
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Sanctic Hood: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks.
-  Haloed in Soulfire (Psychic): While this model is leading a unit, that unit can only be selected as the target of a ranged attack if the attacking model is within 18".
+- Haloed in Soulfire (Psychic): While this model is leading a unit, that unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 #### Unit Composition
 - 1 Brotherhood Librarian
@@ -456,13 +497,18 @@ GREY KNIGHTS
 | melee | -- | Omnissian power axe | -- | Melee | 4 | 3+ | 6 | -2 | 2 |
 | melee | -- | Servo-arms | extra attacks | Melee | 1 | 3+ | 8 | -2 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Techmarine: While this model is within 3" of one or more friendly GREY KNIGHTS VEHICLE units, this model has the Lone Operative ability.
-  Blessing of the Omnissiah: In your Command phase, you can select one friendly GREY KNIGHTS VEHICLE model within 3" of this model. That model regains up to D3 lost wounds and, until the start of your next Command phase, each time that VEHICLE model makes an attack, add 1 to the Hit roll. Each model can only be selected for this ability once per turn.
-  Guardians of the Machine: Each time an enemy unit ends a charge move engaged with one or more friendly GREY KNIGHTS VEHICLE units and within 6" of this unit, you can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Blessing of the Omnissiah: In your Command phase, you can select one friendly GREY KNIGHTS VEHICLE model within 3" of this model. That model regains up to D3 lost wounds and, until the start of your next Command phase, each time that VEHICLE model makes an attack, add 1 to the Hit roll. Each model can only be selected for this ability once per turn.
+- Guardians of the Machine: Each time an enemy unit ends a charge move engaged with one or more friendly GREY KNIGHTS VEHICLE units and within 6" of this unit, you can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -529,12 +575,23 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- This model's storm bolter can be replaced with one of the following:
+  - 1 incinerator
+  - 1 psilencer
+  - 1 psycannon
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Gate of Infinity
 - Warrior Strategist: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Might of Titan (Psychic): Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks and Strength characteristics of melee weapons equipped by this model.
+- Might of Titan (Psychic): Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks and Strength characteristics of melee weapons equipped by this model.
 
 #### Unit Composition
 - 1 Grand Master
@@ -610,12 +667,30 @@ GREY KNIGHTS
 | melee | -- | Nemesis greatsword - sweep | psychic | Melee | 10 | 2+ | 5 | -1 | 1 |
 | melee | -- | Nemesis mace | anti-character 2+ precision psychic | Melee | 5 | 2+ | 6 | -3 | 3 |
 
+#### Wargear options
+- This model's dreadfists can be replaced with one of the following:
+  - 1 Nemesis daemon greathammer
+  - 1 Nemesis flail
+  - 1 Nemesis greatsword
+  - 1 Nemesis mace
+- This model can be equipped with up to two of the following, but cannot take duplicates:
+  - 1 gatling psilencer
+  - 1 heavy incinerator
+  - 1 heavy psycannon
+  - 1 sublimator
+- This model can be equipped with 1 fragstorm grenade launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Gate of Infinity
 - Surge of Wrath (Psychic): Each time this model makes a melee attack that targets a MONSTER or VEHICLE unit, you can re-roll the Hit roll, you can re-roll the Wound roll and you can re-roll the Damage roll.
-  Warrior Strategist: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
+- Warrior Strategist: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Grand Master in Nemesis Dreadknight
@@ -676,10 +751,21 @@ GREY KNIGHTS
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Dreadnought combat weapon | -- | Melee | 5 | 3+ | 12 | -2 | 3 |
 
+#### Wargear options
+- This model's assault cannon can be replaced with one of the following:
+  - 1 heavy plasma cannon
+  - 1 twin lascannon
+- This model's storm bolter can be replaced with 1 heavy flamer.
+
+#### Core Abilities
+- Deadly Demise 1
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Deep Strike
-- FACTION: Gate of Infinity
 - Guidance of the Ancients (Psychic): In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a GREY KNIGHTS model from your army makes an attack that targets that unit, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -734,13 +820,27 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Terminator's storm bolter can be replaced with one of the following:
+  - 1 incinerator
+  - 1 psilencer
+  - 1 psycannon
+- 1 Terminator can have its storm bolter replaced with 1 Apothecary's narthecium.
+- 1 Terminator's storm bolter can be replaced with one of the following:
+  - 1 incinerator and 1 Ancient's banner
+  - 1 psilencer and 1 Ancient's banner
+  - 1 psycannon and 1 Ancient's banner
+  - 1 storm bolter and 1 Ancient's banner*
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Gate of Infinity
 - Force Edge (Psychic): Each time a model in this unit makes a melee attack that targets a unit (excluding MONSTERS and VEHICLES), improve the Armour Penetration characteristic of that attack by 1.
-
-#### Wargear Abilities
 - Ancient's Banner: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 - Apothecary's Narthecium: In your Command phase, if the bearer is not destroyed, you can return 1 destroyed model (excluding CHARACTERS) to the bearer's unit.
 
@@ -782,10 +882,21 @@ GREY KNIGHTS
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Grey Knight's storm bolter and Nemesis force weapon can be replaced with one of the following:
+  - 1 incinerator and 1 close combat weapon
+  - 1 psilencer and 1 close combat weapon
+  - 1 psycannon and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+- Scouts 6"
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Scouts 6"
-- FACTION: Gate of Infinity
 - Sanctifying Ritual (Psychic): At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
 
 #### Unit Composition
@@ -822,17 +933,24 @@ GREY KNIGHTS
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+- This model's twin heavy bolter can be replaced with 1 twin lascannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Fire Focus: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.
+
+#### Transport
+- This model has a transport capacity of 6 GREY KNIGHTS INFANTRY models. It cannot transport TERMINATOR models.
 
 #### Unit Composition
 - 1 Razorback
   This model is equipped with: twin heavy bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 6 GREY KNIGHTS INFANTRY models. It cannot transport TERMINATOR models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -861,17 +979,24 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 additional storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
 - Truesilver Aegis (Aura): While a friendly GREY KNIGHTS unit is wholly within 6" of this unit, models in that unit have the Feel No Pain 6+ ability against mortal wounds.
+
+#### Transport
+- This model has a transport capacity of 12 GREY KNIGHTS INFANTRY models. It cannot transport TERMINATOR models.
 
 #### Unit Composition
 - 1 Rhino
   This model is equipped with: storm bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 GREY KNIGHTS INFANTRY models. It cannot transport TERMINATOR models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **70 pts**
@@ -905,9 +1030,17 @@ GREY KNIGHTS
 | ranged | -- | Typhoon missile launcher - krak | -- | 48" | 2 | 3+ | 9 | -2 | D6 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's las-talon can be replaced with 1 icarus stormcannon.
+- This model's skyhammer missile launcher can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 typhoon missile launcher
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Interceptor: Each time this model makes a ranged attack that targets a unit that can FLY, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -944,9 +1077,18 @@ GREY KNIGHTS
 | ranged | -- | Typhoon missile launcher - krak | -- | 48" | 2 | 3+ | 9 | -2 | D6 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's skyhammer missile launcher can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin lascannon
+  - 1 typhoon missile launcher
+
+#### Core Abilities
+- Deadly Demise D3
+- Hover
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Hover
 - Strafing Run: Each time this model makes a ranged attack that targets a unit that cannot FLY, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -982,10 +1124,20 @@ GREY KNIGHTS
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Interceptor's storm bolter and Nemesis force weapon can be replaced with one of the following:
+  - 1 incinerator and 1 close combat weapon
+  - 1 psilencer and 1 close combat weapon
+  - 1 psycannon and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Gate of Infinity
 - Personal Teleporters: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
@@ -1028,13 +1180,27 @@ GREY KNIGHTS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 4 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 2 Paladins can each have their storm bolter replaced with one of the following:
+  - 1 incinerator
+  - 1 psilencer
+  - 1 psycannon
+- 1 Paladin can have its storm bolter replaced with 1 Apothecary's narthecium.
+- 1 Paladin's storm bolter can be replaced with one of the following:
+  - 1 incinerator and 1 Ancient's banner
+  - 1 psilencer and 1 Ancient's banner
+  - 1 psycannon and 1 Ancient's banner
+  - 1 storm bolter and 1 Ancient's banner*
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Gate of Infinity
 - Attuned Onslaught (Psychic): Each time this unit makes a Charge move, until the end of the turn, add 1 to the Damage characteristic of melee weapons equipped by PALADIN SQUAD models in this unit.
-
-#### Wargear Abilities
 - Ancient's Banner: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 - Apothecary's Narthecium: In your Command phase, if the bearer is not destroyed, you can return 1 destroyed model (excluding CHARACTERS) to the bearer's unit.
 
@@ -1080,10 +1246,20 @@ GREY KNIGHTS
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- Up to 4 Purgators can each have their storm bolter and Nemesis force weapon replaced with one of the following:
+  - 1 incinerator and 1 close combat weapon
+  - 1 psilencer and 1 close combat weapon
+  - 1 psycannon and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Gate of Infinity
 - Righteous Persecution: In your Shooting phase, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks: until the start of your next turn, that enemy unit is pinned. While a unit is pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for it.
 
 #### Unit Composition
@@ -1129,10 +1305,20 @@ GREY KNIGHTS
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 2 Purifiers can each have their storm bolter and Nemesis force weapon replaced with one of the following:
+  - 1 incinerator and 1 close combat weapon
+  - 1 psilencer and 1 close combat weapon
+  - 1 psycannon and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Gate of Infinity
 - Sanctity of Purpose: Each time a model in this unit makes an attack, re-roll a Wound roll of 1. If the target is within range of an objective marker, you can re-roll the Wound roll instead.
 
 #### Unit Composition
@@ -1172,13 +1358,21 @@ GREY KNIGHTS
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's Thunderhawk cluster bombs can be replaced with 1 hellstrike missile battery.
+- This model's Thunderhawk heavy cannon can be replaced with 1 turbo-laser destructor.
+
+#### Core Abilities
+- Deadly Demise D6+2
+- Hover
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2, Hover
 - Aerial Assault: Each time a unit with the Deep Strike ability disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
-
-#### Wargear Abilities
 - Thunderhawk Cluster Bombs: Each time the bearer ends a Normal move, you can select one enemy unit it moved over during that move and roll six D6: for each 3+, that unit suffers 1 mortal wound.
+
+#### Transport
+- This model has a transport capacity of 30 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Grey Knights Thunderhawk Gunship
@@ -1186,9 +1380,6 @@ GREY KNIGHTS
 
 #### Damaged: 1-10 Wounds Remaining
 - While this model has 1-10 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 30 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **805 pts**
@@ -1220,10 +1411,20 @@ GREY KNIGHTS
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 12 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Land Raider
@@ -1231,9 +1432,6 @@ GREY KNIGHTS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **220 pts**
@@ -1265,10 +1463,20 @@ GREY KNIGHTS
 | ranged | -- | Twin assault cannon | devastating wounds twin-linked | 24" | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 16 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Land Raider Crusader
@@ -1276,9 +1484,6 @@ GREY KNIGHTS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 16 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **220 pts**
@@ -1310,10 +1515,20 @@ GREY KNIGHTS
 | ranged | -- | Twin assault cannon | devastating wounds twin-linked | 24" | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 14 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Land Raider Redeemer
@@ -1321,9 +1536,6 @@ GREY KNIGHTS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 GREY KNIGHTS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **260 pts**
@@ -1360,10 +1572,25 @@ GREY KNIGHTS
 | ranged | -- | Typhoon missile launcher - krak | -- | 48" | 2 | 3+ | 9 | -2 | D6 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 2 hurricane bolters.
+- This model's twin assault cannon can be replaced with one of the following:
+  - 1 twin heavy plasma cannon
+  - 1 twin lascannon
+- This model's typhoon missile launcher can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin multi-melta
+
+#### Core Abilities
+- Deadly Demise D6
+- Hover
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Hover
 - Armoured Resilience: Each time an attack is allocated to this model, subtract 1 from the Damage characteristic of that attack.
+
+#### Transport
+- This model has a transport capacity of 12 GREY KNIGHTS INFANTRY models and 1 GREY KNIGHTS VENERABLE DREADNOUGHT model. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Stormraven Gunship
@@ -1371,9 +1598,6 @@ GREY KNIGHTS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 GREY KNIGHTS INFANTRY models and 1 GREY KNIGHTS VENERABLE DREADNOUGHT model. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **280 pts**
@@ -1406,10 +1630,24 @@ GREY KNIGHTS
 | melee | -- | Nemesis greatsword - strike | psychic | Melee | 5 | 2+ | 10 | -2 | D6 |
 | melee | -- | Nemesis greatsword - sweep | psychic | Melee | 10 | 2+ | 5 | -1 | 1 |
 
+#### Wargear options
+- This model's dreadfists can be replaced with one of the following:
+  - 1 Nemesis daemon greathammer
+  - 1 Nemesis greatsword
+- This model can be equipped with up to two of the following, but cannot take duplicates:
+  - 1 gatling psilencer
+  - 1 heavy incinerator
+  - 1 heavy psycannon
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Gate of Infinity
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Gate of Infinity
 - Indomitable Spirit (Psychic): This model is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
 
 #### Unit Composition
@@ -1432,6 +1670,8 @@ GREY KNIGHTS
 ## Detachments
 
 ### Brotherhood Strike (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Fury of Titan
 - Each time a unit from your army is set up using the Deep Strike ability, until the end of the turn, each time a model in that unit makes an attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
 
@@ -1485,12 +1725,16 @@ GREY KNIGHTS
   Designer's Note: This Stratagem allows you to remove a unit in addition to those removed using the Gate of Infinity rule, and it allows you to remove a unit within Engagement Range of one or more enemy units.
 
 ### Hallowed Conclave (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Duty Before All
 - GREY KNIGHTS TERMINATOR units from your army are eligible to shoot and declare a charge in a turn in which they Fell Back.
 
 #### Enhancements
 - Eye of the Augurium 25 pts
 - GREY KNIGHTS model only. You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+  - That use is -1 CP.
+  - That use does not prevent any uses of that stratagem on other units this phase.
 - Inescapable Judgement (Psychic) 20 pts
 - GREY KNIGHTS model only. Each time an enemy unit within Engagement Range of the bearer's unit Falls Back, the bearer can use this Enhancement. If it does, roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds. These mortal wounds are Psychic Attacks.
 - Sanctic Reaper 15 pts
@@ -1537,6 +1781,8 @@ GREY KNIGHTS
   EFFECT: Until the end of the phase, each time an attack targets your unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of your unit, subtract 1 from the Wound roll.
 
 ### Banishers (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Channelled Force
 - Each time a GREY KNIGHTS unit from your army is selected to fight, that unit can take a Leadership test. If that test is passed, select one of the following rules. Until the end of the phase, that unit has that rule.
   - Melee weapons equipped by models in this unit with the [psychic] ability also have the [sustained hits 1] ability.
@@ -1591,6 +1837,8 @@ GREY KNIGHTS
   EFFECT: Your unit can make a Normal move of up to 6" or, if it has the Deep Strike ability, it can be placed into Strategic Reserves.
 
 ### Sanctic Spearhead (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Mailed Fist
 - Each time a GREY KNIGHTS VEHICLE unit from your army Advances, do not make an Advance roll for it; until the end of the phase, add 6" to the Move characteristic of models in that unit, and until the end of the turn, ranged weapons equipped by models in that unit have the [ASSAULT] ability.
 
@@ -1643,6 +1891,8 @@ GREY KNIGHTS
   EFFECT: Each enemy unit within 3" of your unit must take a Battle-shock test, subtracting 1 from that test.
 
 ### Augurium Task Force (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Prescient Redeployment
 - From the second battle round onwards, at the start of your Movement phase, if you did not select the maximum number of GREY KNIGHTS units from your army using the Gate of Infinity ability at the end of your opponent's previous turn, you can select one GREY KNIGHTS unit from your army that is on the battlefield that could have been selected using the Gate of Infinity ability. Remove that unit from the battlefield and place it into Strategic Reserves.
   Designer's Note: This means that your unit can retain its position on the battlefield at the end of your Command phase, and then be placed into Strategic Reserves at the start of your Movement phase, to set it up again in your Reinforcements step in another position.
@@ -1654,6 +1904,8 @@ GREY KNIGHTS
 - GREY KNIGHTS model only. Once per battle, at the start of the battle round, the bearer can use this Enhancement. If it does, until the end of the battle round, add 2 to the Toughness characteristic of models in the bearer's unit.
 - One Foot in the Future 15 pts
 - GREY KNIGHTS model only. When this unit ends an ingress move, you can use this ability. If you do:
+  - This unit can make a normal move of up to D6".
+  - Until the end of the turn, this unit is not eligible to declare a charge.
 - Doomseer's Amulet 25 pts
 - GREY KNIGHTS model only. Each time the bearer's unit is set up in your Reinforcements step, the bearer can use this Enhancement. If it does, select one enemy unit within 12" of and visible to the bearer. That enemy unit must take a Battle-shock test, subtracting 1 from that test.
 
@@ -1697,6 +1949,8 @@ GREY KNIGHTS
   EFFECT: If your unit has the Deep Strike ability, it can be placed into Strategic Reserves.
 
 ### Warpbane Task Force (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Hallowed Ground
 - Certain areas of the battlefield are within your army's Hallowed Ground, as follows:
   - Your deployment zone is always within your army's Hallowed Ground.
@@ -1754,6 +2008,8 @@ GREY KNIGHTS
   EFFECT: Until the end of the phase, each time an enemy unit declares a charge and your unit is one of the targets of that charge, subtract 1 from the Charge roll, or subtract 2 instead if your unit is wholly within your army's Hallowed Ground.
 
 ### Argent Assault (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Dauntless Champions
 - When a friendly PALADIN SQUAD unit is selected to fight, if the S of those attacks is lower than the T of the target, those attacks have +1 to wound rolls.
 
@@ -1784,6 +2040,8 @@ GREY KNIGHTS
   EFFECT: That enemy unit's melee attacks have [HAZARDOUS].
 
 ### Fires of Purgation (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Searing Soulflame
 - When you select a unit to be pinned by a friendly PURGATION SQUAD unit's Righteous Persecution ability, that enemy unit makes a battle-shock roll, with -1 to that battle-shock roll.
 
@@ -1816,6 +2074,8 @@ GREY KNIGHTS
   EFFECT: Select one battle-shocked enemy unit hit by those attacks. That enemy unit suffers D3+1 mortal wounds.
 
 ### Immaterial Interdiction (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Echojump
 - In your Shooting phase, when a friendly INTERCEPTOR SQUAD unit has shot, you can use this ability. If you do:
   - That unit cannot use its Personal Teleporters ability.

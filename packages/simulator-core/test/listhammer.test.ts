@@ -30,8 +30,8 @@ test('Listhammer Markdown imports the stored Ork roster through the current cata
   assert.equal(army.units.filter(candidate => candidate.name === 'Squighog Boyz')[0]?.baseModelCount, 4);
   assert.equal(army.units.filter(candidate => candidate.name === 'Squighog Boyz')[1]?.baseModelCount, 8);
   assert.equal(army.units.filter(candidate => candidate.name === 'Squighog Boyz')[2]?.baseModelCount, 8);
-  assert.equal(army.units.filter(candidate => candidate.name === 'Gretchin')[0]?.baseModelCount, 11);
-  assert.equal(unit('Lootas')?.baseModelCount, 5);
+  assert.equal(army.units.filter(candidate => candidate.name === 'Gretchin')[0]?.baseModelCount, 10);
+  assert.equal(unit('Flash Gitz')?.baseModelCount, 5);
 
   const boyz = unit('Boyz');
   const painboy = unit('Painboy');
@@ -43,7 +43,7 @@ test('Listhammer Markdown imports the stored Ork roster through the current cata
 
   assert.equal(army.catalog?.battleSizes?.[0]?.maximumPoints, 2000);
   assert.equal(army.catalog?.units.find(candidate => candidate.id === boyz?.rosterId)?.modelCountPoints?.['20'], 160);
-  assert.equal(army.catalog?.units.find(candidate => candidate.id === painboy?.rosterId)?.modelCountPoints?.['1'], 115);
+  assert.equal(army.catalog?.units.find(candidate => candidate.id === painboy?.rosterId)?.modelCountPoints?.['1'], 45);
   assert.equal(validateImportedArmy(army, { battleSizeId: army.battleSizeId }).valid, true);
 });
 

@@ -1,0 +1,82 @@
+{
+  "id": "t-au-empire",
+  "name": "T'au Empire",
+  "edition": "11e",
+  "unitRefs": [
+    "t-au-empire.commander-shadowsun",
+    "t-au-empire.darkstrider",
+    "t-au-empire.commander-farsight",
+    "t-au-empire.the-twin-lance",
+    "t-au-empire.cadre-fireblade",
+    "t-au-empire.ethereal",
+    "t-au-empire.firesight-team",
+    "t-au-empire.kroot-flesh-shaper",
+    "t-au-empire.kroot-trail-shaper",
+    "t-au-empire.kroot-war-shaper",
+    "t-au-empire.kroot-lone-spear",
+    "t-au-empire.commander-in-coldstar-battlesuit",
+    "t-au-empire.commander-in-enforcer-battlesuit",
+    "t-au-empire.breacher-team",
+    "t-au-empire.strike-team",
+    "t-au-empire.devilfish",
+    "t-au-empire.razorshark-strike-fighter",
+    "t-au-empire.sun-shark-bomber",
+    "t-au-empire.ax-1-0-tiger-shark",
+    "t-au-empire.manta",
+    "t-au-empire.tiger-shark",
+    "t-au-empire.kroot-hounds",
+    "t-au-empire.kroot-carnivores",
+    "t-au-empire.kroot-farstalkers",
+    "t-au-empire.pathfinder-team",
+    "t-au-empire.stealth-battlesuits",
+    "t-au-empire.vespid-stingwings",
+    "t-au-empire.krootox-rampagers",
+    "t-au-empire.krootox-riders",
+    "t-au-empire.stormsurge",
+    "t-au-empire.ta-unar-supremacy-armour",
+    "t-au-empire.hammerhead-gunship",
+    "t-au-empire.piranhas",
+    "t-au-empire.sky-ray-gunship",
+    "t-au-empire.broadside-battlesuits",
+    "t-au-empire.crisis-fireknife-battlesuits",
+    "t-au-empire.crisis-starscythe-battlesuits",
+    "t-au-empire.crisis-sunforge-battlesuits",
+    "t-au-empire.ghostkeel-battlesuit",
+    "t-au-empire.riptide-battlesuit",
+    "t-au-empire.tidewall-droneport",
+    "t-au-empire.tidewall-gunrig",
+    "t-au-empire.tidewall-shieldline"
+  ],
+  "ruleRefs": [
+    "t-au-empire.army-rule.for-the-greater-good"
+  ],
+  "detachmentRefs": [
+    "t-au-empire.detachment.kauyon",
+    "t-au-empire.detachment.montka",
+    "t-au-empire.detachment.retaliation-cadre",
+    "t-au-empire.detachment.kroot-hunting-pack",
+    "t-au-empire.detachment.advanced-acquisition-cadre",
+    "t-au-empire.detachment.auxiliary-cadre",
+    "t-au-empire.detachment.experimental-prototype-cadre"
+  ],
+  "factionKeywords": [
+    "t-au-empire",
+    "T'au Empire"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia T'au Empire faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 43,
+    "normalizedEntryCount": 43,
+    "excludedLegendCount": 19,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/space-marines/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/space-marines/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -93,14 +93,14 @@
 ### Space Marine Chapters
 - If an ADEPTUS ASTARTES unit has a second Faction keyword on its datasheet, that Faction keyword is the name of that unit's Chapter. For example, MARNEUS CALGAR has both the ADEPTUS ASTARTES and ULTRAMARINES Faction keywords, and is therefore from the Ultramarines Chapter.
   - You cannot include units from more than one Chapter in your army.
-  - If your army includes one or more BLACK TEMPLARS units, it cannot include any ADEPTUS ASTARTES PSYKER models, and cannot include any of the following models that do not have the Black Templars keyword: GLADIATOR LANCER; GLADIATOR REAPER; GLADIATOR VALIANT; Impulsor; Repulsor; REPULSOR EXECUTIONER.
+  - If your army includes one or more BLACK TEMPLARS units, it cannot include any ADEPTUS ASTARTES PSYKER models, and cannot include any of the following models that do not have the Black Templars keyword: GLADIATOR LANCER; GLADIATOR REAPER; GLADIATOR VALIANT; IMPULSOR; REPULSOR; REPULSOR EXECUTIONER.
   - If your army includes one or more DEATHWATCH units, it cannot include any of the following units: DEVASTATOR SQUAD; SCOUT SQUAD; TACTICAL SQUAD.
   - If your army includes one or more SPACE WOLVES units, it cannot include any of the following units: APOTHECARY; DEVASTATOR SQUAD; TACTICAL SQUAD.
 
 ### Deathwatch
 - Your army can include ADEPTUS ASTARTES DEATHWATCH units, but it cannot include any ADEPTUS ASTARTES units drawn from any other Chapter.
   - With the exception of KILL TEAM CASSIUS (see Legends: Agents of the Imperium), your army cannot include any AGENTS OF THE IMPERIUM DEATHWATCH units.
-  - Your army cannot include any of the following units: ASSAULT SQUAD; ASSAULT SQUAD WITH JUMP PACKS; ATTACK BIKE SQUAD; DEVASTATOR SQUAD; LAND SPEEDER STORM; RELIC TERMINATOR SQUAD; Scout Bike Squad; SCOUT SQUAD; SCOUT SNIPER SQUAD; TACTICAL SQUAD; TERMINATOR ASSAULT SQUAD; TERMINATOR SQUAD.
+  - Your army cannot include any of the following units: ASSAULT SQUAD; ASSAULT SQUAD WITH JUMP PACKS; ATTACK BIKE SQUAD; DEVASTATOR SQUAD; LAND SPEEDER STORM; RELIC TERMINATOR SQUAD; SCOUT BIKE SQUAD; SCOUT SQUAD; SCOUT SNIPER SQUAD; TACTICAL SQUAD; TERMINATOR ASSAULT SQUAD; TERMINATOR SQUAD.
 
 ## Datasheets
 
@@ -121,12 +121,16 @@
 | ranged | -- | Drakkis | ignores cover pistol torrent | 12" | D6+3 | N/A | 4 | -1 | 1 |
 | melee | -- | Malleus Noctum | -- | Melee | 5 | 2+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Unto the Anvil: While this model is leading a unit, each time a model in that unit makes a melee attack, you can re-roll the Wound roll.
-  Lord of the Pyroclasts: While an enemy unit is within Engagement Range of this model, halve the Objective Control characteristic of models in that enemy unit.
+- Lord of the Pyroclasts: While an enemy unit is within Engagement Range of this model, halve the Objective Control characteristic of models in that enemy unit.
 
 #### Unit Composition
 - 1 Adrax Agatone - EPIC HERO
@@ -170,12 +174,18 @@ ADEPTUS ASTARTES; SALAMANDERS
 | ranged | -- | Heavy bolt pistol | pistol | 18" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Claws of Severax | sustained hits 2 twin-linked | Melee | 7 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative, Stealth
-- FACTION: Oath of Moment
 - Master of Shadows: In your Command phase, you can select one unit from your opponent's army. Until the start of your next Command phase, each time an ADEPTUS ASTARTES unit from your army declares a charge while it is within 12" of that enemy unit, you can re-roll the Charge roll, but it must declare that enemy unit as a target of that charge (if possible).
-  Blackwing Mantle: You can target this unit with the Rapid Ingress/Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Blackwing Mantle: You can target this unit with the Rapid Ingress/Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -209,12 +219,18 @@ ADEPTUS ASTARTES; RAVEN GUARD
 | melee | -- | Axiom - strike | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Axiom - sweep | -- | Melee | 10 | 2+ | 5 | -2 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+, Leader
-- FACTION: Oath of Moment
 - Cold and Calculating: Each time a model in this model's unit makes an attack that targets a MONSTER or VEHICLE unit, that attack has the [LETHAL HITS] ability. Each time a model in this model's unit makes an attack that targets any other unit, that attack has the [SUSTAINED HITS 1] ability.
-  Cerebrex Logic Engine:
+- Cerebrex Logic Engine:
   - At the start of the Declare Battle Formations step, you can select one ADEPTUS ASTARTES INFANTRY unit from your army. Until the end of the battle, that unit gains the Scouts 6" ability.
   - After both players have deployed their armies, you can select one ADEPTUS ASTARTES unit from your army and redeploy it. When doing so, you can set that unit up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
 
@@ -254,12 +270,17 @@ ADEPTUS ASTARTES; IRON HANDS
 | ranged | -- | Master-crafted bolter | assault heavy | 24" | 2 | 2+ | 4 | -1 | 2 |
 | melee | -- | Master-crafted chainsword | ANTI-INFANTRY 2+ | Melee | 8 | 2+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader
-- FACTION: Oath of Moment
 - Press the Attack: Weapons equipped by models in this model's unit have the [SUSTAINED HITS 1] ability.
-  Honour of Ultramar: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 2+, do not remove it from play. This model can fight after the attacking unit has finished making its attacks. If one or more enemy models are destroyed as a result of those attacks, this model regains D3 lost wounds and is not destroyed; otherwise, it is removed from play.
+- Honour of Ultramar: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 2+, do not remove it from play. This model can fight after the attacking unit has finished making its attacks. If one or more enemy models are destroyed as a result of those attacks, this model regains D3 lost wounds and is not destroyed; otherwise, it is removed from play.
 
 #### Unit Composition
 - 1 Captain Titus - EPIC HERO
@@ -306,12 +327,16 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | melee | -- | Talassarian tempest blade - sweep | sustained hits 1 | Melee | 9 | 2+ | 5 | -2 | 1 |
 | melee | -- | Talassarian tempest blade - coup de grace | precision | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Knight Champion of Macragge: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to 6".
-  Honour or Death: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Honour or Death: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -350,12 +375,16 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | ranged | -- | Storm of the Emperor's Wrath - focused witchfire | blast hazardous psychic | 18" | 2D6 | 2+ | 6 | -2 | 2 |
 | melee | -- | Rod of Tigurius | psychic | Melee | 5 | 3+ | 7 | -2 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Hood of Hellfire: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks and mortal wounds.
-  Master of Prescience (Psychic):
+- Master of Prescience (Psychic):
   - This unit has Stealth.
   - Melee attacks that target this unit have -1 to hit rolls.
   - (Once per battle round, per army) When you target this unit with the Counter-offensive/Fire Overwatch/Heroic Intervention stratagem, that use is -1 CP.
@@ -400,12 +429,17 @@ ADEPTUS ASTARTES; ULTRAMARINES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Fist of Dorn | devastating wounds | Melee | 5 | 2+ | 10 | -3 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Icon of Obstinacy: Each time an attack targets this model's unit, if the Strength characteristic of that attack is greater than or equal to the Toughness characteristic of that unit, subtract 1 from the Wound roll.
-  Rampart: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 2+ invulnerable save.
+- Rampart: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 2+ invulnerable save.
 
 #### Unit Composition
 - 1 Darnath Lysander - EPIC HERO
@@ -444,13 +478,17 @@ ADEPTUS ASTARTES; IMPERIAL FISTS
 | melee | -- | Harrowhand | -- | Melee | 6 | 3+ | 7 | -2 | 2 |
 | melee | -- | Medusan Manipuli | extra attacks | Melee | 2 | 3+ | 8 | -2 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Rites of Tempering: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability.
-  Iron Father: While this model is within 3" of one or more friendly ADEPTUS ASTARTES VEHICLE units, it has the Lone Operative ability.
-  Master of the Forge: In your Command phase, select one friendly ADEPTUS ASTARTES VEHICLE model within 3" of this model. That model regains up to 3 lost wounds and, until the start of your next Command phase, each time that VEHICLE model makes an attack, add 1 to the Hit roll. You cannot select a unit for this ability that has already been selected for the Blessing of the Omnissiah ability this phase, and vice versa.
+- Iron Father: While this model is within 3" of one or more friendly ADEPTUS ASTARTES VEHICLE units, it has the Lone Operative ability.
+- Master of the Forge: In your Command phase, select one friendly ADEPTUS ASTARTES VEHICLE model within 3" of this model. That model regains up to 3 lost wounds and, until the start of your next Command phase, each time that VEHICLE model makes an attack, add 1 to the Hit roll. You cannot select a unit for this ability that has already been selected for the Blessing of the Omnissiah ability this phase, and vice versa.
 
 #### Unit Composition
 - 1 Iron Father Feirros - EPIC HERO
@@ -487,12 +525,19 @@ ADEPTUS ASTARTES; IRON HANDS
 | ranged | -- | Blackout | pistol precision | 18" | 2 | 2+ | 5 | -1 | 2 |
 | melee | -- | The Raven's Talons | precision twin-linked | Melee | 7 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader, Lone Operative, Stealth
-- FACTION: Oath of Moment
 - Shadowmaster: While this model is leading a unit, models in this unit cannot be targeted by ranged attacks unless the attacking model is within 12".
-  Echo of the Ravenspire: At the end of your opponent's turn, if this model's unit is not within Engagement Range of any enemy models, you can remove it from the battlefield and place it into Strategic Reserves.
+- Echo of the Ravenspire: At the end of your opponent's turn, if this model's unit is not within Engagement Range of any enemy models, you can remove it from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
 - 1 Kayvaan Shrike - EPIC HERO
@@ -529,12 +574,16 @@ ADEPTUS ASTARTES; RAVEN GUARD
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 2+ | 4 | 0 | 1 |
 | melee | -- | Moonfang | devastating wounds precision | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - For the Khan!: While this model is leading a unit, ranged weapons equipped by models in that unit have the [ASSAULT] ability and melee weapons equipped by models in that unit have the [LANCE] ability.
-  Trophy Taker: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
+- Trophy Taker: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
 
 #### Unit Composition
 - 1 Kor'sarro Khan - EPIC HERO
@@ -577,12 +626,17 @@ ADEPTUS ASTARTES; WHITE SCARS
 | ranged | -- | Gauntlets of Ultramar | pistol twin-linked | 18" | 4 | 2+ | 4 | -1 | 2 |
 | melee | -- | Gauntlets of Ultramar | twin-linked | Melee | 6 | 2+ | 8 | -3 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Inspiring Leader: This unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
-  Master Tactician: At the start of your Command phase, if this model is your WARLORD and is on the battlefield, you gain 1CP.
+- Master Tactician: At the start of your Command phase, if this model is your WARLORD and is on the battlefield, you gain 1CP.
 
 #### Unit Composition
 - 1 Marneus Calgar in Armour of Antilochus - EPIC HERO
@@ -633,12 +687,17 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | ranged | -- | Dorn's Arrow | rapid fire 2 sustained hits 1 | 24" | 2 | 2+ | 5 | -1 | 2 |
 | melee | -- | Fist of Retribution | -- | Melee | 5 | 2+ | 8 | -3 | 3 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Leader
-- FACTION: Oath of Moment
 - Oath of Rynn: Once per battle, at the start of either player's Command phase, this model can use this ability. When it does, until the end of the turn, add 1 to the Attacks characteristic of weapons equipped by models in this model's unit.
-  To the Last: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.
+- To the Last: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.
 
 #### Unit Composition
 - 1 Pedro Kantor - EPIC HERO
@@ -677,12 +736,16 @@ ADEPTUS ASTARTES; IMPERIAL FISTS
 | ranged | -- | Artificer grav-gun | anti-vehicle 2+ | 18" | 2 | 2+ | 5 | -1 | 2 |
 | melee | -- | Hand of Defiance | -- | Melee | 5 | 2+ | 12 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Signum Array: While this model is leading a unit, ranged weapons equipped by models in that unit have the [IGNORES COVER] ability.
-  Siege Captain: Each time this model makes an attack that targets a MONSTER, VEHICLE, or FORTIFICATION unit, improve the Strength, Armour Penetration and Damage characteristics of that attack by 2.
+- Siege Captain: Each time this model makes an attack that targets a MONSTER, VEHICLE, or FORTIFICATION unit, improve the Strength, Armour Penetration and Damage characteristics of that attack by 2.
 
 #### Unit Composition
 - 1 Tor Garadon - EPIC HERO
@@ -720,12 +783,16 @@ ADEPTUS ASTARTES; IMPERIAL FISTS
 | ranged | -- | Invictus | -- | 24" | 2 | 2+ | 4 | -1 | 2 |
 | melee | -- | Sword of Idaeus | sustained hits 1 | Melee | 6 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Unorthodox Strategist (Aura): Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, this model can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
-  Master of the Fleet: During the Declare Battle Formations step, if your army includes this model, select one PHOBOS, GRAVIS or TACTICUS ADEPTUS ASTARTES INFANTRY unit from your army. That unit gains the Deep Strike ability.
+- Master of the Fleet: During the Declare Battle Formations step, if your army includes this model, select one PHOBOS, GRAVIS or TACTICUS ADEPTUS ASTARTES INFANTRY unit from your army. That unit gains the Deep Strike ability.
 
 #### Unit Composition
 - 1 Uriel Ventris - EPIC HERO
@@ -770,13 +837,13 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | melee | -- | Blades of honour | precision twin-linked | Melee | 6 | 2+ | 5 | -2 | 2 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 5 | 2+ | 5 | -2 | 2 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
-- Ultramarines Honour Guard: While a CAPTAIN or Chapter Master model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
-  Glory of Ultramar: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed by those attacks, this unit can make a surge move of up to D6".
-
-#### Wargear Abilities
+- Ultramarines Honour Guard: While a CAPTAIN or CHAPTER MASTER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
+- Glory of Ultramar: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed by those attacks, this unit can make a surge move of up to D6".
 - Banner of Macragge: Once per battle, at the start of the Fight phase, the bearer can use this ability. If it does, until the end of the phase, add 1 to the Strength and Attacks characteristics of melee weapons equipped by models in the bearer's unit.
 
 #### Unit Composition
@@ -818,12 +885,17 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | ranged | -- | Gauntlet of the Forge | ignores cover pistol torrent | 12" | D6+3 | N/A | 6 | -1 | 1 |
 | melee | -- | Spear of Vulkan | devastating wounds | Melee | 6 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Leader
-- FACTION: Oath of Moment
 - Forgefather: In your Shooting phase, select one enemy unit within 24" of and visible to this model. Until the end of the phase, each time a friendly ADEPTUS ASTARTES model makes a ranged attack with a Torrent or Melta weapon that targets that enemy unit, you can re-roll the Wound roll.
-  Seeker of the Unfound: The first time this model is set up on the battlefield, select one objective marker on the battlefield. While this model is within range of that objective marker, this model has an Objective Control characteristic of 10, a Leadership characteristic of 5+ and the Feel No Pain 4+ ability.
+- Seeker of the Unfound: The first time this model is set up on the battlefield, select one objective marker on the battlefield. While this model is within range of that objective marker, this model has an Objective Control characteristic of 10, a Leadership characteristic of 5+ and the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Vulkan He'stan - EPIC HERO
@@ -871,14 +943,16 @@ ADEPTUS ASTARTES; SALAMANDERS
 | melee | -- | Power weapon | -- | Melee | 4 | 2+ | 4 | -2 | 1 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 5 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Second Company Banner: While this unit contains Ancient Gadriel, add 1 to the Objective Control characteristic of models in this unit. While this unit contains Ancient Gadriel and CAPTAIN TITUS, improve the Leadership characteristic of models in this unit by 1 as well.
-  Strategium Command: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), select up to three ADEPTUS ASTARTES units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
-
-#### Wargear Abilities
+- Strategium Command: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), select up to three ADEPTUS ASTARTES units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
 - Refractor Field: The bearer has a 5+ invulnerable save.
 - Storm Shield: The bearer has a 4+ invulnerable save.
 
@@ -922,7 +996,7 @@ ADEPTUS ASTARTES; ULTRAMARINES
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| GRIMALDUS | (diameter 40mm) | 6" | 4 | 3+ | 4 | 5+ | 1 | 4+ |
+| GRIMALDUS | (diameter 40mm) | 6" | 4 | 3+ | 4 | 5+ | 1 | -- |
 | CENOBYTE SERVITOR | (diameter 28.5mm) | 6" | 4 | 3+ | 1 | 8+ | 1 | 4+ |
 
 #### Weapons
@@ -933,12 +1007,17 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | melee | -- | Artificer crozius | -- | Melee | 6 | 2+ | 6 | -2 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader
-- FACTION: Templar Vows
 - Litanies of the Devout: While this unit is leading a unit and contains a Chaplain Grimaldus model, each time a model in that unit makes a melee attack, you can re-roll the Hit roll.
-  Temple Relics: In your Command phase, if this unit contains one or more Cenobyte Servitor models, select one Temple Relics ability (see left). Until the start of your next Command phase, this unit's Chaplain Grimaldus model has that ability.
+- Temple Relics: In your Command phase, if this unit contains one or more Cenobyte Servitor models, select one Temple Relics ability (see left). Until the start of your next Command phase, this unit's Chaplain Grimaldus model has that ability.
 
 #### Unit Composition
 - 1 Chaplain Grimaldus - EPIC HERO
@@ -983,12 +1062,19 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Sword of the High Marshals - strike | -- | Melee | 6 | 2+ | 8 | -3 | 3 |
 | melee | -- | Sword of the High Marshals - sweep | -- | Melee | 12 | 2+ | 6 | -3 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Templar Vows
 - Crusade of Wrath: While this model is leading a unit, add 1 to the Attacks and Strength characteristics of melee weapons equipped by models in that unit.
-  High Marshal: At the start of the Fight phase, select one enemy unit within Engagement Range of this model's unit and roll one D6, adding 1 to the result for every five models in this model's unit: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6+, that enemy unit suffers D3+3 mortal wounds.
+- High Marshal: At the start of the Fight phase, select one enemy unit within Engagement Range of this model's unit and roll one D6, adding 1 to the result for every five models in this model's unit: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6+, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
 - 1 High Marshal Helbrecht - EPIC HERO
@@ -1027,12 +1113,17 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | The Executioner's Axe | devastating wounds Precision | Melee | 6 | 2+ | 7 | -3 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Redeemer of the Lost: While this model is leading a unit, each time a model in that unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 4+, do not remove it from play; that destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
-  Mass of Doom: Each time this model's unit makes a Charge move, until the end of the turn, melee weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability.
+- Mass of Doom: Each time this model's unit makes a Charge move, until the end of the turn, melee weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 1 Astorath - EPIC HERO
@@ -1071,12 +1162,18 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 2+ | 8 | -3 | 2 |
 | melee | -- | Vitarus | lethal hits psychic | Melee | 6 | 2+ | 9 | -3 | D3 |
 
+#### Core Abilities
+- Feel No Pain 4+
+- Fights First
+- Lone Operative
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 4+, Fights First, Lone Operative
-- FACTION: Oath of Moment
 - The Quickening (Psychic): This model is eligible to declare a charge in a turn in which it Advanced.
-  Transfixing Gaze (Aura, Psychic): While an enemy unit is within 6" of this model, each time that unit is selected to Fall Back, it must take a Leadership test. If that test is failed, that unit must Remain Stationary this phase instead.
+- Transfixing Gaze (Aura, Psychic): While an enemy unit is within 6" of this model, each time that unit is selected to Fall Back, it must take a Leadership test. If that test is failed, that unit must Remain Stationary this phase instead.
 
 #### Unit Composition
 - 1 Chief Librarian Mephiston - EPIC HERO
@@ -1107,12 +1204,17 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | ranged | -- | Perdition Pistol | melta 2 pistol sustained hits d3 | 6" | 1 | 2+ | 9 | -4 | D6 |
 | melee | -- | The Axe Mortalis | lethal hits | Melee | 8 | 2+ | 8 | -3 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Warden of the Imperium Nihilus: While this model is leading a unit, add 1 to Advance and Charge rolls made for that unit and each time a model in that unit makes an attack, add 1 to the Hit roll.
-  Death Mask of Sanguinius: At the start of the Fight phase, each enemy unit within 6" of this model must take a Battle-shock test, subtracting 1 from that test when they do.
+- Death Mask of Sanguinius: At the start of the Fight phase, each enemy unit within 6" of this model must take a Battle-shock test, subtracting 1 from that test when they do.
 
 #### Unit Composition
 - 1 Commander Dante - EPIC HERO
@@ -1150,12 +1252,18 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | ranged | -- | Absolvor bolt pistol | pistol | 18" | 1 | 2+ | 5 | -1 | 2 |
 | melee | -- | The Blood Crozius | lethal hits | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 6+, Leader
-- FACTION: Oath of Moment
 - Guardian of the Lost: While this model is leading a unit, each time an attack is allocated to a model in that unit, subtract 1 from the Damage characteristic of that attack.
-  Fury Unbound: While this model is leading a unit, melee weapons equipped by models in that unit have the [LETHAL HITS] ability
+- Fury Unbound: While this model is leading a unit, melee weapons equipped by models in that unit have the [LETHAL HITS] ability
 
 #### Unit Composition
 - 1 Lemartes - EPIC HERO
@@ -1190,12 +1298,18 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Encarmine broadsword | devastating wounds | Melee | 8 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Lone Operative
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Lone Operative
-- FACTION: Oath of Moment
 - Aura of Fervour (Aura): While a friendly ADEPTUS ASTARTES unit is within 6" of this model, you can re-roll Battle-shock and Leadership tests taken for that unit.
-  Miraculous Saviour: (Once per battle, per army) At the end of your opponent's Charge phase (excluding the first battle round), you can select one enemy unit that made a charge move this phase. This unit can make an ingress move and must be set up engaged with that enemy unit.
+- Miraculous Saviour: (Once per battle, per army) At the end of your opponent's Charge phase (excluding the first battle round), you can select one enemy unit that made a charge move this phase. This unit can make an ingress move and must be set up engaged with that enemy unit.
 
 #### Unit Composition
 - 1 The Sanguinor - EPIC HERO
@@ -1227,12 +1341,16 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Crozius arcanum and power weapon - strike | -- | Melee | 5 | 2+ | 6 | -2 | 2 |
 | melee | -- | Crozius arcanum and power weapon - sweep | -- | Melee | 8 | 2+ | 5 | -2 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Exemplar of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, you can re-roll the Hit roll.
-  Feared Interrogator: At the start of the Fight phase, each enemy CHARACTER unit within 6" of this model must take a Battle-shock test, subtracting 1 from that test when they do. In addition, each time this model destroys an enemy CHARACTER model with a melee attack, you gain 1CP.
+- Feared Interrogator: At the start of the Fight phase, each enemy CHARACTER unit within 6" of this model must take a Battle-shock test, subtracting 1 from that test when they do. In addition, each time this model destroys an enemy CHARACTER model with a melee attack, you gain 1CP.
 
 #### Unit Composition
 - 1 Asmodai - EPIC HERO
@@ -1276,14 +1394,16 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Lion's Wrath | anti-infantry 4+ devastating wounds rapid fire 1 | 24" | 2 | 2+ | 8 | -3 | 2 |
 | melee | -- | The Sword of Secrets | devastating wounds | Melee | 6 | 2+ | 6 | -4 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Supreme Grand Master: While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Masterful Tactician: At the start of your Command phase, if this model is on the battlefield, you gain 1CP.
-
-#### Wargear Abilities
+- Masterful Tactician: At the start of your Command phase, if this model is on the battlefield, you gain 1CP.
 - The Lion Helm: Models in the bearer's unit have a 4+ invulnerable save. In addition, once per battle, in any phase, the bearer can summon a Watcher in the Dark. When it does, until the end of the phase, models in the bearer's unit have the Feel No Pain 4+ ability against mortal wounds.
 
 #### Unit Composition
@@ -1328,12 +1448,17 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Master-crafted storm bolter | precision rapid fire 2 | 24" | 2 | 2+ | 4 | 0 | 2 |
 | melee | -- | The Sword of Silence | precision | Melee | 6 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Grand Master of the Deathwing: While this model is leading a unit, each time a model in that unit makes an attack, if a Critical Hit is scored, that attack has the [PRECISION] ability.
-  Strikes of Retribution: Each time a melee attack is allocated to this model, after the attacking model's unit has finished making its attacks, roll one D6 (to a maximum of six D6 per attacking unit): for each 4+, the attacking unit suffers 1 mortal wound.
+- Strikes of Retribution: Each time a melee attack is allocated to this model, after the attacking model's unit has finished making its attacks, roll one D6 (to a maximum of six D6 per attacking unit): for each 4+, the attacking unit suffers 1 mortal wound.
 
 #### Unit Composition
 - 1 Belial - EPIC HERO
@@ -1375,14 +1500,16 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Mind Wipe - focused witchfire | anti-character 4+ devastating wounds hazardous precision psychic | 12" | 1 | 2+ | 6 | -2 | D6 |
 | melee | -- | Traitor's Bane | anti-chaos 2+ psychic | Melee | 4 | 2+ | 6 | -2 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Psychic Hood: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks.
-  Engulfing Fear (Psychic): In your Shooting phase, you can select one enemy unit within 18" of this model. That enemy unit must take a Battle-shock test.
-
-#### Wargear Abilities
+- Engulfing Fear (Psychic): In your Shooting phase, you can select one enemy unit within 18" of this model. That enemy unit must take a Battle-shock test.
 - Book of Salvation: While this model is leading a unit, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit. When this model is destroyed, each friendly ADEPTUS ASTARTES unit within 6" of this model must take a Battle-shock test.
 
 #### Unit Composition
@@ -1427,12 +1554,16 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 2+ | 4 | 0 | 1 |
 | melee | -- | Enmity's Edge | anti-psyker 2+ | Melee | 6 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Intractable Will: While this model is leading a unit, each time a model in that unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 4+, do not remove it from play; that destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
-  The Spiritshield Helm: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
+- The Spiritshield Helm: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
 
 #### Unit Composition
 - 1 Lazarus - EPIC HERO
@@ -1475,12 +1606,21 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Hellfire Extremis | anti-infantry 4+ devastating wounds ignores cover torrent | 12" | D6 | N/A | 4 | -1 | 1 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+- Mission Tactics
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Leader
-- FACTION: Oath of Moment, Mission Tactics
 - Tactical Instinct: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Unstoppable Champion: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 1 wound remaining.
+- Unstoppable Champion: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 1 wound remaining.
 
 #### Unit Composition
 - 1 Watch Captain Artemis
@@ -1517,12 +1657,17 @@ ADEPTUS ASTARTES; DEATHWATCH
 | ranged | -- | Foehammer | anti-monster 3+ anti-vehicle 3+ assault | 6" | 1 | 2+ | 8 | -2 | 3 |
 | melee | -- | Foehammer | anti-monster 3+ anti-vehicle 3+ precision | Melee | 5 | 2+ | 8 | -2 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Anvil of Endurance: While this model is leading a unit, each time a model in that unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6: on a 4+, do not remove the destroyed model from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
-  Champion of the Kingsguard: Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
+- Champion of the Kingsguard: Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Arjac Rockfist - EPIC HERO
@@ -1559,12 +1704,17 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Axe Morkai - sweep | -- | Melee | 10 | 2+ | 6 | -2 | 1 |
 | melee | -- | Tyrnak and Fenrir | extra attacks | Melee | 6 | 2+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - High King of Fenris: Once per battle round, in your Movement phase, you can select one friendly SPACE WOLVES unit that is in Reserves. If you do, until the end of the phase, for the purpose of setting up that unit on the battlefield, treat the current battle round number as being one higher than it actually is.
-  Guile of the Wolf (Aura): Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
+- Guile of the Wolf (Aura): Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
 
 #### Unit Composition
 - 1 Logan Grimnar - EPIC HERO
@@ -1601,12 +1751,16 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Living Lightning - focused witchfire | hazardous psychic sustained hits 2 | 24" | 2D6 | 3+ | 7 | -1 | 1 |
 | melee | -- | Staff of the Stormcaller | psychic sustained hits 2 | Melee | 4 | 3+ | 7 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Wind Walker (Psychic): While this model is leading a unit, ranged weapons equipped by models in that unit have the [ASSAULT] ability and each time that unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6" to the Move characteristic of models in this unit.
-  Tempest's Wrath (Psychic): In your Shooting phase, after this model's unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks made with this model's Living Lightning weapon. Until the start of your next turn, that enemy unit is stormwracked. While a unit is stormwracked, subtract 6" from the Range characteristic of ranged weapons equipped by models in that unit (to a minimum of 12").
+- Tempest's Wrath (Psychic): In your Shooting phase, after this model's unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks made with this model's Living Lightning weapon. Until the start of your next turn, that enemy unit is stormwracked. While a unit is stormwracked, subtract 6" from the Range characteristic of ranged weapons equipped by models in that unit (to a minimum of 12").
 
 #### Unit Composition
 - 1 Njal Stormcaller - EPIC HERO
@@ -1643,12 +1797,16 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 2+ | 4 | 0 | 1 |
 | melee | -- | Frostfang | sustained hits 1 | Melee | 8 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - War Howl: While this model is leading a BLOOD CLAWS unit, each time a model in that unit makes a melee attack, you can re-roll the Wound roll. While this model is leading a WOLF GUARD HEADTAKERS unit, that unit is eligible to declare a charge in a turn in which it Advanced.
-  Battle-lust: Each time this model ends a Charge move, until the end of the turn, add 2 to the Attacks characteristic of this model's Frostfang weapon.
+- Battle-lust: Each time this model ends a Charge move, until the end of the turn, add 2 to the Attacks characteristic of this model's Frostfang weapon.
 
 #### Unit Composition
 - 1 Ragnar Blackmane - EPIC HERO
@@ -1685,12 +1843,17 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 2+ | 8 | -3 | 2 |
 | melee | -- | Artificer crozius arcanum | ANTI-MONSTER 4+ ANTI-VEHICLE 4+ | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Leader
-- FACTION: Oath of Moment
 - Slayer's Oath: At the start of the battle, select one of the following keywords to be this model's Slayer's Oath: CHARACTER; MONSTER; VEHICLE. The first time this model's unit destroys a unit with this model's Slayer's Oath keyword, if your Detachment rule has a Saga, until the end of the battle, this model's unit receives the benefits of that Detachment rule as if that Saga had been completed.
-  Oathbound: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll. If that attack targets a unit that has this model's Slayer's Oath keyword (see above), add 1 to the Wound roll as well.
+- Oathbound: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll. If that attack targets a unit that has this model's Slayer's Oath keyword (see above), add 1 to the Wound roll as well.
 
 #### Unit Composition
 - 1 Ulrik the Slayer - EPIC HERO
@@ -1728,12 +1891,14 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Emperor's Sword | devastating wounds | Melee | 14 | 2+ | 8 | -3 | 2 |
 | melee | -- | Hand of Dominion | lethal hits | Melee | 7 | 2+ | 14 | -4 | 4 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Author of the Codex: At the Start of your Command phase, select two Author of the Codex abilities (see left). Until the start of your next Command phase, this model has those abilities.
-  Ultramarines Bodyguard: While this model is within 3" of one or more friendly ADEPTUS ASTARTES INFANTRY units, this model has the Lone Operative ability.
-  Armour of Fate: The first time this model is destroyed, roll one D6 at the end of the phase: on a 3+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy models, with 6 wounds remaining.
+- Ultramarines Bodyguard: While this model is within 3" of one or more friendly ADEPTUS ASTARTES INFANTRY units, this model has the Lone Operative ability.
+- Armour of Fate: The first time this model is destroyed, roll one D6 at the end of the phase: on a 3+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy models, with 6 wounds remaining.
 
 #### Unit Composition
 - 1 Roboute Guilliman - EPIC HERO
@@ -1769,13 +1934,21 @@ ADEPTUS ASTARTES; ULTRAMARINES
 | melee | -- | Fealty - strike | lethal hits | Melee | 8 | 2+ | 12 | -4 | 4 |
 | melee | -- | Fealty - sweep | sustained hits 1 | Melee | 16 | 2+ | 6 | -3 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Fights First
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First
-- FACTION: Oath of Moment
 - Primarch of the First Legion: At the start of your Command phase, select two Primarch of the First Legion abilities. Until the start of your next Command phase, this model has those abilities.
-  The Emperor's Shield: Each time an attack is allocated to this model, if the Strength characteristic of that attack is greater than the Toughness characteristic of this model, subtract 1 from the Wound roll.
-  Dark Angels Bodyguard: While this model is within 3" of one or more friendly ADEPTUS ASTARTES INFANTRY units, this model has the Lone Operative ability.
+- The Emperor's Shield: Each time an attack is allocated to this model, if the Strength characteristic of that attack is greater than the Toughness characteristic of this model, subtract 1 from the Wound roll.
+- Dark Angels Bodyguard: While this model is within 3" of one or more friendly ADEPTUS ASTARTES INFANTRY units, this model has the Lone Operative ability.
 
 #### Unit Composition
 - 1 Lion El'Jonson - EPIC HERO
@@ -1811,12 +1984,16 @@ ADEPTUS ASTARTES; DARK ANGELS
 | melee | -- | Stormtooth | lance anti-monster 4+ anti-vehicle 4+ | Melee | 6 | 2+ | 6 | -2 | 2 |
 | melee | -- | Power sword | -- | Melee | 8 | 2+ | 5 | -2 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Spear of Chogoris: This model's unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back. If that unit is already eligible to shoot and declare a charge in a turn in which it Advanced, add 1 to Advance and Charge rolls made for that unit instead.
-  Skilled Riders: Each time a model in this model's unit makes a Normal, Advance, Fall Back or Charge move, it can move horizontally through terrain features.
+- Skilled Riders: Each time a model in this model's unit makes a Normal, Advance, Fall Back or Charge move, it can move horizontally through terrain features.
 
 #### Unit Composition
 - 1 Suboden Khan - EPIC HERO
@@ -1855,15 +2032,19 @@ ADEPTUS ASTARTES; WHITE SCARS
 | ranged | -- | Twin storm bolter | rapid fire 2 twin-linked | 24" | 2 | 2+ | 4 | 0 | 1 |
 | melee | -- | The Raven Sword | sustained hits 2 | Melee | 6 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Grand Master of the Ravenwing:
   - This unit's ranged attacks have [ASSAULT].
   - When this unit is selected to make an advance move, that advance move does not prevent this unit from being eligible to declare a charge.
   - This unit has MOBILE.
-  Cut Off Their Escape: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of this model's unit is selected to Fall Back, models in that enemy unit must take Desperate Escape tests as if their unit was Battle-shocked. When doing so, if that enemy unit is also Battle-shocked by other means, subtract 1 from each of those Desperate Escape tests.
+- Cut Off Their Escape: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of this model's unit is selected to Fall Back, models in that enemy unit must take Desperate Escape tests as if their unit was Battle-shocked. When doing so, if that enemy unit is also Battle-shocked by other means, subtract 1 from each of those Desperate Escape tests.
 
 #### Unit Composition
 - 1 Sammael - EPIC HERO
@@ -1905,12 +2086,22 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Multi-melta | melta 2 | 18" | 2 | 2+ | 9 | -4 | D6 |
 | melee | -- | Trueclaw | lethal hits | Melee | 6 | 2+ | 12 | -2 | 3 |
 
+#### Wargear options
+- This model's assault cannon can be replaced with one of the following:
+  - Helfrost cannon
+  - Multi-melta
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Oath of Moment
 - Legendary Tenacity: Each time an attack targets this model, if the Strength characteristic of that attack is greater than this model's Toughness characteristic, subtract 1 from the Wound roll.
-  Ancient Tactician: At the start of your Command phase, if this model is on the battlefield, you gain 1CP.
+- Ancient Tactician: At the start of your Command phase, if this model is on the battlefield, you gain 1CP.
 
 #### Unit Composition
 - 1 Bjorn the Fell-Handed- EPIC HERO
@@ -1942,12 +2133,18 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Murderclaws | sustained hits 1 twin-linked | Melee | 8 | 3+ | 14 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 6+
+
+#### Army Rules
+- Curse of the Wulfen
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 6+
-- FACTION: Curse of the Wulfen, Oath of Moment
 - Murder-maker (Aura): In the Fight phase, each time an attack targets a friendly WULFEN unit within 6" of this model, if a model in that unit is destroyed as a result of that attack, if that model has not fought this phase, roll one D6: on a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.
-  Bestial Fury: You can re-roll Advance and Charge rolls made for this model.
+- Bestial Fury: You can re-roll Advance and Charge rolls made for this model.
 
 #### Unit Composition
 - 1 Murderfang - EPIC HERO
@@ -1980,12 +2177,19 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Close combat weapon | -- | Melee | 5 | 2+ | 4 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 5 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- This model's bolt rifle and close combat weapon can be replaced with 1 power weapon.
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Astartes Banner: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
-  Unbreakable Duty: While this model is within range of an objective marker and/or within 6" of the centre of the battlefield, this model has the Feel No Pain 4+ ability.
+- Unbreakable Duty: While this model is within range of an objective marker and/or within 6" of the centre of the battlefield, this model has the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Ancient
@@ -2139,14 +2343,27 @@ ADEPTUS ASTARTES
 | melee | -- | Thunder hammer | devastating wounds | Melee | 4 | 3+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | twin-linked | Melee | 6 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- This model's power fist can be replaced with one of the following:
+  - 1 chainfist
+  - 1 close combat weapon
+  - 1 power weapon
+  - 1 thunder hammer
+- This model's storm bolter and power fist can be replaced with one of the following:
+  - 1 twin lightning claws
+  - 1 thunder hammer and 1 Terminator storm shield
+
+#### Core Abilities
+- Deep Strike
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Support
-- FACTION: Oath of Moment
 - Astartes Banner: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
-  Keep the Banner High: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.
-
-#### Wargear Abilities
+- Keep the Banner High: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.
 - Terminator Storm Shield: The bearer has a Wounds characteristic of 6.
 
 #### Unit Composition
@@ -2298,12 +2515,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Reductor pistol | PISTOL | 3" | 1 | 3+ | 4 | -4 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Narthecium: While this model is leading a unit, in your Command phase, you can return 1 destroyed model (excluding CHARACTER models) to that unit.
-  Gene-seed Recovery: When this model's Bodyguard unit is destroyed, roll one D6: on a 2+, you gain 1CP
+- Gene-seed Recovery: When this model's Bodyguard unit is destroyed, roll one D6: on a 2+, you gain 1CP
 
 #### Unit Composition
 - 1 Apothecary
@@ -2312,6 +2533,7 @@ ADEPTUS ASTARTES
 #### Support
 - This model can be attached to the following units:
   - ASSAULT INTERCESSOR SQUAD
+  - BLADEGUARD VETERAN SQUAD
   - DESOLATION SQUAD
   - DEVASTATOR SQUAD
   - HELLBLASTER SQUAD
@@ -2450,12 +2672,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Absolvor bolt pistol | pistol | 18" | 1 | 3+ | 5 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Surgical Precision: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Vivispectrum: If this model's unit destroys an enemy unit as the result of a melee attack, until the end of the battle, this model has an Objective Control characteristic of 9.
+- Vivispectrum: If this model's unit destroys an enemy unit as the result of a melee attack, until the end of the battle, this model has an Objective Control characteristic of 9.
 
 #### Unit Composition
 - 1 Apothecary Biologis
@@ -2587,12 +2813,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Heavy bolt pistol | pistol | 18" | 1 | 3+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 5 | 2+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Astartes Banner: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
-  Deeds of Heroism: Once per battle, when this model is selected to fight, it can use this ability. If it does, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in this model's unit.
+- Deeds of Heroism: Once per battle, when this model is selected to fight, it can use this ability. If it does, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in this model's unit.
 
 #### Unit Composition
 - 1 Bladeguard Ancient
@@ -2735,14 +2965,29 @@ ADEPTUS ASTARTES
 | melee | -- | Master-crafted power weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's bolt pistol, master-crafted bolter and close combat weapon can be replaced with one of the following:
+  - 1 heavy bolt pistol and 1 power fist
+  - 1 heavy bolt pistol and 1 master-crafted power weapon
+  - 1 neo-volkite pistol and 1 power fist
+  - 1 neo-volkite pistol and 1 master-crafted power weapon
+  - 1 plasma pistol and 1 power fist
+  - 1 plasma pistol and 1 master-crafted power weapon
+  - 1 heavy bolt pistol, 1 master-crafted power weapon and 1 relic shield
+- This model's close combat weapon can be replaced with one of the following:
+  - 1 master-crafted power weapon
+  - 1 power fist
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Finest Hour: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
-
-#### Wargear Abilities
+- Finest Hour: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
 - Relic Shield: The bearer has a Wounds characteristic of 6.
 
 #### Unit Composition
@@ -2899,12 +3144,22 @@ ADEPTUS ASTARTES
 | melee | -- | Relic chainsword | extra attacks | Melee | 3 | 2+ | 4 | -1 | 2 |
 | melee | -- | Relic fist | extra attacks | Melee | 1 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's master-crafted heavy bolt rifle and master-crafted power weapon can be replaced with:
+  - 1 boltstorm gauntlet, 1 power fist and 1 relic chainsword
+  - 1 boltstorm gauntlet, 1 power fist and 1 relic blade
+  - 1 boltstorm gauntlet, 1 power fist and 1 relic fist
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Refuse to Yield: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
+- Refuse to Yield: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
 
 #### Unit Composition
 - 1 Captain in Gravis Armour
@@ -3040,12 +3295,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Instigator bolt carbine | precision | 24" | 1 | 2+ | 4 | -2 | 2 |
 | melee | -- | Combat knife | -- | Melee | 6 | 2+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Leader
+- Stealth
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader, Stealth
-- FACTION: Oath of Moment
 - Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Master of Deceit: After both players have deployed their armies, if your army includes one or more models with this ability, you can select up to three friendly ADEPTUS ASTARTES INFANTRY units and redeploy all of those units. When doing so, any of those units can be placed into Strategic Reserves, regardless of how many units are already in Strategic Reserves.
+- Master of Deceit: After both players have deployed their armies, if your army includes one or more models with this ability, you can select up to three friendly ADEPTUS ASTARTES INFANTRY units and redeploy all of those units. When doing so, any of those units can be placed into Strategic Reserves, regardless of how many units are already in Strategic Reserves.
 
 #### Unit Composition
 - 1 Captain in Phobos Armour
@@ -3189,12 +3450,21 @@ ADEPTUS ASTARTES
 | melee | -- | Relic fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Relic weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's storm bolter can be replaced with 1 combi-weapon
+- This model's relic weapon can be replaced with 1 relic fist
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  The Imperium's Sword: You can re-roll Charge rolls made for this model's unit.
+- The Imperium's Sword: You can re-roll Charge rolls made for this model's unit.
 
 #### Unit Composition
 - 1 Captain in Terminator Armour
@@ -3351,14 +3621,27 @@ ADEPTUS ASTARTES
 | melee | -- | Relic weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 5 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's heavy bolt pistol can be replaced with one of the following:
+  - 1 plasma pistol
+  - 1 hand flamer
+- This model's Astartes chainsword can be replaced with one of the following:
+  - 1 power fist
+  - 1 relic weapon
+- This model's heavy bolt pistol and Astartes chainsword can be replaced with 1 thunder hammer and 1 relic shield.
+- If this model is equipped with a heavy bolt pistol and an Astartes chainsword, it can be equipped with 1 relic shield. This model's heavy bolt pistol and Astartes chainsword cannot be replaced.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Angel's Wrath: While this model is leading a unit, each time that unit ends a Charge move, until the end of the turn, add 1 to the Strength characteristic of melee weapons equipped by models in that unit.
-  Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-
-#### Wargear Abilities
+- Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 - Relic Shield: The bearer has a Wounds characteristic of 6.
 
 #### Unit Composition
@@ -3505,12 +3788,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Absolvor bolt pistol | Pistol | 18" | 1 | 3+ | 5 | -1 | 2 |
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Litany of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Spiritual Leader: Once per battle, at the start of any phase, you can select one friendly ADEPTUS ASTARTES unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
+- Spiritual Leader: Once per battle, at the start of any phase, you can select one friendly ADEPTUS ASTARTES unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Chaplain
@@ -3535,6 +3822,7 @@ ADEPTUS ASTARTES
   - DEATHWATCH VETERANS
   - DECIMUS KILL TEAM
   - FORTIS KILL TEAM
+  - DEATH COMPANY MARINES WITH BOLTGUNS
   - DEATH COMPANY MARINES
   - SKYCLAWS
   - WOLF GUARD
@@ -3663,14 +3951,20 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 
+#### Wargear options
+- This model's storm bolter can be replaced with 1 relic shield.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Litany of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Recitation of Faith: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against mortal wounds.
-
-#### Wargear Abilities
+- Recitation of Faith: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against mortal wounds.
 - Relic Shield: The bearer has a Wounds characteristic of 6.
 
 #### Unit Composition
@@ -3835,12 +4129,29 @@ ADEPTUS ASTARTES
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 | melee | -- | Power fist | -- | Melee | 4 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's bolt pistol can be replaced with one of the following:
+  - 1 boltgun
+  - 1 combi-weapon
+  - 1 grav-pistol
+  - 1 hand flamer
+  - 1 inferno pistol
+  - 1 plasma pistol
+  - 1 storm bolter
+  - 1 power fist
+  - 1 absolvor bolt pistol.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Litany of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Exhortation of Rage: Each time this model's unit is selected to fight, you can select one enemy unit within Engagement Range of this model's unit and roll one D6: on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers 3 mortal wounds.
+- Exhortation of Rage: Each time this model's unit is selected to fight, you can select one enemy unit within Engagement Range of this model's unit and roll one D6: on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers 3 mortal wounds.
 
 #### Unit Composition
 - 1 Chaplain with Jump Pack
@@ -3990,12 +4301,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Absolvor bolt pistol | pistol | 18" | 1 | 3+ | 5 | -1 | 2 |
 | melee | -- | Executioner relic blade | devastating wounds precision | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Tempormortis: While this model is leading a unit, that unit has the Fights First ability.
-  Silent Fury: Each time this model destroys an enemy CHARACTER model, until the end of the battle, add 1 to the Attacks characteristic of its executioner relic blade.
+- Silent Fury: Each time this model destroys an enemy CHARACTER model, until the end of the battle, add 1 to the Attacks characteristic of its executioner relic blade.
 
 #### Unit Composition
 - 1 Judiciar
@@ -4142,12 +4457,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Smite - focused witchfire | devastating wounds hazardous psychic | 24" | D6 | 3+ | 6 | -2 | D3 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Psychic Hood: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks.
-  Mental Fortress (Psychic): While this model is leading a unit, models in that unit have a 4+ invulnerable save.
+- Mental Fortress (Psychic): While this model is leading a unit, models in that unit have a 4+ invulnerable save.
 
 #### Unit Composition
 - 1 Librarian
@@ -4301,12 +4620,17 @@ ADEPTUS ASTARTES
 | ranged | -- | Smite - focused witchfire | devastating wounds hazardous psychic | 24" | D6 | 3+ | 6 | -2 | D3 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Infiltrators
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader
-- FACTION: Oath of Moment
 - Psychic Hood: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks.
-  Shrouding (Psychic): While this model is leading a unit, models in that unit have the Stealth ability and that unit cannot be targeted by ranged attacks unless the attacking model is within 12".
+- Shrouding (Psychic): While this model is leading a unit, models in that unit have the Stealth ability and that unit cannot be targeted by ranged attacks unless the attacking model is within 12".
 
 #### Unit Composition
 - 1 Librarian in Phobos Armour
@@ -4453,12 +4777,22 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-weapon
+  - 1 storm bolter
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Oath of Moment
 - Psychic Hood: While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks.
-  Veil of Time (Psychic): While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
+- Veil of Time (Psychic): While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
 
 #### Unit Composition
 - 1 Librarian in Terminator Armour
@@ -4616,14 +4950,27 @@ ADEPTUS ASTARTES
 | melee | -- | Master-crafted power weapon | -- | Melee | 5 | 2+ | 5 | -2 | 2 |
 | melee | -- | Power fist | -- | Melee | 4 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's master-crafted bolter can be replaced with one of the following:
+  - 1 plasma pistol
+  - 1 master-crafted power weapon
+  - 1 power fist
+- This model's bolt pistol, master-crafted bolter and close combat weapon can be replaced with 1 neo volkite pistol, 1 master-crafted power weapon and 1 storm shield.
+- This model's bolt pistol can be replaced with 1 heavy bolt pistol.
+- This model's close combat weapon can be replaced with one of the following:
+  - 1 master-crafted power weapon
+  - 1 power fist
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Tactical Precision: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Target Priority: This model's unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
-
-#### Wargear Abilities
+- Target Priority: This model's unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
 - Storm Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -4773,12 +5120,19 @@ ADEPTUS ASTARTES
 | ranged | -- | Master-crafted scoped bolt carbine | -- | 24" | 2 | 2+ | 4 | 0 | 2 |
 | melee | -- | Paired combat blades | sustained hits 1 | Melee | 5 | 2+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+- Support
+- Scouts 6"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators, Support, Scouts 6"
-- FACTION: Oath of Moment
 - Tactical Precision: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Strategic Dispersal: In your Shooting phase, after this model's unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, that unit is not eligible to declare a charge.
+- Strategic Dispersal: In your Shooting phase, after this model's unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, that unit is not eligible to declare a charge.
 
 #### Unit Composition
 - 1 Lieutenant in Phobos Armour
@@ -4916,12 +5270,17 @@ ADEPTUS ASTARTES
 | ranged | -- | Master-crafted special issue bolt pistol | pistol precision | 12" | 1 | 2+ | 4 | -1 | 2 |
 | melee | -- | Combat knife | precision | Melee | 6 | 2+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Support
+- Scouts 6"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support, Scouts 6"
-- FACTION: Oath of Moment
 - Tactical Precision: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Deadly Terror: While this model is leading a unit, increase the range of that unit's Terror Troops ability by 3".
+- Deadly Terror: While this model is leading a unit, increase the range of that unit's Terror Troops ability by 3".
 
 #### Unit Composition
 - 1 Lieutenant in Reiver Armour
@@ -5056,12 +5415,19 @@ ADEPTUS ASTARTES
 | ranged | -- | Combi-weapon | anti-infantry 4+ devastating wounds rapid fire 1 | 24" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Paired combat blades | anti-infantry 4+ sustained hits 1 | Melee | 5 | 2+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Infiltrators, Lone Operative, Stealth
-- FACTION: Oath of Moment
 - Priority Objective Identified: At the start of the first battle round, if your army includes one or more models with this ability, you can select one objective marker on the battlefield. Until the end of the battle, while one or more models with this ability are on the battlefield, each time a friendly ADEPTUS ASTARTES model makes an attack that targets an enemy unit that is within range of that objective marker, re-roll a Wound roll of 1.
-  Evade and Survive: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to 6".
+- Evade and Survive: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to 6".
 
 #### Unit Composition
 - 1 Lieutenant with Combi-weapon
@@ -5196,13 +5562,17 @@ ADEPTUS ASTARTES
 | melee | -- | Omnissian power axe | -- | Melee | 4 | 3+ | 6 | -2 | 2 |
 | melee | -- | Servo-arm | extra attacks | Melee | 1 | 3+ | 8 | -2 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Techmarine: While this model is within 3" of one or more friendly ADEPTUS ASTARTES VEHICLE units, this model has the Lone Operative ability.
-  Blessing of the Omnissiah: In your Command phase, you can select one friendly ADEPTUS ASTARTES VEHICLE model within 3" of this model. That model regains up to D3 lost wounds and, until the start of your next Command phase, each time that Vehicle model makes an attack, add 1 to the Hit roll. Each model can only be selected for this ability once per turn.
-  Vengeance of the Omnissiah: If a friendly ADEPTUS ASTARTES VEHICLE model is destroyed within 12" of this model, until the end of the battle, this model's Omnissian power axe has an Attacks characteristic of 7.
+- Blessing of the Omnissiah: In your Command phase, you can select one friendly ADEPTUS ASTARTES VEHICLE model within 3" of this model. That model regains up to D3 lost wounds and, until the start of your next Command phase, each time that Vehicle model makes an attack, add 1 to the Hit roll. Each model can only be selected for this ability once per turn.
+- Vengeance of the Omnissiah: If a friendly ADEPTUS ASTARTES VEHICLE model is destroyed within 12" of this model, until the end of the battle, this model's Omnissian power axe has an Attacks characteristic of 7.
 
 #### Unit Composition
 - 1 Techmarine
@@ -5346,12 +5716,20 @@ ADEPTUS ASTARTES
 | melee | -- | Astartes chainsword | sustained hits 1 | Melee | 7 | 2+ | 4 | -1 | 1 |
 | melee | -- | Master-crafted power weapon | lethal hits | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's combi-weapon can be replaced with 1 heavy bolt pistol.
+- This model's master-crafted power weapon can be replaced with 1 Astartes chainsword.
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Templar Vows
 - Vehement Aggression: While this model is leading a unit, each time that unit is selected to fight, take a Leadership test for that unit: if passed, until the end of the phase, each time a model in that unit makes an attack, you can re-roll the Hit roll; if failed, until the end of the phase, each time a model in that unit makes an attack, re-roll a Hit roll of 1.
-  Prioritised Eradication: Each time a model in this model's unit makes a melee attack that destroys one or more enemy units, roll one D6: on a 4+, you gain 1CP.
+- Prioritised Eradication: Each time a model in this model's unit makes a melee attack that destroys one or more enemy units, roll one D6: on a 4+, you gain 1CP.
 
 #### Unit Composition
 - 1 Castellan
@@ -5483,18 +5861,22 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Master-crafted power weapon | lethal hits | Melee | 5 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Templar Vows
 - Vengeful Exhortation: While this model is leading a unit, each time a model in that unit is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
-  Martial Honour: The first time a model in this model's unit makes a melee attack that destroys one or more enemy units, until the end of the battle, while this model's unit is not Battle-shocked, add 5 to this model's Objective Control characteristic.
+- Martial Honour: The first time a model in this model's unit makes a melee attack that destroys one or more enemy units, until the end of the battle, while this model's unit is not Battle-shocked, add 5 to this model's Objective Control characteristic.
 
 #### Unit Composition
 - 1 Crusade Ancient
   This model is equipped with: bolt pistol; master-crafted power weapon.
 
-#### Leader
+#### Support
 - This model can be attached to the following units:
   - CRUSADER SQUAD
   - SWORD BRETHREN SQUAD
@@ -5617,12 +5999,17 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Black Sword - strike | anti-character 5+ precision | Melee | 6 | 2+ | 8 | -3 | 3 |
 | melee | -- | Black Sword - sweep | -- | Melee | 10 | 2+ | 6 | -2 | 1 |
 
+#### Core Abilities
+- Leader
+- Lone Operative
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Lone Operative
-- FACTION: Templar Vows
 - Armour of Faith: Once per phase, when an attack is allocated to this model and the saving throw is failed, you can change the Damage characteristic of that attack to 0.
-  Sigismund's Heir: When this unit declares a charge, If an enemy CHARACTER unit is within 12" of this unit, you can use this part of this ability. If you do:
+- Sigismund's Heir: When this unit declares a charge, If an enemy CHARACTER unit is within 12" of this unit, you can use this part of this ability. If you do:
   - This unit can re-roll that charge roll.
   - This unit must end that charge move engaged with one or more of those enemy CHARACTER units.
   - (Once per battle, per army) In the Fight phase, when this unit is selected to fight, if this unit is engaged with a CHARACTER unit, you can use this part of this ability. If you do, this unit's melee attacks have [DEVASTATING WOUNDS].
@@ -5758,12 +6145,20 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 | melee | -- | Master-crafted power weapon | extra attacks lethal hits | Melee | 3 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's absolvor bolt pistol can be replaced with 1 pyre pistol.
+- If this model is equipped with an absolvor bolt pistol, it can be equipped with 1 master-crafted power weapon (this model's absolvor bolt pistol cannot be replaced).
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Templar Vows
 - Remorseless Persecution: While this model is leading a unit, that unit is eligible to declare a charge in a turn in which it Advanced.
-  Condemnatory Annihilation: Each time this model's unit has fought, if one or more enemy units were destroyed as a result of those attacks, each enemy unit within 6" of this model must take a Battle-shock test.
+- Condemnatory Annihilation: Each time this model's unit has fought, if one or more enemy units were destroyed as a result of those attacks, each enemy unit within 6" of this model must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Execrator
@@ -5897,12 +6292,19 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 2+ | 8 | -3 | 2 |
 | melee | -- | Master-crafted power weapon | lethal hits | Melee | 7 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's plasma pistol can be replaced with one combi-weapon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Templar Vows
 - Inspirational Exemplar: While this model is leading a unit, each time a model in that unit makes a melee attack, an unmodified Hit roll of 5+ scores a Critical Hit.
-  Pious Fervour: Each time this model's unit is selected to fight, until the end of the phase, add 1 to the Attacks characteristic of this model's master-crafted power weapon for each enemy unit within 6" of this model (to a maximum of +3).
+- Pious Fervour: Each time this model's unit is selected to fight, until the end of the phase, add 1 to the Attacks characteristic of this model's master-crafted power weapon for each enemy unit within 6" of this model (to a maximum of +3).
 
 #### Unit Composition
 - 1 Marshal
@@ -6041,12 +6443,22 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Relic weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's heavy bolt pistol can be replaced with 1 inferno pistol.
+- This model's master-crafted chainsword can be replaced with one of the following:
+  - 1 relic weapon
+  - 1 power fist
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Finest Hour: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
+- Finest Hour: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 1 Blood Angels Captain
@@ -6183,13 +6595,24 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Relic weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's heavy bolt pistol can be replaced with 1 inferno pistol.
+- This model's master-crafted chainsword can be replaced with one of the following:
+  - 1 relic weapon
+  - 1 power fist
+
+#### Core Abilities
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Leader
-- FACTION: Oath of Moment
 - Forlorn Hero: While this model is leading a unit, unless that unit starts the battle embarked within a TRANSPORT, models in that unit have the Scouts 6" ability.
-  Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
-  Death Vision of Sanguinius: If this model is destroyed by a melee attack, after the attacking unit has finished making its attacks, you can roll one D6, adding 2 to the result if the attacking unit contains the enemy WARLORD: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6+, that enemy unit suffers D3+3 mortal wounds.
+- Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
+- Death Vision of Sanguinius: If this model is destroyed by a melee attack, after the attacking unit has finished making its attacks, you can roll one D6, adding 2 to the result if the attacking unit contains the enemy WARLORD: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6+, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
 - 1 Death Company Captain
@@ -6328,13 +6751,27 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Relic weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's heavy bolt pistol can be replaced with one of the following:
+  - 1 plasma pistol
+  - 1 hand flamer
+- This model's Astartes chainsword can be replaced with one of the following:
+  - 1 relic weapon
+  - 1 power fist
+
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 6+, Leader
-- FACTION: Oath of Moment
 - Lost to Fury: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
-  Death Vision of Sanguinius: If this model is destroyed by a melee attack, after the attacking unit has finished making its attacks, you can roll one D6, adding 2 to the result if the attacking unit contains the enemy WARLORD: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6+, that enemy unit suffers D3+3 mortal wounds.
+- Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
+- Death Vision of Sanguinius: If this model is destroyed by a melee attack, after the attacking unit has finished making its attacks, you can roll one D6, adding 2 to the result if the attacking unit contains the enemy WARLORD: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6+, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
 - 1 Death Company Captain with Jump Pack
@@ -6476,12 +6913,16 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | ranged | -- | Absolvor bolt pistol | pistol | 18" | 1 | 3+ | 5 | -1 | 2 |
 | melee | -- | Astartes chainsword | -- | Melee | 5 | 3+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Sanguinary Priest: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability.
-  Blood Chalice: While this model is leading a unit, improve the Armour Penetration characteristic of melee weapons equipped by models in that unit by 1.
+- Blood Chalice: While this model is leading a unit, improve the Armour Penetration characteristic of melee weapons equipped by models in that unit by 1.
 
 #### Unit Composition
 - 1 Sanguinary Priest
@@ -6615,12 +7056,20 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | ranged | -- | Vigil spear | -- | 24" | 2 | 2+ | 4 | -1 | 2 |
 | melee | -- | Vigil spear | lance | Melee | 6 | 2+ | 6 | -2 | D3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Mission Tactics, Oath of Moment
 - Strategic Knowledge: While this model is leading a unit, that unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
-  Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
+- Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Watch Master
@@ -6748,13 +7197,17 @@ ADEPTUS ASTARTES; DEATHWATCH
 | ranged | -- | Helfrost pistol - focused | pistol | 12" | 1 | 2+ | 6 | -3 | 3 |
 | melee | -- | Tempest hammer and servo-arm | -- | Melee | 4 | 4+ | 8 | -2 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Iron Priest: While this model is within 3" of one or more friendly ADEPTUS ASTARTES VEHICLE units, this model has the Lone Operative ability.
-  Gift of the Iron Wolf: In your Command phase, you can select one friendly ADEPTUS ASTARTES VEHICLE model within 3" of this model. That model regains up to D3 lost wounds and, until the start of your next Command phase, select one ranged weapon equipped by that model to have the [RAPID FIRE 1] ability. Each model can only be selected for this ability or the Blessing of the Omnissiah ability once per turn.
-  Judgement of the Omnissiah: Each time this model makes an attack that targets an enemy unit within Engagement Range of one or more friendly ADEPTUS ASTARTES VEHICLE units, you can re-roll the Wound roll.
+- Gift of the Iron Wolf: In your Command phase, you can select one friendly ADEPTUS ASTARTES VEHICLE model within 3" of this model. That model regains up to D3 lost wounds and, until the start of your next Command phase, select one ranged weapon equipped by that model to have the [RAPID FIRE 1] ability. Each model can only be selected for this ability or the Blessing of the Omnissiah ability once per turn.
+- Judgement of the Omnissiah: Each time this model makes an attack that targets an enemy unit within Engagement Range of one or more friendly ADEPTUS ASTARTES VEHICLE units, you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Iron Priest
@@ -6890,14 +7343,23 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Master-crafted power weapon | -- | Melee | 7 | 2+ | 5 | -2 | 2 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 5 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's master-crafted power weapon can be replaced with 1 thunder hammer.
+- This model's storm shield can be replaced with one of the following:
+  - 1 master-crafted bolt carbine
+  - 1 master-crafted heavy bolt pistol
+  - 1 plasma pistol
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Tempered Ferocity: While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability and, each time a model in that unit makes an attack that targets an enemy unit within 6", re-roll a Hit roll of 1.
-  Heroic Last Stand: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 2+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
-
-#### Wargear Abilities
+- Heroic Last Stand: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 2+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
 - Storm Shield: The bearer has a Wounds characteristic of 6.
 
 #### Unit Composition
@@ -7032,12 +7494,16 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Absolvor bolt pistol | pistol | 18" | 1 | 3+ | 5 | -1 | 2 |
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Healing Balms: While this model is leading a unit, in your Command phase, you can return 1 destroyed model (excluding CHARACTER models) to that unit.
-  Litany of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
+- Litany of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
 
 #### Unit Composition
 - 1 Wolf Priest
@@ -7171,12 +7637,16 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Twin bolt rifle | twin-linked | 24" | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Crozius arcanum | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Oath of Moment
 - Litany of Hate: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Catechism of Fire: Each time this model's unit is selected to shoot, you can select one enemy unit within 12" of and visible to this model. Until the end of the phase, ranged weapons equipped by models in this model's unit have the [DEVASTATING WOUNDS] ability when targeting that enemy unit.
+- Catechism of Fire: Each time this model's unit is selected to shoot, you can select one enemy unit within 12" of and visible to this model. Until the end of the phase, ranged weapons equipped by models in this model's unit have the [DEVASTATING WOUNDS] ability when targeting that enemy unit.
 
 #### Unit Composition
 - 1 Chaplain on Bike
@@ -7277,10 +7747,10 @@ ADEPTUS ASTARTES; SPACE WOLVES
 - Stubborn Tenacity 15 pts
 - Weapons of the First Legion 15 pts
 - Shroud of Heroes 25 pts
-- Recon Hunter 30 pts
 - Master-crafted Weapon 10 pts
 - Master of Manoeuvre 15 pts
 - Mounted Strategist 30 pts
+- Recon Hunter 30 pts
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **70 pts**
@@ -7314,13 +7784,20 @@ ADEPTUS ASTARTES
 | melee | -- | Black Knight combat weapon | devastating wounds | Melee | 3 | 3+ | 5 | -2 | 1 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- For every 3 models in this unit, 1 model's plasma talon can be replaced with 1 Astartes grenade launcher.
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Oath of Moment
 - Narthecium: While this unit contains a Ravenwing Apothecary, in your Command phase, you can return 1 destroyed model (excluding CHARACTER and INVADER ATV models) to this unit.
-  Astartes Banner: While this unit contains an Ravenwing Ancient, add 1 to the Objective Control characteristic of models in this unit.
-  Honour or Death: While this unit contains a Ravenwing Champion, add 1 to Advance and Charge rolls made for this unit. When you target this unit with the Heroic Intervention stratagem, that use is -1 CP.
+- Astartes Banner: While this unit contains an Ravenwing Ancient, add 1 to the Objective Control characteristic of models in this unit.
+- Honour or Death: While this unit contains a Ravenwing Champion, add 1 to Advance and Charge rolls made for this unit. When you target this unit with the Heroic Intervention stratagem, that use is -1 CP.
 
 #### Unit Composition
 - 1 Ravenwing Champion
@@ -7418,10 +7895,10 @@ ADEPTUS ASTARTES
 - Stubborn Tenacity 15 pts
 - Weapons of the First Legion 15 pts
 - Shroud of Heroes 25 pts
-- Recon Hunter 30 pts
 - Master-crafted Weapon 10 pts
 - Master of Manoeuvre 15 pts
 - Mounted Strategist 30 pts
+- Recon Hunter 30 pts
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 3 models -- **105 pts**
@@ -7455,9 +7932,20 @@ ADEPTUS ASTARTES; DARK ANGELS
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Assault Intercessor Sergeant's heavy bolt pistol can be replaced with one of the following:
+  - 1 hand flamer
+  - 1 plasma pistol
+- The Assault Intercessor Sergeant's Astartes chainsword can be replaced with one of the following:
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Shock Assault: Each time a model in this unit targets an enemy unit with a melee attack, re-roll a Wound roll of 1. If that enemy unit is within range of an objective marker, you can re-roll the Wound roll instead.
 
 #### Unit Composition
@@ -7503,9 +7991,14 @@ ADEPTUS ASTARTES
 | ranged | -- | Heavy bolter | assault heavy sustained hits 1 | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Heavy Intercessor's heavy bolt rifle can be replaced with 1 heavy bolter.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Unyielding in the Face of the Foe: While this unit is within range of an objective marker you control, each time an attack with a Damage characteristic of 1 is allocated to a model in this unit, add 1 to any armour saving throw made against that attack.
 
 #### Unit Composition
@@ -7556,11 +8049,26 @@ ADEPTUS ASTARTES
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Intercessor Sergeant's bolt rifle can be replaced with one of the following:
+  - 1 Astartes chainsword
+  - 1 hand flamer
+  - 1 plasma pistol
+  - 1 power weapon
+- The Intercessor Sergeant's close combat weapon can be replaced with one of the following:
+  - 1 Astartes chainsword
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+- For every 5 models in this unit, 1 model equipped with a bolt rifle can be equipped with 1 Astartes grenade launcher.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Objective Secured: If you control an objective marker at the end of your Command phase and this unit is within range of that objective marker, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-  Hail of Bolts: In your Shooting phase, when this unit is selected to shoot, select up to one visible enemy unit. While making those attacks, this unit's Bolt Rifle attacks that targeted that enemy unit have +2 A.
+- Hail of Bolts: In your Shooting phase, when this unit is selected to shoot, select up to one visible enemy unit. While making those attacks, this unit's Bolt Rifle attacks that targeted that enemy unit have +2 A.
 
 #### Unit Composition
 - 1 Intercessor Sergeant
@@ -7625,9 +8133,40 @@ ADEPTUS ASTARTES
 | melee | -- | Thunder hammer | devastating wounds | Melee | 2 | 4+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | twin-linked | Melee | 4 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- 1 Tactical Marine's boltgun can be replaced with one of the following:
+  - 1 flamer
+  - 1 heavy bolter
+  - 1 grav-cannon
+  - 1 grav-gun
+  - 1 lascannon
+  - 1 meltagun
+  - 1 missile launcher
+  - 1 multi-melta
+  - 1 plasma cannon
+  - 1 plasma gun
+- 1 Tactical Marine's boltgun can be replaced with one of the following:
+  - 1 flamer
+  - 1 grav-gun
+  - 1 meltagun
+  - 1 plasma gun
+- The Tactical Sergeant's bolt pistol and boltgun can be replaced with 1 twin lightning claws, or two different weapons from the following list:*
+  - 1 Astartes chainsword
+  - 1 bolt pistol
+  - 1 boltgun
+  - 1 combi-weapon
+  - 1 grav-pistol
+  - 1 plasma pistol
+  - 1 storm bolter
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Combat Squads: At the start of the Declare Battle Formations step, before any units have been set up, this unit can be split into two units, each containing five models.
 
 #### Unit Composition
@@ -7675,9 +8214,19 @@ ADEPTUS ASTARTES
 | melee | -- | Master-crafted power weapon | lethal hits | Melee | 3 | 2+ | 5 | -2 | 2 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Sword Brother's heavy bolt pistol can be replaced with 1 pyre pistol.
+- Any number of Neophytes can each have their bolt pistol and Astartes chainsword replaced with 1 Neophyte firearm and 1 close combat weapon.
+- Any number of Initiates can each have their bolt rifle replaced with 1 heavy bolt pistol and 1 Astartes chainsword.
+- For every 10 models in this unit, up to 2 Initiates can each have their bolt rifle replaced with one of the following:
+  - 1 heavy bolt pistol and 1 power fist
+  - 1 pyreblaster
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Templar Vows
 - Righteous Zeal: In your opponent's Shooting phase, each time an enemy unit has shot, if any models in this unit were destroyed as a result of those attacks, this unit can make a surge move of up to D6+2".
 
 #### Unit Composition
@@ -7730,12 +8279,26 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Power weapon | -- | Melee | 3 | 3+ | 5 | -2 | 1 |
 | melee | -- | Xenophase blade | devastating wounds | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 2 models can each have their boltgun and power weapon replaced with one of the following:
+  - 1 boltgun, 1 Astartes shield and 1 close combat weapon
+  - 1 power weapon and 1 Astartes shield
+- For every 5 models in this unit, up to 2 models can each have their boltgun and power weapon replaced with 1 Deathwatch thunder hammer.
+- For every 5 models in this unit, 1 model can have its boltgun and power weapon replaced with 1 stalker-pattern boltgun and 1 close combat weapon.
+- For every 5 models in this unit, up to 2 models can each have their boltgun and power weapon replaced with 1 Deathwatch shotgun and 1 close combat weapon.
+- For every 5 models in this unit, 1 model can have its boltgun and power weapon replaced with 1 frag cannon and 1 close combat weapon.
+- For every 5 models in this unit, 1 model can have its boltgun and power weapon replaced with 1 infernus heavy bolter and 1 close combat weapon.
+- 1 model's boltgun and power weapon can be replaced with 1 Black Shield blades.
+- The Watch Sergeant's power weapon can be replaced with 1 xenophase blade.
+- The Watch Sergeant's boltgun can be replaced with 1 combi-weapon.
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Mission Tactics, Oath of Moment
 - Death to the Alien: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack does not have the IMPERIUM or CHAOS keywords, you can re-roll the Hit roll instead.
-
-#### Wargear Abilities
 - Astartes Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -7744,7 +8307,7 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
   Every model is equipped with: boltgun; power weapon.
 
 #### Attached Unit
-- If a CHARACTER from your army with the Leader ability can be attached to a Sternguard Veteran Squad, it can be attached to this unit instead.
+- If a CHARACTER from your army with the Leader ability can be attached to a STERNGUARD VETERAN SQUAD, it can be attached to this unit instead.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -7793,12 +8356,21 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Power weapon | sustained hits 1 | Melee | 4 | 3+ | 5 | -2 | 2 |
 | melee | -- | Xenophase blade | devastating wounds | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in the unit, up to 1 model's infernus heavy bolter can be replaced with one of the following:
+  - 1 frag cannon.
+  - 1 hellstorm bolt rifle and 1 Astartes grenade launcher.
+- For every 5 models in the unit, up to 1 model's heavy thunder hammer can be replaced with 1 power weapon and 1 Astartes shield.
+- For every 5 models in the unit, up to 1 model's stalker bolt rifle can be replaced with 1 plasma incinerator.
+- For every 5 models in the unit, up to 1 model's Deathwatch marksman bolt carbine can be replaced with 1 combat knife.
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Mission Tactics, Oath of Moment
 - Death to the Alien: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack does not have the IMPERIUM or CHAOS keywords, you can re-roll the Hit roll instead.
-
-#### Wargear Abilities
 - Astartes Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -7852,9 +8424,15 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Astartes chainsword | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Blood Claw Pack Leader's bolt pistol can be replaced with 1 plasma pistol.
+- The Blood Claw Pack Leader's Astartes chainsword can be replaced with 1 power weapon.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Berserk Charge: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
@@ -7897,9 +8475,17 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Grey Hunter Pack Leader's bolt carbine can be replaced with 1 plasma pistol.
+- The Grey Hunter Pack Leader's Astartes chainsword can be replaced with one of the following
+  - 1 power fist
+  - 1 power weapon
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Cunning Hunters: Each time a model in this unit makes an attack, re-roll a Wound roll of 1. If the target is within range of an objective marker, you can re-roll the Wound roll instead.
 
 #### Unit Composition
@@ -7935,19 +8521,24 @@ ADEPTUS ASTARTES; SPACE WOLVES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Core Abilities
+- Deadly Demise 1
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Deep Strike
-- FACTION: Oath of Moment
 - Drop Pod Assault: This model must start the battle in Reserves and can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. Any units embarked within this model must immediately disembark after it has been set up on the battlefield, and they must be set up more than 8" away from all enemy models.
-  Combat Disembarkation: Each time a unit disembarks from this model after it has been set up on the battlefield, that unit is still eligible to declare a charge this turn.
-  Deployment Complete: Once this unit is set up on the battlefield and all units within it have disembarked, until the end of the battle, units cannot embark within this TRANSPORT.
-
-#### Unit Composition
-- 1 Drop Pod
+- Combat Disembarkation: Each time a unit disembarks from this model after it has been set up on the battlefield, that unit is still eligible to declare a charge this turn.
+- Deployment Complete: Once this unit is set up on the battlefield and all units within it have disembarked, until the end of the battle, units cannot embark within this TRANSPORT.
 
 #### Transport
 - This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models. It cannot transport CENTURION, GRAVIS, JUMP PACK, WULFEN or TERMINATOR models.
+
+#### Unit Composition
+- 1 Drop Pod
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -7967,7 +8558,7 @@ ADEPTUS ASTARTES
 
 ### Impulsor
 - **Role:** Dedicated Transports
-- **Wahapedia slug:** [Impulsor](https://wahapedia.ru/wh40k11ed/factions/space-marines/Impulsor)
+- **Wahapedia slug:** [Impulsor-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Impulsor-1)
 - **Source label:** Faction Pack. Space Marines (11th edition, version 1.2)
 - **Base size(s) shown:** (diameter 100mm)
 
@@ -7988,22 +8579,34 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 ironhail heavy stubber.
+- This model's 2 storm bolters can be replaced with 2 fragstorm grenade launchers.
+- This model can be equipped with one of the following:
+  - 1 bellicatus missile array
+  - 1 ironhail skytalon array
+  - 1 orbital comms array
+  - 1 shield dome
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 6
-- FACTION: Oath of Moment
 - Assault Vehicle: Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
-
-#### Wargear Abilities
 - Orbital Comms Array (Aura): While a friendly ADEPTUS ASTARTES unit is within 6" of the bearer, each time you target that unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Shield Dome: The bearer has a 5+ invulnerable save.
+
+#### Transport
+- This model has a transport capacity of 7 TACTICUS or PHOBOS INFANTRY models. It cannot transport JUMP PACK models.
 
 #### Unit Composition
 - 1 Impulsor
   This model is equipped with: 2 storm bolters; armoured hull.
-
-#### Transport
-- This model has a transport capacity of 7 TACTICUS or PHOBOS INFANTRY models. It cannot transport JUMP PACK models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -8045,18 +8648,27 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin heavy bolter can be replaced with 1 twin lascannon.
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Fire Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks, Until the end of the phase, each time a friendly model that disembarked from this Transport this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 6 ADEPTUS ASTARTES INFANTRY models. It cannot transport JUMP PACK, WULFEN, PHOBOS, GRAVIS, CENTURION, TERMINATOR or TACTICUS models (excluding TACTICUS CHARACTER models that began the battle attached to a non-TACTICUS unit).
 
 #### Unit Composition
 - 1 Razorback
   This model is equipped with: twin heavy bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 6 ADEPTUS ASTARTES INFANTRY models. It cannot transport JUMP PACK, WULFEN, PHOBOS, GRAVIS, CENTURION, TERMINATOR or TACTICUS models (excluding TACTICUS CHARACTER models that began the battle attached to a non-TACTICUS unit).
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -8096,18 +8708,26 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Oath of Moment
 - Self Repair: At the end of your Command phase, this model regains 1 lost wound.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models. It cannot transport JUMP PACK, WULFEN, PHOBOS, GRAVIS, CENTURION, TERMINATOR or TACTICUS models (excluding TACTICUS CHARACTER models that began the battle attached to a non-TACTICUS unit).
 
 #### Unit Composition
 - 1 Rhino
   This model is equipped with: storm bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models. It cannot transport JUMP PACK, WULFEN, PHOBOS, GRAVIS, CENTURION, TERMINATOR or TACTICUS models (excluding TACTICUS CHARACTER models that began the battle attached to a non-TACTICUS unit).
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -8131,7 +8751,7 @@ ADEPTUS ASTARTES
 
 ### Impulsor
 - **Role:** Dedicated Transports
-- **Wahapedia slug:** [Impulsor](https://wahapedia.ru/wh40k11ed/factions/space-marines/Impulsor)
+- **Wahapedia slug:** [Impulsor-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Impulsor-1)
 - **Source label:** Faction Pack. Black Templars (11th edition, version 1.1)
 - **Base size(s) shown:** (diameter 100mm)
 
@@ -8153,22 +8773,36 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 ironhail heavy stubber
+  - 1 multi-melta
+- This model's 2 storm bolters can be replaced with 2 fragstorm grenade launchers.
+- This model can be equipped with one of the following:
+  - 1 bellicatus missile array
+  - 1 ironhail skytalon array
+  - 1 orbital comms array
+  - 1 shield dome
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 6
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 6
-- FACTION: Templar Vows
 - Assault Vehicle: Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
-
-#### Wargear Abilities
 - Orbital Comms Array (Aura): While a friendly ADEPTUS ASTARTES unit is within 6" of the bearer, each time you target that unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Shield Dome: The bearer has a 5+ invulnerable save.
+
+#### Transport
+- This model has a transport capacity of 7 TACTICUS or PHOBOS INFANTRY models. It cannot transport JUMP PACK models.
 
 #### Unit Composition
 - 1 Impulsor
   This model is equipped with: 2 storm bolters; armoured hull.
-
-#### Transport
-- This model has a transport capacity of 7 TACTICUS or PHOBOS INFANTRY models. It cannot transport JUMP PACK models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -8209,10 +8843,20 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Typhoon missile launcher - krak | -- | 48" | 2 | 3+ | 9 | -2 | D6 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's skyhammer missile launcher can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 typhoon missile launcher
+- This model's las-talon can be replaced with 1 Icarus stormcannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Interceptor: Each time this model makes a ranged attack that targets a unit that can Fly, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -8256,10 +8900,20 @@ ADEPTUS ASTARTES
 | ranged | -- | Typhoon missile launcher - krak | -- | 48" | 2 | 3+ | 9 | -2 | D6 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's skyhammer missile launcher can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin lascannon
+  - 1 typhoon missile launcher
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Strafing Run: Each time this model makes a ranged attack that targets a unit that cannot Fly, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -8301,10 +8955,17 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's avenger mega bolter can be replaced with 1 Nephilim lascannons.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Lightning-fast Manoeuvres: Ranged attacks that target this unit have -1 to wound rolls.
 
 #### Unit Composition
@@ -8345,10 +9006,14 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Rift cannon | blast devastating wounds | 18" | D3+1 | 3+ | 16 | -4 | 3 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Stasis Bomb: At the end of your opponent's Fight phase, select one visible enemy unit (excluding AIRCRAFT/Lone Operative units) within 24" of this unit. That enemy unit is slowed until the end of your opponent's next Movement phase:
   - While a unit is slowed, in your opponent's Movement phase, when that unit is selected to move, unless that unit remains stationary, roll one D6:
   - On a 1-4, that unit suffers D3 mortal wounds and that unit has -2" M.
@@ -8392,9 +9057,14 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Twin Firestrike las-talon | twin-linked | 36" | 2 | 2+ | 10 | -3 | D6+1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their twin Firestrike las-talon replaced with 1 twin Firestrike autocannon.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Sentinel Protocols: Each time you select this unit for the Fire Overwatch Stratagem, hits are scored on unmodified Hit rolls of 4+ when resolving that Stratagem.
 
 #### Unit Composition
@@ -8437,11 +9107,13 @@ ADEPTUS ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Teeth and claws | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Predatory Instinct: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
-  Hunting Hounds: While this unit is within 6" of one or more friendly SPACE WOLVES CHARACTER models (excluding WULFEN models), if this unit is not Battle-shocked, models in it have an Objective Control characteristic of 1.
+- Hunting Hounds: While this unit is within 6" of one or more friendly SPACE WOLVES CHARACTER models (excluding WULFEN models), if this unit is not Battle-shocked, models in it have an Objective Control characteristic of 1.
 
 #### Unit Composition
 - 5-10 Fenrisian Wolves
@@ -8480,9 +9152,14 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Fragstorm grenade launcher | blast | 18" | D6 | 3+ | 4 | 0 | 1 |
 | melee | -- | Twin power fists | twin-linked | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- All models in this unit can each have their flamestorm gauntlets replaced with 1 auto boltstorm gauntlets and 1 fragstorm grenade launcher.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Close-quarters Firepower: Each time a model in this unit makes a ranged attack that targets the closest eligible target, improve the Armour Penetration characteristic of that attack by 1.
 
 #### Unit Composition
@@ -8534,10 +9211,23 @@ ADEPTUS ASTARTES
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Assault Intercessor with Jump Pack's heavy bolt pistol can be replaced with 1 plasma pistol.
+- The Assault Intercessor Sergeant with Jump Pack's Astartes chainsword can be replaced with one of the following:
+  - 1 power weapon
+  - 1 power fist
+- The Assault Intercessor Sergeant with Jump Pack's heavy bolt pistol can be replaced with one of the following:
+  - 1 hand flamer
+  - 1 plasma pistol
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Hammer of Wrath: Each time this unit ends a Charge move, select one enemy unit within Engagement Range of it, then roll one D6 for each model in this unit that is within Engagement Range of that enemy unit: for each 4+, that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
@@ -8592,9 +9282,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 3+ | 8 | -3 | 2 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- The Bladeguard Veteran Sergeant's heavy bolt pistol can be replaced with one of the following:
+  - 1 neo-volkite pistol
+  - 1 plasma pistol
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Bladeguard: (Once per turn, per unit): In the Fight phase, when this unit is selected to fight or when an enemy unit targets this unit, you can select one of the following:
   - This unit's melee attacks have +1 to hit rolls.
   - Or: Attacks that target this unit have -1 to hit rolls.
@@ -8651,12 +9348,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin meltagun | melta 2 twin-linked | 12" | 1 | 3+ | 9 | -4 | D6 |
 | melee | -- | Siege drills | twin-linked | Melee | 3 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- Any number of models can each have their twin flamer replaced with 1 twin meltagun.
+- Any number of models can each have their Centurion bolters replaced with 1 Centurion assault launcher.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Annihilator Protocols: Melee weapons equipped by models in this unit have the [SUSTAINED HITS 2] ability when targeting MONSTER, VEHICLE or FORTIFICATION units.
-
-#### Wargear Abilities
 - Centurion Assault Launcher: The bearer has the GRENADES keyword.
 
 #### Unit Composition
@@ -8701,9 +9402,17 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Centurion fists | -- | Melee | 3 | 4+ | 5 | -1 | 2 |
 
+#### Wargear options
+- Any number of models can each have their Centurion bolters replaced with 1 Centurion missile launcher.
+- Any number of models can each have their grav-cannon replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin lascannon
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Decimator Protocols: Each time a model in this unit makes a ranged attack, re-roll a Hit roll of 1. If the target of that attack is an enemy unit within range of an objective marker, you can re-roll the Hit roll instead.
 
 #### Unit Composition
@@ -8763,11 +9472,13 @@ ADEPTUS ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 5 | 3+ | 4 | 0 | 1 |
 | melee | -- | Master-crafted power weapon | PRECISION | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Astartes Banner: While this unit contains an Ancient, add 1 to the Objective Control characteristic of models in this unit.
-  Command Squad: While a CHARACTER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
+- Command Squad: While a CHARACTER model is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
 
 #### Unit Composition
 - 1 Ancient
@@ -8813,9 +9524,15 @@ ADEPTUS ASTARTES
 | ranged | -- | Vengor launcher | blast indirect fire | 48" | D6 | 2+ | 7 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- All of the models in this unit can each have their superfrag rocket launcher replaced with 1 superkrak rocket launcher.
+- The Desolation Sergeant's superfrag rocket launcher or superkrak rocket launcher can be replaced with 1 vengor launcher.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Targeter Optics: Each time this unit Remains Stationary, until the start of your next Movement phase, ranged weapons equipped by models in this unit have the [IGNORES COVER] ability.
 
 #### Unit Composition
@@ -8874,12 +9591,33 @@ ADEPTUS ASTARTES
 | melee | -- | Power weapon | -- | Melee | 3 | 3+ | 5 | -2 | 1 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 2 | 4+ | 8 | -2 | 2 |
 
+#### Wargear options
+- Up to 4 Devastator Marines can each have their boltgun replaced with one of the following:
+  - 1 grav-cannon
+  - 1 heavy bolter
+  - 1 lascannon
+  - 1 missile launcher
+  - 1 multi-melta
+  - 1 plasma cannon
+- The Devastator Sergeant's bolt pistol and boltgun can be replaced with two different weapons from the following list:*
+  - 1 Astartes chain sword
+  - 1 bolt pistol
+  - 1 boltgun
+  - 1 combi-weapon
+  - 1 grav-pistol
+  - 1 plasma pistol
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Signum: Each time this unit Remains Stationary, until the start of your next Movement phase, ranged weapons equipped by models in this unit have the [IGNORES COVER] ability.
-  Armorium Cherub: Once per battle, after making a Hit roll for a model in this unit, you can change that roll to an unmodified 6.
-  Designer's Note: Place an Armorium Cherub token next to the unit, removing it once this ability has been used.
+- Armorium Cherub: Once per battle, after making a Hit roll for a model in this unit, you can change that roll to an unmodified 6.
+- Designer's Note: Place an Armorium Cherub token next to the unit, removing it once this ability has been used.
 
 #### Unit Composition
 - 1 Devastator Sergeant
@@ -8923,12 +9661,23 @@ ADEPTUS ASTARTES
 | ranged | -- | Las fusil | heavy | 36" | 1 | 3+ | 9 | -3 | D6 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- The Eliminator Sergeant's bolt sniper rifle can be replaced with one of the following:
+  - 1 instigator bolt carbine
+  - 1 las fusil
+- All Eliminators in this unit can each have their bolt sniper rifle replaced with 1 las fusil.
+
+#### Core Abilities
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Stealth
-- FACTION: Oath of Moment
 - Reposition Under Covering Fire: In your Shooting phase, after this unit has shot, if it contains an Eliminator Sergeant equipped with an instigator bolt carbine, this unit can make a Normal move. If it does so, until the end of the turn, this unit is not eligible to declare a charge.
-  Mark the Target: Each time this unit Remains Stationary, until the start of your next Movement phase, ranged weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.
+- Mark the Target: Each time this unit Remains Stationary, until the start of your next Movement phase, ranged weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 1 Eliminator Sergeant
@@ -8968,9 +9717,14 @@ ADEPTUS ASTARTES
 | ranged | -- | Multi-melta | heavy melta 2 | 18" | 2 | 4+ | 9 | -4 | D6 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- For every 3 models in this unit, 1 Eradicator's melta rifle can be replaced with 1 multi-melta.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Total Obliteration: Each time a ranged attack made by a model in this unit targets a MONSTER or VEHICLE model, you can re-roll the Hit roll, you can re-roll the Wound roll and you can re-roll the Damage roll.
 
 #### Unit Composition
@@ -9018,9 +9772,11 @@ ADEPTUS ASTARTES
 | ranged | -- | Heavy bolter | heavy sustained hits 1 | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Close-combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Overlapping Detonations: In your Shooting phase, when this unit is selected to shoot you can select one non-MONSTER/VEHICLE enemy unit visible to it. While making attacks, this unit's heavy bolters that targeted that selected unit have [BLAST 1].
 
 #### Unit Composition
@@ -9062,11 +9818,16 @@ ADEPTUS ASTARTES
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 3+ | 8 | -3 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- The Hellblaster Sergeant's bolt pistol can be replaced with 1 plasma pistol.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - For the Chapter!: Each time a model in this unit is destroyed, roll one D6: on a 3+, do not remove it from play. The destroyed model can shoot after the attacking model's unit has finished making its attacks, and is then removed from play. When resolving these attacks, any Hazardous tests taken for that attack are automatically passed.
-  Designer's Note: This ability is triggered even when a model in this unit is destroyed as the result of failing a Hazardous test, meaning such a model may be able to shoot twice in the same phase
+- Designer's Note: This ability is triggered even when a model in this unit is destroyed as the result of failing a Hazardous test, meaning such a model may be able to shoot twice in the same phase
 
 #### Unit Composition
 - 1 Hellblaster Sergeant
@@ -9110,10 +9871,17 @@ ADEPTUS ASTARTES
 | ranged | -- | Plasma exterminators - supercharge | assault pistol hazardous twin-linked | 18" | 2 | 3+ | 8 | -3 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their assault bolters replaced with 1 plasma exterminators.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Meteoric Descent: In your Movement phase, when this unit is set up on the battlefield using the Deep Strike ability, it can perform a meteoric descent. If it does, this unit can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge.
 
 #### Unit Composition
@@ -9162,13 +9930,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Occulus bolt carbine | assault ignores cover | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Paired combat blades | sustained hits 1 | Melee | 3 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- One Incursor can be equipped with 1 haywire mine.
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Oath of Moment
 - Multi-spectrum Array: In your Shooting phase, after this unit has shot, select one enemy unit that was hit by one or more attacks made by this unit this phase. Until the end of the phase, each time a friendly ADEPTUS ASTARTES unit makes an attack that targets that enemy unit, add 1 to the Hit roll.
-
-#### Wargear Abilities
 - Haywire Mine: Once per battle, at the start of any phase, you can select one enemy unit within 3" of the bearer and roll one D6: on a 2+, that enemy unit suffers D3 mortal wounds, or 2D3 mortal wounds instead if it is a VEHICLE unit.
 
 #### Unit Composition
@@ -9217,9 +9990,11 @@ ADEPTUS ASTARTES
 | ranged | -- | Pyreblaster | ignores cover torrent | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Incendiary Terror: In your Shooting phase, after this unit has shot, you can select one enemy INFANTRY unit hit by one or more of those attacks made with a pyreblaster. That enemy unit must take a Battle-shock test, subtracting 1 from that test.
 
 #### Unit Composition
@@ -9261,13 +10036,19 @@ ADEPTUS ASTARTES
 | ranged | -- | Marksman bolt carbine | heavy | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- 1 Infiltrator can be equipped with 1 helix gauntlet.*
+- 1 Infiltrator can be equipped with 1 Infiltrator comms array.*
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: Oath of Moment
 - Omni-scramblers: Enemy units that are set up on the battlefield from Reserves cannot be set up within 12" of this unit.
-
-#### Wargear Abilities
 - Helix Gauntlet: Models in the bearer's unit have the Feel No Pain 6+ ability.
 - Infiltrator Comms Array: Each time you target the bearer's unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
@@ -9318,14 +10099,22 @@ ADEPTUS ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Combat knife | precision | Melee | 4 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their combat knife replaced with 1 bolt carbine and 1 close combat weapon.
+- If the Reiver Sergeant is equipped with 1 bolt carbine, it can be equipped with 1 combat knife.
+- All models in this unit can each be equipped with 1 Reiver grav-chute.
+- All models in this unit can each be equipped with 1 grapnel launcher.
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Oath of Moment
 - Fearsome Assault: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test, subtracting 1 from that test.
-  Terror Troops (Aura): While an enemy unit (excluding MONSTERS and VEHICLES) is within 3" of one or more units with this ability, subtract 1 from the Objective Control characteristic of models in that enemy unit.
-
-#### Wargear Abilities
+- Terror Troops (Aura): While an enemy unit (excluding MONSTERS and VEHICLES) is within 3" of one or more units with this ability, subtract 1 from the Objective Control characteristic of models in that enemy unit.
 - Grapnel Launcher: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 - Reiver Grav-chute: The bearer has the Deep Strike ability.
 
@@ -9376,10 +10165,25 @@ ADEPTUS ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Combat knife | -- | Melee | 3 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- The Scout Sergeant's boltgun can be replaced with 1 Astartes chainsword.
+- Any number of models can each have their boltgun replaced with one of the following:
+  - 1 Astartes shotgun
+  - 1 combat knife
+- For every 5 models in this unit, 1 Scout's boltgun can be replaced with 1 Scout sniper rifle.
+- For every 5 models in this unit, 1 Scout's boltgun can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 missile launcher
+
+#### Core Abilities
+- Infiltrators
+- Scouts 6"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Scouts 6"
-- FACTION: Oath of Moment
 - Guerrilla Tactics: At the end of your opponent's turn, if this unit is more than 6" away from all enemy models, you can remove this unit from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
@@ -9433,9 +10237,25 @@ ADEPTUS ASTARTES
 | melee | -- | Power weapon | -- | Melee | 5 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 4 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Sternguard Veteran Sergeant's Sternguard bolt rifle can be replaced with one of the following:
+  - 1 Astartes chainsword
+  - 1 combi-weapon
+  - 1 power weapon
+  - 1 power fist
+  - 1 Astartes chainsword and 1 Sternguard bolt rifle*
+  - 1 power weapon and 1 Sternguard bolt rifle*
+  - 1 power fist and 1 Sternguard bolt rifle*
+- Any number of Sternguard Veterans can each have their Sternguard bolt rifle replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 Sternguard Veteran's Sternguard bolt rifle can be replaced with one of the following:
+  - 1 pyrecannon
+  - 1 Sternguard heavy bolter
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Sternguard Focus: Each time a model in this unit makes an attack that targets your Oath of Moment target, you can re-roll the Wound roll.
 
 #### Unit Composition
@@ -9478,10 +10298,14 @@ ADEPTUS ASTARTES
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Suppression Fire: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks made with an accelerator autocannon. Until the start of your next turn, while this unit is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -9519,14 +10343,19 @@ ADEPTUS ASTARTES
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | twin-linked | Melee | 6 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their thunder hammer and storm shield replaced with 1 twin lightning claws.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" horizontally of that token and not within 8" horizontally of any enemy models. That token is then removed.
-  Terminatus Assault: At the start of the Fight phase, each enemy unit within Engagement Range of this unit must take a Battle-shock test.
-
-#### Wargear Abilities
+- Terminatus Assault: At the start of the Fight phase, each enemy unit within Engagement Range of this unit must take a Battle-shock test.
 - Storm Shield: The bearer has a Wounds characteristic of 4.
 
 #### Unit Composition
@@ -9578,12 +10407,24 @@ ADEPTUS ASTARTES
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Terminator's storm bolter can be replaced with one of the following:
+  - 1 assault cannon
+  - 1 heavy flamer
+  - 1 cyclone missile launcher and 1 storm bolter.*
+- Any number of models can each have their power fist replaced with 1 chainfist.
+- The Terminator Sergeant's power fist can be replaced with 1 power weapon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" of that token and not within 8" of any enemy models. That token is then removed.
-  Fury of the First: Each time a model in this unit makes an attack that targets your Oath of Moment target, add 1 to the Hit roll.
+- Fury of the First: Each time a model in this unit makes an attack that targets your Oath of Moment target, add 1 to the Hit roll.
 
 #### Unit Composition
 - 1 Terminator Sergeant
@@ -9632,13 +10473,26 @@ ADEPTUS ASTARTES
 | melee | -- | Master-crafted power weapon | -- | Melee | 3 | 3+ | 5 | -2 | 2 |
 | melee | -- | Vanguard Veteran weapon | -- | Melee | 4 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their bolt pistol replaced one of the following:
+  - 1 storm shield
+  - 1 grav-pistol
+  - 1 hand flamer
+  - 1 inferno pistol
+  - 1 plasma pistol
+- All models can each have their Bolt Pistol and Vanguard Veteran Weapon replaced with:
+  - 1 Heavy Bolt Pistol and 1 Master-crafted Power Weapon
+- For every 5 models in this unit, 1 model can replace their Heavy Bolt Pistol with 1 Plasma Pistol.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Vanguard Assault: Each time this unit ends a Charge move, until the end of the turn, melee weapons equipped by models in this unit have the [LETHAL HITS] ability.
-
-#### Wargear Abilities
 - Storm Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -9698,9 +10552,25 @@ ADEPTUS ASTARTES
 | melee | -- | Power fist | -- | Melee | 4 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 5 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Sternguard Veteran Squad Leader's Sternguard bolt rifle can be replaced with one of the following:
+  - 1 Astartes chainsword
+  - 1 combi-weapon
+  - 1 power fist
+  - 1 power weapon
+  - 1 Astartes chainsword and 1 Sternguard bolt rifle*
+  - 1 power fist and 1 Sternguard bolt rifle*
+  - 1 power weapon and 1 Sternguard bolt rifle*
+- Any number of Sternguard Veterans can each have their Sternguard bolt rifle replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 Sternguard Veteran's Sternguard bolt rifle can be replaced with one of the following:
+  - 1 pyrecannon
+  - 1 Sternguard heavy bolter
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Templar Vows
 - Virtuous Onslaught: Each time a model in this unit makes an attack that targets the closest eligible target, re-roll a Wound roll of 1.
 
 #### Unit Composition
@@ -9743,9 +10613,18 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | twin-linked | Melee | 5 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- Any number of Sword Brothers can each have their Astartes chainsword replaced with 1 master-crafted power weapon.
+- For every 5 models in this unit, 1 Sword Brother's Astartes chainsword can be replaced with 1 thunder hammer.
+- For every 5 models in this unit, 1 Sword Brother's heavy bolt pistol can be replaced with 1 plasma pistol.
+- For every 5 models in this unit, up to 2 Sword Brothers can each have their heavy bolt pistol replaced with 1 pyre pistol.
+- For every 5 models in this unit, 1 Sword Brother's heavy bolt pistol and Astartes chainsword can be replaced with 1 twin lightning claws.
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Templar Vows
 - Exploit Their Cowardice: Each time an enemy unit within Engagement Range of this unit is selected to Fall Back, after it ends that Fall Back move, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move.
 
 #### Unit Composition
@@ -9799,12 +10678,24 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Terminator's storm bolter can be replaced with one of the following:
+  - 1 assault cannon
+  - 1 heavy flamer
+  - 1 cyclone missile launcher and 1 storm bolter.*
+- Any number of models can each have their power fist replaced with 1 chainfist.
+- The Terminator Squad Leader's power fist can be replaced with 1 power weapon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Templar Vows
 - Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" of that token and not within 9" of any enemy models. That token is then removed.
-  Judgement of the Weak: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of this unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
+- Judgement of the Weak: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of this unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
 
 #### Unit Composition
 - 1 Terminator Squad Leader
@@ -9849,19 +10740,34 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 
+#### Wargear options
+- 1 model's heavy bolt pistol can be replaced with one of the following:
+  - 1 hand flamer
+  - 1 inferno pistol
+  - 1 plasma pistol
+- For every 5 models in this unit, 1 model's Astartes chainsword can be replaced with equipped with 1 eviscerator.
+- 1 model's Astartes chainsword can be replaced with one of the following:
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+
+#### Core Abilities
+- Feel No Pain 6+
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+
-- FACTION: Oath of Moment
 - Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
-  An Honourable Death in Combat: Each time a model in this unit makes an attack, that attack has the [SUSTAINED HITS 1] ability if this unit is below its Starting Strength, or the [SUSTAINED HITS 2] ability if this unit is Below Half-strength.
+- An Honourable Death in Combat: Each time a model in this unit makes an attack, that attack has the [SUSTAINED HITS 1] ability if this unit is below its Starting Strength, or the [SUSTAINED HITS 2] ability if this unit is Below Half-strength.
 
 #### Unit Composition
 - 5-10 Death Company Marines
   Every model is equipped with: heavy bolt pistol; Astartes chainsword.
 
 #### Attached Unit
-- If a Chaplain model from your army with the Leader ability can be attached to an ASSAULT INTERCESSOR SQUAD unit, it can be attached to this unit instead.
+- If a CHAPLAIN model from your army with the Leader ability can be attached to an ASSAULT INTERCESSOR SQUAD unit, it can be attached to this unit instead.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -9907,12 +10813,30 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 
+#### Wargear options
+- 1 model's bolt rifle can be replaced with one of the following:
+  - 1 Astartes chainsword
+  - 1 hand flamer
+  - 1 inferno pistol
+  - 1 plasma pistol
+- For every 5 models in this unit, 1 model's bolt rifle and close combat weapon can be replaced with 1 eviscerator.
+- For every 5 models in this unit, 1 model equipped with a bolt rifle can be equipped with 1 Astartes grenade launcher.
+- 1 model's close combat weapon can be replaced with one of the following:
+  - 1 Astartes chainsword
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+
+#### Core Abilities
+- Feel No Pain 6+
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+
-- FACTION: Oath of Moment
 - Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
-  Visions of Heresy:
+- Visions of Heresy:
   - This unit can re-roll charge rolls.
   - When you target this unit with the Fire Overwatch/Heroic Intervention stratagem, that use is -1 CP.
 
@@ -9921,7 +10845,7 @@ ADEPTUS ASTARTES; BLOOD ANGELS
   Every model is equipped with: bolt pistol; bolt rifle; close combat weapon.
 
 #### Attached Unit
-- If a Chaplain model from your army with the Leader ability can be attached to an INTERCESSOR SQUAD unit, it can be attached to this unit instead.
+- If a CHAPLAIN model from your army with the Leader ability can be attached to an INTERCESSOR SQUAD unit, it can be attached to this unit instead.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -9962,19 +10886,43 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 model's heavy bolt pistol can be replaced with 1 plasma pistol.
+- For every 5 models in this unit, 1 model's Astartes chainsword can be replaced with 1 eviscerator.
+- 1 model's Astartes chainsword can be replaced with one of the following:
+  - 1 power fist
+  - 1 power weapon
+- For every 5 models in this unit, 1 model's heavy bolt pistol and Astartes chainsword can be replaced with one of the following:
+  - 1 hand flamer and 1 Astartes chainsword
+  - 1 hand flamer and 1 power fist
+  - 1 hand flamer and 1 power weapon
+  - 1 heavy bolt pistol and 1 power fist
+  - 1 heavy bolt pistol and 1 power weapon
+  - 1 inferno pistol and 1 Astartes chainsword
+  - 1 inferno pistol and 1 power fist
+  - 1 inferno pistol and 1 power weapon
+  - 1 plasma pistol and 1 Astartes chainsword
+  - 1 plasma pistol and 1 power fist
+  - 1 plasma pistol and 1 power weapon
+
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 6+
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 6+
-- FACTION: Oath of Moment
 - Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
-  Savage Fury: You can re-roll Charge rolls made for this unit.
+- Savage Fury: You can re-roll Charge rolls made for this unit.
 
 #### Unit Composition
 - 5-10 Death Company Marines with Jump Packs
   Every model is equipped with: heavy bolt pistol; Astartes chainsword.
 
 #### Attached Unit
-- If a Chaplain model from your army with the Leader ability can be attached to ASSAULT INTERCESSORS WITH JUMP PACKS, it can be attached to this unit instead.
+- If a CHAPLAIN model from your army with the Leader ability can be attached to ASSAULT INTERCESSORS WITH JUMP PACKS, it can be attached to this unit instead.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -10010,14 +10958,21 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Encarmine blade | -- | Melee | 4 | 2+ | 6 | -3 | 2 |
 | melee | -- | Encarmine spear | Lance | Melee | 4 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their encarmine blade replaced with 1 encarmine spear.
+- For every 3 models in this unit, 1 model's Angelus boltgun can be replaced with 1 inferno pistol.
+- One model can be equipped with 1 Sanguinary banner.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Angelic Visage: Each time a melee attack targets this unit, subtract 1 from the Hit roll.
-  Heirs of Azkaellon: While a CHARACTER model is leading this unit, each time a melee attack targets this unit, subtract 1 from the Wound roll.
-
-#### Wargear Abilities
+- Heirs of Azkaellon: While a CHARACTER model is leading this unit, each time a melee attack targets this unit, subtract 1 from the Wound roll.
 - Sanguinary Banner: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 
 #### Unit Composition
@@ -10060,14 +11015,21 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Power weapon | -- | Melee | 5 | 2+ | 6 | -2 | 2 |
 | melee | -- | Relic weapon | lethal hits | Melee | 6 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- The Knight Master's great weapon of the Unforgiven can be replaced with 1 relic weapon.
+- All Deathwing Knights in this unit can each have their mace of absolution replaced with 1 power weapon.
+- This unit can be equipped with 1 Watcher in the Dark.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" horizontally of that token and not within 8" horizontally of any enemy models. That token is then removed.
-  Inner Circle: Each time an attack is allocated to a model in this unit, subtract 1 from the Damage characteristic of that attack.
-
-#### Wargear Abilities
+- Inner Circle: Each time an attack is allocated to a model in this unit, subtract 1 from the Damage characteristic of that attack.
 - Watcher in the Dark: Once per battle, in any phase, just after a mortal wound is allocated to an ADEPTUS ASTARTES model in this unit, this unit can summon a Watcher in the Dark. When it does, until the end of the phase, models in this unit have the Feel No Pain 4+ ability against mortal wounds.
   Designer's Note: Place a Watcher in the Dark token next to the unit, removing it when this ability has been used.
 
@@ -10119,14 +11081,25 @@ ADEPTUS ASTARTES; DARK ANGELS
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- Any number of Deathwing Terminators can each have their power fist replaced with 1 chainfist.
+- For every 5 models in this unit, 1 Deathwing Terminator can replace its storm bolter with one of the following:
+  - 1 assault cannon
+  - 1 heavy flamer
+  - 1 plasma cannon
+  - 1 storm bolter and 1 cyclone missile launcher (this model's storm bolter cannot be replaced)
+- This unit can be equipped with 1 Watcher in the Dark.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not in your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" horizontally of that token and not within 8" horizontally of any enemy models. That token is then removed.
-  Deathwing: Each time a model in this unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic Skill or Weapon Skill characteristics and/or to the Hit roll. In addition, each time a model in this unit makes an attack that targets the enemy unit you selected at the start of your Command phase for the Oath of Moment ability, add 1 to the Hit roll.
-
-#### Wargear Abilities
+- Deathwing: Each time a model in this unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic Skill or Weapon Skill characteristics and/or to the Hit roll. In addition, each time a model in this unit makes an attack that targets the enemy unit you selected at the start of your Command phase for the Oath of Moment ability, add 1 to the Hit roll.
 - Watcher in the Dark: Once per battle, in any phase, just after a mortal wound is allocated to an ADEPTUS ASTARTES model in this unit, this unit can summon a Watcher in the Dark. When it does, until the end of the phase, models in this unit have the Feel No Pain 4+ ability against mortal wounds.
   Designer's Note: Place a Watcher in the Dark token next to the unit, removing it when this ability has been used.
 
@@ -10172,20 +11145,22 @@ ADEPTUS ASTARTES; DARK ANGELS
 | melee | -- | Calibanite greatsword - strike | lethal hits | Melee | 4 | 3+ | 6 | -2 | 2 |
 | melee | -- | Calibanite greatsword - sweep | sustained hits 2 | Melee | 5 | 3+ | 6 | -2 | 1 |
 
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Braziers of Judgement:
   - This unit has Stealth.
   - Melee attacks that target this unit have -1 to hit rolls.
-  Enmity for the Unworthy: Each time a model in this unit makes an attack that targets a CHARACTER unit, add 1 to the Hit roll.
+- Enmity for the Unworthy: Each time a model in this unit makes an attack that targets a CHARACTER unit, add 1 to the Hit roll.
 
 #### Unit Composition
 - 3-6 Inner Circle Companions
   Every Inner Circle Companion is equipped with: heavy bolt pistol; Calibanite greatsword.
 
 #### Attached Unit
-- If a CHARACTER unit from your army with the Leader ability can be attached to a Sternguard Veteran Squad, it can be attached to this unit instead.
+- If a CHARACTER unit from your army with the Leader ability can be attached to a STERNGUARD VETERAN SQUAD, it can be attached to this unit instead.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -10229,14 +11204,29 @@ ADEPTUS ASTARTES; DARK ANGELS
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | twin-linked | Melee | 5 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- Up to 3 Deathwatch Terminators can each have their storm bolter replaced with one of the following:
+  - 1 assault cannon
+  - 1 heavy flamer
+  - 1 plasma cannon
+  - 1 cyclone missile launcher and 1 storm bolter (this model's storm bolter cannot be replaced)
+- Any number of models can each have their power fist and storm bolter replaced with one of the following:
+  - 1 storm bolter and 1 power weapon
+  - 1 storm bolter and 1 chainfist
+  - 1 thunder hammer and 1 storm shield
+  - 1 twin lightning claws
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Mission Tactics, Oath of Moment
 - Terminatus Assault: You can re-roll Charge rolls made for this unit. Each time this unit ends a Charge move, each enemy unit within Engagement Range of this unit must take a Battle-shock test. If that enemy unit does not have the IMPERIUM or CHAOS keywords, subtract 1 from that test.
-  Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not within your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" of that token and not within 8" horizontally of one or more enemy units. That token is then removed.
-
-#### Wargear Abilities
+- Teleport Homer: At the start of the battle, you can set up one Teleport Homer token for this unit anywhere on the battlefield that is not within your opponent's deployment zone. If you do, once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, but when resolving that Stratagem, you must set this unit up within 3" of that token and not within 8" horizontally of one or more enemy units. That token is then removed.
 - Storm Shield: The bearer has a Wounds characteristic of 4.
 
 #### Unit Composition
@@ -10297,9 +11287,28 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Thunder hammer | devastating wounds | Melee | 3 | 4+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Kill Team Sergeant can replace its Deathwatch bolt rifle with one of the following:
+  - 1 Astartes chainsword
+  - 1 hand flamer
+  - 1 plasma pistol
+  - 1 power weapon
+- The Kill Team Sergeant can replace its close combat weapon with one of the following:
+  - 1 Astartes chainsword
+  - 1 power fist
+  - 1 power weapon
+  - 1 thunder hammer
+- For every 5 models in this unit, 1 model equipped with a Deathwatch bolt rifle can be equipped with 1 Astartes grenade launcher.
+- One model equipped with a plasma incinerator can replace its bolt pistol with 1 plasma pistol.
+- 1 model can replace its superfrag rocket launcher with 1 vengor launcher.
+- Any number of models can each replace their superfrag rocket launcher with 1 superkrak rocket launcher.
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Mission Tactics, Oath of Moment
 - Fortis Doctrines: Each time a model in this unit makes an attack that targets a unit that is below its Starting Strength, add 1 to the Hit roll. If that attack targets a unit that is Below Half-strength, add 1 to the Hit roll and add 1 to the Wound roll instead.
 
 #### Unit Composition
@@ -10357,9 +11366,17 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Twin power fists | twin-linked | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 model can replace its Deathwatch heavy bolt rifle with 1 Deathwatch heavy bolter.
+- 1 model can replace its melta rifle with 1 multi-melta.
+- Any number of models can each have their flamestorm gauntlets replaced with 1 auto boltstorm gauntlets and 1 fragstorm grenade launcher.
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Mission Tactics, Oath of Moment
 - Indomitor Doctrines: Each time a model in this unit makes a ranged attack that targets the closest eligible target, or makes a melee attack in a turn in which it made a Charge move, improve the Strength characteristic of that attack by 2.
 
 #### Unit Composition
@@ -10409,13 +11426,26 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Combat knife | precision | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Paired combat blades | sustained hits 1 | Melee | 3 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- One model equipped with a Deathwatch marksman bolt carbine can be equipped with one of
+  the following:
+  - 1 helix gauntlet
+  - 1 Infiltrator comms array
+- One model can replace its bolt sniper rifle with 1 instigator bolt carbine.
+- Any number of models can each replace their bolt sniper rifle with 1 las fusil.
+- Any number of models can each replace their combat knife with 1 Deathwatch bolt carbine and 1 close combat weapon.
+
+#### Core Abilities
+- Infiltrators
+- Scouts 6"
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Scouts 6"
-- FACTION: Mission Tactics, Oath of Moment
 - Spectrus Doctrines: At the end of your opponent's turn, if this unit is more than 6" away from all enemy units, you can remove this unit from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
 - Helix Gauntlet: Models in the bearer's unit have the Feel No Pain 6+ ability.
 - Infiltrator Comms Array: Each time you target the bearer's unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Instigator Bolt Carbine: In your Shooting phase, after the bearer's unit has shot, the bearer's unit can make a Normal move. If it does, until the end of the turn, the bearer's unit is not eligible to declare a charge.
@@ -10475,10 +11505,25 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Kill Team Sergeant with Jump Pack can replace its heavy bolt pistol with one of the following:
+  - 1 hand flamer
+  - 1 plasma pistol
+- The Kill Team Sergeant with Jump Pack can replace its Astartes chainsword with one of the following:
+  - 1 power fist
+  - 1 power weapon
+- For every 5 models in this unit, 1 model can replace its heavy bolt pistol with 1 plasma pistol.
+- Any number of models can each have their assault bolters replaced with 1 plasma exterminators.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Mission Tactics, Oath of Moment
 - Talonstrike Doctrines: Each time this unit is set up on the battlefield, until the end of the turn:
   - Improve the Armour Penetration characteristic of weapons equipped by models in this unit by 1.
   - Melee weapons equipped by models in this unit have the [LANCE] ability.
@@ -10525,14 +11570,17 @@ ADEPTUS ASTARTES; DEATHWATCH
 | melee | -- | Paired master-crafted power weapons | -- | Melee | 6 | 3+ | 5 | -2 | 2 |
 | melee | -- | Teeth and claws | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- All of the models in this unit can each have their master-crafted power weapon and storm shield replaced with 1 paired master-crafted power weapons.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Let Loose the Wolves: At the start of the Declare Battle Formations step, split this unit into two units, one containing all of its HEADTAKERS models and one containing all of its HUNTING WOLVES models, with new Starting Strengths accordingly.
-  Headhunters: At the start of the battle, select one unit from your opponent's army to be this unit's quarry. Weapons equipped by HEADTAKERS models in this unit have the [DEVASTATING WOUNDS] and [PRECISION] abilities while targeting its quarry. Each time this unit's quarry is destroyed, select one new enemy unit to be this unit's quarry. This ability can be used even if this unit is embarked within a TRANSPORT.
-  Hunting Hounds: While this unit is within 6" of one or more friendly SPACE WOLVES CHARACTER models (excluding WULFEN models), if this unit is not Battle-shocked, HUNTING WOLVES models in it have an Objective Control characteristic of 1.
-
-#### Wargear Abilities
+- Headhunters: At the start of the battle, select one unit from your opponent's army to be this unit's quarry. Weapons equipped by HEADTAKERS models in this unit have the [DEVASTATING WOUNDS] and [PRECISION] abilities while targeting its quarry. Each time this unit's quarry is destroyed, select one new enemy unit to be this unit's quarry. This ability can be used even if this unit is embarked within a TRANSPORT.
+- Hunting Hounds: While this unit is within 6" of one or more friendly SPACE WOLVES CHARACTER models (excluding WULFEN models), if this unit is not Battle-shocked, HUNTING WOLVES models in it have an Objective Control characteristic of 1.
 - Storm Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -10580,13 +11628,22 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Relic greataxe | devastating wounds | Melee | 3 | 3+ | 7 | -2 | 3 |
 | melee | -- | Twin lightning claws | twin-linked | Melee | 6 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their storm bolter replaced with 1 storm shield.
+- For every 5 models in this unit, 1 Wolf Guard Terminator can replace its storm bolter and master-crafted power weapon with 1 assault cannon and 1 powerfist.
+- The Wolf Guard Terminator Pack Leader's storm bolter and master-crafted power weapon can be replaced with 1 of the following:
+  - 1 relic greataxe
+  - 1 twin lightning claws
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Rugged Resilience: Each time an attack targets this unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of this unit, subtract 1 from the Wound roll.
-
-#### Wargear Abilities
 - Storm Shield: The bearer has a Wounds characteristic of 4.
 
 #### Unit Composition
@@ -10639,14 +11696,23 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Runic stave | psychic | Melee | 3 | 3+ | 6 | -1 | D3 |
 | melee | -- | Teeth and claws | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- 1 Wolf Scout's plasma pistol can be replaced with 1 plasma gun.
+- 1 Wolf Scout equipped with a plasma pistol can be equipped with 1 haywire mine (That model's plasma pistol cannot be replaced).
+- 1 Wolf Scout's plasma pistol and combat blade can be replaced with 1 bolt pistol, 1 Thunderclap and 1 runic stave.
+- If this unit contains 12 models, 1 Wolf Scout's plasma pistol can be replaced with 1 instigator bolt carbine.
+
+#### Core Abilities
+- Infiltrators
+- Scouts 7"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Scouts 7"
-- FACTION: Oath of Moment
 - Deadly Stalkers: Each time a model in this unit makes an attack that targets an enemy unit, if there are no other units from your opponent's army within 6" of that target, add 1 to the Wound roll.
-  Hunting Hounds: While this unit is within 6" of one or more friendly SPACE WOLVES CHARACTER models (excluding WULFEN models), if this unit is not Battle-shocked, Hunting Wolves models in this unit have an Objective Control characteristic of 1.
-
-#### Wargear Abilities
+- Hunting Hounds: While this unit is within 6" of one or more friendly SPACE WOLVES CHARACTER models (excluding WULFEN models), if this unit is not Battle-shocked, Hunting Wolves models in this unit have an Objective Control characteristic of 1.
 - Haywire Mine: Once per battle, at the start of any phase, you can select one enemy unit within 3" of the bearer and roll one D6: on a 2+, that enemy unit suffers D3 mortal wounds, or 2D3 mortal wounds instead if it is a VEHICLE unit.
 
 #### Unit Composition
@@ -10692,12 +11758,16 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Stormfrag auto-launcher | assault blast | 12" | D3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Wulfen weapons | sustained hits 1 | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their death totem replaced with 1 stormfrag auto-launcher.
+
+#### Army Rules
+- Curse of the Wulfen
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Curse of the Wulfen, Oath of Moment
 - Savage Frenzy: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of this unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
-
-#### Wargear Abilities
 - Death Totem: Each time the bearer makes a melee attack, re-roll a Hit roll of 1.
 
 #### Unit Composition
@@ -10735,12 +11805,16 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Stormfrag auto-launcher | assault blast | 12" | D3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Thunder hammer | anti-monster 3+ anti-vehicle 3+ | Melee | 2 | 3+ | 5 | -2 | 3 |
 
+#### Wargear options
+- Any number of models can each have their death totem replaced with 1 stormfrag auto-launcher.
+
+#### Army Rules
+- Curse of the Wulfen
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Curse of the Wulfen, Oath of Moment
 - Hammer Blow: In the Fight phase, after this unit has fought, select one enemy MONSTER or VEHICLE unit hit by one or more of those attacks. Until the end of the next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
-
-#### Wargear Abilities
 - Death Totem: Each time the bearer makes a melee attack, re-roll a Hit roll of 1.
 
 #### Unit Composition
@@ -10781,9 +11855,14 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Twin bolt rifle | twin-linked | 24" | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 5 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- This model's onslaught gatling cannon can be replaced with 1 multi-melta.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Outrider Escort: Once per turn, in your opponent's Shooting phase, when another friendly ADEPTUS ASTARTES MOUNTED unit within 6" of this model is selected as the target of an attack, one model from your army with this ability can use it. If it does, after that enemy unit has finished making its attacks, that model can shoot as if it were your Shooting phase, but when resolving those attacks it can only target that enemy unit (and only if it is an eligible target).
 
 #### Unit Composition
@@ -10827,9 +11906,14 @@ ADEPTUS ASTARTES
 | melee | -- | Astartes chainsword | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 5 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- An Invader ATV's onslaught gatling cannon can be replaced with 1 multi-melta.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Thunderous Impact: Each time a model in this unit makes a melee attack, if this unit made a Charge move this turn, improve the Strength and Damage characteristics of that attack by 1.
 
 #### Unit Composition
@@ -10883,9 +11967,14 @@ ADEPTUS ASTARTES
 | ranged | -- | Plasma talon - supercharge | hazardous rapid fire 1 | 18" | 2 | 3+ | 8 | -3 | 2 |
 | melee | -- | Black Knight combat weapon | devastating wounds | Melee | 3 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 3 models in this unit, 1 model can replace its plasma talon with 1 Astartes grenade launcher.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Knights of Caliban: Each time this unit is selected to fight, if it made a Charge move this turn, until the end of the phase, melee weapons equipped by models in this unit have the [ANTI-MONSTER 4+] and [ANTI-VEHICLE 4+] abilities.
 
 #### Unit Composition
@@ -10933,12 +12022,18 @@ ADEPTUS ASTARTES; DARK ANGELS
 | melee | -- | Teeth and claws | extra attacks | Melee | 3 | 4+ | 5 | -1 | 1 |
 | melee | -- | Wolf Guard weapon | -- | Melee | 4 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their bolt pistol replaced with one of the following:
+  - 1 boltgun
+  - 1 storm shield
+- For every 3 models in this unit, one model's bolt pistol can be replaced with 1 plasma pistol.
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Oath of Moment
 - Thunderous Charge: Each time a model in this unit makes a melee attack with its Wolf Guard weapon, if it made a Charge move this turn, add 1 to the Damage characteristic of that attack.
-
-#### Wargear Abilities
 - Storm Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -10986,10 +12081,19 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Twin macro-accelerator cannon | sustained hits 1 twin-linked | 72" | 12 | 3+ | 9 | -1 | 3 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 Astraeus las-rippers can be replaced with 2 plasma eradicators.
+- This model's twin heavy bolter can be replaced with 1 twin lascannon.
+- This model can be equipped with 1 ironhail heavy stubber.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Oath of Moment
 - Suppression Fire: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more attacks made with its twin macro-accelerator cannon this phase. Until the start of your next turn, while this model is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -11041,14 +12145,24 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's Thunderhawk heavy cannon can be replaced with 1 turbo-laser destructor.
+- This model's Thunderhawk cluster bombs can be replaced with 1 hellstrike missile battery.
+
+#### Core Abilities
+- Deadly Demise D6+2
+- Hover
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2, Hover
-- FACTION: Oath of Moment
 - Aerial Assault: Each time a unit with the Deep Strike ability disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
-
-#### Wargear Abilities
 - Thunderhawk Cluster Bombs: Each time the bearer ends a Normal move, you can select one enemy unit it moved over during that move and roll six D6: for each 3+, that unit suffers 1 mortal wound.
+
+#### Transport
+- This model has a transport capacity of 30 ADEPTUS ASTARTES INFANTRY or ADEPTUS ASTARTES MOUNTED models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models. Each CENTURION model takes up the space of 3 models. Each MOUNTED model takes up the space of 4 models.
 
 #### Unit Composition
 - 1 Thunderhawk Gunship
@@ -11056,9 +12170,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-10 Wounds Remaining
 - While this model has 1-10 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 30 ADEPTUS ASTARTES INFANTRY or ADEPTUS ASTARTES MOUNTED models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models. Each CENTURION model takes up the space of 3 models. Each MOUNTED model takes up the space of 4 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11096,11 +12207,23 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Oath of Moment
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Land Raider
@@ -11108,9 +12231,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11135,7 +12255,7 @@ ADEPTUS ASTARTES
 
 ### Land Raider Crusader
 - **Role:** Transport
-- **Wahapedia slug:** [Land-Raider-Crusader](https://wahapedia.ru/wh40k11ed/factions/space-marines/Land-Raider-Crusader)
+- **Wahapedia slug:** [Land-Raider-Crusader-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Land-Raider-Crusader-1)
 - **Source label:** Faction Pack. Space Marines (11th edition, version 1.2)
 - **Base size(s) shown:** (diameter Use model)
 
@@ -11154,11 +12274,23 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin assault cannon | devastating wounds twin-linked | 24" | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Oath of Moment
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 16 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Land Raider Crusader
@@ -11166,9 +12298,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 16 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11212,11 +12341,23 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin assault cannon | devastating wounds twin-linked | 24" | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Oath of Moment
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 14 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Land Raider Redeemer
@@ -11224,9 +12365,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11251,7 +12389,7 @@ ADEPTUS ASTARTES
 
 ### Repulsor
 - **Role:** Transport
-- **Wahapedia slug:** [Repulsor](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor)
+- **Wahapedia slug:** [Repulsor-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor-1)
 - **Source label:** Faction Pack. Space Marines (11th edition, version 1.2)
 - **Base size(s) shown:** (diameter 100mm)
 
@@ -11271,11 +12409,22 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's twin heavy bolter can be replaced with 1 twin lascannon.
+- This model's heavy onslaught gatling cannon can be replaced with 1 las-talon.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Oath of Moment
 - Emergency Combat Embarkation: Once per turn, in your opponent's Charge phase, after an enemy unit has selected targets for its charge but before it makes a Charge move, you can select one ADEPTUS ASTARTES unit from your army that was selected as a target of that charge. Provided that unit is not within Engagement Range of one or more enemy units and every model in that unit is within 3" of this TRANSPORT, it can embark within this TRANSPORT. The charging unit can then select new targets for its charge.
+
+#### Transport
+- This model has a transport capacity of 14 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Repulsor
@@ -11283,9 +12432,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11310,7 +12456,7 @@ ADEPTUS ASTARTES
 
 ### Repulsor Executioner
 - **Role:** Transport
-- **Wahapedia slug:** [Repulsor-Executioner](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor-Executioner)
+- **Wahapedia slug:** [Repulsor-Executioner-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor-Executioner-1)
 - **Source label:** Faction Pack. Space Marines (11th edition, version 1.2)
 - **Base size(s) shown:** (diameter 100mm)
 
@@ -11333,11 +12479,23 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin Icarus ironhail heavy stubber | anti-fly 4+ rapid fire 3 twin-linked | 36" | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's macro plasma incinerator can be replaced with 1 heavy laser destroyer.
+- This model can be equipped with 1 ironhail heavy stubber.
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Oath of Moment
 - Executioner: Each time this model makes an attack that targets a unit that is Below Half-strength, add 1 to the Hit roll.
+
+#### Transport
+- This model has a transport capacity of 7 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Repulsor Executioner
@@ -11345,9 +12503,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 7 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11412,11 +12567,28 @@ ADEPTUS ASTARTES
 | ranged | -- | Typhoon missile launcher - krak | -- | 48" | 2 | 3+ | 9 | -2 | D6 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's twin assault cannon can be replaced with one of the following:
+  - 1 twin heavy plasma cannon
+  - 1 twin lascannon
+- This model's typhoon missile launcher can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin multi-melta
+- This model can be equipped with 2 hurricane bolters.
+
+#### Core Abilities
+- Deadly Demise D6
+- Hover
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Hover
-- FACTION: Oath of Moment
 - Armoured Resilience: Each time an attack is allocated to this model, subtract 1 from the Damage characteristic of that attack.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models and 1 DREADNOUGHT model. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Stormraven Gunship
@@ -11424,9 +12596,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY models and 1 Dreadnought model. Each JUMP PACK, WULFEN, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11449,7 +12618,7 @@ ADEPTUS ASTARTES
 
 ### Land Raider Crusader
 - **Role:** Transport
-- **Wahapedia slug:** [Land-Raider-Crusader](https://wahapedia.ru/wh40k11ed/factions/space-marines/Land-Raider-Crusader)
+- **Wahapedia slug:** [Land-Raider-Crusader-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Land-Raider-Crusader-1)
 - **Source label:** Faction Pack. Black Templars (11th edition, version 1.1)
 - **Base size(s) shown:** (diameter Use model)
 
@@ -11468,12 +12637,24 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin assault cannon | devastating wounds twin-linked | 24" | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 multi-melta.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Templar Vows
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
-  Legacy of Jerulas: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
+- Legacy of Jerulas: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
+
+#### Transport
+- This model has a transport capacity of 16 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Land Raider Crusader
@@ -11481,9 +12662,6 @@ ADEPTUS ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 16 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11503,7 +12681,7 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 
 ### Repulsor
 - **Role:** Transport
-- **Wahapedia slug:** [Repulsor](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor)
+- **Wahapedia slug:** [Repulsor-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor-1)
 - **Source label:** Faction Pack. Black Templars (11th edition, version 1.1)
 - **Base size(s) shown:** (diameter 100mm)
 
@@ -11524,11 +12702,23 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's twin heavy bolter can be replaced with 1 twin lascannon.
+- This model's heavy onslaught gatling cannon can be replaced with 1 las-talon.
+- This model can be equipped with 1 multi-melta.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Templar Vows
 - Stabilised Disembarkation: In your opponent's Shooting phase, each time an enemy unit is selected to shoot, after that unit has shot, if any of those attacks targeted this TRANSPORT, it can use this ability. If it does, any units embarked within it can disembark. When doing so, models in those units can be set up anywhere on the battlefield wholly within 6" of this TRANSPORT and not within Engagement Range of one or more enemy units.
+
+#### Transport
+- This model has a transport capacity of 14 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Repulsor
@@ -11536,9 +12726,6 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 ADEPTUS ASTARTES INFANTRY models. Each Jump Pack, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11558,7 +12745,7 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 
 ### Repulsor Executioner
 - **Role:** Transport
-- **Wahapedia slug:** [Repulsor-Executioner](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor-Executioner)
+- **Wahapedia slug:** [Repulsor-Executioner-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Repulsor-Executioner-1)
 - **Source label:** Faction Pack. Black Templars (11th edition, version 1.1)
 - **Base size(s) shown:** (diameter 100mm)
 
@@ -11582,11 +12769,25 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Twin Icarus ironhail heavy stubber | anti-fly 4+ rapid fire 3 twin-linked | 36" | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's macro plasma incinerator can be replaced with 1 heavy laser destroyer.
+- This model can be equipped with one of the following:
+  - 1 ironhail heavy stubber
+  - 1 multi-melta
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Templar Vows
 - Interception Strike: Each time this model makes a ranged attack that targets an enemy unit within 12" of one or more ADEPTUS ASTARTES units from your army, you can re-roll the Hit roll.
+
+#### Transport
+- This model has a transport capacity of 7 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Repulsor Executioner
@@ -11594,9 +12795,6 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 7 ADEPTUS ASTARTES INFANTRY models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11637,15 +12835,31 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin assault cannon can be replaced with 1 twin lascannon.
+- This model's 2 Blackstar rocket launchers can be replaced with 2 stormstrike missile launchers.
+- This model can be equipped with 1 hurricane bolter.
+- This model can be equipped with one of the following:
+  - 1 auspex array
+  - 1 infernum halo-launcher
+
+#### Core Abilities
+- Deadly Demise D6
+- Hover
+- Stealth
+
+#### Army Rules
+- Mission Tactics
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Hover, Stealth
-- FACTION: Mission Tactics, Oath of Moment
 - Blackstar Cluster Launcher: Each time this model ends a Normal move, you can select one enemy unit it moved over during that move and roll six D6: for each 5+, that unit suffers 1 mortal wound.
-
-#### Wargear Abilities
 - Auspex Array: Ranged weapons equipped by the bearer have the [IGNORES COVER] ability.
 - Infernum Halo-launcher: The bearer has the SMOKE keyword.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY or KILL TEAM models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Corvus Blackstar
@@ -11653,9 +12867,6 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTUS ASTARTES INFANTRY or KILL TEAM models. Each JUMP PACK, GRAVIS or TERMINATOR model takes up the space of 2 models and each CENTURION model takes up the space of 3 models.
 
 #### Enhancements
 - Calibanite Armaments 15 pts
@@ -11689,10 +12900,19 @@ ADEPTUS ASTARTES; DEATHWATCH
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 storm bolters can be replaced with 2 fragstorm grenade launchers.
+- This model can be equipped with 1 ironhail heavy stubber.
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Aquilon Optics: Each time this model is selected to shoot, you can re-roll one Hit roll, you can re-roll one Wound roll and you can re-roll one Damage roll when resolving those attacks.
 
 #### Unit Composition
@@ -11742,10 +12962,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin heavy onslaught gatling cannon | devastating wounds twin-linked | 24" | 12 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 ironhail heavy stubber.
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Rotating Death: This model's twin heavy onslaught gatling cannon has the [SUSTAINED HITS 2] ability when targeting INFANTRY units.
 
 #### Unit Composition
@@ -11795,10 +13023,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin las-talon | twin-linked | 36" | 2 | 3+ | 10 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 ironhail heavy stubber.
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Ferocious Assault: Each time this model makes an attack with its twin las-talon that targets the closest eligible MONSTER or VEHICLE unit, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -11848,10 +13084,17 @@ ADEPTUS ASTARTES
 | ranged | -- | Stormfury missile launcher | -- | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Close-combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- This model can have its 1 onslaught gatling cannon replaced with 1 heavy flamer
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Oath of Moment
 - Purgation Run: In your Shooting phase, after this unit has shot, it can make a normal move of up to D6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
@@ -11896,10 +13139,21 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Annihilator: Each time a ranged attack made by this model is allocated to a MONSTER or VEHICLE model, you can re-roll the Damage roll.
 
 #### Unit Composition
@@ -11950,10 +13204,21 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Destructor: Each time this model makes a ranged attack that targets an INFANTRY unit, improve the Armour Penetration characteristic of that attack by 1.
 
 #### Unit Composition
@@ -12002,10 +13267,15 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin ironhail heavy stubber | rapid fire 3 twin-linked | 36" | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Oath of Moment
 - Hailstrike: Each time this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the end of the phase, each time a friendly ADEPTUS ASTARTES unit makes a ranged attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per phase.
 
 #### Unit Composition
@@ -12051,10 +13321,15 @@ ADEPTUS ASTARTES
 | ranged | -- | Melta destroyer | melta 2 | 18" | 3 | 3+ | 9 | -4 | D6 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Oath of Moment
 - Hammerstrike: Each time this model has shot, select one enemy unit that was hit by one or more attacks made by this model this phase. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -12100,10 +13375,15 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin Icarus rocket pod | anti-fly 2+ twin-linked | 24" | D3 | 3+ | 8 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Oath of Moment
 - Thunderstrike: Each time this model has shot, select one enemy MONSTER or VEHICLE unit that was hit by one or more attacks made by this model this phase. Until the end of the phase, each time a friendly ADEPTUS ASTARTES unit makes a ranged attack that targets that enemy unit, add 1 to the Wound roll.
 
 #### Unit Composition
@@ -12149,10 +13429,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Siege Shield: When making ranged attacks with its demolisher cannon, this model can target enemy units within Engagement Range of it (provided no other friendly units are also within Engagement Range of that enemy unit). In addition, when making ranged attacks, this model does not suffer the penalty to its Hit rolls for being within Engagement Range of one or more enemy units.
 
 #### Unit Composition
@@ -12201,10 +13489,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Whirlwind vengeance launcher | blast indirect fire | 72" | D6+3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Pinning Bombardment: In your Shooting phase, after this model has shot, if one or more of those attacks made with its Whirlwind vengeance launcher scored a hit against an enemy INFANTRY unit, that unit must take a Battle-shock test.
 
 #### Unit Composition
@@ -12256,10 +13552,21 @@ ADEPTUS ASTARTES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 storm bolters can be replaced with 2 fragstorm grenade launchers.
+- This model can be equipped with one of the following:
+  - 1 ironhail heavy stubber
+  - 1 multi-melta
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Templar Vows
 - Aquilon Optics: Each time this model is selected to shoot, you can re-roll one Hit roll, you can re-roll one Wound roll and you can re-roll one Damage roll when resolving its attacks.
 
 #### Unit Composition
@@ -12306,10 +13613,20 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Twin heavy onslaught gatling cannon | devastating wounds twin-linked | 24" | 12 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 ironhail heavy stubber
+  - 1 multi-melta
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Templar Vows
 - Reaping Tally: This model's twin heavy onslaught gatling cannon has the [SUSTAINED HITS 2] ability while targeting INFANTRY units.
 
 #### Unit Composition
@@ -12355,10 +13672,20 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Twin las-talon | twin-linked | 36" | 2 | 3+ | 10 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 ironhail heavy stubber
+  - 1 multi-melta
+- This model can be equipped with 1 Icarus rocket pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Templar Vows
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Templar Vows
 - Priority Target Acquisition: Each time this model makes an attack with its twin las-talon that targets the closest eligible MONSTER or VEHICLE unit, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -12406,10 +13733,22 @@ ADEPTUS ASTARTES; BLACK TEMPLARS
 | ranged | -- | Twin assault cannon | ASSAULT DEVASTATING WOUNDS TWIN-LINKED | 24" | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin assault cannon can be replaced with 1 Baal flamestorm cannon.
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+- This model can be equipped with one of the following
+  - 2 heavy bolters
+  - 2 heavy flamers
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Overcharged Engines: You can re-roll Advance rolls made for this model.
 
 #### Unit Composition
@@ -12455,10 +13794,17 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | ranged | -- | Plasma storm battery - supercharge | blast hazardous twin-linked | 36" | D6+1 | 3+ | 9 | -3 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 assault cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Storm of Vengeance: Once per turn, in your opponent's Shooting phase, when a friendly Adeptus Astartes unit within 6" of this model is destroyed, this model can use this ability (it cannot use this ability when it is itself destroyed). If it does, after the attacking unit has finished making its attacks, this model can shoot as if it were your Shooting phase, but when resolving those attacks it can only target that enemy unit (and only if it is an eligible target).
 
 #### Unit Composition
@@ -12499,10 +13845,17 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Heavy bolter | sustained hits 1 | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 assault cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Icon of Old Caliban (Aura): Friendly ADEPTUS ASTARTES units within 6" of this unit have Stealth.
 
 #### Unit Composition
@@ -12542,10 +13895,14 @@ ADEPTUS ASTARTES; DARK ANGELS
 | ranged | -- | Twin storm bolter | rapid fire 2 twin-linked | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured feet | -- | Melee | 5 | 3+ | 7 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Ballistus Strike: Each time this model makes a ranged attack that targets a unit that is not Below Half-strength, you can re-roll the Hit roll.
 
 #### Unit Composition
@@ -12594,10 +13951,18 @@ ADEPTUS ASTARTES
 | melee | -- | Brutalis talons - strike | twin-linked | Melee | 6 | 3+ | 12 | -2 | 3 |
 | melee | -- | Brutalis talons - sweep | twin-linked | Melee | 10 | 3+ | 7 | -2 | 1 |
 
+#### Wargear options
+- This model's twin heavy bolter can be replaced with 1 twin multi-melta.
+- This model's Brutalis fists and Brutalis bolt rifles can be replaced with 1 Brutalis talons.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Brutalis Charge: Each time this model ends a Charge move, select one enemy unit within Engagement Range of it and roll one D6: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
@@ -12650,10 +14015,23 @@ ADEPTUS ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 5 | 3+ | 6 | 0 | 1 |
 | melee | -- | Dreadnought combat weapon | -- | Melee | 5 | 3+ | 12 | -2 | 3 |
 
+#### Wargear options
+- This model's assault cannon can be replaced with one of the following:
+  - 1 heavy plasma cannon
+  - 1 multi-melta
+  - 1 twin lascannon
+- This model's Dreadnought combat weapon and storm bolter can be replaced with one of the following:
+  - 1 missile launcher and 1 close combat weapon
+  - 1 heavy flamer and 1 Dreadnought combat weapon
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Oath of Moment
 - Wisdom of the Ancients (Aura): While a friendly ADEPTUS ASTARTES INFANTRY unit is within 6" of this model, each time a model in that unit makes an attack, re-roll a Hit roll of 1.
 
 #### Unit Composition
@@ -12696,10 +14074,18 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin ironhail heavy stubber | rapid fire 3 twin-linked | 36" | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Invictor fist | -- | Melee | 5 | 3+ | 14 | -2 | 3 |
 
+#### Wargear options
+- This model's incendium cannon can be replaced with 1 twin ironhail autocannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Scouts 8"
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Scouts 8"
-- FACTION: Oath of Moment
 - Combat Support: Once per turn, in your opponent's Shooting phase, when a friendly ADEPTUS ASTARTES PHOBOS INFANTRY unit within 6" of this model is selected as the target of an attack, one model from your army with this ability can use it. If it does, after that enemy unit has finished making its attacks, that model can shoot as if it were your Shooting phase, but when resolving those attacks it can only target that enemy unit [and only if it is an eligible target).
 
 #### Unit Composition
@@ -12746,10 +14132,20 @@ ADEPTUS ASTARTES
 | ranged | -- | Twin storm bolter | rapid fire 2 twin-linked | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Redemptor fist | -- | Melee | 5 | 3+ | 12 | -2 | 3 |
 
+#### Wargear options
+- This model can be equipped with 1 Icarus rocket pod.
+- This model's heavy flamer can be replaced with 1 onslaught gatling cannon.
+- This model's heavy onslaught gatling cannon can be replaced with 1 macro plasma incinerator.
+- This model's twin fragstorm grenade launcher can be replaced with 1 twin storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Oath of Moment
 - Duty Eternal: Each time an attack is allocated to this model, subtract 1 from the Damage characteristic of that attack.
 
 #### Unit Composition
@@ -12802,12 +14198,21 @@ ADEPTUS ASTARTES
 | melee | -- | Blood talons - strike | twin-linked | Melee | 6 | 3+ | 12 | -2 | 3 |
 | melee | -- | Blood talons - sweep | twin-linked | Melee | 10 | 3+ | 7 | -2 | 1 |
 
+#### Wargear options
+- This model's twin heavy bolter can be replaced with 1 twin multi-melta.
+- This model's blood fists and blood fist bolt rifles can be replaced with 1 blood talons.
+
+#### Core Abilities
+- Deadly Demise D3
+- Feel No Pain 6+
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Feel No Pain 6+
-- FACTION: Oath of Moment
 - Black Rage: Each time a model in this unit makes a melee attack, you can re-roll the Hit roll. While this unit is not within 6" of one or more friendly BLOOD ANGELS CHARACTER models, or not within 12" of one or more friendly CHAPLAIN models, it cannot be selected to Fall Back and its Objective Control characteristic is 0.
-  Driven by Fury: In your opponent's Shooting phase, when an enemy unit has shot, if this model lost a wound as a result of those attacks, this unit can make a surge move of up to D6+2".
+- Driven by Fury: In your opponent's Shooting phase, when an enemy unit has shot, if this model lost a wound as a result of those attacks, this unit can make a surge move of up to D6+2".
 
 #### Unit Composition
 - 1 Death Company Dreadnought
@@ -12830,7 +14235,7 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 
 ### Venerable Dreadnought
 - **Role:** Walker
-- **Wahapedia slug:** [Venerable-Dreadnought-1](https://wahapedia.ru/wh40k11ed/factions/space-marines/Venerable-Dreadnought-1)
+- **Wahapedia slug:** [Venerable-Dreadnought](https://wahapedia.ru/wh40k11ed/factions/space-marines/Venerable-Dreadnought)
 - **Source label:** Faction Pack. Space Wolves (11th edition, version 1.2)
 - **Base size(s) shown:** (diameter 60mm)
 
@@ -12852,13 +14257,24 @@ ADEPTUS ASTARTES; BLOOD ANGELS
 | melee | -- | Fenrisian greataxe - strike | -- | Melee | 6 | 3+ | 10 | -2 | D6+1 |
 | melee | -- | Fenrisian greataxe - sweep | -- | Melee | 12 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- This model's assault cannon can be replaced with one of the following:
+  - 1 helfrost cannon
+  - 1 multi-melta
+- This model's storm bolter can be replaced with 1 heavy flamer.
+- This model's assault cannon, storm bolter and Dreadnought combat weapon can be replaced with one of the following:
+  - 1 Fenrisian greataxe, 1 blizzard shield and 1 storm bolter
+  - 1 Fenrisian greataxe, 1 blizzard shield and 1 heavy flamer
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Oath of Moment
 - Fervour of the Ancients (Aura): While a friendly SPACE WOLVES unit is within 6" of this model, add 1 to Advance and Charge rolls made for that unit.
-
-#### Wargear Abilities
 - Blizzard Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -12897,14 +14313,22 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | melee | -- | Fenrisian greataxe - sweep | -- | Melee | 12 | 3+ | 6 | -2 | 1 |
 | melee | -- | Great wolf claw | -- | Melee | 6 | 3+ | 10 | -3 | 3 |
 
+#### Wargear options
+- This model's Fenrisian greataxe or great wolf claw and storm bolter can be replaced with 1 blizzard shield and 1 heavy flamer.
+- If this model is not equipped with a storm bolter, its heavy flamer can be replaced with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 6+
+
+#### Army Rules
+- Curse of the Wulfen
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 6+
-- FACTION: Curse of the Wulfen, Oath of Moment
 - Bestial Rage: In your opponent's Shooting phase, when an enemy unit has shot, if this model lost a wound as a result of those attacks, this unit can make a surge move of up to D6+2".
-  Violent Fury: If this model is equipped with two melee weapons, those weapon profiles have the [TWIN-LINKED] ability.
-
-#### Wargear Abilities
+- Violent Fury: If this model is equipped with two melee weapons, those weapon profiles have the [TWIN-LINKED] ability.
 - Blizzard Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -12942,15 +14366,22 @@ ADEPTUS ASTARTES; SPACE WOLVES
 | ranged | -- | Hammerfall missile launcher - superfrag | blast | 48" | 2D6+2 | 4+ | 5 | 0 | 1 |
 | ranged | -- | Hammerfall missile launcher - superkrak | -- | 48" | 2 | 4+ | 10 | -2 | D6+1 |
 
+#### Wargear options
+- This model's Hammerfall heavy bolter array can be replaced with 1 Hammerfall heavy flamer array.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Oath of Moment
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Oath of Moment
 - Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
-  Ceramite Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
-  Defensive Array: You can target this FORTIFICATION with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted another unit with that Stratagem this turn. This FORTIFICATION can only be targeted with that Stratagem once per turn.
+- Ceramite Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Defensive Array: You can target this FORTIFICATION with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted another unit with that Stratagem this turn. This FORTIFICATION can only be targeted with that Stratagem once per turn.
 
 #### Unit Composition
 - 1 Hammerfall Bunker
@@ -12975,6 +14406,8 @@ ADEPTUS ASTARTES
 ## Detachments
 
 ### Gladius Task Force (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Combat Doctrines
 - At the start of your Command phase, you can select one of the Combat Doctrines listed below. Until the start of your next Command phase, that Combat Doctrine is active and its effects apply to all ADEPTUS ASTARTES units from your army. You can only select each Combat Doctrine once per battle.
   Devastator Doctrine
@@ -13034,6 +14467,8 @@ ADEPTUS ASTARTES
   RESTRICTIONS: You cannot select a unit that is within Engagement Range of one or more enemy units.
 
 ### Anvil Siege Force (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Shield of the Imperium
 - Ranged weapons equipped by ADEPTUS ASTARTES models from your army have the [HEAVY] ability. If such a weapon already has this ability, each time an attack is made with that weapon, if the attacking model's unit Remained Stationary this turn, add 1 to the Wound roll.
 
@@ -13087,6 +14522,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can shoot as if it were your Shooting phase, but must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Ironstorm Spearhead (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Armoured Wrath
 - Once per phase for each ADEPTUS ASTARTES unit in your army, you can re-roll one Hit roll, one Wound roll or one Damage roll made for a model in that unit.
 
@@ -13139,6 +14576,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can shoot as if it were your Shooting phase, but must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Firestorm Assault Force (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Close-range Eradication
 - Ranged weapons equipped by ADEPTUS ASTARTES models from your army have the [ASSAULT] ability, and each time an attack made with such a weapon targets a unit within 12", add 1 to the Strength characteristic of that attack.
 
@@ -13192,6 +14631,8 @@ ADEPTUS ASTARTES
   EFFECT: One unit embarked within that TRANSPORT can disembark as if it were your Movement phase, and can then shoot as if it were your Shooting phase, but must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Stormlance Task Force (3 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Lightning Assault
 - ADEPTUS ASTARTES units from your army are eligible to declare a charge in a turn in which they Advanced or Fell Back.
 
@@ -13245,6 +14686,8 @@ ADEPTUS ASTARTES
   RESTRICTIONS: You cannot select a unit that is within Engagement Range of one or more enemy units.
 
 ### Vanguard Spearhead (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Shadow Masters
 - Each time a ranged attack targets an ADEPTUS ASTARTES unit from your army, unless the attacking model is within 12", the target has the Benefit of Cover against that attack.
 
@@ -13300,6 +14743,8 @@ ADEPTUS ASTARTES
   RESTRICTIONS: Each unit selected for this Stratagem must be more than 3" away from all enemy models.
 
 ### 1st Company Task Force (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Extremis-level Threat
 - Once per battle, in your Command phase, you can use this ability. If you do, until the start of your next Command phase, each time a model from your army with the Oath of Moment ability makes an attack that targets your Oath of Moment target, you can re-roll the Wound roll as well.
 
@@ -13353,6 +14798,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the turn, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.
 
 ### Bastion Task Force (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Interlocking Tactics
 - ADEPTUS ASTARTES BATTLELINE units from your army:
   - Are eligible to shoot and declare a charge in a turn in which they Advanced or Fell Back.
@@ -13408,6 +14855,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the phase, your unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back. If it does, every target of that charge and every target of those attacks must be an auspex scanned unit.
 
 ### Orbital Assault Force (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Rapid-drop Deployment
 - At the start of the Declare Battle Formations step, select a number of ADEPTUS ASTARTES units (excluding TITANIC units) from your army based on the battle size, as shown below. Models in those units have the Deep Strike ability.
   BATTLE SIZENUMBER OF UNITS
@@ -13466,6 +14915,8 @@ ADEPTUS ASTARTES
   EFFECT: If your ADEPTUS ASTARTES unit is wholly within 6" of that TRANSPORT, it can embark within it.
 
 ### Ceramite Sentinels (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Adaptive Defence
 - Each time an ADEPTUS ASTARTES model from your army makes an attack, if that model's unit is within a terrain feature, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
   ADEPTUS ASTARTES units from your army gain the ENTRENCHED keyword while all of the following are true:
@@ -13478,6 +14929,8 @@ ADEPTUS ASTARTES
 - GRAVIS model only. The first time the bearer is destroyed, roll one D6 at the end of the phase. On a 2+, set the bearer back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
 - Castellum Omnivox 20 pts
 - ADEPTUS ASTARTES model only. Each time the bearer's unit makes a Fall Back move, select one of the following to apply to that unit until the end of the turn:
+  - That unit is eligible to perform an Action in a turn in which it Fell Back.
+  - That unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
 - Spy-skull Data Link 15 pts
 - ADEPTUS ASTARTES model only. Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 - Defensive Mastery 25 pts
@@ -13522,6 +14975,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can make a Normal move of up to D6". If your unit is ENTRENCHED, you can re-roll the D6 to determine how far your unit can move.
 
 ### Armoured Speartip (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Rapid Deployment
 - Each time an ADEPTUS ASTARTES unit from your army disembarks from a TRANSPORT (excluding FLY) that made a Normal or Advance move this phase (excluding those that arrived from Strategic Reserves), that disembarked unit can make a Normal move of up to D6", or a Normal move of up to D3+3" instead if that TRANSPORT is a HEAVY TRANSPORT (see below).
   Keywords
@@ -13533,7 +14988,7 @@ ADEPTUS ASTARTES
 - Tip of the Spear 40 pts
 - ADEPTUS ASTARTES model only. If the bearer starts the battle embarked within a TRANSPORT, that TRANSPORT has the Scouts 6" ability.
 - Shock Deployment 20 pts
-- Adeptus Astartes Terminator or GRAVIS model only. In your Shooting phase, each time the bearer's unit is selected to shoot, if it disembarked from a TRANSPORT this turn, until the end of the phase, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
+- ADEPTUS ASTARTES TERMINATOR or GRAVIS model only. In your Shooting phase, each time the bearer's unit is selected to shoot, if it disembarked from a TRANSPORT this turn, until the end of the phase, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
 - Armoured Commander 25 pts
 - ADEPTUS ASTARTES model only. Once per turn, in your Movement phase, the bearer can use this Enhancement. If it does, select one friendly ADEPTUS ASTARTES TRANSPORT that is in Strategic Reserves. Until the end of the phase, for the purposes of setting up that TRANSPORT on the battlefield, treat the current battle round number as being one higher than it actually is.
 
@@ -13576,6 +15031,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Hit roll (if your unit disembarked from a HEAVY TRANSPORT this turn, add 1 to the Wound roll as well).
 
 ### Headhunter Task Force (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Target Sighted
 - Each time a TANK ACE unit from your army (see below) Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6" to the Move characteristic of models in that unit.
   Each time a TANK ACE unit from your army shoots in your Shooting phase, if that unit did not Advance this turn, you can re-roll the Damage roll.
@@ -13635,6 +15092,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can shoot as if it were your Shooting phase, but must target only that enemy unit when doing so, and can only do so if that enemy unit is visible and an eligible target.
 
 ### Emperor's Shield (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Wrath of Dorn
 - Each time a model from your army with the Oath of Moment ability makes an attack that targets your Oath of Moment target, you can re-roll a Wound roll of 1.
   Each time a model in a DARNATH LYSANDER unit from your army makes an attack that targets your Oath of Moment target, you can re-roll the Wound roll.
@@ -13645,9 +15104,9 @@ ADEPTUS ASTARTES
 - Champion of the Feast 25 pts
 - ADEPTUS ASTARTES model only. Add 1 to the Attacks characteristic of the bearer's melee weapons. Once per battle, at the start of any phase, the bearer can use this Enhancement. If it does, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by other models in the bearer's unit as well.
 - Disciple of Rhetoricus 10 pts
-- Adeptus Astartes Terminator model only. Improve the Objective Control characteristic of the bearer by 1. Once per battle, at the start of any phase, the bearer can use this Enhancement. If it does, until the end of the phase, add 1 to the Objective Control characteristic of other models in the bearer's unit as well.
+- ADEPTUS ASTARTES TERMINATOR model only. Improve the Objective Control characteristic of the bearer by 1. Once per battle, at the start of any phase, the bearer can use this Enhancement. If it does, until the end of the phase, add 1 to the Objective Control characteristic of other models in the bearer's unit as well.
 - Indomitable Champion 20 pts
-- Adeptus Astartes Terminator model only. The first time the bearer is destroyed, roll one D6 at the end of the phase. On a 2+, set the bearer back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 3 wounds remaining.
+- ADEPTUS ASTARTES TERMINATOR model only. The first time the bearer is destroyed, roll one D6 at the end of the phase. On a 2+, set the bearer back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 3 wounds remaining.
 - Malodraxian Standard 20 pts
 - ADEPTUS ASTARTES ANCIENT model only. Each time an attack targets the bearer's unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of the bearer's unit, subtract 1 from the Wound roll.
 
@@ -13662,34 +15121,36 @@ ADEPTUS ASTARTES
 - 1CP
 - Emperor's Shield - Battle Tactic Stratagem
 - WHEN: Your Shooting phase or the Fight phase.
-  TARGET: One Adeptus Astartes Terminator, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army that has not been selected to shoot or fight this phase.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army that has not been selected to shoot or fight this phase.
   EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Hit roll. If your unit is below its Starting Strength, add 1 to the Wound roll as well.
 - OBDURATE VENGEANCE
 - 1CP
 - Emperor's Shield - Battle Tactic Stratagem
 - WHEN: Fight phase, just after an enemy unit has selected its targets.
-  TARGET: One Adeptus Astartes Terminator, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army that was selected as the target of one or more of the attacking unit's attacks.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army that was selected as the target of one or more of the attacking unit's attacks.
   EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6: on a 3+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
 - WRATHFUL CONQUERORS
 - 1CP
 - Emperor's Shield - Strategic Ploy Stratagem
 - WHEN: Your Movement phase.
-  TARGET: One Adeptus Astartes Terminator, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army within range of an objective marker you control.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army within range of an objective marker you control.
   EFFECT: That objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any phase.
 - DISCIPLINED EXTERMINATION
 - 1CP
 - Emperor's Shield - Battle Tactic Stratagem
 - WHEN: Your Shooting phase.
-  TARGET: One Adeptus Astartes Terminator, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army that has not been selected to shoot this phase.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army that has not been selected to shoot this phase.
   EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability and improve the Armour Penetration characteristic of such weapons by 1.
 - DROPSHIP EXTRACTION
 - 1CP
 - Emperor's Shield - Battle Tactic Stratagem
 - WHEN: End of your opponent's Fight phase.
-  TARGET: One Adeptus Astartes Terminator unit from your army. You cannot target a unit that is within Engagement Range of one or more enemy units.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR unit from your army. You cannot target a unit that is within Engagement Range of one or more enemy units.
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Blade of Ultramar (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Mastered Doctrines
 - At the start of up to three of your Command phases, you can select one of the Combat Doctrines listed below. Until the start of your next Command phase, that Combat Doctrine is active and its effects apply to all ADEPTUS ASTARTES units from your army. You cannot select a Combat Doctrine you have already selected this battle, unless a friendly MARNEUS CALGAR model is on the battlefield.
   Devastator Doctrine
@@ -13750,6 +15211,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can make a Normal move of up to D6", or a Normal move of up to 6" instead if it is under the effects of the Tactical Doctrine.
 
 ### Reclamation Force (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Oath of Reclamation
 - Each time an ADEPTUS ASTARTES model from your army makes a melee attack that targets a unit within range of an objective marker, improve the Armour Penetration characteristic of that attack by 1.
   - Each time an attack targets an ADEPTUS ASTARTES unit from your army, if your unit is within range of an objective marker that you controlled at the start of the phase and if the Strength characteristic of that attack is greater than the Toughness characteristic of your unit or your unit has the TITUS keyword, subtract 1 from the Wound roll.
@@ -13763,6 +15226,8 @@ ADEPTUS ASTARTES
 - ADEPTUS ASTARTES model only. In the Battle-shock step of your opponent's Command phase, if an enemy unit that is below its Starting Strength is within 9" of the bearer, that enemy unit must take a Battle-shock test.
 - Scroll of Proclamation 15 pts
 - When this unit declares a charge, if an enemy unit within range of an objective is within 12" of this unit, you can use this enhancement. If you do:
+  - This unit can re-roll that charge roll.
+  - This unit must end that charge move engaged with one or more of those enemy units.
 - Liberatum 25 pts
 - ADEPTUS ASTARTES model only. Each time the bearer makes an attack that targets an enemy unit, if the target is within range of an objective marker, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
@@ -13806,6 +15271,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can make a Normal move of up to D6"+1.
 
 ### Shadowmark Talon (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Masters of Shadow
 - Each time a ranged attack targets an ADEPTUS ASTARTES unit from your army, unless the attacking model is within 12", the target has the Benefit of Cover against that attack.
 #### Detachment rule -- Unparalleled Tactician
@@ -13861,6 +15328,8 @@ ADEPTUS ASTARTES
   EFFECT: Remove those units from the battlefield and place them into Strategic Reserves.
 
 ### Forgefather's Seekers (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Vulkan's Quest
 - Ranged weapons equipped by ADEPTUS ASTARTES models from your army have the [ASSAULT] ability, and each time an attack made with such a weapon targets a unit within 12", add 1 to the Strength characteristic of that attack.
   SEEKER'S COMPANIONS
@@ -13919,6 +15388,8 @@ ADEPTUS ASTARTES
   EFFECT: Select one enemy unit (excluding MONSTERS and VEHICLES and units with the FLY keyword) within 12" of and visible to your unit. Until the end of the phase, each time that enemy unit declares a charge, subtract 2 from the Charge roll (this is not cumulative with any other negative modifiers to that Charge roll).
 
 ### Hammer of Avernii (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Calculated Annihilation
 - Each time a model from your army with the Oath of Moment ability makes an attack that targets your Oath of Moment target, you can re-roll a Wound roll of 1.
 #### Detachment rule -- Recalculating
@@ -13947,34 +15418,36 @@ ADEPTUS ASTARTES
 - 1CP
 - Hammer of Avernii - Battle Tactic Stratagem
 - WHEN: Your Shooting phase or the Fight phase.
-  TARGET: One Adeptus Astartes Dreadnought, TERMINATOR, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army that has not been selected to shoot or fight this phase.
+  TARGET: One ADEPTUS ASTARTES DREADNOUGHT, TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army that has not been selected to shoot or fight this phase.
   EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Hit roll. If your unit is below Starting Strength, add 1 to the Wound roll as well.
 - DOMINATOR BEACON
 - 1CP
 - Hammer of Avernii - Strategic Ploy Stratagem
 - WHEN: Your Movement phase.
-  TARGET: One Adeptus Astartes Dreadnought, TERMINATOR, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army within range of an objective marker you control.
+  TARGET: One ADEPTUS ASTARTES DREADNOUGHT, TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army within range of an objective marker you control.
   EFFECT: That objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the end of a phase.
 - COGITATED FEROCITY
 - 1CP
 - Hammer of Avernii - Strategic Ploy Stratagem
 - WHEN: Your Fight phase.
-  TARGET: One Adeptus Astartes Dreadnought, TERMINATOR, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army that has not been selected to fight this phase.
+  TARGET: One ADEPTUS ASTARTES DREADNOUGHT, TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army that has not been selected to fight this phase.
   EFFECT: Select either the [SUSTAINED HITS 1] or [LETHAL HITS] abilities. Until the end of the phase, melee weapons equipped by models in your unit have the selected ability.
 - AUGMETIC FORTITUDE
 - 1CP
 - Hammer of Avernii - Battle Tactic Stratagem
 - WHEN: Your opponent's Charge phase, just after an enemy unit ends a Charge move.
-  TARGET: One Adeptus Astartes Terminator, BLADEGUARD VETERAN SQUAD, Sternguard Veteran Squad or VANGUARD VETERAN SQUAD unit from your army within Engagement Range of that enemy unit.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR, BLADEGUARD VETERAN SQUAD, STERNGUARD VETERAN SQUAD or VANGUARD VETERAN SQUAD unit from your army within Engagement Range of that enemy unit.
   EFFECT: Until the end of the turn, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.
 - DROPSHIP EXTRACTION
 - 1CP
 - Hammer of Avernii - Strategic Ploy Stratagem
 - WHEN: End of your opponent's Fight phase.
-  TARGET: One Adeptus Astartes Terminator unit from your army. You cannot target a unit that is within Engagement Range of one or more enemy units.
+  TARGET: One ADEPTUS ASTARTES TERMINATOR unit from your army. You cannot target a unit that is within Engagement Range of one or more enemy units.
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Spearpoint Task Force (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Storm-swift Onslaught
 - ADEPTUS ASTARTES units from your army are eligible to declare a charge in a turn in which they Advanced or Fell Back.
 #### Detachment rule -- Wrath of the First Khan
@@ -14029,6 +15502,8 @@ ADEPTUS ASTARTES
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Vengeful Hosts (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Imperator Unleashed
 - In a turn a friendly ADEPTUS ASTARTES FLY INFANTRY unit made an ingress/charge move, that unit's attacks can re-roll hit rolls of 1.
 
@@ -14037,6 +15512,21 @@ ADEPTUS ASTARTES
 - ADEPTUS ASTARTES FLY INFANTRY model only. When this unit ends an ingress move, select up to one enemy unit within 9" of this unit. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll.
 - Orksbane 20 pts
 - ADEPTUS ASTARTES FLY INFANTRY model only. This model has the following weapon:
+  MELEE WEAPONS
+  RANGE
+  A
+  WS
+  S
+  AP
+  D
+  Orksbane cleave 2
+  Orksbane cleave 2
+  Melee
+  4
+  2+
+  8
+  -2
+  3
 
 #### Stratagems
 - METEORIC ONSLAUGHT
@@ -14059,6 +15549,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit is no longer battle-shocked.
 
 ### Fulguris Task Force (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Skystrike
 - Friendly LAND SPEEDER/STORM SPEEDER HAILSTRIKE/STORM SPEEDER HAMMERSTRIKE/STORM SPEEDER THUNDERSTRIKE units have SPEEDER.
   - In your first Movement phase, friendly SPEEDER units can make an ingress move.
@@ -14066,6 +15558,8 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Bellicose Weapon SpiritsUPGRADE 15 pts
 - SPEEDER unit only. This unit can re-roll:
+  - Damage rolls.
+  - Rolls to determine the A of a weapon.
 - Raptorial Cogitator CoreUPGRADE 15 pts
 - SPEEDER unit only. This unit's ranged attacks have [IGNORES COVER].
 
@@ -14090,6 +15584,8 @@ ADEPTUS ASTARTES
   EFFECT: Place your unit in strategic reserves.
 
 ### Librarius Conclave (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Psychic Disciplines
 - At the start of the battle round, select one of the following Psychic Disciplines abilities. Friendly ADEPTUS ASTARTES PSYKER units have that ability until the end of the battle round.
   - Biomancy Discipline: This unit has +2" M.
@@ -14103,16 +15599,30 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Celerity 35 pts
 - ADEPTUS ASTARTES PSYKER model only.
+  - When this unit is selected to make an advance move, that move does not prevent this unit from being eligible to declare a charge.
+  - When this unit is selected to make a fall-back move, if this unit has the Biomancy Discipline ability, that move does not prevent this unit from being eligible to declare a charge.
 - Prescience 20 pts
 - ADEPTUS ASTARTES PSYKER model only (excluding TERMINATOR models). (Once per turn per unit) In your opponent's Movement phase, when an enemy unit ends a move within 8" of this unit, if this unit is unengaged, this unit can make a normal move of:
+  - Up to D6".
+  - Or: If this unit has the Divination Discipline ability, up to 6".
 - Obfuscation 25 pts
 - ADEPTUS ASTARTES PSYKER model only.
+  - Enemy units cannot target this unit with snap shooting attacks.
+  - If this unit has the Telepathy Discipline ability, this unit has -3" detection range.
 - Temporal Corridor 25 pts
 - ADEPTUS ASTARTES PSYKER model only.
+  - If this unit has the Telekinesis Discipline ability, this unit has Deep Strike.
+  - At the end of your opponent's Fight phase, if this unit is unengaged, you can use this ability. If you do:
+  - Place this unit in strategic reserves.
+  - This unit can make an ingress move in your next Movement phase (including in your first turn).
 - Fusillade 25 pts
 - ADEPTUS ASTARTES PSYKER model only. This unit's ranged attacks have:
+  - [LETHAL HITS]
+  - If this unit has the Pyromancy Discipline ability, [SUSTAINED HITS 1].
 
 ### Subversion Assets (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Nowhere to Hide
 - Friendly PHOBOS/SCOUT SQUAD units have the following ability:
   Transhuman Perception: In your Shooting phase, this unit can select one visible enemy unit within 12". That enemy unit is detected:
@@ -14121,6 +15631,8 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Shroud Field 20 pts
 - PHOBOS model only. This model has:
+  - Lone Operative.
+  - Stealth.
 - Death in the DarkUPGRADE 15 pts
 - INFANTRY PHOBOS unit only. This unit's attacks that target a hidden unit have +1 to hit rolls.
 
@@ -14144,20 +15656,9 @@ ADEPTUS ASTARTES
   TARGET: One friendly unengaged PHOBOS/SCOUT SQUAD unit.
   EFFECT: Your unit has -3" detection range until the end of the turn.
 
-### Black Templars Codex Supplement
-#### Detachment rule -- Introduction
-- Below you will find several Black Templars Detachments you can select from, as described in the Core Rules (sec the Select Detachment rules step, page 56). If you are playing a Crusade battle, see the equivalent step in the Mustering a Crusade Army section of the main Crusade rules. Each Detachment is a themed fighting force that focuses on one particular combat style employed by the Black Templars - the rules they include are as follows:
-  1
-  DETACHMENT RULE
-  The Detachment rule listed here will apply to either your whole army or to particular units within it. If any additional restrictions or benefits apply to a Detachment, they will be listed here. This can include units your army either must include or cannot include, as well as additional keywords some of your units may gain.
-  2
-  ENHANCEMENTS
-  When mustering your army, your chosen Detachment enables you to upgrade CHARACTERS using the Enhancements listed here (see the Select Units). If you are playing a Crusade battle, you can instead use the Renowned Heroes Requisition to give your CHARACTERS Enhancements.
-  3
-  STRATAGEMS
-  Your chosen Detachment gives you access to the Stratagems listed here in addition to the Core Stratagems listed in the Core Rules. During the battle, you can spend Command points (CP) to use these Stratagems.
-
 ### Companions of Vehemence (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Righteous Fervour
 - You can re-roll Advance and Charge rolls made for ADEPTUS ASTARTES units from your army.
   RESTRICTIONS
@@ -14165,11 +15666,11 @@ ADEPTUS ASTARTES
 
 #### Enhancements
 - Incendiary Animus 25 pts
-- Chaplain or JUDICIAR model only. Improve the Armour Penetration characteristic of melee weapons equipped by models in the bearer's unit by 1.
+- CHAPLAIN or JUDICIAR model only. Improve the Armour Penetration characteristic of melee weapons equipped by models in the bearer's unit by 1.
 - Oathbound Exemplar 15 pts
 - ADEPTUS ASTARTES INFANTRY model only. Add 1 to Advance rolls made for the bearer's unit. If the mission pack you are playing features Actions, the bearer's unit is eligible to start to perform an Action in a turn in which it Advanced.
 - Merciless Denunciation 25 pts
-- Chaplain or JUDICIAR model only. Each time a model in the bearer's unit makes a melee attack, you can re-roll the Hit roll.
+- CHAPLAIN or JUDICIAR model only. Each time a model in the bearer's unit makes a melee attack, you can re-roll the Hit roll.
 - Zealous Vanguard 20 pts
 - ADEPTUS ASTARTES model only. Models in the bearer's unit have the Scouts 6" ability.
 
@@ -14180,7 +15681,7 @@ ADEPTUS ASTARTES
 - WHEN: Fight phase.
   TARGET: One ADEPTUS ASTARTES INFANTRY unit from your army that has not been selected to fight this phase.
   EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in or Consolidation move, it can move up to 6" instead of up to 3".
-  RESTRICTIONS: A unit cannot be targeted with this and the Hearts Hardened to Duty Stratagem in the same phase unless it has the Chaplain or JUDICIAR keywords.
+  RESTRICTIONS: A unit cannot be targeted with this and the Hearts Hardened to Duty Stratagem in the same phase unless it has the CHAPLAIN or JUDICIAR keywords.
 - HEARTS HARDENED TO DUTY
 - 1CP
 - Companions of Vehemence - Strategic Ploy Stratagem
@@ -14197,7 +15698,7 @@ ADEPTUS ASTARTES
 - 1CP
 - Companions of Vehemence - Battle Tactic Stratagem
 - WHEN: Fight phase.
-  TARGET: One Chaplain or JUDICIAR unit from your army that has not been selected to fight this phase.
+  TARGET: One CHAPLAIN or JUDICIAR unit from your army that has not been selected to fight this phase.
   EFFECT: Until the end of the phase, each time a model in your unit makes a melee attack that targets an enemy unit, re-roll a Hit roll of 1. If that target is a MONSTER or VEHICLE unit, re-roll a Wound roll of 1 as well.
 - HERESY BEGETS RETRIBUTION
 - 1CP
@@ -14213,6 +15714,8 @@ ADEPTUS ASTARTES
   EFFECT: That enemy unit must take a Battle-shock test, subtracting 1 from the result.
 
 ### Vindication Task Force (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Purge and Sanctify
 - Each time an attack targets an ANCIENT unit from your army, if that unit is within range of one or more objective markers and the Strength characteristic of that attack is greater than the Toughness characteristic of that unit, subtract 1 from the Wound roll.
   - Each time a friendly CRUSADER SQUAD unit makes a surge move, instead of selecting a surge target, you can can select the closest objective to that unit. When that unit makes that surge move, each model in that unit must end that surge move as close as possible to that objective instead.
@@ -14271,6 +15774,8 @@ ADEPTUS ASTARTES
   RESTRICTIONS: Note that even if this charge is successful, your unit does not receive any Charge bonus this turn.
 
 ### Godhammer Assault Force (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Shock and Awe
 - Each time an ADEPTUS ASTARTES unit from your army declares a charge, if it disembarked from a TRANSPORT this turn, after selecting the targets of that charge, select one of those targets; that enemy unit must take a Battle-shock test.
   - Each time a model in an ADEPTUS ASTARTES unit from your army makes a melee attack, if it disembarked from a TRANSPORT this turn, add 1 to the Hit roll.
@@ -14326,6 +15831,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.
 
 ### Marshal's Household (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Faith-fuelled Resolve
 - Friendly SWORD BRETHREN SQUAD units have +1 OC.
   Restrictions: Your army can include BLACK TEMPLARS units, but it cannot include any ADEPTUS ASTARTES units drawn from any other Chapter.
@@ -14358,6 +15865,8 @@ ADEPTUS ASTARTES
   EFFECT: When an enemy unit engaged with your unit is selected to make a fall-back move, that enemy unit must use the desperate escape mode, with -1 to those hazard rolls if that enemy unit is battle-shocked.
 
 ### The Living Miracle (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Anointed Champion
 - When a friendly EMPEROR'S CHAMPION unit is selected to fight, that model's melee attacks can:
   - Re-roll one hit roll.
@@ -14368,8 +15877,17 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Guiding Omens 15 pts
 - EMPEROR'S CHAMPION model only. At the start of the first battle round, you can select up to three of the following abilities. This model has those abilities until the end of the battle:
+  - Instrument of the God-Emperor (Once per battle, per army): In the Fight phase, when this unit is selected to fight, if this unit is engaged with an enemy CHARACTER unit, you can use this ability. If you do, this model's melee attacks have [DEVASTATING WOUNDS].
+  - Foreseen Paths of the Unholy: This unit has -3" detection range.
+  - Vision of Momentous Brutality: This model's melee attacks have +2 A.
+  - Augury of Retribution: Melee attacks that target this unit have [HAZARDOUS].
+  - Omen of Sacred Intervention: When you target this unit with the Heroic Intervention stratagem, that use is -1 CP.
+  - Harbinger of Judgement: When an enemy unit (excluding MONSTER/VEHICLE units) engaged with this model is selected to make a fall-back move, roll one D6:
+  - On a 2+, that enemy unit suffers D6 mortal wounds.
 
 ### Wrathful Procession (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Chant of Deathless Devotion
 - Friendly CHAPLAIN units have 5+ InSv against ranged attacks.
   Restrictions: Your army can include BLACK TEMPLARS units, but it cannot include any ADEPTUS ASTARTES units drawn from any other Chapter.
@@ -14379,6 +15897,8 @@ ADEPTUS ASTARTES
 - CHAPLAIN model only. This model's melee attacks have [DEVASTATING WOUNDS].
 - Adaptable Executioner 20 pts
 - EXECRATOR model only. When this unit is selected to fight, this model's melee attacks have:
+  - [CLEAVE 1].
+  - Or: [PRECISION].
 
 #### Stratagems
 - FUELLED BY FAITH
@@ -14400,20 +15920,9 @@ ADEPTUS ASTARTES
   TARGET: That CHAPLAIN unit.
   EFFECT: Your unit's melee attacks have +1 S.
 
-### Blood Angels Codex Supplement
-#### Detachment rule -- Introduction
-- Below you will find several Blood Angels Detachments you can select from, as described in the Core Rules (see the Select Detachment Rules step). If you are playing a Crusade battle, see the equivalent step in the Mustering a Crusade Army section. Each Detachment is a themed fighting force that focuses on one particular combat style employed by the Blood Angels - the rules they include are as follows:
-  1
-  DETACHMENT RULE
-  The Detachment rule listed here will apply to either your whole army or to particular units within it. If any additional restrictions or benefits apply to a Detachment, they will be listed here. This can include units your army either must include or cannot include, as well as additional keywords some of your units may gain.
-  2
-  ENHANCEMENTS
-  When mustering your army, your chosen Detachment enables you to upgrade CHARACTERS using the Enhancements listed here(see the Select Units). If you are playing a Crusade battle, you can instead use the Renowned Heroes Requisition to give your Characters Enhancements.
-  3
-  STRATAGEMS
-  Your chosen Detachment gives you access to the Stratagems listed here in addition to the Core Stratagems listed in the Core Rules. During the battle, you can spend Command points (CP) to use these Stratagems.
-
 ### Liberator Assault Group (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Red Thirst
 - Each time an ADEPTUS ASTARTES unit from your army is selected to fight, if that unit made a Charge move this turn, until the end of the phase, add 1 to the Attacks characteristic and add 2 to the Strength characteristic of melee weapons equipped by models in that unit.
   RESTRICTIONS
@@ -14468,6 +15977,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the turn, your unit is eligible to either shoot or declare a charge even though it Fell Back. You can instead choose for your unit to give in to the Red Thirst; if it does, it becomes Battle-shocked (but the effects of this Stratagem still apply to it) and until the end of the turn, your unit is eligible to both shoot and declare a charge, even though it Fell Back.
 
 ### The Lost Brethren (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- A Noble Death in Combat
 - Each time a DEATH COMPANY model from your army makes a melee attack, re-roll a Wound roll of 1 if that model's unit is below its Starting Strength; if that model's unit is Below Half-strength, you can re-roll the Wound roll instead.
   KEYWORDS
@@ -14503,27 +16014,29 @@ ADEPTUS ASTARTES
 - The Lost Brethren - Epic Deed Stratagem
 - WHEN: Fight phase, just after an enemy unit has selected its targets.
   TARGET: One DEATH COMPANY unit from your army that was selected as the target of one or more of the attacking unit's attacks.
-  EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 to the result if your unit is within 12" of one or more friendly Chaplain models; on a 4+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
+  EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 to the result if your unit is within 12" of one or more friendly CHAPLAIN models; on a 4+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
 - FURIOUS ONSLAUGHT
 - 1CP
 - The Lost Brethren - Battle Tactic Stratagem
 - WHEN: Fight phase.
   TARGET: One DEATH COMPANY unit from your army, just before that unit Piles-in.
-  EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in move, it can move up to D3+3" instead of up to 3". If your unit is within 12" of one or more friendly Chaplain models, or if it is below Starting Strength, it can move up to 6" instead. In either case, it can only do so provided your unit ends that Pile-in move in Unit Coherency and within Engagement Range of one or more enemy units.
+  EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in move, it can move up to D3+3" instead of up to 3". If your unit is within 12" of one or more friendly CHAPLAIN models, or if it is below Starting Strength, it can move up to 6" instead. In either case, it can only do so provided your unit ends that Pile-in move in Unit Coherency and within Engagement Range of one or more enemy units.
 - LOST TO RAGE
 - 1CP
 - The Lost Brethren - Battle Tactic Stratagem
 - WHEN: Fight phase.
   TARGET: One DEATH COMPANY unit from your army that is below Starting Strength and has not been selected to fight this phase.
-  EFFECT: Until the end of the phase, improve the Attacks, Stength and Armour Penetration characteristics of melee weapons equipped by models in your unit by 1 and, unless your unit is within 12" of one or more friendly Chaplain models, until the end of the phase, those weapons have the [HAZARDOUS] ability.
+  EFFECT: Until the end of the phase, improve the Attacks, Stength and Armour Penetration characteristics of melee weapons equipped by models in your unit by 1 and, unless your unit is within 12" of one or more friendly CHAPLAIN models, until the end of the phase, those weapons have the [HAZARDOUS] ability.
 - WRATHFUL RAMPAGE
 - 1CP
 - The Lost Brethren - Strategic Ploy Stratagem
 - WHEN: Your Movement phase, just after a DEATH COMPANY unit from your army Advances.
   TARGET: That DEATH COMPANY unit.
-  EFFECT: Until the end of the turn, your unit is eligible to declare a charge in a turn in which it Advanced. If your unit is within 12" of one or more friendly Chaplain models, or it is below its Starting Strength, until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced.
+  EFFECT: Until the end of the turn, your unit is eligible to declare a charge in a turn in which it Advanced. If your unit is within 12" of one or more friendly CHAPLAIN models, or it is below its Starting Strength, until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced.
 
 ### The Angelic Host (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Upon Wings of Fire
 - At the end of your opponent s turn, you can select a number of ADEPTUS ASTARTES JUMP PACK units from your army (excluding units that are within Engagement Range of one or more enemy units). The maximum number of units you can select depends on the battle size, as follows:
   BATTLE SIZEUNITS
@@ -14584,6 +16097,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
 
 ### Angelic Inheritors (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Legacy of the Angel
 - At the start of the first battle round, select two of the Angelic Legacy abilities listed below. Until the end of the battle, those Angelic Legacy abilities are active and their effects apply to all ADEPTUS ASTARTES CHARACTER units from your army.
   Sanguinary Grace: This unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
@@ -14642,6 +16157,8 @@ ADEPTUS ASTARTES
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Rage-cursed Onslaught (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Maddened Ferocity
 - Each time an ADEPTUS ASTARTES model from your army makes a melee attack, re-roll a Wound roll of 1.
   Each time an ADEPTUS ASTARTES unit from your army is selected to fight, if that unit made a Charge move this turn, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit. If your unit is Battle-shocked, add 2 to the Attacks characteristic of melee weapons equipped by models in that unit instead.
@@ -14650,7 +16167,7 @@ ADEPTUS ASTARTES
 
 #### Enhancements
 - Carmine Reliquary 30 pts
-- Chaplain model only. Models in the bearer's unit have the Scouts 6" ability. Each time you take a Battle-shock test for an ADEPTUS ASTARTES unit within 6" of the bearer, you can re-roll the result.
+- CHAPLAIN model only. Models in the bearer's unit have the Scouts 6" ability. Each time you take a Battle-shock test for an ADEPTUS ASTARTES unit within 6" of the bearer, you can re-roll the result.
 - Master of the Red Thirst 25 pts
 - ADEPTUS ASTARTES model only. Once per battle, at the start of the Fight phase, the bearer can use this Enhancement. If it does, until the end of the phase, models in the bearer's unit have the Fights First ability.
 - Sanguinary Tear (Aura) 35 pts
@@ -14697,6 +16214,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the turn, your unit is eligible to either shoot or declare a charge in a turn in which it Advanced. You can instead choose for your unit to give in to the Red Thirst; if it does, it becomes Battle-shocked (but the effects of this Stratagem still apply to it), and until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced.
 
 ### Legacy of Grace (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Legacy of the Angel
 - Friendly BLOOD ANGELS INFANTRY CHARACTER units (excluding COMMANDER DANTE units) have +1 to advance rolls and charge rolls.
   This detachment has the GRACE tag and cannot be taken with another GRACE detachment.
@@ -14705,6 +16224,8 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Blood Boil 10 pts
 - ADEPTUS ASTARTES PSYKER model only. This model's [PSYCHIC] attacks:
+  - Have [ANTI: non-MONSTER/VEHICLE 5+].
+  - Can re-roll damage rolls.
 - Aureole of the Angel 20 pts
 - ADEPTUS ASTARTES model only. This unit has -3" detection range.
 
@@ -14731,6 +16252,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit has 5+ InSv.
 
 ### Encarmine Speartip (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Wrath of Angels
 - When a friendly SANGUINARY GUARD unit is selected to make a fall-back move, that move does not prevent that unit from being eligible to shoot/eligible to declare a charge.
   Restrictions: Your army can include BLOOD ANGELS units, but it cannot include any ADEPTUS ASTARTES units drawn from any other Chapter.
@@ -14738,6 +16261,8 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Angelic Executioner 25 pts
 - ADEPTUS ASTARTES JUMP PACK model only. When this unit is selected to fight, this unit's melee attacks have:
+  - [LETHAL HITS].
+  - Or: [SUSTAINED HITS 1].
 - Shadow of Abomination 25 pts
 - ADEPTUS ASTARTES JUMP PACK model only. (Once per battle, per army) When this unit is selected to fight you can use this ability. If you do, this model's melee attacks have +1 D.
 
@@ -14763,6 +16288,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit has Stealth.
 
 ### Wrath of the Doomed (1 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Fanatical Celerity
 - When a friendly DEATH COMPANY unit is selected to make an advance move, you can use this ability. If you do:
   - That unit suffers D3+1 mortal wounds.
@@ -14797,20 +16324,9 @@ ADEPTUS ASTARTES
   TARGET: That DEATH COMPANY unit.
   EFFECT: Your unit can make a surge move of up to D6".
 
-### Dark Angels Codex Supplement
-#### Detachment rule -- Introduction
-- Below you will find several Dark Angels Detachments you can select from, as described in the Core Rules (see the Select Detachment Rules step). If you are playing a Crusade battle, see the equivalent step in the Mustering a Crusade Army section. Each Detachment is a themed fighting force that focuses on one particular combat style employed by the Dark Angels - the rules they include are as follows:
-  1
-  DETACHMENT RULE
-  The Detachment rule listed here will apply to either your whole army or to particular units within it. If any additional restrictions or benefits apply to a Detachment, they will be listed here. This can include units your army either must include or cannot include, as well as additional keywords some of your units may gain.
-  2
-  ENHANCEMENTS
-  When mustering your army, your chosen Detachment enables you to upgrade CHARACTERS using the Enhancements listed here(see the Select Units). If you are playing a Crusade battle, you can instead use the Renowned Heroes Requisition to give your Characters Enhancements.
-  3
-  STRATAGEMS
-  Your chosen Detachment gives you access to the Stratagems listed here in addition to the Core Stratagems listed in the Core Rules. During the battle, you can spend Command points (CP) to use these Stratagems.
-
 ### Unforgiven Task Force (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Grim Resolve
 - While an ADEPTUS ASTARTES unit from your army is Battle-shocked, change the Objective Control characteristic of models in that unit to 1, instead of 0. In your Command phase, select one ADEPTUS ASTARTES unit from your army; until the start of your next Command phase, add 1 to the Objective Control characteristic of models in that unit.
   RESTRICTIONS
@@ -14819,6 +16335,7 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Shroud of Heroes 25 pts
 - ADEPTUS ASTARTES model only. (Once per battle, per army) When this model is destroyed, at the end of the phase, roll one D6:
+  - On a 2+, set up this model on the battlefield, unengaged and as close as possible to where it was destroyed. This model is not part of an attached unit and its unit has a starting strength of 1. This model has 3 wounds remaining, or its full wounds remaining if this model was battle-shocked when it was destroyed.
 - Stubborn Tenacity 15 pts
 - ADEPTUS ASTARTES model only. While the bearer is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Battle-shocked and below its Starting Strength.
 - Weapons of the First Legion 15 pts
@@ -14865,6 +16382,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the turn, each time an attack targets your unit, subtract 1 from the Wound roll.
 
 ### Inner Circle Task Force (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Vowed Target
 - At the start of your Movement phase, select one of the following:
   - Defensive Footing: Select one objective you control. Until the start of your next Movement phase, that objective is your Vowed objective.
@@ -14922,6 +16441,8 @@ ADEPTUS ASTARTES
   EFFECT: Until the end of the phase, each time an attack targets your unit, if the Strength characteristic of that attack is greater than your unit's Toughness characteristic, subtract 1 from the Wound roll.
 
 ### Company of Hunters (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Masters of Manoeuvre
 - Friendly ADEPTUS ASTARTES have:
   - This unit's ranged attacks have [ASSAULT].
@@ -14984,6 +16505,8 @@ ADEPTUS ASTARTES
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Wrath of the Rock (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Dutiful Tenacity
 - Each time an attack targets an ADEPTUS ASTARTES INFANTRY or ADEPTUS ASTARTES MOUNTED unit from your army, if the Strength characteristic of that attack is greater than the Toughness characteristic of that unit, subtract 1 from the Wound roll.
 
@@ -15037,6 +16560,8 @@ ADEPTUS ASTARTES
   RESTRICTIONS: Note that even if this charge is successful, your unit does not receive any Charge bonus this turn.
 
 ### Lion's Blade Task Force (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- In The Lion's Claws
 - Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more RAVENWING units from your army Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
   - Each time a DEATHWING unit from your army declares a charge, if one or more targets of that charge are within Engagement Range of one or more RAVENWING units from your army, add 2 to the Charge roll.
@@ -15095,6 +16620,8 @@ ADEPTUS ASTARTES
   RESTRICTIONS: Note that even if this charge is successful, your unit does not receive any Charge bonus this turn.
 
 ### Dark Age Arsenal (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Invocations of Ancient Fury
 - Friendly ADEPTUS ASTARTES units' weapon profiles with 'Plasma' in their names are plasma weapon profiles.
   - Plasma weapon profiles have +1 S.
@@ -15128,6 +16655,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit's plasma ranged attacks have +1 to hit rolls.
 
 ### Darkflight Pursuit (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Black-winged Vigilance
 - Friendly RAVENWING FLY units' ranged attacks have [IGNORES COVER].
   Restrictions: Your army can include DARK ANGELS units, but it cannot include any ADEPTUS ASTARTES units drawn from any other Chapter.
@@ -15137,6 +16666,8 @@ ADEPTUS ASTARTES
 - RAVENWING FLY unit only. In your first Movement phase, this unit can make an ingress move.
 - Nightforged BatteryUPGRADE 15 pts
 - LAND SPEEDER VENGEANCE unit only. This unit can re-roll:
+  - Rolls to determine the A of a weapon.
+  - Hazard rolls.
 
 #### Stratagems
 - SKYBORNE SURVEILLANCE
@@ -15159,6 +16690,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit can make a normal move of up to D3+3".
 
 ### Interrogation Conclave (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Dread Catechism
 - In the Fight phase, when a friendly CHAPLAIN unit destroys an enemy unit, enemy units within 6" of that CHAPLAIN unit make a battle-shock roll.
   - Friendly CHAPLAIN units have the following ability:
@@ -15192,12 +16725,9 @@ ADEPTUS ASTARTES
   TARGET: That CHAPLAIN unit.
   EFFECT: Your unit can make a normal move of up to D3+3".
 
-### Deathwatch Army Rule
-#### Detachment rule -- Kill Teams
-- Each time an attack targets a KILL TEAM unit from your army that contains models with different Toughness characteristics, until the attacking unit has finished making its attacks, use the Toughness characteristic of the majority of the models in that unit when determining what result is required for that attack to successfully wound. If two or more Toughness characteristics are tied for majority, use the highest Toughness characteristic.
-  For the purposes of determining which models can embark within a TRANSPORT model, KILL TEAM models follow the normal restrictions listed on the TRANSPORT model.
-
 ### Black Spear Task Force (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Mission Tactics
 - At the start of your Command phase, you can select one of the Mission Tactics listed below. Until the start of your next Command phase, that Mission Tactic is active and its effects apply to all units from your army with this ability. Each Mission Tactic can only be selected once per battle.
   FUROR TACTICS
@@ -15259,20 +16789,9 @@ ADEPTUS ASTARTES
   TARGET: Up to two KILL TEAM units from your army, or one other ADEPTUS ASTARTES INFANTRY unit from your army, if those units are not within Engagement Range of one or more enemy units.
   EFFECT: Remove those units from the battlefield and place them into Strategic Reserves. Until the end of your next Movement phase, models in those units that do not have the Deep Strike ability have the Deep Strike ability.
 
-### Space Wolves Codex Supplement
-#### Detachment rule -- Introduction
-- Below you will find several SPACE WOLVES Detachments you can select from, as described in the Core Rules (see the Select Detachment Rules step). If you are playing a Crusade battle, see the equivalent step in the Mustering a Crusade Army section. Each Detachment is a themed fighting force that focuses on one particular combat style employed by the Space Wolves - the rules they include are as follows:
-  1
-  DETACHMENT RULE
-  The Detachment rule listed here will apply to either your whole army or to particular units within it.
-  2
-  ENHANCEMENTS
-  When mustering your army, your chosen Detachment enables you to upgrade CHARACTERS using the Enhancements listed here, as described in the Core Rules (see the Select Units step). If you are playing a Crusade battle, you can instead use the Renowned Heroes Requisition to give your CHARACTERS Enhancements, as described in the main Crusade rules.
-  3
-  STRATAGEMS
-  Your chosen Detachment gives you access to the Stratagems listed here in addition to the Core Stratagems listed in the Core Rules. During the battle, you can spend Command points (CP) to use these Stratagems.
-
 ### Saga of the Hunter (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Pack's Quarry
 - Each time a model in a SPACE WOLVES unit from your army makes a melee attack that targets an enemy unit, if that enemy unit is within Engagement Range of one or more other ADEPTUS ASTARTES units from your army, or if the attacking unit contains more models than that enemy unit:
   - Add 1 to the Hit roll.
@@ -15334,6 +16853,8 @@ ADEPTUS ASTARTES
   EFFECT: Select one enemy unit visible to both of your units. Until the end of the phase, models in your units can only target that enemy unit (and only if it is an eligible target) and each time a model in one of your units makes an attack, re-roll a Wound roll of 1.
 
 ### Saga of the Bold (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Heroes All
 - Each time an ADEPTUS ASTARTES unit from your army is selected to shoot or fight, apply one of the following when resolving those attacks:
   - If your Saga is completed (see below), you can re-roll one Hit roll, one Wound roll and one Damage roll.
@@ -15354,6 +16875,7 @@ ADEPTUS ASTARTES
 - SPACE WOLVES model only. At the start of the Fight phase, if there are more enemy models than friendly models wholly within 6" of the bearer, until the end of the phase, add 2 to the Attacks characteristic of melee weapons equipped by the bearer. If the bearer's unit has achieved one or more Boasts, add 3 to the Attacks characteristic instead.
 - Thunderwolf's Fortitude 25 pts
 - ADEPTUS ASTARTES model only. (Once per battle, per army) When this model is destroyed, at the end of the phase, roll one D6:
+  - On a 2+, set up this model on the battlefield, unengaged and as close as possible to where it was destroyed. This model is not part of an attached unit and its unit has a starting strength of 1. This model has 3 wounds remaining.
 
 #### Stratagems
 - INSPIRING PRESENCE
@@ -15395,6 +16917,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit now declares a charge that targets only one or more of those enemy units, and you resolve that charge as if it were your Charge phase. Note that even if this charge is successful, your unit does not receive any Charge bonus this turn.
 
 ### Saga of the Beastslayer (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Legendary Slayers
 - Each time an ADEPTUS ASTARTES model from your army makes an attack, if that attack targets a CHARACTER, MONSTER or VEHICLE unit or if your Saga is completed (see below), that attack has the [lethal hits] ability.
   Saga of the Beastslayer
@@ -15404,7 +16928,8 @@ ADEPTUS ASTARTES
 
 #### Enhancements
 - Wolf-touched 15 pts
-- SPACE WOLVES model only. Add 2" to the Move characteristic of the bearer.
+- LEADER: WULFEN, WULFEN WITH STORM SHIELDS
+  SPACE WOLVES model only. Add 2" to the Move characteristic of the bearer.
 - Hunter's Guile 20 pts
 - ADEPTUS ASTARTES model only. After both players have deployed their armies, select up to three THUNDERWOLF CAVALRY, WULFEN and/or BLOOD CLAWS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
 - Elder's Guidance 20 pts
@@ -15451,6 +16976,8 @@ ADEPTUS ASTARTES
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Champions of Fenris (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- The Great Wolf Watches
 - Friendly ADEPTUS ASTARTES INFANTRY CHARACTER units have the following ability:
   Countercharge: (Once per battle round, per unit) You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
@@ -15460,6 +16987,8 @@ ADEPTUS ASTARTES
 #### Enhancements
 - A Giant Amongst Giants 15 pts
 - ADEPTUS ASTARTES INFANTRY model only.
+  - This model has +2 W.
+  - This model's melee attacks have +1 S.
 - Preyslayer 15 pts
 - ADEPTUS ASTARTES INFANTRY model only. This unit can re-roll advance rolls and countercharge rolls.
 
@@ -15484,6 +17013,8 @@ ADEPTUS ASTARTES
   EFFECT: Your unit has Stealth.
 
 ### Legends of Saga and Song (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Loping Charge
 - Friendly ADEPTUS ASTARTES TERMINATOR units have +1 to charge rolls.
   Restrictions: Your army can include SPACE WOLVES units, but it cannot include any ADEPTUS ASTARTES units drawn from any other Chapter.
@@ -15515,6 +17046,8 @@ ADEPTUS ASTARTES
   EFFECT: Place your unit in strategic reserves.
 
 ### Veterans of the Fang (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Old Greymanes
 - When a friendly GREY HUNTER unit starts an action, that action does not prevent this unit from being eligible to shoot.
   - In the Declare Battle Formations step, you can split a friendly GREY HUNTERS unit into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units).
@@ -15523,8 +17056,13 @@ ADEPTUS ASTARTES
 #### Enhancements
 - Eye of the Hunter 20 pts
 - WOLF GUARD BATTLE LEADER model only. This unit's ranged attacks have:
+  - [ASSAULT].
+  - [IGNORES COVER].
+  - +1 AP.
 - Weaver of Sagas 15 pts
 - WOLF PRIEST model only. (Once per battle-round, per army) In your Movement phase, at the start or end of this unit's move, you can:
+  - Select one friendly ADEPTUS ASTARTES unit within 6" of this unit. That unit is no longer battle-shocked.
+  - Or: Select one friendly GREY HUNTERS unit within 18" of this unit. That unit is no longer battle-shocked.
 
 #### Stratagems
 - GRIZZLED KILLERS
@@ -15549,6 +17087,8 @@ ADEPTUS ASTARTES
   EFFECT: Select one visible enemy unit within 24" of your unit. That enemy unit has +6" detection range.
 
 ### Saga of the Great Wolf (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Master of Wolves
 - At the start of your Command phase, you can select one of the Hunting Packs listed below. Until the start of your next Command phase, that Hunting Pack is active and its effects apply to all ADEPTUS ASTARTES units from your army. You can only select each Hunting Pack once per battle.
   - Encircling Jaws: This unit can re-roll Advance rolls and Charge rolls.
@@ -15559,7 +17099,8 @@ ADEPTUS ASTARTES
 
 #### Enhancements
 - Grimnar's Mark 20 pts
-- ADEPTUS ASTARTES TERMINATOR CAPTAIN model only. Once per battle round, from the second battle round onwards, you can target the bearer's unit with the Rapid Ingress or Heroic Intervention Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this turn.
+- LEADER: WOLF GUARD TERMINATORS
+  ADEPTUS ASTARTES TERMINATOR CAPTAIN model only. Once per battle round, from the second battle round onwards, you can target the bearer's unit with the Rapid Ingress or Heroic Intervention Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this turn.
   In the Declare Battle Formations step, the bearer can be attached to a WOLF GUARD TERMINATORS unit.
 - Howlmaw 15 pts
 - WOLF PRIEST model only. At the start of the Fight phase, you can select one enemy unit within 6" of the bearer. That unit must take a Battle-shock, subtracting 1 from the result.
@@ -15613,4 +17154,4 @@ ADEPTUS ASTARTES
 - Legends blocks skipped: 108.
 - Units without a role in the page index: 0.
 - Units without a profile table: 0.
-- Detachments written: 58.
+- Detachments written: 53.

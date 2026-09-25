@@ -25,11 +25,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await requestJson<{ scenario?: PracticeScenario }>(request);
-    if (!body.scenario) {
+    const body = await requestJson<{ requestScenario?: PracticeScenario; scenario?: PracticeScenario; timelineEntryStartIndex?: number }>(request);
+    const scenario = body.requestScenario ?? body.scenario;
+    if (!scenario) {
       return NextResponse.json({ error: 'Missing scenario.' }, { status: 400 });
     }
-    return NextResponse.json(await prismaPracticeScenarioRepository.saveScenario(body.scenario));
+    return NextResponse.json(await prismaPracticeScenarioRepository.saveScenario(
+      scenario,
+      body.timelineEntryStartIndex,
+    ));
   } catch (error) {
     return practiceApiError('Failed to save practice scenario. Check that Postgres is running and migrations are applied.', error);
   }

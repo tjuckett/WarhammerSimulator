@@ -11,7 +11,7 @@ type StoredArmy = {
   updatedAt: Date;
 };
 
-type ArmyMetadata = Pick<ImportedArmy, 'battleSizeId' | 'detachmentId' | 'sourceEdition' | 'catalog' | 'sourceMetadata' | 'generation'>;
+type ArmyMetadata = Pick<ImportedArmy, 'battleSizeId' | 'forceDisposition' | 'detachmentId' | 'detachmentIds' | 'sourceEdition' | 'catalog' | 'sourceMetadata' | 'generation'>;
 
 export type SavedArmyPayload = {
   id: string;
@@ -25,7 +25,9 @@ export type SavedArmyPayload = {
 function metadataForArmy(army: ImportedArmy): ArmyMetadata | undefined {
   const metadata = JSON.parse(JSON.stringify({
     battleSizeId: army.battleSizeId,
+    forceDisposition: army.forceDisposition,
     detachmentId: army.detachmentId,
+    detachmentIds: army.detachmentIds,
     sourceEdition: army.sourceEdition,
     catalog: army.catalog,
     sourceMetadata: army.sourceMetadata,

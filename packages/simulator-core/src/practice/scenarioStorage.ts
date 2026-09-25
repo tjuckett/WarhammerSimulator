@@ -154,7 +154,12 @@ function scenarioWithStoredTimeline(scenario: PracticeScenario): PracticeScenari
   };
 }
 
-function compactScenarioForStorage(scenario: PracticeScenario): PracticeScenario {
+/**
+ * Checkpoints already have an authoritative state snapshot. Their action
+ * history stores whole-board snapshots per entry, so it is optional and must
+ * not be included in a normal persistence payload.
+ */
+export function compactPracticeCheckpoint(scenario: PracticeScenario): PracticeScenario {
   if (!scenario.metadata.checkpointKind || scenario.timeline.entries.length === 0) return scenario;
   const state = scenario.initialState;
   return {
@@ -225,13 +230,19 @@ export function loadPracticeScenario(id: string): PracticeScenario | null {
 
 export function savePracticeScenario(scenario: PracticeScenario): PracticeScenarioSummary[] {
   const library = readLibrary();
-  saveBranchTimelineForScenario(scenario);
-  const nextScenario = compactScenarioForStorage(clone(scenario));
+  // Browser fallback must still save the checkpoint when optional timeline
+  // history has grown beyond the browser's string-size limit.
+  try {
+    saveBranchTimelineForScenario(scenario);
+  } catch {
+    // The compact checkpoint below remains fully resumable without history.
+  }
+  const nextScenario = compactPracticeCheckpoint(clone(scenario));
   const scenarios = [
     nextScenario,
     ...library.scenarios
       .filter(candidate => candidate.metadata.id !== nextScenario.metadata.id)
-      .map(compactScenarioForStorage),
+      .map(compactPracticeCheckpoint),
   ];
   writeLibrary({ version: 1, scenarios });
   return loadPracticeScenarioSummaries();

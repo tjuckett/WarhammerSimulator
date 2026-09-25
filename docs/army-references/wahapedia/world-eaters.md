@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/world-eaters/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/world-eaters/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -113,14 +113,18 @@
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 3+ | 8 | -3 | 2 |
 | melee | -- | Gorechild | -- | Melee | 8 | 2+ | 7 | -2 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Blessings of Khorne
 - Legendary Killer: While this model is leading a unit, each time a model in that unit makes a melee attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
-  The Betrayer: At the end of your Charge phase, if this unit is on the battlefield, is unengaged, and contains a bodyguard model, this unit makes a leadership roll:
+- The Betrayer: At the end of your Charge phase, if this unit is on the battlefield, is unengaged, and contains a bodyguard model, this unit makes a leadership roll:
   - If that leadership roll is failed, one bodyguard model in this unit is destroyed.
-  Berzerker Frenzy: The first time this model is destroyed, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with 3 wounds remaining.
+- Berzerker Frenzy: The first time this model is destroyed, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with 3 wounds remaining.
 
 #### Unit Composition
 - 1 Kharn the Betrayer - EPIC HERO
@@ -155,12 +159,17 @@ WORLD EATERS
 | melee | -- | Samni'arius and Spinegrinder - strike | devastating wounds | Melee | 8 | 2+ | 14 | -3 | D6+2 |
 | melee | -- | Samni'arius and Spinegrinder - sweep | devastating wounds | Melee | 16 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: Blessings of Khorne
 - Reborn in Blood: At the start of the battle round, when you make a Blessings of Khorne roll, if this model is destroyed, you can use a triple 6 from that roll to use this ability instead of activating any Blessings of Khorne at the start of that battle round. If you do, this model is no longer destroyed and in the Reinforcements step of your next Movement phase, it is set up anywhere on the battlefield using its Deep Strike ability, with 8 wounds remaining.
-  Wrathful Presence: At the start of the battle round, select one Wrathful Presence ability. Until the start of the next battle round, this model has that ability.
+- Wrathful Presence: At the start of the battle round, select one Wrathful Presence ability. Until the start of the next battle round, this model has that ability.
 
 #### Unit Composition
 - 1 Angron - EPIC HERO
@@ -195,12 +204,17 @@ WORLD EATERS
 | melee | -- | Slaughter and Carnage - strike | -- | Melee | 8 | 2+ | 16 | -4 | 6 |
 | melee | -- | Slaughter and Carnage - sweep | -- | Melee | 16 | 2+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- Pact of Blood
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: Pact of Blood
 - Rage Embodied (Aura): While a friendly BLOOD LEGIONS unit is within 6" of this model, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit.
-  Murderlust: This unit is eligible to declare a charge in a turn in which it Advanced.
+- Murderlust: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
 - 1 Skarbrand - EPIC HERO
@@ -235,12 +249,18 @@ BLOOD LEGIONS
 | melee | -- | Coward's Bane | devastating wounds | Melee | 7 | 2+ | 6 | -2 | 2 |
 | melee | -- | Bladed horn | extra attacks lance | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Leader
+- Deep Strike
+- Scouts 6"
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Deep Strike, Scouts 6"
-- FACTION: Blessings of Khorne
 - Fire Riders: While this model is leading a unit, models in that unit have the Deep Strike ability and each time a model in that unit makes a Normal, Advance, Fall Back or Charge move, it can move horizontally through models and terrain features. When making a Normal, Advance or Fall Back move, models in that unit can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them and any Desperate Escape test is automatically passed.
-  Bloody Stampede: Each time this model's unit ends a Charge move, select one enemy unit within Engagement Range of this model, then roll one D6: on a 2-3, that enemy unit suffers 1 mortal wound; on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
+- Bloody Stampede: Each time this model's unit ends a Charge move, select one enemy unit within Engagement Range of this model, then roll one D6: on a 2-3, that enemy unit suffers 1 mortal wound; on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
 - 1 Lord Invocatus - EPIC HERO
@@ -277,12 +297,16 @@ WORLD EATERS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Axe of dismemberment | devastating wounds precision | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Blessings of Khorne
 - Forwards, for Blood!: While this model is leading a unit, you can re-roll Advance rolls made for that unit and each time that unit makes a Blood Surge move, you can re-roll the D6 used to determine how far models in that unit move.
-  A Worthy Skull: Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's unit destroys a CHARACTER model, you gain 1CP.
+- A Worthy Skull: Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's unit destroys a CHARACTER model, you gain 1CP.
 
 #### Unit Composition
 - 1 Master of Executions
@@ -336,12 +360,17 @@ WORLD EATERS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lacerator and daemonic claw | -- | Melee | 6 | 2+ | 10 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Leader
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Leader
-- FACTION: Blessings of Khorne
 - Rage Eternal: While this model is leading a unit, in your Command phase, you can return one destroyed Bodyguard model to that unit.
-  Possessed Lord: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
+- Possessed Lord: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 1 Slaughterbound
@@ -402,12 +431,22 @@ WORLD EATERS
 | melee | -- | Great axe of Khorne - strike | -- | Melee | 7 | 2+ | 16 | -4 | D6+2 |
 | melee | -- | Great axe of Khorne - sweep | -- | Melee | 14 | 2+ | 10 | -2 | 2 |
 
+#### Wargear options
+- This model's great axe of Khorne can be replaced with 1 axe of Khorne and one of the following:
+  - 1 bloodflail
+  - 1 lash of Khorne
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- Pact of Blood
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: Pact of Blood
 - Daemon Lord of Khorne (Aura): While a friendly BLOOD LEGIONS unit is within 6" of this model, each time a model in that unit makes a melee attack, add 1 to the Hit roll.
-  Relentless Carnage: At the end of the Fight phase, you can select one enemy unit within Engagement Range of this model and roll eight D6: for each 4+, that enemy unit suffers 1 mortal wound.
+- Relentless Carnage: At the end of the Fight phase, you can select one enemy unit within Engagement Range of this model and roll eight D6: for each 4+, that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
 - 1 Bloodthirster
@@ -446,13 +485,17 @@ BLOOD LEGIONS
 | melee | -- | Hellforged weapons - strike | -- | Melee | 8 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | -- | Melee | 16 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Blessings of Khorne
 - Lord of Murder: While this model is within 3" of one or more friendly WORLD EATERS INFANTRY units, this model has the Lone Operative ability.
-  Devastating Assault: Each time this model makes a Charge move, until the end of the turn, its melee weapons have the [DEVASTATING WOUNDS] ability.
-  Direct the Slaughter: Once per battle round, one model from your army with this ability can use it when a friendly WORLD EATERS unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
+- Devastating Assault: Each time this model makes a Charge move, until the end of the turn, its melee weapons have the [DEVASTATING WOUNDS] ability.
+- Direct the Slaughter: Once per battle round, one model from your army with this ability can use it when a friendly WORLD EATERS unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Daemon Prince of Khorne
@@ -503,12 +546,17 @@ WORLD EATERS
 | melee | -- | Hellforged weapons - strike | -- | Melee | 8 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | -- | Melee | 16 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Blessings of Khorne
 - Bloodied Terror: At the start of the Fight phase, each enemy unit within Engagement Range of this model must take a Battle-shock test, subtracting 1 from that test if that enemy unit is Below Half-strength.
-  Swooping Predator: Each time this model ends a Normal or Advance move, you can select one enemy unit that it moved over during that move and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.
+- Swooping Predator: Each time this model ends a Normal or Advance move, you can select one enemy unit that it moved over during that move and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
 - 1 Daemon Prince of Khorne with Wings
@@ -560,12 +608,16 @@ WORLD EATERS
 | melee | -- | Exalted chainblade | -- | Melee | 7 | 2+ | 6 | -1 | 2 |
 | melee | -- | Bladed horn | extra attacks lance | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Blessings of Khorne
 - Aggressive Advance: While this model is leading a unit, models in that unit have a Move characteristic of 10" and each time a model in that unit makes a Normal, Advance, Fall Back or Charge move, it can move horizontally through terrain features.
-  Crush All Who Stand Before Us: Each time this model's unit is selected to fight, you can use this ability. When determining which models in this unit are eligible to fight, any models in it that are within 3" of one or more enemy models are eligible to fight. When resolving those attacks, such models can target one of those enemy units that is within 3" of them and within Engagement Range of their unit.
+- Crush All Who Stand Before Us: Each time this model's unit is selected to fight, you can use this ability. When determining which models in this unit are eligible to fight, any models in it that are within 3" of one or more enemy models are eligible to fight. When resolving those attacks, such models can target one of those enemy units that is within 3" of them and within Engagement Range of their unit.
 
 #### Unit Composition
 - 1 Lord on Juggernaut
@@ -615,13 +667,19 @@ WORLD EATERS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hellblade | -- | Melee | 2 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- 1 Bloodletter that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Bloodletter that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Blood
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Blood
 - Bane of Cowards: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is also Battle-shocked, subtract 1 from each of those Desperate Escape tests.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -658,12 +716,18 @@ BLOOD LEGIONS
 | melee | -- | Chainblade | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Khornate eviscerator | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Khorne Berzerker Champion's bolt pistol can be replaced with 1 plasma pistol.
+- For every 5 models in this unit, 1 Khorne Berzerker's bolt pistol can be replaced with 1 plasma pistol.
+- For every 5 models in this unit, 1 Khorne Berzerker's chainblade can be replaced with 1 Khornate eviscerator.
+- 1 model can be equipped with 1 icon of Khorne.
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Blessings of Khorne
 - Blood Surge: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6+2".
-
-#### Wargear Abilities
 - Icon of Khorne: If the bearer's unit contains one or more Icons of Khorne, each time the bearer's unit destroys an enemy unit, you gain 1 Bloodshed point. Each time you make a Blessings of Khorne roll, roll one additional D6 for each Bloodshed point you have, after which, all your Bloodshed points are lost.
 
 #### Unit Composition
@@ -699,18 +763,29 @@ WORLD EATERS
 | ranged | -- | Havoc launcher | blast | 48" | D6 | 4+ | 5 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 3+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 additional combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher or can replace 1 combi-bolter with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Blessings of Khorne
 - Meet Any Challenge: In your opponent's Movement phase, each time an enemy unit is set up or ends a Normal, Advance or Fall Back move within 8" of this model, any units embarked within it can disembark.
+
+#### Transport
+- This model has a transport capacity of 12 WORLD EATERS INFANTRY models. It cannot transport POSSESSED or TERMINATOR models.
 
 #### Unit Composition
 - 1 Chaos Rhino
   This model is equipped with: 1 combi-bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 WORLD EATERS INFANTRY models. It cannot transport POSSESSED or TERMINATOR models.
 
 #### Enhancements
 - Murder-Forged Entity 15 pts
@@ -740,10 +815,15 @@ WORLD EATERS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hideous mutations | -- | Melee | D6+4 | 4+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Scouts 8"
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Scouts 8"
-- FACTION: Blessings of Khorne
 - To Slake its Rage: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
@@ -775,13 +855,18 @@ WORLD EATERS
 | ranged | -- | Burning roar | ignores cover torrent | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Gore-drenched fangs | -- | Melee | 3 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Blood
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Blood
 - Hunters from the Warp: At the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
 - Collar of Khorne: The bearer has the Feel No Pain 3+ ability against Psychic Attacks.
 
 #### Unit Composition
@@ -822,10 +907,23 @@ BLOOD LEGIONS
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 5 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Chaos Terminator's combi-bolter can be replaced with one of the following:
+  - 1 heavy flamer
+  - 1 reaper autocannon
+- Any number of models can each have their combi-bolter replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 model's combi-bolter and accursed weapon can be replaced with 1 paired accursed weapons.
+- For every 5 models in this unit, up to 3 models can each have their accursed weapon replaced with 1 power fist.
+- For every 5 models in this unit, 1 model's accursed weapon can be replaced with 1 chainfist.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Blessings of Khorne
 - Bloody Fury:
   - This unit's ranged attacks that target the closest eligible target can re-roll hit rolls.
   - When this unit declares a charge, you can use this part of this ability.
@@ -869,10 +967,14 @@ WORLD EATERS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Chainblades | -- | Melee | 5 | 3+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Blessings of Khorne
 - Beacons of Rage (Aura): While a friendly WORLD EATERS unit is within 6" of this unit, each time a model in that unit makes a melee attack that targets a unit (excluding MONSTERS and VEHICLES), add 1 to the Hit roll. If that attack targets a unit (excluding MONSTERS and VEHICLES) that is Below Half-strength, add 1 to the Wound roll as well.
 
 #### Unit Composition
@@ -907,10 +1009,14 @@ WORLD EATERS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Chainblades | anti-monster 3+ anti-vehicle 3+ | Melee | 4 | 3+ | 8 | -3 | 2 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Blessings of Khorne
 - Rend and Tear: Each time a model in this unit makes a melee attack that targets a MONSTER or VEHICLE unit, until the end of the phase, improve the Damage characteristic of that attack by 1.
 
 #### Unit Composition
@@ -948,10 +1054,18 @@ WORLD EATERS
 | melee | -- | Chainblade | lance | Melee | 3 | 4+ | 3 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- 1 Goremonger's chainblade can be replaced with 1 autopistol.
+- 1 Goremonger's chainblade can be replaced with 1 blood harpoon.
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: Blessings of Khorne
 - Loping Speed: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
 
 #### Unit Composition
@@ -987,12 +1101,17 @@ WORLD EATERS
 | melee | -- | Mauler chainblade | -- | Melee | 3 | 5+ | 4 | -1 | 2 |
 | melee | -- | Skullsmasher and mangler | -- | Melee | 2 | 4+ | 4 | -1 | 2 |
 
+#### Wargear options
+- For every 10 models in this unit, 1 Jakhal's chainblades can be replaced with 1 mauler chainblade.
+- Any number of Dishonoured models can each have their paired manglers replaced with 1 skullsmasher and mangler.
+- For every 10 models in this unit, 1 Jakhal can be equipped with 1 icon of Khorne.
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Blessings of Khorne
 - Objective Ravaged: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
-
-#### Wargear Abilities
 - Icon of Khorne: If the bearer's unit contains one or more Icons of Khorne, each time the bearer's unit destroys an enemy unit, you gain 1 Bloodshed point. Each time you make a Blessings of Khorne roll, roll one additional D6 for each Bloodshed point you have, after which, all your Bloodshed points are lost.
 
 #### Unit Composition
@@ -1028,13 +1147,19 @@ WORLD EATERS
 | melee | -- | Hellblade | -- | Melee | 2 | 3+ | 5 | -2 | 2 |
 | melee | -- | Bladed horn | extra attacks lance | Melee | 4 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- 1 Bloodcrusher that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Bloodcrusher that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Blood
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Blood
 - Brass Stampede: Each time this unit ends a Charge move, select one enemy unit within Engagement Range of this unit and roll one D6 for each model in this unit: for each 4+, that enemy unit suffers D3 mortal wounds.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -1076,12 +1201,22 @@ BLOOD LEGIONS
 | melee | -- | Great cleaver of Khorne - strike | -- | Melee | 6 | 3+ | 16 | -4 | 8 |
 | melee | -- | Great cleaver of Khorne - sweep | -- | Melee | 18 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's gorestorm cannon can be replaced with one of the following:
+  - 1 daemongore cannon
+  - 1 ichor cannon
+- This model's Hades gatling cannon can be replaced with 1 skullhurler.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Blessings of Khorne
 - Idol of Blessed Blood: At the start of the battle round, if this model is on the battlefield, when you make a Blessings of Khorne roll, roll one additional D6.
-  Super-heavy War Engine: Each time this model makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4" or less in height. When doing so it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them. It can also move through sections of terrain features that are more than 4" in height, but if it does, after it has moved, roll one D6: on a roll of 1, this model is Battle-shocked.
+- Super-heavy War Engine: Each time this model makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4" or less in height. When doing so it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them. It can also move through sections of terrain features that are more than 4" in height, but if it does, after it has moved, roll one D6: on a roll of 1, this model is Battle-shocked.
 
 #### Unit Composition
 - 1 Khorne Lord of Skulls
@@ -1123,11 +1258,24 @@ WORLD EATERS
 | ranged | -- | Twin heavy bolter | rapid fire 2 sustained hits 1 twin-linked | 36" | 3 | 4+ | 5 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 9 | 3+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Blessings of Khorne
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 14 WORLD EATERS INFANTRY models. Each POSSESSED and TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Chaos Land Raider
@@ -1135,9 +1283,6 @@ WORLD EATERS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 WORLD EATERS INFANTRY models. Each POSSESSED and TERMINATOR model takes up the space of 2 models.
 
 #### Enhancements
 - Murder-Forged Entity 15 pts
@@ -1173,10 +1318,23 @@ WORLD EATERS
 | ranged | -- | Predator twin lascannon | rapid fire 2 twin-linked | 48" | 1 | 4+ | 14 | -3 | D6+1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 3+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with 1 havoc launcher.
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Blessings of Khorne
 - Blood-hungry Annihilator: Each time this model makes a ranged attack that targets the closest eligible MONSTER or VEHICLE target within 18", you can re-roll the Wound roll and you can re-roll the Damage roll.
 
 #### Unit Composition
@@ -1220,10 +1378,23 @@ WORLD EATERS
 | ranged | -- | Predator autocannon | rapid fire 6 | 48" | 4 | 4+ | 9 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 3+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with 1 havoc launcher.
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Blessings of Khorne
 - Punishing Suppression: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks (excluding MONSTERS and VEHICLES). Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -1263,10 +1434,18 @@ WORLD EATERS
 | ranged | -- | Hades autocannon | rapid fire 4 | 36" | 6 | 4+ | 8 | -1 | 2 |
 | melee | -- | Heldrake claws | anti-fly 2+ devastating wounds | Melee | 6 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's Hades autocannon can be replaced with 1 baleflamer.
+
+#### Core Abilities
+- Deadly Demise D3
+- Hover
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Hover
-- FACTION: Blessings of Khorne
 - Airborne Predator: Each time this model makes an attack that targets a unit that can FLY, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -1314,12 +1493,28 @@ WORLD EATERS
 | melee | -- | Shearing claws - strike | -- | Melee | 6 | 3+ | 16 | -3 | D6+1 |
 | melee | -- | Shearing claws - sweep | -- | Melee | 12 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- This model's Hades battle cannon can be replaced with 1 ectoplasma destructor.
+- This model's excruciator cannons can be replaced with 2 magma cutters.
+- This model's heavy baleflamer can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+- This model's heavy missile launcher can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Blessings of Khorne
 - Scuttling Walker: Each time this unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.
-  Unleash Wrath: At the end of your opponent's Movement phase, you can select one enemy unit that was set up on the battlefield within 12" of this model; this model can then either:
+- Unleash Wrath: At the end of your opponent's Movement phase, you can select one enemy unit that was set up on the battlefield within 12" of this model; this model can then either:
   - Shoot at that unit, but only if it is an eligible target.
   - Declare a charge. This unit must end that charge move engaged with the enemy unit you selected (note that even if this charge is successful, this unit does not receive any Charge bonus this turn).
 
@@ -1363,10 +1558,18 @@ WORLD EATERS
 | melee | -- | Forgefiend claws | -- | Melee | 6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Forgefiend jaws | -- | Melee | 8 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's 2 Hades autocannons can be replaced with 2 ectoplasma cannons.
+- This model's Forgefiend jaws can be replaced with 1 ectoplasma cannon and 1 Forgefiend claws.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Blessings of Khorne
 - Furious Onslaught: Each time this model makes a ranged attack that targets the closest eligible target within 18", you can re-roll the Hit roll.
 
 #### Unit Composition
@@ -1417,12 +1620,31 @@ WORLD EATERS
 | melee | -- | Helbrute hammer | -- | Melee | 6 | 4+ | 14 | -3 | D6+1 |
 | melee | -- | Power scourge | -- | Melee | 10 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's multi-melta can be replaced with one of the following:
+  - 1 plasma cannon
+  - 1 twin autocannon
+  - 1 twin heavy bolter
+  - 1 twin lascannon
+  - 1 Helbrute fist
+- This model's missile launcher can be replaced with one of the following:
+  - 1 Helbrute fist
+  - 1 Helbrute hammer
+  - 1 power scourge
+- For each Helbrute fist this model is equipped with, it can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 heavy flamer
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Blessings of Khorne
 - Devoted to Destruction: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
-  Frenzy: (Once per turn, per unit) In the Fight phase, when an enemy unit targets this unit, after that unit has resolved its attacks, you can use this ability. If you do, this unit is eligible to fight (even if it has already fought this phase) and must be selected to fight next.
+- Frenzy: (Once per turn, per unit) In the Fight phase, when an enemy unit targets this unit, after that unit has resolved its attacks, you can use this ability. If you do, this unit is eligible to fight (even if it has already fought this phase) and must be selected to fight next.
 
 #### Unit Composition
 - 1 Helbrute
@@ -1457,14 +1679,21 @@ WORLD EATERS
 | melee | -- | Lasher tendrils | extra attacks | Melee | 6 | 3+ | 7 | -1 | 1 |
 | melee | -- | Maulerfiend fists | -- | Melee | 8 | 3+ | 14 | -2 | D6+1 |
 
+#### Wargear options
+- This model's lasher tendrils can be replaced with 2 magma cutters.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Blessings of Khorne
 - The Scent of Blood: In the Charge phase, when this unit declares a charge:
   - If an enemy unit below starting strength is within 9" of this unit, this unit has +1 to charge rolls.
   - Or: If an enemy unit below half strength is within 9" of this unit, this unit has +2 to charge rolls.
-  Savage Exaltation: Each time this model makes a melee attack that targets an enemy unit that is below its Starting Strength, add 1 to the Hit roll and, if that attack targets an enemy unit that is Below Half-strength, add 1 to the Wound roll as well.
+- Savage Exaltation: Each time this model makes a melee attack that targets an enemy unit that is below its Starting Strength, add 1 to the Hit roll and, if that attack targets an enemy unit that is Below Half-strength, add 1 to the Wound roll as well.
 
 #### Unit Composition
 - 1 Maulerfiend
@@ -1489,6 +1718,8 @@ WORLD EATERS
 ## Detachments
 
 ### Berzerker Warband (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Relentless Rage
 - Each time a WORLD EATERS unit from your army makes a Charge move, until the end of the turn, add 1 to the Attacks characteristic and add 2 to the Strength characteristic of melee weapons equipped by models in that unit.
 
@@ -1541,6 +1772,8 @@ WORLD EATERS
   EFFECT: Do not roll a D6 to determine how far models in your unit can move when they make a surge move. Instead, when making a surge move, those models can move up to 8".
 
 ### Cult of Blood (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Idols of Khorne
 - At the start of your Command phase, you can select one of the Idols of Khorne abilities listed below. Until the start of your next Command phase, that ability is active and its effects apply to all WORLD EATERS TITANIC and WORLD EATERS MONSTER units from your army. You can only select each Idols of Khorne ability once per battle.
   Idol of Infinite Rage (Aura)
@@ -1556,7 +1789,8 @@ WORLD EATERS
 - Chosen of the Blood God 15 pts
 - WORLD EATERS MONSTER model only. Add 3" to the range of the bearers Aura abilities.
 - Butcher Lord 10 pts
-- WORLD EATERS INFANTRY model only. The bearer has the Infiltrators ability.
+- LEADER: GOREMONGERS, JAKHALS
+  WORLD EATERS INFANTRY model only. The bearer has the Infiltrators ability.
 - Brazen Form 25 pts
 - WORLD EATERS MONSTER model only. Add 1 to the bearer's Toughness characteristic and the bearer has the Feel No Pain 5+ ability.
 - Strategic Slaughter 20 pts
@@ -1603,6 +1837,8 @@ WORLD EATERS
   RESTRICTIONS: You can only use this Stratagem once per battle.
 
 ### Khorne Daemonkin (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Blood Tithe
 - Each time a BLOOD LEGIONS or WORLD EATERS unit from your army destroys an enemy unit, roll one D6: on a 3+, you gain 1 Blood Tithe point (BTP). At the start of the Command phase, you can spend one or more of your BTP to activate one of the following abilities until the end of the battle:
   - Enraged Abjuration [2BTP]
@@ -1626,7 +1862,8 @@ WORLD EATERS
 - Blood-forged Armour 20 pts
 - BLOOD LEGIONS or WORLD EATERS model only. The bearer has a Save characteristic of 2+. If the bearer is destroyed, you gain 1 Blood Tithe point.
 - Disciple of Khorne 15 pts
-- LORD ON JUGGERNAUT model only. The bearer has the Deep Strike ability and it has the BLOOD LEGIONS Faction keyword instead of the WORLD EATERS Faction keyword.
+- LEADER: BLOODCRUSHERS, FLESH HOUNDS
+  LORD ON JUGGERNAUT model only. The bearer has the Deep Strike ability and it has the BLOOD LEGIONS Faction keyword instead of the WORLD EATERS Faction keyword.
 - Blade of Endless Bloodshed 30 pts
 - WORLD EATERS model only. Add 1 to the Attacks, Strength and Damage characteristics of the bearers melee weapons. Each time the bearer's unit destroys an enemy unit with a melee attack, do not roll to gain a Blood Tithe point, you automatically gain 1 Blood Tithe point instead.
 
@@ -1671,6 +1908,8 @@ WORLD EATERS
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Possessed Slaughterband (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Brazen Fury
 - WORLD EATERS POSSESSED units from your army have the following ability:
   Brazen Fury: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6". That surge move is a Brazen Fury move.
@@ -1725,6 +1964,8 @@ WORLD EATERS
   EFFECT: Each enemy unit within Engagement Range of your unit must take a Battle-shock test, subtracting 1 from that test.
 
 ### Goretrack Onslaught (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Rush to the Fray
 - Each time a WORLD EATERS unit from your army disembarks from a TRANSPORT, until the end of the turn, add 1 to Charge rolls made for that unit and that unit's melee weapons have the [lance] ability.
 
@@ -1779,6 +2020,8 @@ WORLD EATERS
   RESTRICTION: A unit cannot be targeted by this Stratagem and the Unrelenting Advance Stratagem in the same phase.
 
 ### Brazen Engines (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Rampaging Terrors
 - Friendly DAEMON VEHICLE units have the following ability:
   Terror of Khorne: At the start of the Fight phase, you can select one enemy unit engaged with this unit. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll. You cannot select the same enemy unit for this effect more than once per phase.
@@ -1814,6 +2057,8 @@ WORLD EATERS
   EFFECT: Your unit can make a surge move of up to D6".
 
 ### Butchers of Khorne (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Adamantine Avalanche
 - At the start of the Fight phase, if a friendly TERMINATOR SQUAD unit is engaged, make a Blessings of Khorne roll and use the results to activate one Blessing of Khorne. Until the end of the phase, that Blessing of Khorne is active for friendly TERMINATOR SQUAD units in addition to any other Blessings of Khorne that are currently active.
 
@@ -1844,6 +2089,8 @@ WORLD EATERS
   EFFECT: Ranged attacks that target your unit have -1 D until that enemy unit has attacked.
 
 ### Vessels of Wrath (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Wrath of Khorne
 - When a friendly WORLD EATERS CHARACTER unit (excluding EPIC HERO units) is selected to fight, that unit's CHARACTER models' melee attacks can have:
   - [CLEAVE 1].
@@ -1854,6 +2101,8 @@ WORLD EATERS
 - WORLD EATERS model only. (Once per battle, per army) In your Command phase, you can use this ability. If you do, every Blessing of Khorne is active for this unit until the start of your next turn.
 - Gateways to Glory 10 pts
 - WORLD EATERS DAEMON PRINCE model only. This model has:
+  - MOBILE.
+  - +1 to charge rolls.
 
 #### Stratagems
 - SCORN THE WITCH

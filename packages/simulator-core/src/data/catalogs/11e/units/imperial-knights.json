@@ -1,0 +1,5574 @@
+{
+  "factionId": "imperial-knights",
+  "units": [
+    {
+      "id": "imperial-knights.sir-hekhtur",
+      "name": "Sir Hekhtur",
+      "externalIds": {
+        "wahapedia": "Sir-Hekhtur"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [],
+      "profile": {
+        "name": "Sir Hekhtur",
+        "move": 6,
+        "toughness": 3,
+        "save": 4,
+        "wounds": 3,
+        "leadership": 5,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "SIR HEKHTUR"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Hekhtur's pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Lone Operative",
+            "description": "Core ability: Lone Operative.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [],
+      "sources": [
+        {
+          "title": "Wahapedia Sir Hekhtur datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Sir-Hekhtur",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.canis-rex",
+      "name": "Canis Rex",
+      "externalIds": {
+        "wahapedia": "Canis-Rex"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 415
+        }
+      ],
+      "profile": {
+        "name": "Canis Rex",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "CANIS REX"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Las-impulsor - high intensity",
+            "profileGroup": "Las-impulsor",
+            "range": 24,
+            "attacks": "D6",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Sustained Hits 1",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Las-impulsor - low intensity",
+            "profileGroup": "Las-impulsor",
+            "range": 36,
+            "attacks": "2D6",
+            "skill": 2,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris multi-laser",
+            "range": 36,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Freedom's Hand - strike",
+            "profileGroup": "Freedom's Hand",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 20,
+            "ap": -3,
+            "damage": "9",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Freedom's Hand - sweep",
+            "profileGroup": "Freedom's Hand",
+            "range": 0,
+            "attacks": "10",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Legendary Freeblade",
+          "description": "Once per turn, when you target this model with a stratagem, you may reduce the CP cost of that use of that stratagem by 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Chainbreaker",
+          "description": "Once per battle, at the start of any phase, you can select one friendly IMPERIUM unit that is Battle-shocked and within 12\" of this model. That unit is no longer Battle-shocked.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Canis Rex datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Canis-Rex",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.skitarii-marshal",
+      "name": "Skitarii Marshal",
+      "externalIds": {
+        "wahapedia": "Skitarii-Marshal"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 35
+        }
+      ],
+      "profile": {
+        "name": "Skitarii Marshal",
+        "move": 6,
+        "toughness": 3,
+        "save": 4,
+        "invulnSave": 5,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "SKITARII",
+          "MARSHAL"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Mechanicus pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Control stave",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Support",
+            "description": "Core ability: Support.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Control Edict",
+          "description": "While this model is leading a unit, each time a model in that unit makes an attack, you can re-roll the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Servo-skull Uplink",
+          "description": "Once per battle, at the start of any phase, you can select one friendly SKITARII unit that is Battle-shocked and within 6\" of this model. That unit is no longer Battle-shocked.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: SKITARII RANGERS SKITARII VANGUARD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "SKITARII RANGERS",
+        "SKITARII VANGUARD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Skitarii Marshal datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Skitarii-Marshal",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "imperial-knights.skitarii-rangers",
+        "imperial-knights.skitarii-vanguard"
+      ]
+    },
+    {
+      "id": "imperial-knights.tech-priest-dominus",
+      "name": "Tech-priest Dominus",
+      "externalIds": {
+        "wahapedia": "Tech-priest-Dominus"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 60
+        }
+      ],
+      "wargearOptions": [
+        "This model's macrostubber can be replaced with 1 phosphor serpenta.",
+        "This model's volkite blaster can be replaced with 1 eradication ray."
+      ],
+      "profile": {
+        "name": "Tech-priest Dominus",
+        "move": 6,
+        "toughness": 4,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "IMPERIUM",
+          "INFANTRY",
+          "CHARACTER",
+          "CULT MECHANICUS",
+          "TECH-PRIEST",
+          "DOMINUS"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Eradication ray - dissipated",
+            "profileGroup": "Eradication ray",
+            "range": 24,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Eradication ray - focused",
+            "profileGroup": "Eradication ray",
+            "range": 12,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Macrostubber",
+            "range": 12,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Phosphor serpenta",
+            "range": 18,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volkite blaster",
+            "range": 24,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Omnissian axe",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            2,
+            4,
+            5
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Lord of the Machine Cult",
+          "description": "While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability. If that unit has the ELECTRO-PRIESTS keyword, models in that unit have the Feel No Pain 4+ ability instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Data-spike",
+          "description": "At the start of the Fight phase, you can select one enemy VEHICLE unit within Engagement Range of this model's unit and roll one D6: on a 4+, that enemy unit suffers D6 mortal wounds and, until the end of the phase, the Weapon Skill characteristic of melee weapons equipped by that enemy unit is worsened by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: SKITARII RANGERS SKITARII VANGUARD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "SKITARII RANGERS",
+        "SKITARII VANGUARD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Tech-priest Dominus datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Tech-priest-Dominus",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "imperial-knights.skitarii-rangers",
+        "imperial-knights.skitarii-vanguard"
+      ]
+    },
+    {
+      "id": "imperial-knights.tech-priest-manipulus",
+      "name": "Tech-priest Manipulus",
+      "externalIds": {
+        "wahapedia": "Tech-priest-Manipulus"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 60
+        }
+      ],
+      "wargearOptions": [
+        "This model's magnarail lance can be replaced with 1 transonic cannon."
+      ],
+      "profile": {
+        "name": "Tech-priest Manipulus",
+        "move": 6,
+        "toughness": 4,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "IMPERIUM",
+          "INFANTRY",
+          "CHARACTER",
+          "CULT MECHANICUS",
+          "TECH-PRIEST",
+          "MANIPULUS"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Magnarail lance",
+            "range": 36,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Transonic cannon",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Omnissian staff",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Galvanic Field",
+          "description": "While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Defend the Divine Work",
+          "description": "Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, all models in this model's unit have a 4+ invulnerable save.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: SKITARII RANGERS SKITARII VANGUARD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "SKITARII RANGERS",
+        "SKITARII VANGUARD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Tech-priest Manipulus datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Tech-priest-Manipulus",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "imperial-knights.skitarii-rangers",
+        "imperial-knights.skitarii-vanguard"
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-destrier",
+      "name": "Knight Destrier",
+      "externalIds": {
+        "wahapedia": "Knight-Destrier"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 265,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 280,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's chastiser gatling cannon can be replaced with one of the following:; 1 bellatus reaper chainsword*; 1 thundershock spear*",
+        "This model's frag bombard can be replaced with one of the following:; 1 bellatus reaper chainsword*; 1 thundershock spear*"
+      ],
+      "profile": {
+        "name": "Knight Destrier",
+        "move": 12,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 18,
+        "leadership": 6,
+        "oc": 8,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 150,
+            "lengthMm": 95
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "BELLATUS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT DESTRIER"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Chastiser gatling cannon",
+            "range": 24,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Frag bombard",
+            "range": 24,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bellatus reaper chainsword - strike",
+            "profileGroup": "Bellatus reaper chainsword",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D3+3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Bellatus reaper chainsword - sweep",
+            "profileGroup": "Bellatus reaper chainsword",
+            "range": 0,
+            "attacks": "10",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thundershock spear - strike",
+            "profileGroup": "Thundershock spear",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D3+3",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Thundershock spear - sweep",
+            "profileGroup": "Thundershock spear",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 6,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            7
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Ram Jets",
+          "description": "Each time this unit is selected to make a Normal or Advance move, until the end of the phase, add D3\" to the Move characteristic of this model.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Thundercharge",
+          "description": "If this model is equipped with a thundershock spear and a bellatus reaper chainsword, add 2 to the Attacks characteristic of melee weapons equipped by this model.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Saturation Fire",
+          "description": "Each time this model makes a ranged attack that targets a unit within range of one or more objective markers, that attack has the [IGNORES COVER] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, subtract 4 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Destrier datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Destrier",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-castellan",
+      "name": "Knight Castellan",
+      "externalIds": {
+        "wahapedia": "Knight-Castellan"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 425,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 450,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 shieldbreaker missile launchers and twin siegebreaker cannon can be replaced with 1 shieldbreaker missile launcher and 2 twin siegebreaker cannons."
+      ],
+      "profile": {
+        "name": "Knight Castellan",
+        "move": 8,
+        "toughness": 12,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "DOMINUS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT CASTELLAN"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Plasma decimator - standard",
+            "profileGroup": "Plasma decimator",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma decimator - supercharge",
+            "profileGroup": "Plasma decimator",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "3",
+            "keywords": [
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Shieldbreaker missile launcher",
+            "range": 72,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 12,
+            "ap": -6,
+            "damage": "D6+1",
+            "keywords": [
+              "Anti-titanic 4+",
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin siegebreaker cannon",
+            "range": 36,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Twin-linked",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volcano lance",
+            "range": 72,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 18,
+            "ap": -5,
+            "damage": "D6+8",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            4,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Ion Aegis (Aura)",
+          "description": "While a friendly ARMIGER model is within 6\" of this model, each time a ranged attack targets that model, it has the Benefit of Cover against that attack.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Titan Hunter",
+          "description": "Each time a ranged attack made by this model is allocated to a MONSTER or VEHICLE model, you can re-roll the Damage roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 110 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Castellan datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Castellan",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-crusader",
+      "name": "Knight Crusader",
+      "externalIds": {
+        "wahapedia": "Knight-Crusader"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 395,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 415,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's meltagun can be replaced with 1 Questoris heavy stubber.",
+        "This model's thermal cannon can be replaced with:",
+        "1 rapid-fire battle cannon and 1 Questoris heavy stubber",
+        "This model can be equipped with one of the following:; 1 ironstorm missile pod; 1 stormspear rocket pod; 1 twin Icarus autocannon"
+      ],
+      "profile": {
+        "name": "Knight Crusader",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT CRUSADER"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Avenger gatling cannon",
+            "range": 36,
+            "attacks": "18",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Rapid-fire battle cannon",
+            "range": 72,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Stormspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Thermal cannon",
+            "range": 24,
+            "attacks": "2D3",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 6",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Icarus autocannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            3,
+            7,
+            9
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Crusader's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, each time that model makes a ranged attack, add 1 to the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Punishing Salvoes",
+          "description": "In your Movement phase, if this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [SUSTAINED HITS 1] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Crusader datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Crusader",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-defender",
+      "name": "Knight Defender",
+      "externalIds": {
+        "wahapedia": "Knight-Defender"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 400,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 420,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "profile": {
+        "name": "Knight Defender",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT DEFENDER"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Conversion beam obliterator",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 12,
+            "ap": -2,
+            "damage": "4",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma executor - standard",
+            "profileGroup": "Plasma executor",
+            "range": 36,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma executor - supercharge",
+            "profileGroup": "Plasma executor",
+            "range": 36,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Phosphor blaster",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1",
+              "Ignores Cover"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin incendine combustor",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            4,
+            3,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Defender's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, each time an attack is allocated to that model, subtract 1 from the Damage characteristic of that attack.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Selfless Protector",
+          "description": "Each time a ranged attack is allocated to an IMPERIAL KNIGHTS model from your army, if that model is not fully visible to every model in the attacking unit because of this Knight Defender model, that model has the Benefit of Cover and a 4+ invulnerable save against that attack.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Defender datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Defender",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-errant",
+      "name": "Knight Errant",
+      "externalIds": {
+        "wahapedia": "Knight-Errant"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 355,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's meltagun can be replaced with 1 Questoris heavy stubber.",
+        "This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.",
+        "This model can be equipped with one of the following:; 1 ironstorm missile pod; 1 stormspear rocket pod; 1 twin Icarus autocannon"
+      ],
+      "profile": {
+        "name": "Knight Errant",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT ERRANT"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Stormspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Thermal cannon",
+            "range": 24,
+            "attacks": "2D3",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 6",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Icarus autocannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - strike",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - sweep",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            4,
+            6,
+            7
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Errant's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, you can re-roll Advance rolls made for that model and ranged weapons equipped by that model have the [ASSAULT] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Aggressive Assault",
+          "description": "Each time this model makes a ranged attack that targets the closest eligible target, add 1 to the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Errant datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Errant",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-gallant",
+      "name": "Knight Gallant",
+      "externalIds": {
+        "wahapedia": "Knight-Gallant"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 355,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's meltagun can be replaced with 1 Questoris heavy stubber.",
+        "This model can be equipped with one of the following:; 1 ironstorm missile pod; 1 stormspear rocket pod; 1 twin Icarus autocannon"
+      ],
+      "profile": {
+        "name": "Knight Gallant",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT GALLANT"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Stormspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Icarus autocannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "18",
+            "skill": 2,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Lethal Hits"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - strike",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - sweep",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "12",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Lethal Hits"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            7,
+            8,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Gallant's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, you can re-roll Charge rolls made for that model and each time that model makes a melee attack, you can re-roll the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Martial Pride",
+          "description": "Each time this unit Consolidates, models in it can move an additional 3\" provided your unit can end that move within Engagement Range of one or more enemy units.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Gallant datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Gallant",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-paladin",
+      "name": "Knight Paladin",
+      "externalIds": {
+        "wahapedia": "Knight-Paladin"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 375,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 390,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's meltagun can be replaced with 1 Questoris heavy stubber.",
+        "This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.",
+        "This model can be equipped with one of the following:; 1 ironstorm missile pod; 1 stormspear rocket pod; 1 twin Icarus autocannon"
+      ],
+      "profile": {
+        "name": "Knight Paladin",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT PALADIN"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Rapid-fire battle cannon",
+            "range": 72,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Stormspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Icarus autocannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - strike",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - sweep",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            6,
+            7
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Paladin's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, weapons equipped by that model have the [LETHAL HITS] ability, and melee weapons equipped by that model have the [LANCE] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Seasoned Noble",
+          "description": "Each time this model makes a ranged attack that targets the closest eligible target, improve the Armour Penetration characteristic of that attack by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Paladin datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Paladin",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-preceptor",
+      "name": "Knight Preceptor",
+      "externalIds": {
+        "wahapedia": "Knight-Preceptor"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 365,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 380,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's Questoris multi-laser can be replaced with one of the following",
+        "1 meltagun",
+        "1 Questoris heavy stubber",
+        "This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.",
+        "This model can be equipped with one of the following:; 1 ironstorm missile pod; 1 stormspear rocket pod; 1 twin Icarus autocannon"
+      ],
+      "profile": {
+        "name": "Knight Preceptor",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT PRECEPTOR"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Las-impulsor - high intensity",
+            "profileGroup": "Las-impulsor",
+            "range": 24,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 14,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Las-impulsor - low intensity",
+            "profileGroup": "Las-impulsor",
+            "range": 36,
+            "attacks": "2D6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris multi-laser",
+            "range": 36,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Stormspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Icarus autocannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - strike",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - sweep",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            8,
+            9
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Mentor (Bondsman)",
+          "description": "Each time a model affected by this ability makes an attack that targets this model's quarry, you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Exemplar of the Code",
+          "description": "At the start of the battle, select one unit from your opponent's army to be this model's quarry. Each time this model makes an attack that targets its quarry, you can re-roll the Wound roll. Each time this model's quarry is destroyed, you can select a new unit from your opponent's army to be its quarry.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Preceptor datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Preceptor",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-valiant",
+      "name": "Knight Valiant",
+      "externalIds": {
+        "wahapedia": "Knight-Valiant"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 400,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 415,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 shieldbreaker missile launchers and twin siegebreaker cannon can be replaced with 1 shieldbreaker missile launcher and 2 twin siegebreaker cannons."
+      ],
+      "profile": {
+        "name": "Knight Valiant",
+        "move": 8,
+        "toughness": 12,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "DOMINUS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT VALIANT"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Conflagration cannon",
+            "range": 18,
+            "attacks": "3D6",
+            "skill": 6,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Shieldbreaker missile launcher",
+            "range": 72,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 12,
+            "ap": -6,
+            "damage": "D6+1",
+            "keywords": [
+              "Anti-titanic 4+",
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Thundercoil harpoon",
+            "range": 12,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 24,
+            "ap": -6,
+            "damage": "10",
+            "keywords": [
+              "Devastating Wounds",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin siegebreaker cannon",
+            "range": 36,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Twin-linked",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            4,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Ion Aegis (Aura)",
+          "description": "While a friendly ARMIGER model is within 6\" of this model, each time a ranged attack targets that model, it has the Benefit of Cover against that attack.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Thundershock",
+          "description": "In your Shooting phase, each time you select a target for this model's thundercoil harpoon, roll one D6 for the target unit and one D6 for each other enemy unit within 6\" of the target unit. On a 4+, the unit being rolled for is struck by arcing energies; after resolving all of this model's attacks against the target unit, each unit struck by arcing energies suffers D3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 110 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Valiant datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Valiant",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.knight-warden",
+      "name": "Knight Warden",
+      "externalIds": {
+        "wahapedia": "Knight-Warden"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 375,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 390,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's meltagun can be replaced with 1 Questoris heavy stubber.",
+        "This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.",
+        "This model can be equipped with one of the following:; 1 ironstorm missile pod; 1 stormspear rocket pod; 1 twin Icarus autocannon"
+      ],
+      "profile": {
+        "name": "Knight Warden",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "QUESTORIS",
+          "CHARACTER",
+          "IMPERIUM",
+          "KNIGHT WARDEN"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Avenger gatling cannon",
+            "range": 36,
+            "attacks": "18",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Stormspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Icarus autocannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - strike",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Thunderstrike gauntlet - sweep",
+            "profileGroup": "Thunderstrike gauntlet",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            3,
+            7,
+            8
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Warden's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, weapons equipped by that model have the [SUSTAINED HITS 1] ability, and ranged weapons equipped by that model have the [IGNORES COVER] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Thin Their Ranks",
+          "description": "Each time this model makes a ranged attack that targets an enemy unit (excluding MONSTERS and VEHICLES), that attack has the [DEVASTATING WOUNDS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 19 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Warden datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Knight-Warden",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.cerastus-knight-acheron",
+      "name": "Cerastus Knight Acheron",
+      "externalIds": {
+        "wahapedia": "Cerastus-Knight-Acheron"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 380,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 395,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Cerastus Knight Acheron",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "CERASTUS",
+          "KNIGHT ACHERON"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Acheron flame cannon",
+            "range": 18,
+            "attacks": "2D6",
+            "skill": 6,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainfist - strike",
+            "profileGroup": "Reaper chainfist",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainfist - sweep",
+            "profileGroup": "Reaper chainfist",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Acheron's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, at the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test, subtracting 1 from the result when they do.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Searing Flames",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with an Acheron flame cannon. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Cerastus Knight Acheron datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Cerastus-Knight-Acheron",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.cerastus-knight-atrapos",
+      "name": "Cerastus Knight Atrapos",
+      "externalIds": {
+        "wahapedia": "Cerastus-Knight-Atrapos"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 405,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 425,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Cerastus Knight Atrapos",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "CERASTUS",
+          "KNIGHT ATRAPOS"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Atrapos lascutter - low intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 36,
+            "attacks": "2D6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Atrapos lascutter - high intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 24,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 14,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Graviton singularity cannon - contained",
+            "profileGroup": "Graviton singularity cannon",
+            "range": 24,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "D6+1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Graviton singularity cannon - singularity",
+            "profileGroup": "Graviton singularity cannon",
+            "range": 24,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "D6+1",
+            "keywords": [
+              "Devastating Wounds",
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Atrapos lascutter - low intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Atrapos lascutter - high intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 14,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            4,
+            5,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Atrapos' Duty (Bondsman)",
+          "description": "While a model is affected by this ability, each time that model makes an attack that targets a TITANIC or TOWERING model, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Macro-extinction Protocols",
+          "description": "Each time this model makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll. If that target is TITANIC or TOWERING, add 1 to the Wound roll as well.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Cerastus Knight Atrapos datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Cerastus-Knight-Atrapos",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.cerastus-knight-castigator",
+      "name": "Cerastus Knight Castigator",
+      "externalIds": {
+        "wahapedia": "Cerastus-Knight-Castigator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 380,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 395,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Cerastus Knight Castigator",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "CERASTUS",
+          "KNIGHT CASTIGATOR"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Castigator bolt cannon",
+            "range": 36,
+            "attacks": "18",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Tempest warblade - strike",
+            "profileGroup": "Tempest warblade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Tempest warblade - sweep",
+            "profileGroup": "Tempest warblade",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Castigator's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, its ranged weapons have the [SUSTAINED HITS 1] ability and the Armour Penetration characteristic of its ranged weapons is improved by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Storm of Bolts",
+          "description": "In your Shooting phase, after this model has shot, select one unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this model is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Cerastus Knight Castigator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Cerastus-Knight-Castigator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.cerastus-knight-lancer",
+      "name": "Cerastus Knight Lancer",
+      "externalIds": {
+        "wahapedia": "Cerastus-Knight-Lancer"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 415,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 435,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Cerastus Knight Lancer",
+        "move": 14,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "CERASTUS",
+          "KNIGHT LANCER"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Cerastus shock lance",
+            "range": 12,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Cerastus shock lance - strike",
+            "profileGroup": "Cerastus shock lance",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Cerastus shock lance - sweep",
+            "profileGroup": "Cerastus shock lance",
+            "range": 0,
+            "attacks": "10",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Lancer's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, it is eligible to declare a charge in a turn in which it Advanced.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Shock Charge",
+          "description": "You can target this model with the Crushing Impact Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Cerastus Knight Lancer datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Cerastus-Knight-Lancer",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.questoris-knight-magaera",
+      "name": "Questoris Knight Magaera",
+      "externalIds": {
+        "wahapedia": "Questoris-Knight-Magaera"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 385,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 400,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser."
+      ],
+      "profile": {
+        "name": "Questoris Knight Magaera",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "QUESTORIS",
+          "KNIGHT MAGAERA"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Lightning cannon",
+            "range": 48,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Phased plasma-fusil",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin rad cleanser",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 2,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hekaton siege claw - strike",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hekaton siege claw - sweep",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Magaera's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, each time that model makes a ranged attack that targets the closest eligible target, improve the Strength and Armour Penetration characteristics of that attack by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Repair Auto-simulacra",
+          "description": "At the end of your Command phase, this model regains up to D3 lost wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Questoris Knight Magaera datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Questoris-Knight-Magaera",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.questoris-knight-styrix",
+      "name": "Questoris Knight Styrix",
+      "externalIds": {
+        "wahapedia": "Questoris-Knight-Styrix"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 375,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 390,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser."
+      ],
+      "profile": {
+        "name": "Questoris Knight Styrix",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "QUESTORIS",
+          "KNIGHT STYRIX"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Graviton crusher",
+            "range": 18,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-vehicle 2+",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin rad cleanser",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 2,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volkite chierovile",
+            "range": 30,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 12,
+            "ap": 0,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hekaton siege claw - strike",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hekaton siege claw - sweep",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Styrix's Duty (Bondsman)",
+          "description": "While a model is affected by this ability, each time that model is selected to shoot or fight, after it has resolved all of its attacks, select one enemy unit hit by one or more of those attacks; that unit must take a Battle-shock test, subtracting one from the test when doing so.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Grav-pinned",
+          "description": "In your Shooting phase, after this model has shot, if an enemy INFANTRY unit was hit by one or more of those attacks made with a graviton crusher, until the end of your opponent's next turn, that enemy unit is grav-pinned. While a unit is grav-pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Questoris Knight Styrix datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Questoris-Knight-Styrix",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.skitarii-rangers",
+      "name": "Skitarii Rangers",
+      "aliases": [
+        "Skitarii Rangers (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Skitarii-Rangers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 85
+        }
+      ],
+      "wargearOptions": [
+        "The Skitarii Ranger Alpha can be equipped with 1 Alpha combat weapon.",
+        "The Skitarii Ranger Alpha's galvanic rifle can be replaced with 1 Mechanicus pistol.",
+        "1 Skitarii Ranger's galvanic rifle can be replaced with 1 arc rifle.",
+        "1 Skitarii Ranger's galvanic rifle can be replaced with 1 plasma caliver.",
+        "1 Skitarii Ranger's galvanic rifle can be replaced with 1 transuranic arquebus.",
+        "1 Skitarii Ranger equipped with a galvanic rifle can be equipped with one of the following:; 1 enhanced data-tether*; 1 omnispex*"
+      ],
+      "profile": {
+        "name": "Skitarii Rangers",
+        "move": 6,
+        "toughness": 3,
+        "save": 4,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "IMPERIUM",
+          "SKITARII",
+          "RANGERS"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Mechanicus pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Arc rifle",
+            "range": 30,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "D3",
+            "keywords": [
+              "Anti-vehicle 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Galvanic rifle",
+            "range": 30,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma caliver - standard",
+            "profileGroup": "Plasma caliver",
+            "range": 30,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma caliver - supercharge",
+            "profileGroup": "Plasma caliver",
+            "range": 30,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Transuranic arquebus",
+            "range": 36,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Precision",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Alpha combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            7
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Objective Scouted",
+          "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Enhanced data-tether",
+          "description": "Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Omnispex",
+          "description": "Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Skitarii Rangers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Skitarii-Rangers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.skitarii-vanguard",
+      "name": "Skitarii Vanguard",
+      "aliases": [
+        "Skitarii Vanguard (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Skitarii-Vanguard"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 85
+        }
+      ],
+      "wargearOptions": [
+        "The Skitarii Vanguard Alpha can be equipped with 1 Alpha combat weapon.",
+        "The Skitarii Vanguard Alpha's radium carbine can be replaced with 1 Mechanicus pistol.",
+        "1 Skitarii Vanguard's radium carbine can be replaced with 1 arc rifle.",
+        "1 Skitarii Vanguard's radium carbine can be replaced with 1 plasma caliver.",
+        "1 Skitarii Vanguard's radium carbine can be replaced with 1 transuranic arquebus.",
+        "1 Skitarii Vanguard equipped with a radium carbine can be equipped with one of the following:; 1 enhanced data-tether*; 1 omnispex*"
+      ],
+      "profile": {
+        "name": "Skitarii Vanguard",
+        "move": 6,
+        "toughness": 3,
+        "save": 4,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "IMPERIUM",
+          "SKITARII",
+          "VANGUARD"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Mechanicus pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Arc rifle",
+            "range": 30,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "D3",
+            "keywords": [
+              "Anti-vehicle 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma caliver - standard",
+            "profileGroup": "Plasma caliver",
+            "range": 30,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma caliver - supercharge",
+            "profileGroup": "Plasma caliver",
+            "range": 30,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Radium carbine",
+            "range": 18,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Transuranic arquebus",
+            "range": 36,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Precision",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Alpha combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Rad-saturation (Aura)",
+          "description": "While an enemy unit (excluding VEHICLE units) is within 3\" of this unit, subtract 1 from the Objective Control characteristic of models in that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Enhanced data-tether",
+          "description": "Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Omnispex",
+          "description": "Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Skitarii Vanguard datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Skitarii-Vanguard",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.acastus-knight-asterius",
+      "name": "Acastus Knight Asterius",
+      "externalIds": {
+        "wahapedia": "Acastus-Knight-Asterius"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 785,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 860,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Acastus Knight Asterius",
+        "move": 8,
+        "toughness": 13,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 30,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "ACASTUS",
+          "IMPERIUM",
+          "KNIGHT ASTERIUS"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Asterius volkite culverin",
+            "range": 24,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Karacnos mortar battery",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Indirect Fire",
+              "Ignores Cover",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin conversion beam cannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 16,
+            "ap": -2,
+            "damage": "6",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 10,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 2D6",
+            "description": "Core ability: Deadly Demise 2D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Sunderer of Fortresses",
+          "description": "Each time this model makes an attack that targets a VEHICLE, improve the Strength and Damage characteristics of that attack by 1. If that attack targets a FORTIFICATION, improve the Strength and Damage characteristics of that attack by 2 instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Acastus Knight Asterius datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Acastus-Knight-Asterius",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.acastus-knight-porphyrion",
+      "name": "Acastus Knight Porphyrion",
+      "externalIds": {
+        "wahapedia": "Acastus-Knight-Porphyrion"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 725,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 800,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 Acastus autocannons can be replaced with one of the following:; 2 lascannons; 1 Acastus autocannon and 1 lascannon",
+        "This model's Acastus ironstorm missile pod can be replaced with 1 helios defence missiles."
+      ],
+      "profile": {
+        "name": "Acastus Knight Porphyrion",
+        "move": 8,
+        "toughness": 13,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 30,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "IMPERIUM",
+          "ACASTUS",
+          "KNIGHT PORPHYRION"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Acastus autocannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Acastus ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Helios defence missiles",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [
+              "Anti-fly 2+",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin magna lascannon",
+            "range": 72,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 18,
+            "ap": -4,
+            "damage": "D6+6",
+            "keywords": [
+              "Twin-linked",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 10,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 2D6",
+            "description": "Core ability: Deadly Demise 2D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Bastion of Firepower",
+          "description": "Each time this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Acastus Knight Porphyrion datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Acastus-Knight-Porphyrion",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.armiger-helverin",
+      "name": "Armiger Helverin",
+      "externalIds": {
+        "wahapedia": "Armiger-Helverin"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 140
+        }
+      ],
+      "wargearOptions": [
+        "This model's Questoris heavy stubber can be replaced with 1 meltagun."
+      ],
+      "profile": {
+        "name": "Armiger Helverin",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "ARMIGER",
+          "HELVERIN"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Armiger autocannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Suppression Protocols",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks made with an Armiger autocannon. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Armiger Helverin datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Armiger-Helverin",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.armiger-warglaive",
+      "name": "Armiger Warglaive",
+      "externalIds": {
+        "wahapedia": "Armiger-Warglaive"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 140
+        }
+      ],
+      "wargearOptions": [
+        "This model's Questoris heavy stubber can be replaced with 1 meltagun."
+      ],
+      "profile": {
+        "name": "Armiger Warglaive",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "ARMIGER",
+          "WARGLAIVE"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Questoris heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Thermal spear",
+            "range": 18,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chain-cleaver - strike",
+            "profileGroup": "Reaper chain-cleaver",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chain-cleaver - sweep",
+            "profileGroup": "Reaper chain-cleaver",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Impetuous Glory",
+          "description": "Each time this model makes a Charge move, until the end of the turn, add 1 to the Attacks characteristic of this model's reaper chain-cleaver - strike profile, and add 2 to the Attacks characteristic of this model's reaper chain-cleaver - sweep profile.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Armiger Warglaive datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Armiger-Warglaive",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "imperial-knights.armiger-moirax",
+      "name": "Armiger Moirax",
+      "externalIds": {
+        "wahapedia": "Armiger-Moirax"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's volkite veuglaire can be replaced with one of the following:; 1 siege claw and 1 rad cleanser; 1 graviton pulsar; 1 lightning lock; 1 conversion beam cannon",
+        "This model's graviton pulsar can be replaced with one of the following;",
+        "1 siege claw and 1 rad cleanser",
+        "1 lightning lock",
+        "1 conversion beam cannon",
+        "1 volkite veuglaire"
+      ],
+      "profile": {
+        "name": "Armiger Moirax",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "ARMIGER",
+          "MOIRAX"
+        ],
+        "factionKeywords": [
+          "imperial-knights",
+          "Imperial Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Conversion beam cannon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Graviton pulsar",
+            "range": 24,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-VEHICLE 2+",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lightning lock",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 8,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Rad cleanser",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 2,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volkite veuglaire",
+            "range": 36,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 8,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Siege claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            4,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "imperial-knights.army-rule.code-chivalric"
+      ],
+      "rawRules": [
+        {
+          "name": "Protection Protocols",
+          "description": "You can target this unit with the Heroic Intervention Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Armiger Moirax datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/Armiger-Moirax",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "id": "world-eaters",
+  "name": "World Eaters",
+  "edition": "11e",
+  "unitRefs": [
+    "world-eaters.kh-rn-the-betrayer",
+    "world-eaters.angron",
+    "world-eaters.skarbrand",
+    "world-eaters.lord-invocatus",
+    "world-eaters.master-of-executions",
+    "world-eaters.slaughterbound",
+    "world-eaters.bloodthirster",
+    "world-eaters.daemon-prince-of-khorne",
+    "world-eaters.daemon-prince-of-khorne-with-wings",
+    "world-eaters.lord-on-juggernaut",
+    "world-eaters.bloodletters",
+    "world-eaters.khorne-berzerkers",
+    "world-eaters.chaos-rhino",
+    "world-eaters.chaos-spawn",
+    "world-eaters.flesh-hounds",
+    "world-eaters.chaos-terminators",
+    "world-eaters.eightbound",
+    "world-eaters.exalted-eightbound",
+    "world-eaters.goremongers",
+    "world-eaters.jakhals",
+    "world-eaters.bloodcrushers",
+    "world-eaters.khorne-lord-of-skulls",
+    "world-eaters.chaos-land-raider",
+    "world-eaters.chaos-predator-annihilator",
+    "world-eaters.chaos-predator-destructor",
+    "world-eaters.heldrake",
+    "world-eaters.defiler",
+    "world-eaters.forgefiend",
+    "world-eaters.helbrute",
+    "world-eaters.maulerfiend"
+  ],
+  "ruleRefs": [
+    "world-eaters.army-rule.pact-of-blood",
+    "world-eaters.army-rule.blessings-of-khorne"
+  ],
+  "detachmentRefs": [
+    "world-eaters.detachment.berzerker-warband",
+    "world-eaters.detachment.cult-of-blood",
+    "world-eaters.detachment.khorne-daemonkin",
+    "world-eaters.detachment.possessed-slaughterband",
+    "world-eaters.detachment.goretrack-onslaught",
+    "world-eaters.detachment.brazen-engines",
+    "world-eaters.detachment.butchers-of-khorne",
+    "world-eaters.detachment.vessels-of-wrath"
+  ],
+  "factionKeywords": [
+    "world-eaters",
+    "World Eaters"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia World Eaters faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 30,
+    "normalizedEntryCount": 30,
+    "excludedLegendCount": 28,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

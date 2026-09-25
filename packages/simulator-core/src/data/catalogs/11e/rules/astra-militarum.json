@@ -1,0 +1,2064 @@
+{
+  "factionId": "astra-militarum",
+  "rules": [
+    {
+      "id": "astra-militarum.army-rule.voice-of-command",
+      "name": "Voice of Command",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is ASTRA MILITARUM, OFFICER models with this ability can issue Orders. Each OFFICER's datasheet will specify how many Orders it can issue in a battle round and which units are eligible to receive those Orders. Each time an Officer model issues an Order, select one of the Orders below, then select one eligible friendly unit within 6\" of that Officer model to issue it to. OFFICER models can issue Orders in your Command phase and at the end of a phase in which they disembarked from a TRANSPORT or were set up on the battlefield. Until the start of your next Command phase, the unit you selected is affected by that Order. Unless otherwise stated, a unit can only be affected by one Order at a time (any Order subsequently issued to that unit replaces the current one). Orders cannot be issued to Battle-shocked units, and if a unit being affected by an Order becomes Battle-shocked, that Order ceases to affect that unit. Only ASTRA MILITARUM models gain the benefit of an Order issued to their unit. Move! Move! Move! M +3\" Add 3\" to the Move characteristic of models in this unit. Fix Bayonets! WS +1 Improve the Weapon Skill characteristic of melee weapons equipped by models in this unit by 1. Take Aim! BS +1 Improve the Ballistic Skill characteristic of ranged weapons equipped by models in this unit by 1. First Rank, Fire! Second Rank, Fire! A +1 Improve the Attacks characteristic of Rapid Fire weapons equipped by models in this unit by 1. Take Cover! SV +1 Improve the Save characteristic of models in this unit by 1 (this cannot improve a model's Save to better than 3+). Duty and Honour! LD +1 OC +1 Improve the Leadership and Objective Control characteristics of models in this unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Voice of Command",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Voice of Command"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms",
+      "name": "Combined Arms - Born Soldiers",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time a model in a REGIMENT unit from your army makes a ranged attack that targets a visible unit (excluding MONSTERS and VEHICLES), that attack has the [LETHAL HITS] ability. Each time a model in a SQUADRON unit from your army makes a ranged attack that targets a visible MONSTER or VEHICLE unit, that attack has the [LETHAL HITS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.enhancement.death-mask-of-ollanius",
+      "name": "Death Mask of Ollanius",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "10 pts. OFFICER model only. While the bearer's unit is Battle-shocked, subtract 1 from the Objective Control characteristic of models in that unit, instead of changing it to 0.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.enhancement.drill-commander",
+      "name": "Drill Commander",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "20 pts. OFFICER model only. While the bearer is leading a unit, each time a model in that unit makes a ranged attack, if that unit Remained Stationary this turn, a Critical Hit is scored on a successful unmodified Hit roll of 5+.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.enhancement.grand-strategist",
+      "name": "Grand Strategist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "15 pts. OFFICER model only. In your Command phase, the bearer can issue one additional Order.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.enhancement.reactive-command",
+      "name": "Reactive Command",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "15 pts. OFFICER model only. Each time an enemy unit is set up within 8\" of the bearer's unit, the bearer can issue one Order. This is not counted towards the number of Orders the bearer can issue in a battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.stratagem.coordinated-action",
+      "name": "COORDINATED ACTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "1CP. Combined Arms - Battle Tactic Stratagem. WHEN: Start of any phase. TARGET: One REGIMENT unit from your army and one SQUADRON unit from your army within 6\" of and visible to that REGIMENT unit. EFFECT: Until the end of the phase, Orders affecting one of your units affect the other, and vice versa.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms - COORDINATED ACTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms - COORDINATED ACTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.stratagem.reinforcements",
+      "name": "REINFORCEMENTS!",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "2CP. Combined Arms - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One INFANTRY REGIMENT unit from your army that was just destroyed. You can target that unit with this Stratagem even though it was just destroyed. EFFECT: Add a new unit to your army identical to your destroyed unit, in Strategic Reserves, at its Starting Strength and with all of its wounds remaining. RESTRICTIONS: This Stratagem cannot be used to return destroyed CHARACTER units to Attached units. You can only use this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms - REINFORCEMENTS!",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms - REINFORCEMENTS!"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.stratagem.flexible-command",
+      "name": "FLEXIBLE COMMAND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "2CP. Combined Arms - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: Any number of ASTRA MILITARUM OFFICER units from your army. EFFECT: Until the end of the phase, your Officers can issue Orders to REGIMENT units and SQUADRON units.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms - FLEXIBLE COMMAND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms - FLEXIBLE COMMAND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.stratagem.fields-of-fire",
+      "name": "FIELDS OF FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "1CP. Combined Arms - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One REGIMENT unit and one SQUADRON unit from your army that have not been selected to shoot this phase. EFFECT: Select one enemy unit. Until the end of the phase, each time your selected REGIMENT and SQUADRON units make an attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms - FIELDS OF FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms - FIELDS OF FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.stratagem.inspired-command",
+      "name": "INSPIRED COMMAND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "1CP. Combined Arms - Epic Deed Stratagem. WHEN: Your opponent's Command phase. TARGET: One ASTRA MILITARUM OFFICER unit from your army. EFFECT: Your OFFICER can issue one Order as if it were your Command phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms - INSPIRED COMMAND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms - INSPIRED COMMAND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.combined-arms.stratagem.stalwart-protector",
+      "name": "STALWART PROTECTOR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.combined-arms",
+      "description": "1CP. Combined Arms - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ASTRA MILITARUM VEHICLE unit from your army. EFFECT: Until the end of the phase, each time a ranged attack is allocated to an INFANTRY model from your army, if that model is not fully visible to every model in the attacking unit because of your VEHICLE, that model has the Benefit of Cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Combined Arms - STALWART PROTECTOR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Combined Arms - STALWART PROTECTOR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment",
+      "name": "Siege Regiment - Artillery Support",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "At the start of the battle round, select one of the following types of artillery support. Creeping Barrage: Roll one D6 for each enemy unit that is more than 12\" from every model from your army that is on the battlefield: On a 5+, until the end of the battle round, that unit is shaken. While a unit is shaken, subtract 2\" from its Move characteristic and subtract 2 from Charge rolls made for it. The maximum number of units that can be shaken by this rule in each battle round depends on the battle size, as shown below. Incendiary Bombardment: Select a number of enemy units more than 12\" from every model from your army that is on the battlefield. Until the end of the battle round, those enemy units are scattered. While a unit is scattered, it cannot have the Benefit of Cover. The maximum number of units you can select in this way depends on the battle size, as shown below. Smoke Shells: Select a number of units from your army. Until the end of the battle round, those units have the Stealth ability. BATTLE SIZEMAXIMUM NUMBER OF UNITS Incursion2 Strike Force3 Onslaught4",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.enhancement.eager-advance",
+      "name": "Eager Advance",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "20 pts. INFANTRY OFFICER model only. While the bearer is leading a REGIMENT unit, that unit has the Scouts 6\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.enhancement.flash-grenades",
+      "name": "Flash Grenades",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "20 pts. INFANTRY OFFICER model only. Enemy units cannot use the Fire Overwatch Stratagem to shoot at the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.enhancement.legacy-sidearm",
+      "name": "Legacy Sidearm",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "10 pts. INFANTRY OFFICER model only. Add 2 to the Attacks characteristics of the bearers Pistols.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.enhancement.stalwarts-honours",
+      "name": "Stalwart's Honours",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "15 pts. OFFICER model only. While the bearer is leading a unit, when that unit is issued an Order, it is also affected by the Take Cover! Order.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.stratagem.trench-fighters",
+      "name": "TRENCH FIGHTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "1CP. Siege Regiment - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One ASTRA MILITARUM INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 2 to the result if it is a REGIMENT model. On a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment - TRENCH FIGHTERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment - TRENCH FIGHTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.stratagem.over-the-top",
+      "name": "OVER THE TOP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "2CP. Siege Regiment - Strategic Ploy Stratagem. WHEN: Start of your Command phase. TARGET: One INFANTRY OFFICER model from your army. EFFECT: Until the end of the phase, when your model issues the Move! Move! Move! Order, it can issue that Order to any number of eligible friendly INFANTRY REGIMENT units, regardless of range to your model.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment - OVER THE TOP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment - OVER THE TOP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.stratagem.flare-burst",
+      "name": "FLARE BURST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "1CP. Siege Regiment - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM CHARACTER unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time your unit makes an attack that targets a visible enemy unit within 12\", you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment - FLARE BURST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment - FLARE BURST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.stratagem.callous-sacrifice",
+      "name": "CALLOUS SACRIFICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "1CP. Siege Regiment - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One PLATOON unit from your army that is within Engagement Range of one or more enemy units. EFFECT: Until the end of the phase, enemy units are not considered to be within Engagement Range of your unit for the purposes of selecting targets of ranged weapons. Until the end of the phase, each time an enemy model loses a wound, while that model's unit is within Engagement Range of your unit, roll one D6: on a 4+, one model from your unit is destroyed after the attacking unit has finished making its attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment - CALLOUS SACRIFICE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment - CALLOUS SACRIFICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.stratagem.furious-fusillade",
+      "name": "FURIOUS FUSILLADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "1CP. Siege Regiment - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One PLATOON unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, add 1 to the Attacks characteristic of ranged weapons equipped by models in your unit while targeting an enemy unit within half range.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment - FURIOUS FUSILLADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment - FURIOUS FUSILLADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.siege-regiment.stratagem.minefield",
+      "name": "MINEFIELD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.siege-regiment",
+      "description": "1CP. Siege Regiment - Wargear Stratagem. WHEN: Start of your opponent's Charge phase. TARGET: One PLATOON unit from your army. EFFECT: Until the end of the phase, each time an enemy unit ends a Charge move within Engagement Range of your unit, roll one D6 for each model in that enemy unit: for each 5+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Siege Regiment - MINEFIELD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Siege Regiment - MINEFIELD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault",
+      "name": "Mechanised Assault - Armoured Fist",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Each time an ASTRA MILITARUM model from your army makes a ranged attack in a turn in which it disembarked from a TRANSPORT, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.enhancement.bold-leadership",
+      "name": "Bold Leadership",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "25 pts. INFANTRY OFFICER model only. If you control an objective marker at the end of your Command phase, and the bearer's unit (or any TRANSPORT it is embarked within) is within range of that objective marker, that objective marker remains under you control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.enhancement.sacred-unguents",
+      "name": "Sacred Unguents",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "10 pts. ASTRA MILITARUM TECH-PRIEST ENGINSEER model only. At the start of your Shooting phase, select one TRANSPORT from your army (excluding AIRCRAFT and TITANIC units) within 3\" of the bearer. Until the end of the phase, each time that TRANSPORT makes an attack, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.enhancement.smoke-grenades",
+      "name": "Smoke Grenades",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "10 pts. INFANTRY OFFICER model only. The bearer's unit has the Benefit of Cover and the Stealth ability while the bearer's unit is wholly within 3\" of one or more friendly TRANSPORT models.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.enhancement.vanguard-honours",
+      "name": "Vanguard Honours",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "15 pts. INFANTRY OFFICER model only. The bearer's unit can disembark from a TRANSPORT after it has Advanced. If it does, it makes a shock disembark move (Core Rules, 18.07) for that disembarkation.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.stratagem.vox-relay",
+      "name": "VOX-RELAY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "1CP. Mechanised Assault - Wargear Stratagem. WHEN: Your Command phase. TARGET: One INFANTRY OFFICER unit from your army embarked within a TRANSPORT. You can use this Stratagem on that unit even though it is embarked within a TRANSPORT. EFFECT: Until the end of the phase, your unit can issue Orders even though it is not on the battlefield, and it can issue Orders to ASTRA MILITARUM TRANSPORT units from your army [excluding TITANIC units) regardless of the distance to and from your unit's TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault - VOX-RELAY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault - VOX-RELAY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.stratagem.rapid-dispersal",
+      "name": "RAPID DISPERSAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "1CP. Mechanised Assault - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One ASTRA MILITARUM INFANTRY unit from your army that disembarked from a TRANSPORT this phase. EFFECT: Your INFANTRY unit can make a Normal move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault - RAPID DISPERSAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault - RAPID DISPERSAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.stratagem.clear-and-secure",
+      "name": "CLEAR AND SECURE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "1CP. Mechanised Assault - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM unit from your army that disembarked from a TRANSPORT this turn and has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a unit within range of an objective marker, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault - CLEAR AND SECURE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault - CLEAR AND SECURE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.stratagem.swift-interception",
+      "name": "SWIFT INTERCEPTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "1CP. Mechanised Assault - Battle Tactic Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One TRANSPORT unit from your army (excluding AIRCRAFT and TITANIC units) that is not within Engagement Range of one or more enemy units, and is within 8\" of the enemy unit that just ended that move. EFFECT: Your TRANSPORT can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault - SWIFT INTERCEPTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault - SWIFT INTERCEPTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.stratagem.hasty-extraction",
+      "name": "HASTY EXTRACTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "1CP. Mechanised Assault - Battle Tactic Stratagem. WHEN: Your opponent's Charge phase, after an enemy unit has selected targets for its charge but before it makes a Charge move. TARGET: One ASTRA MILITARUM INFANTRY unit from your army that was selected as a target of that charge. EFFECT: Provided your unit is not within Engagement Range of one or more enemy units and every model in your unit is within 3\" of an ASTRA MILITARUM TRANSPORT from your army, it can embark within that TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault - HASTY EXTRACTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault - HASTY EXTRACTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.mechanised-assault.stratagem.move-out",
+      "name": "MOVE OUT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.mechanised-assault",
+      "description": "1CP. Mechanised Assault - Strategic Ploy Stratagem. WHEN: End of your opponent's turn. TARGET: One ASTRA MILITARUM unit from your army. EFFECT: Provided your unit is not within Engagement Range of one or more enemy units and every model in your unit is within 3\" of an ASTRA MILITARUM TRANSPORT from your army, it can embark within that TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Mechanised Assault - MOVE OUT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Mechanised Assault - MOVE OUT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor",
+      "name": "Hammer of the Emperor - Iron Tread",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Each time a SQUADRON unit from your army Advances, do not make an Advance roll for it; until the end of the phase, add 6\" to the Move characteristic of models in that unit, and when making that Advance move, that unit can move within Engagement Range of enemy models but cannot end that move within Engagement Range of enemy models.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.enhancement.calm-under-fire",
+      "name": "Calm Under Fire",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "15 pts. VEHICLE OFFICER model only. Once per turn, after the bearer issues an Order to a SQUADRON unit from your army, it can issue the same Order to another SQUADRON unit from your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.enhancement.indomitable-steed",
+      "name": "Indomitable Steed",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "15 pts. VEHICLE OFFICER model only. The bearer has the Feel No Pain 6+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.enhancement.regimental-banner",
+      "name": "Regimental Banner",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "20 pts. VEHICLE OFFICER model only. Add 3 to the bearer's Objective Control characteristic.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.enhancement.veteran-crew",
+      "name": "Veteran Crew",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "20 pts. VEHICLE OFFICER model only. Each time a model in the bearer's unit makes a ranged attack, re-roll a Hit roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.stratagem.final-hour",
+      "name": "FINAL HOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "1CP. Hammer of the Emperor - Epic Deed Stratagem. WHEN: Your Command phase. TARGET: One SQUADRON unit from your army that is Below Half-strength (excluding OFFICER units). EFFECT: Until the end of the battle round, ranged weapons equipped by models in your unit (excluding [ONE SHOT] weapons) have the [HAZARDOUS] ability, and each time a model in your unit makes a ranged attack, you can ignore any or all modifiers to that attack's Ballistic Skill characteristic and to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor - FINAL HOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor - FINAL HOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.stratagem.blazing-advance",
+      "name": "BLAZING ADVANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "1CP. Hammer of the Emperor - Battle Tactic Stratagem. WHEN: Your Movement phase, just after a SQUADRON unit from your army Advances. TARGET: That SQUADRON unit. EFFECT: Until the end of the turn, your unit is eligible to shoot in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor - BLAZING ADVANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor - BLAZING ADVANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.stratagem.tactical-withdrawal",
+      "name": "TACTICAL WITHDRAWAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "1CP. Hammer of the Emperor - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a SQUADRON unit from your army Falls Back. TARGET: That SQUADRON unit. EFFECT: Until the end of the turn, your unit is eligible to shoot in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor - TACTICAL WITHDRAWAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor - TACTICAL WITHDRAWAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.stratagem.crash-through",
+      "name": "CRASH THROUGH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "1CP. Hammer of the Emperor - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One ASTRA MILITARUM VEHICLE unit from your army that has not been selected to move or charge this phase. EFFECT: Until the end of the phase, each time your unit makes a Normal, Advance or Charge move, it can move horizontally through terrain features as if they were not there.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor - CRASH THROUGH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor - CRASH THROUGH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.stratagem.furious-cannonade",
+      "name": "FURIOUS CANNONADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "1CP. Hammer of the Emperor - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One SQUADRON unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a unit within 12\", improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor - FURIOUS CANNONADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor - FURIOUS CANNONADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.hammer-of-the-emperor.stratagem.ablative-plating",
+      "name": "ABLATIVE PLATING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.hammer-of-the-emperor",
+      "description": "2CP. Hammer of the Emperor - Wargear Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ASTRA MILITARUM VEHICLE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Hammer of the Emperor - ABLATIVE PLATING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Hammer of the Emperor - ABLATIVE PLATING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element",
+      "name": "Recon Element - Masters of Camouflage",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly ASTRA MILITARUM units (excluding TITANIC units) have Stealth.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.enhancement.guerrilla-honours",
+      "name": "Guerrilla Honours",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "25 pts. INFANTRY OFFICER model only. After both players have deployed their armies, if the bearer is on the battlefield, select up to three other ASTRA MILITARUM INFANTRY units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.enhancement.scare-gas-grenades",
+      "name": "Scare Gas Grenades",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "5 pts. ASTRA MILITARUM INFANTRY model only. Once per battle, at the start of any phase, the bearer can use this Enhancement. If it does, select one enemy unit within 8\" of the bearer's unit (excluding MONSTER and VEHICLE units); that unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.enhancement.survival-gear",
+      "name": "Survival Gear",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "5 pts. ASTRA MILITARUM INFANTRY model only. The bearer has the Scouts 6\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.enhancement.tripwires",
+      "name": "Tripwires",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "20 pts. ASTRA MILITARUM INFANTRY model only. Each time an enemy INFANTRY or MOUNTED unit ends a Normal, Advance, Charge or Fall Back move within 8\" of the bearer's unit, roll one D6: on a 4+, until the start of your next turn, that enemy unit is stunned. While a unit is stunned, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.stratagem.crack-shots",
+      "name": "CRACK SHOTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "1CP. Recon Element - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One PLATOON unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [PRECISION] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element - CRACK SHOTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element - CRACK SHOTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.stratagem.draw-them-out",
+      "name": "DRAW THEM OUT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "1CP. Recon Element - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One PLATOON unit from your army that is within 8\" of that enemy unit, and is not within Engagement Range of one or more enemy units. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element - DRAW THEM OUT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element - DRAW THEM OUT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.stratagem.scramble-field",
+      "name": "SCRAMBLE FIELD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "1CP. Recon Element - Wargear Stratagem. WHEN: Start of your opponent's Reinforcements step. TARGET: One ASTRA MILITARUM INFANTRY unit from your army. EFFECT: Until the end of the phase, enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12\" of your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element - SCRAMBLE FIELD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element - SCRAMBLE FIELD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.stratagem.courageous-diversion",
+      "name": "COURAGEOUS DIVERSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "1CP. Recon Element - Strategic Ploy Stratagem. WHEN: Start of your opponent's Shooting phase. TARGET: One ASTRA MILITARUM INFANTRY or ASTRA MILITARUM MOUNTED unit from your army. EFFECT: Until the end of the phase, your unit has the Feel No Pain 6+ ability, and each time an enemy model makes an attack, if your unit is the closest eligible target, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element - COURAGEOUS DIVERSION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element - COURAGEOUS DIVERSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.stratagem.tanglefoot-grenades",
+      "name": "TANGLEFOOT GRENADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "1CP. Recon Element - Wargear Stratagem. WHEN: Start of your opponent's Charge phase. TARGET: One ASTRA MILITARUM GRENADES unit from your army. EFFECT: Select one visible enemy unit within 12\" of your unit. When that enemy unit declares a charge, that enemy unit has -1 to charge rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element - TANGLEFOOT GRENADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element - TANGLEFOOT GRENADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.recon-element.stratagem.scouting-outriders",
+      "name": "SCOUTING OUTRIDERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.recon-element",
+      "description": "1CP. Recon Element - Battle Tactic Stratagem. WHEN: End of your opponent's turn. TARGET: One ASTRA MILITARUM MOUNTED or ASTRA MILITARUM WALKER unit from your army that is wholly within 10\" of one or more battlefield edges and not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Recon Element - SCOUTING OUTRIDERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Recon Element - SCOUTING OUTRIDERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company",
+      "name": "Grizzled Company - Ruthless Discipline",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Add 1 to the number of Orders each ASTRA MILITARUM OFFICER model from your army can issue, as stated on their datasheet. While an ASTRA MILITARUM unit from your army is affected by an Order, each time a model in that unit makes an attack, re-roll a Hit roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.enhancement.abhuman-detail",
+      "name": "Abhuman Detail",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "20 pts. LEADER: OGRYN SQUAD, BULLGRYN SQUAD COMMISSAR model only. Add the OGRYN keyword to the list of units this model can issue Orders too (as stated on its datasheet). In the Declare Battle Formations step, the bearer can be attached to an OGRYN SQUAD or BULLGRYN SQUAD unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.enhancement.aquilan-eye",
+      "name": "Aquilan Eye",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "20 pts. ASTRA MILITARUM OFFICER model only. Each time you select an Order for the bearer to issue, you can select the Order below: Target Weak Spot (Order): Each time a model in this unit makes a ranged attack that targets an enemy unit within 12\", improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.enhancement.spec-ops-veteran",
+      "name": "Spec Ops Veteran",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "15 pts. ASTRA MILITARUM INFANTRY OFFICER model only. Each time you select an Order for the bearer to issue, you can select the Order below: Move to the Shadows (Order): Each time a ranged attack targets this unit, until those attacks are resolved, models in this unit have the Stealth ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.enhancement.laud-hailer",
+      "name": "Laud Hailer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "10 pts. ASTRA MILITARUM OFFICER model only. Each time you select a unit for this OFFICER model to issue an Order to, that unit can be within 12\" instead of within 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.stratagem.snap-to-it",
+      "name": "SNAP TO IT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "1CP. Grizzled Company Stratagem. WHEN: Start of any phase. TARGET: One ASTRA MILITARUM OFFICER unit from your army. EFFECT: Your unit's OFFICER model can issue 1 Order as if it were your Command phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company - SNAP TO IT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company - SNAP TO IT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.stratagem.no-retreat",
+      "name": "NO RETREAT!",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "1CP. Grizzled Company Stratagem. WHEN: Your Command phase. TARGET: One ASTRA MILITARUM unit from your army affected by the Duty and Honour! Order. EFFECT: If your unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company - NO RETREAT!",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company - NO RETREAT!"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.stratagem.veteran-sharpshooters",
+      "name": "VETERAN SHARPSHOOTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "1CP. Grizzled Company Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company - VETERAN SHARPSHOOTERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company - VETERAN SHARPSHOOTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.stratagem.purging-fire",
+      "name": "PURGING FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "1CP. Grizzled Company Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM unit from your army affected by an Order that has not been selected to shoot this phase. EFFECT: If your unit is within range of an objective marker, until the end of the phase, ranged weapons equipped by models in your unit have the [LETHAL HITS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company - PURGING FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company - PURGING FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.stratagem.mordian-minute",
+      "name": "MORDIAN MINUTE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "1CP. Grizzled Company Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM INFANTRY unit from your army affected by the First Rank, Fire! Second Rank, Fire! Order. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, improve the Strength characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company - MORDIAN MINUTE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company - MORDIAN MINUTE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.grizzled-company.stratagem.additional-armour",
+      "name": "ADDITIONAL ARMOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.grizzled-company",
+      "description": "1CP. Grizzled Company Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ASTRA MILITARUM unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Grizzled Company - ADDITIONAL ARMOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Grizzled Company - ADDITIONAL ARMOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer",
+      "name": "Steel Hammer - Ceaseless Cannonade",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Each time an ASTRA MILITARUM TITANIC or ASTRA MILITARUM SQUADRON unit from your army is selected to shoot, models in that unit can target enemy units within Engagement Range of that unit (including with Blast weapons), provided no other friendly units are also within Engagement Range of that enemy unit. When doing so, such models do not suffer the penalty to their Hit rolls for being within Engagement Range of one or more enemy units (excluding attacks made with Indirect Fire weapons). KEYWORDS In the Muster Armies step, you can select one or more ASTRA MILITARUM TITANIC units from your army to gain the CHARACTER keyword. Designer's Note: This means that the selected units can be given Enhancements, and one of them can be selected as your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.enhancement.battalion-commander",
+      "name": "Battalion Commander",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "30 pts. ASTRA MILITARUM TITANIC CHARACTER model only. The bearer has the Voice of Command ability and the OFFICER keyword, and can issue up to 2 Orders to ASTRA MILITARUM TITANIC and SQUADRON units.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.enhancement.titan-killer",
+      "name": "Titan Killer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "20 pts. ASTRA MILITARUM TITANIC CHARACTER model only. Each time the bearer makes a ranged attack, you can re-roll the Damage roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.enhancement.engine-speaker",
+      "name": "Engine Speaker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "15 pts. ASTRA MILITARUM TECH-PRIEST ENGINSEER model only. Each time the bearer uses its Omnissiah's Blessing ability, until the start of your next Command phase, add 3\" to the Move characteristic of the selected VEHICLE model.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.enhancement.assault-hatches",
+      "name": "Assault Hatches",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "25 pts. ASTRA MILITARUM TITANIC CHARACTER TRANSPORT model only. Each time a unit disembarks from the bearer after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.stratagem.engine-of-wrath",
+      "name": "ENGINE OF WRATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "1CP. Steel Hammer - Epic Deed Stratagem. WHEN: Fight phase. TARGET: One ASTRA MILITARUM TITANIC unit from your army that has not been selected to fight this phase. EFFECT: Select one enemy unit within Engagement Range of your unit. Until the end of the phase, add 6 to the Attacks characteristic of melee weapons equipped by models in your unit, improve the Armour Penetration characteristic of those weapons by 2, and each time a model in your unit fights, it can only target that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer - ENGINE OF WRATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer - ENGINE OF WRATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.stratagem.imposing-arrival",
+      "name": "IMPOSING ARRIVAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "1CP. Steel Hammer - Strategic Ploy Stratagem. WHEN: Reinforcements step of your Movement phase, from the second battle round onwards. TARGET: One ASTRA MILITARUM TITANIC unit from your army that is in Reserves. EFFECT: Set up your unit on the battlefield, wholly within 8\" of the battlefield edge and more than 6\" horizontally away from all enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer - IMPOSING ARRIVAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer - IMPOSING ARRIVAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.stratagem.adamantine-behemoth",
+      "name": "ADAMANTINE BEHEMOTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "1CP. Steel Hammer - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One ASTRA MILITARUM VEHICLE unit from your army that has not been selected to move or charge this phase. EFFECT: Until the end of the phase, each time your unit makes a Normal, Advance or Charge move, it can move horizontally through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer - ADAMANTINE BEHEMOTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer - ADAMANTINE BEHEMOTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.stratagem.shattering-salvo",
+      "name": "SHATTERING SALVO",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "1CP. Steel Hammer - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after an ASTRA MILITARUM TITANIC unit from your army has shot. TARGET: That ASTRA MILITARUM TITANIC unit. EFFECT: Select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer - SHATTERING SALVO",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer - SHATTERING SALVO"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.stratagem.withering-firepower",
+      "name": "WITHERING FIREPOWER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "1CP. Steel Hammer - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after an ASTRA MILITARUM VEHICLE unit from your army has shot. TARGET: That ASTRA MILITARUM VEHICLE unit. EFFECT: Select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test, subtracting 1 from that test.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer - WITHERING FIREPOWER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer - WITHERING FIREPOWER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.steel-hammer.stratagem.accuracy-under-pressure",
+      "name": "ACCURACY UNDER PRESSURE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.steel-hammer",
+      "description": "2CP. Steel Hammer - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Steel Hammer - ACCURACY UNDER PRESSURE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Steel Hammer - ACCURACY UNDER PRESSURE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry",
+      "name": "Armoured Infantry - Squadron Command",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Add SQUADRON to the list of units each OFFICER unit from your army can issue Orders to. Add the Order below to those listed in the Voice of Command ability. ON MY SIGNAL This Order can only be issued to ARMOURED SKIRMISHER units (see below). Each time an enemy unit ends a Normal or Advance move within 8\" of this unit, this unit can make a Normal move of up to D6\". Each unit can only move in this way once per turn. KEYWORDS ASTRA MILITARUM SQUADRON units from your army have the ARMOURED SKIRMISHER keyword (excluding ARTILLERY units and units containing one or more models with a Wounds characteristic of 13 or higher).",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.enhancement.exemplary-officer",
+      "name": "Exemplary Officer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "20 pts. INFANTRY OFFICER model only. Each time the bearer issues an Order to its own unit, you can select up to two other PLATOON units within 3\" of the bearer's unit. That Order is also issued to each of those units.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.enhancement.master-manoeuvrist",
+      "name": "Master Manoeuvrist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "15 pts. INFANTRY OFFICER model only. At the end of your opponent's Fight phase, if the bearer's unit is not within Engagement Range of one or more enemy units and every model in that unit is within 3\" of an ASTRA MILITARUM TRANSPORT from your army, it can embark within that TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.enhancement.omnissian-unguents-aura",
+      "name": "Omnissian Unguents (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "35 pts. ASTRA MILITARUM TECH-PRIEST ENGINSEER model only. While a friendly ARMOURED SKIRMISHER unit is within 3\" of the bearer, that unit has the Feel No Pain 5+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.enhancement.grand-strategist",
+      "name": "Grand Strategist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "25 pts. OFFICER model only. After both players have deployed their armies, if the bearer's unit (or any TRANSPORT it is embarked within) is on the battlefield, select up to two units with the REGIMENT or SQUADRON keywords from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.stratagem.order-the-advance",
+      "name": "ORDER THE ADVANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "1CP. Armoured Infantry - Battle Tactic Stratagem. WHEN: Start of your Movement phase. TARGET: One ASTRA MILITARUM OFFICER unit from your army. EFFECT: Select one or more friendly ASTRA MILITARUM units within 6\" of your unit; until the end of the phase, you can re-roll Advance rolls made for those units.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry - ORDER THE ADVANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry - ORDER THE ADVANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.stratagem.mobile-firebase",
+      "name": "MOBILE FIREBASE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "1CP. Armoured Infantry - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after an ARMOURED SKIRMISHER unit from your army Advances or Falls Back. TARGET: That ARMOURED SKIRMISHER unit. EFFECT: Until the end of the turn, your unit is eligible to shoot in a turn in which it Advanced or Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry - MOBILE FIREBASE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry - MOBILE FIREBASE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.stratagem.burst-of-speed",
+      "name": "BURST OF SPEED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "1CP. Armoured Infantry - Strategic Ploy Stratagem. WHEN: End of your Movement phase. TARGET: One ASTRA MILITARUM unit from your army that did not Remain Stationary or arrive from Reserves this phase. EFFECT: Your unit can make a Normal move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry - BURST OF SPEED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry - BURST OF SPEED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.stratagem.supporting-ordnance",
+      "name": "SUPPORTING ORDNANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "1CP. Armoured Infantry - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ARMOURED SKIRMISHER unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a visible MONSTER or VEHICLE unit, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry - SUPPORTING ORDNANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry - SUPPORTING ORDNANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.stratagem.combined-fire",
+      "name": "COMBINED FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "1CP. Armoured Infantry - Battle Tactic Stratagem. WHEN: Your Shooting phase, just after an ARMOURED SKIRMISHER unit from your army has shot. TARGET: That ARMOURED SKIRMISHER unit. EFFECT: Select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover, and each time an ARMOURED SKIRMISHER unit from your army makes an attack that targets that unit, improve the Strength characteristic of that attack by 2.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry - COMBINED FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry - COMBINED FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.armoured-infantry.stratagem.opening-salvo",
+      "name": "OPENING SALVO",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.armoured-infantry",
+      "description": "1CP. Armoured Infantry - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASTRA MILITARUM unit from your army that disembarked from a TRANSPORT this turn and has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Armoured Infantry - OPENING SALVO",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Infantry - OPENING SALVO"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.abhuman-auxiliaries",
+      "name": "Abhuman Auxiliaries - Absolutist Principles",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.abhuman-auxiliaries",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly BULLGRYN SQUAD/OGRYN SQUAD/RATLINGS units have ABHUMAN. Friendly COMMISSAR models can: Issue the Take Aim! Order. Issue 1 Order to a friendly ABHUMAN unit. This detachment has the ABHUMAN tag and cannot be taken with another ABHUMAN detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Abhuman Auxiliaries",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Abhuman Auxiliaries"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.abhuman-auxiliaries.enhancement.sharp-eyes-light-fingersupgrade",
+      "name": "Sharp eyes, Light fingersUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.abhuman-auxiliaries",
+      "maximumSelections": 3,
+      "description": "10 pts. RATLINGS unit only. When this unit is selected to shoot, enemy units have +6\" detection range until this unit has shot.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Abhuman Auxiliaries enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Abhuman Auxiliaries enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.abhuman-auxiliaries.enhancement.exemplar-of-dutyupgrade",
+      "name": "Exemplar of DutyUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.abhuman-auxiliaries",
+      "maximumSelections": 3,
+      "description": "10 pts. LEADER: OGRYN SQUAD, BULLGRYN SQUAD COMMISSAR model only. This model has Feel No Pain 4+.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Abhuman Auxiliaries enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Abhuman Auxiliaries enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.abhuman-auxiliaries.stratagem.thick-skulled-obdurance",
+      "name": "THICK-SKULLED OBDURANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.abhuman-auxiliaries",
+      "description": "1CP. Abhuman Auxiliaries Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly BULLGRYN SQUAD/OGRYN SQUAD unit that is within range of an objective. TARGET: That BULLGRYN SQUAD/OGRYN SQUAD unit. EFFECT: Attacks that target your unit have -1 AP until that enemy unit has attacked.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Abhuman Auxiliaries - THICK-SKULLED OBDURANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Abhuman Auxiliaries - THICK-SKULLED OBDURANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.abhuman-auxiliaries.stratagem.low-profile",
+      "name": "LOW PROFILE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.abhuman-auxiliaries",
+      "description": "1CP. Abhuman Auxiliaries Stratagem. WHEN: Your Shooting phase, when a friendly RATLINGS unit has shot. TARGET: That RATLINGS unit. EFFECT: Those ranged attacks do not prevent your unit from being hidden.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Abhuman Auxiliaries - LOW PROFILE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Abhuman Auxiliaries - LOW PROFILE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.abhuman-auxiliaries.stratagem.stirred-to-action",
+      "name": "STIRRED TO ACTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.abhuman-auxiliaries",
+      "description": "1CP. Abhuman Auxiliaries Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit that targeted a friendly unengaged BULLGRYN SQUAD/OGRYN SQUAD unit has shot. TARGET: That BULLGRYN SQUAD/OGRYN SQUAD unit. EFFECT: Your unit can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Abhuman Auxiliaries - STIRRED TO ACTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Abhuman Auxiliaries - STIRRED TO ACTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.designation-force",
+      "name": "Designation Force - Designated Targets",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.designation-force",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly SCOUT SENTINEL/ASTRA MILITARUM INFANTRY SMOKE units have the following ability: Signal Flares: In your Shooting phase, this unit can select one visible enemy unit within 12\". That enemy unit is designated: While a unit is designated, that unit has +3\" detection range. This detachment has the RECON tag and cannot be taken with another RECON detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Designation Force",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Designation Force"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.designation-force.enhancement.long-range-scoutupgrade",
+      "name": "Long-Range ScoutUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.designation-force",
+      "maximumSelections": 3,
+      "description": "10 pts. SCOUT SENTINEL unit only. This unit has Infiltrators",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Designation Force enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Designation Force enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.designation-force.enhancement.recon-starupgrade",
+      "name": "Recon StarUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.designation-force",
+      "maximumSelections": 3,
+      "description": "10 pts. ASTRA MILITARUM INFANTRY PLATOON unit only. In your first Movement phase, this unit can make an ingress move.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Designation Force enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Designation Force enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.designation-force.stratagem.close-range-detection",
+      "name": "CLOSE-RANGE DETECTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.designation-force",
+      "description": "1CP. Designation Force Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly SCOUT SENTINEL/ASTRA MILITARUM INFANTRY unit. EFFECT: While a visible enemy unit is within 6\" of your unit, that unit has +3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Designation Force - CLOSE-RANGE DETECTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Designation Force - CLOSE-RANGE DETECTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.designation-force.stratagem.triggered-alerts",
+      "name": "TRIGGERED ALERTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.designation-force",
+      "description": "1CP. Designation Force Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move within 8\" of a friendly unengaged ASTRA MILITARUM INFANTRY unit. TARGET: That ASTRA MILITARUM INFANTRY unit. EFFECT: Your unit can make a normal move of up to D3+3\"",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Designation Force - TRIGGERED ALERTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Designation Force - TRIGGERED ALERTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.designation-force.stratagem.sump-smog-screen",
+      "name": "SUMP-SMOG SCREEN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.designation-force",
+      "description": "1CP. Designation Force Stratagem. WHEN: Start of your opponent's Shooting phase TARGET: One friendly ASTRA MILITARUM INFANTRY SMOKE unit. EFFECT: When an attack targets either your unit, or a unit that is not fully visible to the attacking model because of one or more models in your unit, the target has the benefit of cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Designation Force - SUMP-SMOG SCREEN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Designation Force - SUMP-SMOG SCREEN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.bridgehead-strike",
+      "name": "Bridgehead Strike - Fire Zone Purge",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.bridgehead-strike",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "If a friendly MILITARUM TEMPESTUS OFFICER model is your WARLORD, friendly TEMPESTUS SCIONS units have: BATTLELINE. +1 OC. When a friendly MILITARUM TEMPESTUS unit is selected to shoot, if that unit was set up this turn, that unit's ranged attacks have +1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Bridgehead Strike",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Bridgehead Strike"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.bridgehead-strike.enhancement.bombast-class-vox-array",
+      "name": "Bombast-class Vox-array",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.bridgehead-strike",
+      "description": "15 pts. MILITARUM TEMPESTUS OFFICER model only. When this model issues an Order, if this unit has the Master Vox wargear ability, this model can issue that Order to up to three different REGIMENT units, instead of only one.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Bridgehead Strike enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Bridgehead Strike enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.bridgehead-strike.enhancement.priority-drop-beacon",
+      "name": "Priority drop Beacon",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.bridgehead-strike",
+      "description": "25 pts. MILITARUM TEMPESTUS OFFICER model only. In your first Movement phase, this unit can make an ingress move.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Bridgehead Strike enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Bridgehead Strike enhancements"
+        }
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.bridgehead-strike.stratagem.on-my-position",
+      "name": "ON MY POSITION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.bridgehead-strike",
+      "description": "1CP. Bridgehead Strike Stratagem. WHEN: End of your opponent's Charge phase. TARGET: One friendly engaged REGIMENT unit. EFFECT: Roll one D6 for each enemy unit engaged with your unit: On a 2+ that enemy unit suffers D6 mortal wounds. Then, your unit suffers 3D3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Bridgehead Strike - ON MY POSITION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Bridgehead Strike - ON MY POSITION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.bridgehead-strike.stratagem.firing-hot",
+      "name": "FIRING HOT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.bridgehead-strike",
+      "description": "2CP. Bridgehead Strike Stratagem. WHEN: Your Shooting phase, when a friendly MILITARUM TEMPESTUS/KASRKIN unit is selected to shoot. TARGET: That MILITARUM TEMPESTUS/KASRKIN unit. EFFECT: Your unit's Hot-shot Lascarbines, Hot-shot Lasguns, Hot-shot Laspistols, Hot-shot Marksman Rifles, Hot-shot Volley Guns and Sentry Hot-shot Volley Guns weapons that targeted an enemy unit within 12\" have +1 S and AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Bridgehead Strike - FIRING HOT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Bridgehead Strike - FIRING HOT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "astra-militarum.detachment.bridgehead-strike.stratagem.servodesignators",
+      "name": "SERVODESIGNATORS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "astra-militarum.detachment.bridgehead-strike",
+      "description": "1CP. Bridgehead Strike Stratagem. WHEN: Your Shooting phase, when a friendly MILITARUM TEMPESTUS unit has shot. TARGET: That MILITARUM TEMPESTUS unit. EFFECT: Select one enemy unit hit by those ranged attacks. Friendly MILITARUM TEMPESTUS units' ranged attacks that target that enemy unit have [IGNORES COVER].",
+      "sources": [
+        {
+          "title": "Wahapedia Astra Militarum Bridgehead Strike - SERVODESIGNATORS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/astra-militarum/",
+          "capturedAt": "2026-09-25",
+          "section": "Bridgehead Strike - SERVODESIGNATORS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

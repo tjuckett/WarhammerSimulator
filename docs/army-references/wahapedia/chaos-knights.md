@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/chaos-knights/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/chaos-knights/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -38,7 +38,7 @@
 ## Army rule
 
 ### Dreadblades
-- If every model in your army has the CHAOS keyword, you can include either 1 Titanic Chaos Knights model or up to 3 WAR DOG models in your army, even if they do not have the Faction keyword you selected in the Select Army Faction step. None of these models can be your WARLORD, and they cannot be given Enhancements.
+- If every model in your army has the CHAOS keyword, you can include either 1 TITANIC CHAOS KNIGHTS model or up to 3 WAR DOG models in your army, even if they do not have the Faction keyword you selected in the Select Army Faction step. None of these models can be your WARLORD, and they cannot be given Enhancements.
 
 ### Super-heavy Walker
 - Each time a model with this ability makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4" or less in height. When doing so:
@@ -64,12 +64,16 @@
 | ranged | -- | Balefire pike | IGNORES COVER TORRENT | 12" | D6+3 | N/A | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 4+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Fiery Faith: While this model is leading a unit, you can re-roll Leadership tests taken for that unit.
-  Cursed Flames: In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
+- Cursed Flames: In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Cultist Firebrand
@@ -112,14 +116,16 @@ HERETIC ASTARTES
 | melee | -- | Commune blade | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 | melee | -- | Commune stave | devastating wounds | Melee | 2 | 4+ | 3 | 0 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Faithful Flock: While this unit is leading a unit and contains a CULT DEMAGOGUE model, models in that unit have a 5+ invulnerable save.
-  Dark Ritual: Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.
-
-#### Wargear Abilities
+- Dark Ritual: Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -156,8 +162,8 @@ HERETIC ASTARTES
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| TRAITOR ENFORCER | (diameter 32mm) | 6" | 3 | 5+ | 3 | 6+ | 1 | 5+ |
-| TRAITOR OGRYN | (diameter 40mm) | 6" | 6 | 5+ | 4 | 7+ | 1 | -- |
+| TRAITOR ENFORCER | (diameter 32mm) | 6" | 3 | 5+ | 3 | 6+ | 1 | -- |
+| TRAITOR OGRYN | (diameter 40mm) | 6" | 6 | 5+ | 4 | 7+ | 1 | 5+ |
 
 #### Weapons
 | Type | Applies to | Weapon | Weapon keywords | Range | A | BS/WS | S | AP | D |
@@ -166,12 +172,19 @@ HERETIC ASTARTES
 | melee | -- | Ogryn weapons | -- | Melee | 5 | 3+ | 7 | -1 | 2 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Brutal Example: Once per turn, while this unit is leading a unit and contains a TRAITOR ENFORCER model, you can target that unit with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted a different unit from your army with that Stratagem this turn. Each time you use this ability, one Bodyguard model in that unit is destroyed.
-  Mutated Bodyguard: While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.
+- Mutated Bodyguard: While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Traitor Enforcer
@@ -210,12 +223,17 @@ HERETIC ASTARTES
 | melee | -- | Balemace | extra attacks | Melee | 3 | 3+ | 8 | -1 | 2 |
 | melee | -- | Electroscourge | sustained hits 1 | Melee | 9 | 3+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Vortex Terrors (Psychic): At the start of your Shooting phase, select one enemy unit within 24" of and visible to this model. That enemy unit must take a Battle-shock test.
-  Warp Storms (Psychic): At the end of your Movement phase, roll one D6 for each enemy unit within 9" of one or more models with this ability: on a 3+, that enemy unit suffers D3 mortal wounds.
+- Warp Storms (Psychic): At the end of your Movement phase, roll one D6 for each enemy unit within 9" of one or more models with this ability: on a 3+, that enemy unit suffers D3 mortal wounds.
 
 #### Unit Composition
 - 1 Knight Abominant
@@ -276,14 +294,22 @@ CHAOS KNIGHTS
 | melee | -- | Warpstrike claw - strike | -- | Melee | 4 | 3+ | 20 | -3 | 8 |
 | melee | -- | Warpstrike claw - sweep | -- | Melee | 8 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's reaper chainsword can be replaced with 1 warpstrike claw.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Obsessive Ruthlessness: This unit's ranged attacks that target a MONSTER/VEHICLE unit can ignore modifiers to this unit's:
   - BS.
   - Hit rolls and wound rolls.
-  Taskmaster (Aura): While a friendly WAR DOG model is within 9" of this model, each time that WAR DOG model makes a ranged attack, re-roll a Hit roll of 1.
+- Taskmaster (Aura): While a friendly WAR DOG model is within 9" of this model, each time that WAR DOG model makes a ranged attack, re-roll a Hit roll of 1.
 
 #### Unit Composition
 - 1 Knight Desecrator
@@ -351,12 +377,32 @@ CHAOS KNIGHTS
 | melee | -- | Warpstrike claw - strike | -- | Melee | 4 | 3+ | 20 | -3 | 8 |
 | melee | -- | Warpstrike claw - sweep | -- | Melee | 8 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's daemonbreath meltagun can be replaced with 1 diabolus heavy stubber.
+- This model's reaper chainsword can be replaced with one of the following:
+  - 1 daemonbreath thermal cannon
+  - 1 despoiler gatling cannon and 1 heavy darkflamer
+  - 1 despoiler battle cannon and 1 diabolus heavy stubber
+- This model's warpstrike claw can be replaced with one of the following:
+  - 1 daemonbreath thermal cannon
+  - 1 despoiler gatling cannon and 1 heavy darkflamer
+  - 1 despoiler battle cannon and 1 diabolus heavy stubber
+- This model can be equipped with one of the following:
+  - 1 havoc missile pod
+  - 1 ruinspear rocket pod
+  - 1 hellstorm autocannons
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Dread Dominion (Aura): While a friendly WAR DOG model is within 9" of this model, improve that WAR DOG model's Leadership and Objective Control characteristics by 1.
-  Seething Hatred: Each time this model is selected to shoot or fight, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.
+- Seething Hatred: Each time this model is selected to shoot or fight, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.
 
 #### Unit Composition
 - 1 Knight Despoiler
@@ -417,12 +463,17 @@ CHAOS KNIGHTS
 | melee | -- | Warpstrike claw - strike | sustained hits 1 | Melee | 6 | 2+ | 20 | -3 | 8 |
 | melee | -- | Warpstrike claw - sweep | sustained hits 1 | Melee | 12 | 2+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Bloodlust: Each time this model makes a Charge move, until the end of the turn, its melee weapons have the [DEVASTATING WOUNDS] ability.
-  Frenzied Rampage (Aura): While a friendly WAR DOG model is within 9" of this model, each time that WAR DOG model makes a melee attack, re-roll a Hit roll of 1.
+- Frenzied Rampage (Aura): While a friendly WAR DOG model is within 9" of this model, each time that WAR DOG model makes a melee attack, re-roll a Hit roll of 1.
 
 #### Unit Composition
 - 1 Knight Rampager
@@ -480,12 +531,17 @@ CHAOS KNIGHTS
 | melee | -- | Fellbore - strike | anti-monster 2+ anti-vehicle 2+ | Melee | 4 | 3+ | 14 | -3 | 6 |
 | melee | -- | Fellbore - sweep | -- | Melee | 10 | 3+ | 9 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Methodical Destruction: At the start of the first battle round, select one unit from your opponent's army to be this model's victim. Each time this model makes an attack that targets its victim, you can re-roll the Wound roll. Each time this model's victim is destroyed, select one new enemy unit to be this model's victim.
-  Close-range Killers (Aura): While a friendly WAR DOG model is within 9" of this model, each time that WAR DOG model makes an attack that targets the closest enemy unit, improve the Armour Penetration characteristic of that attack by 1.
+- Close-range Killers (Aura): While a friendly WAR DOG model is within 9" of this model, each time that WAR DOG model makes an attack that targets the closest enemy unit, improve the Armour Penetration characteristic of that attack by 1.
 
 #### Unit Composition
 - 1 Knight Ruinator
@@ -548,12 +604,21 @@ CHAOS KNIGHTS
 | ranged | -- | Warpshock harpoon | blast devastating wounds | 12" | D3 | 3+ | 24 | -6 | 12 |
 | melee | -- | Titanic feet | -- | Melee | 4 | 4+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's 2 gheiststrike missile launchers and twin Desecrator cannon can be replaced with 1 gheiststrike missile launcher and 2 twin Desecrator cannons.
+- This model's brimstone volcano lance and ectoplasma decimator can be replaced with 1 darkflame cannon and 1 warpshock harpoon.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Infernal Aegis (Aura): While a friendly WAR DOG model is within 6" of this model, that WAR DOG model has the Benefit of Cover.
-  Bastion of Corruption: Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" of this model.
+- Bastion of Corruption: Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" of this model.
 
 #### Unit Composition
 - 1 Knight Tyrant
@@ -613,12 +678,20 @@ CHAOS KNIGHTS
 | melee | -- | Reaper chainfist - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Reaper chainfist - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Searing Flames: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with an Acheron flame cannon. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
-  Unrestrained Terror (Aura): While a friendly WAR DOG model is within 6" of this model, it is affected by this ability. At the start of the Fight phase, each enemy unit within Engagement Range of one or more WAR DOG units affected by this ability must take a Battle-shock test.
+- Unrestrained Terror (Aura): While a friendly WAR DOG model is within 6" of this model, it is affected by this ability. At the start of the Fight phase, each enemy unit within Engagement Range of one or more WAR DOG units affected by this ability must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Chaos Cerastus Knight Acheron
@@ -678,12 +751,20 @@ CHAOS KNIGHTS
 | melee | -- | Atrapos lascutter - low intensity | sustained hits 1 | Melee | 12 | 3+ | 7 | -1 | 2 |
 | melee | -- | Atrapos lascutter - high intensity | sustained hits 1 | Melee | 6 | 3+ | 14 | -3 | 4 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Macro-extinction Protocols: Each time this model makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll. If that target is TITANIC or TOWERING, add 1 to the Wound roll as well.
-  Consumed with Hunger (Aura): While a friendly WAR DOG model is within 6" of this model, each time that WAR DOG model makes an attack that targets a TITANIC or TOWERING unit, you can re-roll the Hit roll.
+- Consumed with Hunger (Aura): While a friendly WAR DOG model is within 6" of this model, each time that WAR DOG model makes an attack that targets a TITANIC or TOWERING unit, you can re-roll the Hit roll.
 
 #### Unit Composition
 - 1 Chaos Cerastus Knight Atrapos
@@ -740,12 +821,20 @@ CHAOS KNIGHTS
 | melee | -- | Tempest warblade - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Tempest warblade - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Storm of Bolts: In your Shooting phase, after this model has shot, select one unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this model is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
-  Offerings for the Dark Gods (Aura): While a friendly WAR DOG model is within 6" of this model, ranged weapons equipped by that WAR DOG model have the [SUSTAINED HITS 1] ability.
+- Offerings for the Dark Gods (Aura): While a friendly WAR DOG model is within 6" of this model, ranged weapons equipped by that WAR DOG model have the [SUSTAINED HITS 1] ability.
 
 #### Unit Composition
 - 1 Chaos Cerastus Knight Castigator
@@ -802,12 +891,20 @@ CHAOS KNIGHTS
 | melee | -- | Cerastus shock lance - strike | lance | Melee | 5 | 2+ | 20 | -3 | 8 |
 | melee | -- | Cerastus shock lance - sweep | -- | Melee | 10 | 2+ | 10 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Shock Charge: You can target this model with the Crushing Impact Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
-  Dark Fervour (Aura): While a friendly WAR DOG model is within 6" of this model, ranged weapons equipped by that War Dog model have the [ASSAULT] ability.
+- Dark Fervour (Aura): While a friendly WAR DOG model is within 6" of this model, ranged weapons equipped by that War Dog model have the [ASSAULT] ability.
 
 #### Unit Composition
 - 1 Chaos Cerastus Knight Lancer
@@ -868,12 +965,20 @@ CHAOS KNIGHTS
 | melee | -- | Reaper chainsword - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Reaper chainsword - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Huntmaster (Aura): While a friendly WAR DOG model is within 6" of this model, ranged weapons equipped by that WAR DOG model have the [ASSAULT] ability.
-  Repair Auto-simulacra: At the end of your Command phase, this model regains up to D3 lost wounds.
+- Repair Auto-simulacra: At the end of your Command phase, this model regains up to D3 lost wounds.
 
 #### Unit Composition
 - 1 Chaos Questoris Knight Magaera
@@ -934,12 +1039,20 @@ CHAOS KNIGHTS
 | melee | -- | Reaper chainsword - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Reaper chainsword - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Preysight (Aura): While a friendly WAR DOG model is within 6" of this model, ranged weapons equipped by that WAR DOG model have the [IGNORES COVER] ability.
-  Grav-pinned: In your Shooting phase, after this model has shot, if an enemy INFANTRY unit was hit by one or more of those attacks made with a graviton crusher, until the end of your opponent's next turn, that enemy unit is grav-pinned. While a unit is grav-pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.
+- Grav-pinned: In your Shooting phase, after this model has shot, if an enemy INFANTRY unit was hit by one or more of those attacks made with a graviton crusher, until the end of your opponent's next turn, that enemy unit is grav-pinned. While a unit is grav-pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.
 
 #### Unit Composition
 - 1 Chaos Questoris Knight Styrix
@@ -996,9 +1109,14 @@ CHAOS KNIGHTS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Brutal assault weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Cultist Champion's autopistol can be replaced with 1 bolt pistol.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - For the Dark Gods: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
 
 #### Unit Composition
@@ -1033,10 +1151,15 @@ HERETIC ASTARTES
 | melee | -- | Blasphemous appendages | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Hideous mutations | -- | Melee | D6+2 | 4+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Scouts 6"
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Scouts 6"
-- FACTION: Dark Pacts
 - Accursed Horde: In your opponent's Shooting phase, when an enemy unit has shot, if a model from this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6".
 
 #### Unit Composition
@@ -1080,9 +1203,16 @@ HERETIC ASTARTES
 | melee | -- | Corrupted stave | devastating wounds psychic | Melee | 2 | 4+ | 4 | -1 | D3 |
 | melee | -- | Great weapon | -- | Melee | 2 | 5+ | 8 | -1 | 2 |
 
+#### Wargear options
+- The Fellgor Champion's bolt pistol can be replaced with 1 plasma pistol.
+- 1 Fellgor Beastman's close combat weapon can be replaced with 1 great weapon.
+- 1 Fellgor Beastman's close combat weapon can be replaced with 1 corrupted stave.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Bestial Raiders: If this unit starts the game in Strategic Reserves, it can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. If this unit is in Strategic Reserves, for the purposes of setting up this unit on the battlefield, treat the current battle round number as being one higher than it actually is.
 
 #### Unit Composition
@@ -1127,9 +1257,23 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Up to 3 Traitor Guardsmen can each have their lasgun replaced with one of the following (duplicates are not allowed):
+  - 1 Cultist grenade launcher
+  - 1 flamer
+  - 1 meltagun
+  - 1 plasma gun
+  - 1 Cultist sniper rifle
+- The Traitor Sergeant's close combat weapon can be replaced with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- The Traitor Sergeant's corrupted pistol can be replaced with 1 boltgun.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Twisted Defence Force: While this unit is within range of an objective, this unit has +1 Sv against ranged attacks.
 
 #### Unit Composition
@@ -1165,10 +1309,18 @@ HERETIC ASTARTES
 | ranged | -- | Twin conversion beam cannon | conversion sustained hits d3 twin-linked | 48" | 3 | 3+ | 16 | -2 | 6 |
 | melee | -- | Titanic feet | -- | Melee | 6 | 4+ | 10 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Sunderer of Fortresses: Each time this model makes an attack that targets a VEHICLE, improve the Strength and Damage characteristics of that attack by 1 (if that attack targets a FORTIFICATION, improve the Strength and Damage characteristics of that attack by 2 instead).
 
 #### Unit Composition
@@ -1211,10 +1363,21 @@ CHAOS KNIGHTS
 | ranged | -- | Twin magna lascannon | blast twin-linked | 72" | D6 | 3+ | 18 | -4 | D6+6 |
 | melee | -- | Titanic feet | -- | Melee | 6 | 4+ | 10 | -1 | 2 |
 
+#### Wargear options
+- This model's 2 Acastus autocannons can each be replaced with one of the following:
+  - 2 lascannons
+  - 1 Acastus autocannon and 1 lascannon
+- This model's Acastus ironstorm missile pod can be replaced with 1 helios defence missiles.
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Harbingers of Dread
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Harbingers of Dread, Super-heavy Walker
 - Bastion of Firepower: Each time this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [LETHAL HITS] ability.
 
 #### Unit Composition
@@ -1256,10 +1419,17 @@ CHAOS KNIGHTS
 | ranged | -- | Havoc multi-launcher | blast indirect fire | 48" | D6 | 3+ | 5 | 0 | 1 |
 | melee | -- | Armoured feet | -- | Melee | 4 | 3+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's diabolus heavy stubber can be replaced with 1 havoc multi-launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Harbingers of Dread
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Harbingers of Dread
 - Brigand: Each time this model makes a ranged attack that targets a unit that is within range of one or more objective markers, that attack has the [IGNORES COVER] ability.
 
 #### Unit Composition
@@ -1302,10 +1472,17 @@ CHAOS KNIGHTS
 | ranged | -- | War Dog autocannon | -- | 48" | 4 | 3+ | 9 | -1 | 3 |
 | melee | -- | Armoured feet | -- | Melee | 4 | 3+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's diabolus heavy stubber can be replaced with 1 daemonbreath meltagun.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Harbingers of Dread
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Harbingers of Dread
 - Executioner: Each time this model makes an attack that targets a unit Below Half-strength, add 1 to the Hit roll. Each time an enemy unit is destroyed as the result of this model's attacks, before removing the last model in that unit from the battlefield, each unit from your opponent's army that is within 3" of it must take a Battle-shock test.
 
 #### Unit Composition
@@ -1350,10 +1527,17 @@ CHAOS KNIGHTS
 | melee | -- | Reaper chaintalon - strike | -- | Melee | 4 | 3+ | 10 | -3 | 3 |
 | melee | -- | Reaper chaintalon - sweep | -- | Melee | 8 | 3+ | 8 | -2 | 1 |
 
+#### Wargear options
+- This model's diabolus heavy stubber can be replaced with 1 daemonbreath meltagun.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Harbingers of Dread
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Harbingers of Dread
 - Huntsman: Each time this model makes an attack that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll.
 
 #### Unit Composition
@@ -1397,10 +1581,17 @@ CHAOS KNIGHTS
 | melee | -- | Reaper chaintalon | sustained hits 1 | Melee | 12 | 3+ | 8 | -2 | 1 |
 | melee | -- | Slaughterclaw | sustained hits 1 | Melee | 6 | 3+ | 12 | -3 | D6+2 |
 
+#### Wargear options
+- This model's diabolus heavy stubber can be replaced with 1 havoc multi-launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Harbingers of Dread
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Harbingers of Dread
 - Karnivore: You can re-roll Advance and Charge rolls made for this model.
 
 #### Unit Composition
@@ -1446,10 +1637,20 @@ CHAOS KNIGHTS
 | melee | -- | Reaper chaintalon - sweep | -- | Melee | 8 | 3+ | 8 | -2 | 1 |
 | melee | -- | Slaughterclaw | -- | Melee | 4 | 3+ | 12 | -3 | D6+2 |
 
+#### Wargear options
+- This model's avenger chaincannon can be replaced with 1 daemonbreath spear.
+- This model's diabolus heavy stubber can be replaced with 1 havoc multi-launcher.
+- This model's slaughterclaw can be replaced with 1 reaper chaintalon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Scouts 6"
+
+#### Army Rules
+- Harbingers of Dread
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Scouts 6"
-- FACTION: Harbingers of Dread
 - Stalker: Each time this model makes an attack that targets an enemy unit, if there are no other units from your opponent's army within 6" of that target, add 1 to the Wound roll.
 
 #### Unit Composition
@@ -1495,10 +1696,26 @@ CHAOS KNIGHTS
 | melee | -- | Armoured feet | -- | Melee | 4 | 3+ | 6 | 0 | 1 |
 | melee | -- | Siege claw | -- | Melee | 4 | 3+ | 12 | -3 | D6+2 |
 
+#### Wargear options
+- This model's graviton pulsar can be replaced with one of the following;
+  - 1 siege claw and 1 rad cleanser
+  - 1 lightning lock
+  - 1 conversion beam cannon
+  - 1 volkite veuglaire
+- This model's volkite veuglaire can be replaced with one of the following:
+  - 1 siege claw and 1 rad cleanser
+  - 1 graviton pulsar
+  - 1 lightning lock
+  - 1 conversion beam cannon
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Harbingers of Dread
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Harbingers of Dread
 - Protection Protocols: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
@@ -1528,6 +1745,8 @@ CHAOS KNIGHTS
 ## Detachments
 
 ### Traitoris Lance (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Paragons of Terror
 - At the start of the first battle round, after selecting one or more Dread abilities to be active for your army, you can select one additional Dread ability to be active for your army (this additional Dread ability cannot be randomly selected).
 
@@ -1546,20 +1765,20 @@ CHAOS KNIGHTS
 - 1CP
 - Traitoris Lance - Wargear Stratagem
 - WHEN: Any phase, just after an enemy unit fails a Battle-shock test.
-  TARGET: One Chaos Knights unit from your army that is within 12" of that enemy unit.
+  TARGET: One CHAOS KNIGHTS unit from your army that is within 12" of that enemy unit.
   EFFECT: Roll six D6: for each 4+, that enemy unit suffers 1 mortal wound and one model in your unit regains up to 1 lost wound.
   RESTRICTIONS: You can only use this Stratagem once per battle round.
 - CONQUERORS WITHOUT MERCY
 - 1CP
 - Traitoris Lance - Battle Tactic Stratagem
 - WHEN: Fight phase.
-  TARGET: One Chaos Knights model from your army that made a Charge move this turn and has not been selected to fight this phase.
+  TARGET: One CHAOS KNIGHTS model from your army that made a Charge move this turn and has not been selected to fight this phase.
   EFFECT: Until the end of the phase, improve the Armour Penetration characteristic of melee weapons equipped by your model by 1. After your model has finished making its attacks this phase, if it destroyed one or more enemy units this phase, each enemy unit within 6" of your model must take a Battle-shock test.
 - DISDAIN FOR THE WEAK
 - 1CP
 - Traitoris Lance - Strategic Ploy Stratagem
 - WHEN: Fight phase, just after an enemy unit has selected its targets.
-  TARGET: One Chaos Knights unit from your army that was selected as the target of one or more of the attacking unit's attacks.
+  TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks.
   EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 6+ ability, and the Feel No Pain 5+ ability against attacks made by Battle-shocked models.
 - A LONG LEASH
 - 1CP
@@ -1571,20 +1790,22 @@ CHAOS KNIGHTS
 - 1CP
 - Traitoris Lance - Epic Deed Stratagem
 - WHEN: Your Movement phase or your Charge phase.
-  TARGET: Up to two WAR DOG units from your army or one Titanic Chaos Knights unit from your army.
+  TARGET: Up to two WAR DOG units from your army or one TITANIC CHAOS KNIGHTS unit from your army.
   EFFECT: Until the end of the phase, each time a model in one of your units makes a Normal, Advance, Fall Back or Charge move, it can move through models and terrain features. When doing so, it can move within Engagement Range of such models but, unless it made a Charge move, cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed (the Super-heavy Walker ability does not apply while using this Stratagem).
 - STORM OF DARKNESS
 - 1CP
 - Traitoris Lance - Strategic Ploy Stratagem
-- WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets.
-  TARGET: One Chaos Knights unit from your army that was selected as the target of one or more of the attacking unit's attacks.
+- WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets.
+  TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks.
   EFFECT:
   - Your unit has Stealth.
   - Melee attacks that target your unit have -1 to hit rolls.
 
 ### Infernal Lance (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Malefic Surge
-- In your Command phase, one or more Chaos Knights units from your army can make a Malefic Surge. Each one that does must first take a Leadership test; if that test is failed, that unit suffers D3 mortal wounds. Then, until the start of your next Command phase, that unit is Empowered. While a unit is Empowered it can use one of the Malefic Surge abilities below. Once that unit has used a Malefic Surge ability, it is no longer Empowered.
+- In your Command phase, one or more CHAOS KNIGHTS units from your army can make a Malefic Surge. Each one that does must first take a Leadership test; if that test is failed, that unit suffers D3 mortal wounds. Then, until the start of your next Command phase, that unit is Empowered. While a unit is Empowered it can use one of the Malefic Surge abilities below. Once that unit has used a Malefic Surge ability, it is no longer Empowered.
   - Unholy Hunger: When a model in this unit makes a Normal, Advance or Fall Back move, until the end of the phase, add 3" to its Move characteristic.
   - Diabolic Power: When this unit is selected to shoot or fight, select either the [LETHAL HITS] or [SUSTAINED HITS 1] ability. Until the end of the phase, weapons equipped by models in this unit have the selected ability.
   - Unnatural Fortitude: When this unit is selected as the target of an attack, select one of the following to apply until the end of the phase:
@@ -1607,43 +1828,45 @@ CHAOS KNIGHTS
 - 1CP
 - Infernal Lance - Battle Tactic Stratagem
 - WHEN: End of any phase.
-  TARGET: One Chaos Knights unit from your army that is not Empowered.
+  TARGET: One CHAOS KNIGHTS unit from your army that is not Empowered.
   EFFECT: Your unit makes a Malefic Surge.
   RESTRICTIONS: You cannot select the same unit as the target of this Stratagem more than once per battle round.
 - HELLFORGED CONSTRUCTION
 - 1CP
 - Infernal Lance - Battle Tactic Stratagem
 - WHEN: Fight phase, just after an enemy unit has selected its targets.
-  TARGET: One Chaos Knights unit from your army that was selected as the target of one or more of the attacking unit's attacks.
+  TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks.
   EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1.
 - CORRUPTING TAINT
 - 1CP
 - Infernal Lance - Epic Deed Stratagem
-- WHEN: Your Command phase, just after a Chaos Knights Character unit from your army makes a Malefic Surge.
+- WHEN: Your Command phase, just after a CHAOS KNIGHTS CHARACTER unit from your army makes a Malefic Surge.
   TARGET: That CHAOS KNIGHTS CHARACTER unit.
   EFFECT: Select one objective marker your unit is within range of that you control. That objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
 - UNLEASH BALEFIRE
 - 1CP
 - Infernal Lance - Wargear Stratagem
 - WHEN: Your Shooting phase.
-  TARGET: One Chaos Knights unit from your army that has not been selected to shoot this phase.
+  TARGET: One CHAOS KNIGHTS unit from your army that has not been selected to shoot this phase.
   EFFECT: After your unit has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test; if the test is failed, until the end of your opponent's next turn, it is aflame. While a unit is aflame, subtract 2" from its Move characteristic and subtract 2 from Charge rolls made for it.
 - WARP VISION
 - 1CP
 - Infernal Lance - Wargear Stratagem
 - WHEN: Your Shooting phase.
-  TARGET: One Chaos Knights unit from your army that has not been selected to shoot this phase.
+  TARGET: One CHAOS KNIGHTS unit from your army that has not been selected to shoot this phase.
   EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability.
 - DIABOLIC BULWARK
 - 1CP
 - Infernal Lance - Wargear Stratagem
 - WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets.
-  TARGET: One Chaos Knights unit from your army that was selected as the target of one or more of the attacking unit's attacks.
+  TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks.
   EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.
 
 ### Lords of Dread (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Tyrannical Court
-- Improve the Objective Control characteristic of Chaos Knights Character models from your army by 2. In addition, once per battle round, if your WARLORD is on the battlefield, you can use the Claimed for the Dark Gods Stratagem for 0CP.
+- Improve the Objective Control characteristic of CHAOS KNIGHTS CHARACTER models from your army by 2. In addition, once per battle round, if your WARLORD is on the battlefield, you can use the Claimed for the Dark Gods Stratagem for 0CP.
 
 #### Enhancements
 - Throne Mechanicum of Skulls 25 pts
@@ -1664,40 +1887,42 @@ CHAOS KNIGHTS
 - 1CP
 - Lords of Dread - Epic Deed Stratagem
 - WHEN: Start of your Command phase.
-  TARGET: One Chaos Knights Character unit from your army that is within range of one or more objective markers you control.
+  TARGET: One CHAOS KNIGHTS CHARACTER unit from your army that is within range of one or more objective markers you control.
   EFFECT: Select one of those objective markers. That objective marker remains under your control, with a Level of Control of 5 (unless it would otherwise be higher), until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
 - SPITEFUL DEMISE
 - 1CP
 - Lords of Dread - Epic Deed Stratagem
-- WHEN: Any phase, just after a Chaos Knights Character unit from your army is destroyed.
+- WHEN: Any phase, just after a CHAOS KNIGHTS CHARACTER unit from your army is destroyed.
   TARGET: That CHAOS KNIGHTS CHARACTER unit. You can use this Stratagem on that unit even though it was just destroyed.
   EFFECT: When rolling to determine whether mortal wounds are inflicted by your unit's Deadly Demise ability, that model's Deadly Demise ability inflicts mortal wounds on a D6 roll of a 4+ instead of on a 6.
 - RUNES OF DISDAIN
 - 2CP
 - Lords of Dread - Epic Deed Stratagem
 - WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets.
-  TARGET: One Chaos Knights Character unit from your army that was selected as the target of one or more of the attacking unit's attacks.
+  TARGET: One CHAOS KNIGHTS CHARACTER unit from your army that was selected as the target of one or more of the attacking unit's attacks.
   EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.
 - TITANIC DUEL
 - 1CP
 - Lords of Dread - Epic Deed Stratagem
 - WHEN: Your Shooting phase or the Fight phase.
-  TARGET: One Chaos Knights Character unit from your army that has not been selected to shoot or fight this phase.
+  TARGET: One CHAOS KNIGHTS CHARACTER unit from your army that has not been selected to shoot or fight this phase.
   EFFECT: Select one enemy MONSTER or VEHICLE unit. Until the end of the phase, each time a model in your unit makes an attack that targets that enemy unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1. Each time a model in your unit makes an attack that targets that enemy unit, if that enemy unit is TITANIC, you can re-roll the Hit roll and you can re-roll the Wound roll instead.
 - TROPHY HUNTER
 - 1CP
 - Lords of Dread - Epic Deed Stratagem
-- WHEN: Fight phase, just before a Chaos Knights Character unit from your army consolidates.
+- WHEN: Fight phase, just before a CHAOS KNIGHTS CHARACTER unit from your army consolidates.
   TARGET: That CHAOS KNIGHTS CHARACTER unit.
   EFFECT: Until the end of the phase, each time your unit Consolidates, models in it can move an additional 3" as long as your unit can end that move within Engagement Range of one or more enemy units.
 - CRUSHED LIKE VERMIN
 - 1CP
 - Lords of Dread - Epic Deed Stratagem
-- WHEN: Your Movement phase, just after a Chaos Knights Character unit from your army ends a Normal move.
+- WHEN: Your Movement phase, just after a CHAOS KNIGHTS CHARACTER unit from your army ends a Normal move.
   TARGET: That CHAOS KNIGHTS CHARACTER unit.
   EFFECT: Select one enemy unit (excluding MONSTERS and VEHICLES) that your unit moved over during that move and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound. If one or more models are destroyed as a result of this Stratagem, that enemy unit must take a Battle-shock test.
 
 ### Houndpack Lance (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Marked Prey
 - At the start of your Command phase, select one unit from your opponent's army. Until the start of your next Command phase, each time a WAR DOG model from your army makes an attack that targets that enemy unit, if that unit is visible to the attacking model, that attack has the [SUSTAINED HITS 1] ability.
   KEYWORDS
@@ -1757,33 +1982,35 @@ CHAOS KNIGHTS
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Helhunt Lance (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Masters of the Pack
-- If a Titanic Chaos Knights unit from your army has an Aura ability that affects friendly WAR DOG units, while two or more friendly WAR DOG models are within range of that TITANIC CHAOS KNIGHTS unit's Aura ability, that TITANIC CHAOS KNIGHTS unit is affected by that Aura ability as well.
-  Example: Two friendly WAR DOG models are within 9" of a Knight Desecrator when it is selected to shoot. As a result, the KNIGHT DESECRATOR's Taskmaster ability also affects itself, even though it does not have the WAR DOG keyword, so each time that KNIGHT DESECRATOR makes a ranged attack, Hit rolls of 1 are re-rolled.
+- If a TITANIC CHAOS KNIGHTS unit from your army has an Aura ability that affects friendly WAR DOG units, while two or more friendly WAR DOG models are within range of that TITANIC CHAOS KNIGHTS unit's Aura ability, that TITANIC CHAOS KNIGHTS unit is affected by that Aura ability as well.
+  Example: Two friendly WAR DOG models are within 9" of a KNIGHT DESECRATOR when it is selected to shoot. As a result, the KNIGHT DESECRATOR's Taskmaster ability also affects itself, even though it does not have the WAR DOG keyword, so each time that KNIGHT DESECRATOR makes a ranged attack, Hit rolls of 1 are re-rolled.
 
 #### Enhancements
 - Aspect of the Beast 30 pts
-- Chaos Knights model only. At the start of your Command phase, select one Dread ability to be active for the bearer until the start of your next Command phase, in addition to the Dread abilities active for your army
+- CHAOS KNIGHTS model only. At the start of your Command phase, select one Dread ability to be active for the bearer until the start of your next Command phase, in addition to the Dread abilities active for your army
 - Hunter's Helm 15 pts
-- Chaos Knights model only. You can re-roll Advance and Charge rolls made for the bearer's unit.
+- CHAOS KNIGHTS model only. You can re-roll Advance and Charge rolls made for the bearer's unit.
 - Octagram of Conjuration 40 pts
 - KNIGHT ABOMINANT model only. The bearer has the following ability:
   Octagram of Conjuration (Aura): While a friendly WAR DOG model is within 9" of this model, after that WAR DOG model has shot, you can select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test.
 - Throne Tyrannicus 25 pts
-- Titanic Chaos Knights model only. In your Command phase, select one other Chaos Knights Character model within 9" of the bearer. If the bearer has one or more Aura abilities that affect friendly WAR DOG units, until the start of your next Command phase, the selected CHAOS KNIGHTS CHARACTER model is affected by those Aura abilities as well.
+- TITANIC CHAOS KNIGHTS model only. In your Command phase, select one other CHAOS KNIGHTS CHARACTER model within 9" of the bearer. If the bearer has one or more Aura abilities that affect friendly WAR DOG units, until the start of your next Command phase, the selected CHAOS KNIGHTS CHARACTER model is affected by those Aura abilities as well.
 
 #### Stratagems
 - FERAL ARROGANCE
 - 1CP
 - Helhunt Lance - Strategic Ploy Stratagem
-- WHEN: Any phase, just after a mortal wound is allocated to a Chaos Knights unit from your army.
+- WHEN: Any phase, just after a mortal wound is allocated to a CHAOS KNIGHTS unit from your army.
   TARGET: That CHAOS KNIGHTS unit.
   EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 5+ ability against mortal wounds.
 - MERCILESS FUSILLADE
 - 1CP
 - Helhunt Lance - Battle Tactic Stratagem
 - WHEN: Start of your Shooting phase or the start of the Fight phase.
-  TARGET: One Titanic Chaos Knights unit from your army, and up to two friendly WAR DOG units, that have not been selected to shoot or fight this phase.
+  TARGET: One TITANIC CHAOS KNIGHTS unit from your army, and up to two friendly WAR DOG units, that have not been selected to shoot or fight this phase.
   EFFECT: Select one enemy unit that is an eligible target for each of those CHAOS KNIGHTS units. Until the end of the phase, each time one of those Chaos Knights units is selected to shoot or fight, if that enemy unit is an eligible target, you can only select that enemy unit as the target for all of those attacks and those attacks have the [SUSTAINED HITS 1] ability.
 - BEASTHIDE MANIFESTATION
 - 1CP
@@ -1795,13 +2022,13 @@ CHAOS KNIGHTS
 - 1CP
 - Helhunt Lance - Battle Tactic Stratagem
 - WHEN: Start of your Movement phase.
-  TARGET: One Titanic Chaos Knights unit from your army and up to three friendly WAR DOG units within 6" of that Titanic Chaos Knights unit.
+  TARGET: One TITANIC CHAOS KNIGHTS unit from your army and up to three friendly WAR DOG units within 6" of that Titanic Chaos Knights unit.
   EFFECT: Until the end of the phase, each time one of those War Dog units makes a Normal, Advance or Fall Back move, its models can move through models and terrain features. When doing so, they can move within Engagement Range of such models but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.
 - CONTEMPTUOUS VOLLEYS
 - 1CP
 - Helhunt Lance - Strategic Ploy Stratagem
 - WHEN: Your Movement phase, just after a CHAOS KNIGHTS unit from your army Falls Back.
-  TARGET: That Chaos Knights unit.
+  TARGET: That CHAOS KNIGHTS unit.
   EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
 - GOADED BEAST
 - 1CP
@@ -1811,6 +2038,8 @@ CHAOS KNIGHTS
   EFFECT: Your unit can make a surge move of up to D6"
 
 ### Bastions of Tyranny (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Annihilate the Unworthy
 - Friendly KNIGHT TYRANT units' attacks that target a battle-shocked unit have +1 to the hit roll.
 
@@ -1842,6 +2071,8 @@ CHAOS KNIGHTS
   - While a unit is suppressed, that unit's attacks have -1 to hit rolls.
 
 ### Hunting Warpack (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Scenting Fear
 - (Once per battle round, per army) In your Shooting phase, you can select one visible enemy unit within 12" of a friendly WAR DOG unit. That enemy unit has +6" detection range.
   This detachment has the WAR DOGS tag and cannot be taken with another WAR DOGS detachment.
@@ -1873,6 +2104,8 @@ CHAOS KNIGHTS
   EFFECT: Ranged attacks that target your unit have -1 AP until that enemy unit has attacked.
 
 ### Iconoclast Fiefdom (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Wretched Thralls
 - You can include DAMNED units in your army (see Codex: Chaos Space Marines). The combined points cost of such units cannot exceed 500 points.
   - Friendly DAMNED units can re-roll leadership rolls.

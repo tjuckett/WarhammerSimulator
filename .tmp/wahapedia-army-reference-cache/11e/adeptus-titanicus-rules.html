@@ -1,0 +1,1362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Wahapedia: Warhammer 40,000 11th edition, Adeptus Titanicus army rules, detachment rules, stratagems, enhancements, faction expansions." />
+<meta name="keywords" content="Wahapedia, Warhammer 40,000 11th edition, Adeptus Titanicus, Imperium, Frame, Towering, Titanic, Walker, Vehicle, Reaver Titan, Warbringer Nemesis Titan, Warhound Titan, Warlord Titan, Deadly Demise, Super-heavy Walker" />
+<style type="text/css">
+|#siteNav {min-height:96px;}
+</style>
+
+<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>
+	window.ezstandalone = window.ezstandalone || {};
+	ezstandalone.cmd = ezstandalone.cmd || [];
+</script>
+<script src="//ezoicanalytics.com/analytics.js"></script>
+<link rel="stylesheet" type="text/css" href="/wh40k11ed/css/fonts1.css">
+<link name="magnus_did_what" rel="stylesheet" href="/wh40k11ed/css/magnus_did_not1.css">
+<link rel="stylesheet" href="/wh40k11ed/css/main1.css">
+<link rel="stylesheet" href="/wh40k11ed/css/header1.css">
+<link rel="stylesheet" href="/wh40k11ed/css/profile1.css">
+<link rel="stylesheet" href="/wh40k11ed/css/noprint1.css">
+<link rel="icon" type="image/png" href="/wh40k11ed/img/favicon.png" />
+<link rel="stylesheet" type="text/css" href="/tooltipster/dist/css/tooltipster.bundle.min.css" />
+<link rel="manifest" href="/manifest_40k.json">
+<link rel="apple-touch-icon" sizes="57x57" href="/img/web-app/wahapedia-icon-57.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/img/web-app/wahapedia-icon-76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/img/web-app/wahapedia-icon-114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/img/web-app/wahapedia-icon-120.png">
+<link rel="apple-touch-icon" sizes="128x128" href="/img/web-app/wahapedia-icon-128.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/img/web-app/wahapedia-icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="/img/web-app/wahapedia-icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/web-app/wahapedia-icon-180.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/img/web-app/wahapedia-icon-192.png">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+<script type="text/javascript" src="/tooltipster-scrollableTip/tooltipster-scrollableTip.min.js"></script>
+<script type="text/javascript" src="https://wahapedia.ru/scripts/jquery.cookie.js"></script><script>window.yaContextCb=window.yaContextCb||[]</script>
+<script src="https://yandex.ru/ads/system/context.js" async></script>
+
+<link rel="stylesheet" type="text/css" href="/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-noir.min.css" />
+<link rel="stylesheet" href="/wh40k11ed/css/tooltipster-noir1.css">
+<link href="/wh40k11ed/pagefind/pagefind-ui.css" rel="stylesheet">
+<script src="/wh40k11ed/pagefind-boot.js"></script>
+<script src="/wh40k11ed/pagefind/pagefind-ui.js"></script>
+<title>Adeptus Titanicus [Warhammer 40,000 11th edition]</title>
+<link rel="preload" href="/wh40k11ed/nav.html" as="fetch" crossorigin="anonymous">
+
+<script type="text/javascript">
+window._wahapediaNavHtml = null;
+window._wahapediaNavPromise = jQuery.get('/wh40k11ed/nav.html').done(function(html) {
+	window._wahapediaNavHtml = html;
+});
+</script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LfARRUkAAAAAD0Li_kOGLUDH_77uo1aMO8YZsA4"></script>
+<script>   
+function closeLoginTooltip() {
+	$('.tooltipLogin.tooltipstered').each(function(){
+		try { $(this).tooltipster('close'); } catch (e) {}
+	});
+}
+function submitCaptcha(e) {
+	e.preventDefault();
+	var $form = $(e.currentTarget).closest('form');
+	if (!$form.length) {
+		$form = $(e.currentTarget).closest('.tooltipster-base').find('#disable-ads');
+	}
+	grecaptcha.ready(function() {
+		grecaptcha.execute('6LfARRUkAAAAAD0Li_kOGLUDH_77uo1aMO8YZsA4', {action: 'submit'}).then(function(token) {    
+			$form.find("#captcha-box").val(token);
+			if ($form.length) { $form[0].submit(); }
+		});
+	});
+}
+function loadErrors() {
+  if($(location).attr('hash') != ""){ return; }
+  let searchParams = new URLSearchParams(window.location.search);
+     if(searchParams.has('error')){
+         var $err = $('#error-login');
+         if ($err.length && !$err.text()) {
+             $err.append(document.createTextNode(searchParams.get('error')));
+             $err.show();
+         }
+     }
+     if(searchParams.has('message')){
+         var $msg = $('#email-sent');
+         if ($msg.length && !$msg.text()) {
+             $msg.append(document.createTextNode(searchParams.get('message')));
+             $msg.show();
+         }
+     }
+}
+
+$(document).on( 'click', '#btnCloseLogin', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  closeLoginTooltip();
+});
+
+$(document).on( 'click', '#btnGetPin', function(e) {
+  $(".tooltipster-box #password-text-field").val("");
+  submitCaptcha(e);
+});
+
+$(document).on( 'click', '#btnDisableAds', function(e) {
+  submitCaptcha(e);
+});
+</script>
+<script type="text/javascript">
+function switchColorTheme(){
+		var userTheme = localStorage.ColorTheme;
+		if (userTheme == undefined) {userTheme = 'default'; localStorage.ColorTheme = userTheme};
+		if ((userTheme == 'dark') || (userTheme == 'light')) {
+			document.documentElement.setAttribute('data-theme', userTheme);}
+		else if (!window.matchMedia) {
+			document.documentElement.setAttribute('data-theme', 'light');}
+		else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				document.documentElement.setAttribute('data-theme', 'dark');}
+			else {
+				document.documentElement.setAttribute('data-theme', 'light');}
+   };
+	switchColorTheme();
+$(document).ready(function(){
+touchHover(); loadErrors(); $.get('https://wahapedia.ru/relog.php');
+window.syncUserSiteSettings = function() {
+	var data = localStorage.ShowFluff;
+	if (data == undefined) {data = 'true'; localStorage.ShowFluff = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowFluff').prop('checked', StrData);
+	ChangeShowFluff();
+
+	$(document).off('change.wahUsr', '.ShowFluff').on('change.wahUsr', '.ShowFluff', function () {
+      localStorage.ShowFluff = $(this).prop('checked') ? 'true' : 'false';
+	   ChangeShowFluff();
+   });
+
+	function ChangeShowFluff() {
+	if (localStorage.ShowFluff == 'true')
+		{$('.ShowFluff').css('display', '');}
+	else
+		{$('.ShowFluff').css('display', 'none');}
+	}
+	window.ChangeShowFAQErrata = function() {
+	if (localStorage.ShowFAQErrata == 'true')
+		{$('.faqErrataSpoiler, .faqErrataStrat').css('display', '');}
+	else
+		{$('.faqErrataSpoiler, .faqErrataStrat').css('display', 'none');}
+	};
+	var data = localStorage.ShowFAQErrata;
+	if (data == undefined) {data = 'true'; localStorage.ShowFAQErrata = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowFAQErrata').prop('checked', StrData);
+	window.ChangeShowFAQErrata();
+
+	$(document).off('change.wahUsr', '.ShowFAQErrata').on('change.wahUsr', '.ShowFAQErrata', function () {
+      localStorage.ShowFAQErrata = $(this).prop('checked') ? 'true' : 'false';
+	   window.ChangeShowFAQErrata();
+   });
+
+	var data = localStorage.ShowLegendaryDatasheets;
+	if (data == undefined) {data = 'false'; localStorage.ShowLegendaryDatasheets = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowLegendaryDatasheets').prop('checked', StrData);
+
+	$(document).off('change.wahUsr', '.ShowLegendaryDatasheets').on('change.wahUsr', '.ShowLegendaryDatasheets', function () {
+      localStorage.ShowLegendaryDatasheets = $(this).prop('checked') ? 'true' : 'false';
+	   FilterApply(false);
+   });
+	var data = localStorage.ShowForgeWorldDatasheets;
+	if (data == undefined) {data = 'true'; localStorage.ShowForgeWorldDatasheets = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowForgeWorldDatasheets').prop('checked', StrData);
+
+	$(document).off('change.wahUsr', '.ShowForgeWorldDatasheets').on('change.wahUsr', '.ShowForgeWorldDatasheets', function () {
+      localStorage.ShowForgeWorldDatasheets = $(this).prop('checked') ? 'true' : 'false';
+	   FilterApply(false);
+   });
+	var data = localStorage.ShowCrusadeRules;
+	if (data == undefined) {data = 'true'; localStorage.ShowCrusadeRules = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowCrusadeRules').prop('checked', StrData);
+
+	$(document).off('change.wahUsr', '.ShowCrusadeRules').on('change.wahUsr', '.ShowCrusadeRules', function () {
+      localStorage.ShowCrusadeRules = $(this).prop('checked') ? 'true' : 'false';
+	   FilterApply(false);
+   });
+	var data = localStorage.ShowBoardingActions;
+	if (data == undefined) {data = 'true'; localStorage.ShowBoardingActions = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowBoardingActions').prop('checked', StrData);
+	ChangeShowBoardingActions();
+
+	$(document).off('change.wahUsr', '.ShowBoardingActions').on('change.wahUsr', '.ShowBoardingActions', function () {
+      localStorage.ShowBoardingActions = $(this).prop('checked') ? 'true' : 'false';
+	   ChangeShowBoardingActions();
+	   FilterApply(false);
+   });
+
+	function ChangeShowBoardingActions() {
+	if (localStorage.ShowBoardingActions == 'true')
+		{$('.dropShowBoardingActions').css('display', '');}
+	else
+		{$('.dropShowBoardingActions').css('display', 'none');}
+	}
+	var data = localStorage.ShowNonBAStratagems;
+	if (data == undefined) {data = 'true'; localStorage.ShowNonBAStratagems = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowNonBAStratagems').prop('checked', StrData);
+
+	$(document).off('change.wahUsr', '.ShowNonBAStratagems').on('change.wahUsr', '.ShowNonBAStratagems', function () {
+      localStorage.ShowNonBAStratagems = $(this).prop('checked') ? 'true' : 'false';
+	   FilterApply(false);
+   });
+	var data = localStorage.ShowBaseSize;
+	if (data == undefined) {data = 'true'; localStorage.ShowBaseSize = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowBaseSize').prop('checked', StrData);
+	ChangeShowBaseSize();
+
+	$(document).off('change.wahUsr', '.ShowBaseSize').on('change.wahUsr', '.ShowBaseSize', function () {
+      localStorage.ShowBaseSize = $(this).prop('checked') ? 'true' : 'false';
+	   ChangeShowBaseSize();
+   });
+
+	function ChangeShowBaseSize() {
+	if (localStorage.ShowBaseSize == 'true')
+		{$('.ShowBaseSize').css('display', '');}
+	else
+		{$('.ShowBaseSize').css('display', 'none');}
+	}
+	var data = localStorage.ShowCoreStratagems;
+	if (data == undefined) {data = 'true'; localStorage.ShowCoreStratagems = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowCoreStratagems').prop('checked', StrData);
+
+	$(document).off('change.wahUsr', '.ShowCoreStratagems').on('change.wahUsr', '.ShowCoreStratagems', function () {
+      localStorage.ShowCoreStratagems = $(this).prop('checked') ? 'true' : 'false';
+	   FilterApply(false);
+   });
+	var data = localStorage.ShowDatasheetFeatures;
+	if (data == undefined) {data = 'true'; localStorage.ShowDatasheetFeatures = data};
+
+	var StrData; if (data == 'true') {StrData = true} else {StrData = false};
+	$('.ShowDatasheetFeatures').prop('checked', StrData);
+	ChangeShowDatasheetFeatures();
+
+	$(document).off('change.wahUsr', '.ShowDatasheetFeatures').on('change.wahUsr', '.ShowDatasheetFeatures', function () {
+      localStorage.ShowDatasheetFeatures = $(this).prop('checked') ? 'true' : 'false';
+	   ChangeShowDatasheetFeatures();
+   });
+
+	function ChangeShowDatasheetFeatures() {
+	if (localStorage.ShowDatasheetFeatures == 'true')
+		{$('.ShowDatasheetFeatures').css('display', '');}
+	else
+		{$('.ShowDatasheetFeatures').css('display', 'none');}
+	}
+	$('.ColorTheme').prop('value', localStorage.ColorTheme);
+	$(document).off('change.wahUsr', '.ColorTheme').on('change.wahUsr', '.ColorTheme', function () {
+		localStorage.ColorTheme = $(this).prop('value');
+		switchColorTheme();
+	});
+};
+window.syncUserSiteSettings();
+
+	window.wahInitPagefind = function(){
+		var boot = window.wahPagefindBoot;
+		if (typeof PagefindUI === 'undefined') {
+			if (boot) {
+				boot.showWaiting();
+				boot.watch('/wh40k11ed/pagefind/', function(){ window.wahInitPagefind(); });
+			}
+			return;
+		}
+		if (boot) { boot.hideWaiting(); boot.stopWatch(); }
+		var desk = document.querySelector('#pagefind-search-desktop');
+		if (desk && !desk.getAttribute('data-wah-pf')) {
+			new PagefindUI({
+				element: '#pagefind-search-desktop',
+				bundlePath: '/wh40k11ed/pagefind/',
+				baseUrl: '/wh40k11ed/',
+				showImages: false,
+				showSubResults: true,
+				translations: { placeholder: 'Search this site...' },
+				processResult: function(result){
+				if (!result) { return result; }
+				var fixPath = function(u){
+					if (!u) { return u; }
+					var s = String(u), hash = '', i = s.indexOf('#');
+					if (i >= 0) { hash = s.slice(i); s = s.slice(0, i); }
+					s = s.replace(/\.html?$/i, '');
+					if (s && s.charAt(s.length - 1) !== '/') { s += '/'; }
+					return s + hash;
+				};
+				var leafTitle = function(url){
+					var path = String(url || '').split('#')[0].replace(/\/+$/, '');
+					var seg = path.split('/').pop() || '';
+					if (!seg) { return ''; }
+					return seg.replace(/[-_]+/g, ' ').replace(/\b[a-z]/g, function(c){ return c.toUpperCase(); });
+				};
+				var pageUrl = fixPath((result.meta && result.meta.url) || result.url || '');
+				if (pageUrl) {
+					result.url = pageUrl;
+					if (!result.meta) { result.meta = {}; }
+					result.meta.url = pageUrl;
+				}
+				if (result.meta) {
+					var cur = String(result.meta.title || '').trim();
+					var derived = leafTitle(pageUrl);
+					if (derived) {
+						if (!cur) { result.meta.title = derived; }
+						else if (cur.toLowerCase() !== derived.toLowerCase()) {
+							var parentSlug = cur.toLowerCase().replace(/\s+/g, '-');
+							var path = String(pageUrl || '').toLowerCase();
+							if (parentSlug && path.indexOf('/' + parentSlug + '/') >= 0 && !path.endsWith('/' + parentSlug + '/')) {
+								result.meta.title = derived;
+							}
+						}
+					}
+					if (result.meta.title) {
+						result.meta.title = String(result.meta.title).replace(/\s*\d+\s*DP\b/gi, '').replace(/\s+/g, ' ').trim();
+					}
+				}
+				if (result.sub_results && result.sub_results.length) {
+					for (var i = 0; i < result.sub_results.length; i++) {
+						var sr = result.sub_results[i];
+						if (!sr) { continue; }
+						if (sr.title) {
+							sr.title = String(sr.title).replace(/\s*\d+\s*DP\b/gi, '').replace(/\s+/g, ' ').trim();
+						}
+						if (!sr.url) { continue; }
+						var fixed = fixPath(sr.url);
+						var hashAt = fixed.indexOf('#');
+						if (hashAt < 0) { sr.url = pageUrl || fixed; }
+						else if (pageUrl) { sr.url = pageUrl + fixed.slice(hashAt); }
+						else { sr.url = fixed; }
+					}
+				}
+				return result;
+			}
+			});
+			desk.setAttribute('data-wah-pf', '1');
+		}
+		var mob = document.querySelector('#pagefind-search-mobile');
+		if (mob && !mob.getAttribute('data-wah-pf')) {
+			new PagefindUI({
+				element: '#pagefind-search-mobile',
+				bundlePath: '/wh40k11ed/pagefind/',
+				baseUrl: '/wh40k11ed/',
+				showImages: false,
+				showSubResults: true,
+				translations: { placeholder: 'Search this site...' },
+				processResult: function(result){
+				if (!result) { return result; }
+				var fixPath = function(u){
+					if (!u) { return u; }
+					var s = String(u), hash = '', i = s.indexOf('#');
+					if (i >= 0) { hash = s.slice(i); s = s.slice(0, i); }
+					s = s.replace(/\.html?$/i, '');
+					if (s && s.charAt(s.length - 1) !== '/') { s += '/'; }
+					return s + hash;
+				};
+				var leafTitle = function(url){
+					var path = String(url || '').split('#')[0].replace(/\/+$/, '');
+					var seg = path.split('/').pop() || '';
+					if (!seg) { return ''; }
+					return seg.replace(/[-_]+/g, ' ').replace(/\b[a-z]/g, function(c){ return c.toUpperCase(); });
+				};
+				var pageUrl = fixPath((result.meta && result.meta.url) || result.url || '');
+				if (pageUrl) {
+					result.url = pageUrl;
+					if (!result.meta) { result.meta = {}; }
+					result.meta.url = pageUrl;
+				}
+				if (result.meta) {
+					var cur = String(result.meta.title || '').trim();
+					var derived = leafTitle(pageUrl);
+					if (derived) {
+						if (!cur) { result.meta.title = derived; }
+						else if (cur.toLowerCase() !== derived.toLowerCase()) {
+							var parentSlug = cur.toLowerCase().replace(/\s+/g, '-');
+							var path = String(pageUrl || '').toLowerCase();
+							if (parentSlug && path.indexOf('/' + parentSlug + '/') >= 0 && !path.endsWith('/' + parentSlug + '/')) {
+								result.meta.title = derived;
+							}
+						}
+					}
+					if (result.meta.title) {
+						result.meta.title = String(result.meta.title).replace(/\s*\d+\s*DP\b/gi, '').replace(/\s+/g, ' ').trim();
+					}
+				}
+				if (result.sub_results && result.sub_results.length) {
+					for (var i = 0; i < result.sub_results.length; i++) {
+						var sr = result.sub_results[i];
+						if (!sr) { continue; }
+						if (sr.title) {
+							sr.title = String(sr.title).replace(/\s*\d+\s*DP\b/gi, '').replace(/\s+/g, ' ').trim();
+						}
+						if (!sr.url) { continue; }
+						var fixed = fixPath(sr.url);
+						var hashAt = fixed.indexOf('#');
+						if (hashAt < 0) { sr.url = pageUrl || fixed; }
+						else if (pageUrl) { sr.url = pageUrl + fixed.slice(hashAt); }
+						else { sr.url = fixed; }
+					}
+				}
+				return result;
+			}
+			});
+			mob.setAttribute('data-wah-pf', '1');
+		}
+	};
+	wahInitPagefind();
+
+
+
+window.wahUnlockFiltersPaint=function(){if(window._wahFiltersPainted)return;window._wahFiltersPainted=true;$('.DetFilterBlock').addClass('DetFilterReady');document.documentElement.classList.remove('wah-boot');};
+function FilterApply(IsInit) {
+var clFlags = '';
+var comma = '';
+var clAllFlags = '.sLegendary, .sForgeWorld, .sShowBoardingActions, .sShowCoreStratagems, .sCrusadeRules';
+if (localStorage.ShowLegendaryDatasheets == 'false') {clFlags = clFlags + comma + '.sLegendary'; comma = ', ';};
+if (localStorage.ShowForgeWorldDatasheets == 'false') {clFlags = clFlags + comma + '.sForgeWorld'; comma = ', ';};
+if (localStorage.ShowCrusadeRules == 'false') {clFlags = clFlags + comma + '.sCrusadeRules'; comma = ', ';};
+if (localStorage.ShowBoardingActions == 'false') {clFlags = clFlags + comma + '.sShowBoardingActions'; comma = ', ';};
+if (localStorage.ShowCoreStratagems == 'false') {clFlags = clFlags + comma + '.sShowCoreStratagems'; comma = ', ';};
+ $('.dsVisChk').css('display', ''); $('.kwVisChk').css('display', '');
+	$(clAllFlags).show();
+	$(clFlags).hide();
+if (typeof window.wahUnlockFiltersPaint === 'function') {window.wahUnlockFiltersPaint();}
+ $('.dsVisChk').each(function() {
+	var root = this;
+	var sheets = root.getElementsByClassName('datasheet');
+	var any = false;
+	for (var i = 0; i < sheets.length; i++) {
+		var el = sheets[i];
+		var hidden = el.style.display === 'none';
+		while (!hidden && el && el !== root) {
+			if (el.style.display === 'none') { hidden = true; break; }
+			el = el.parentElement;
+		}
+		if (!hidden) { any = true; break; }
+	}
+	root.style.display = any ? '' : 'none';
+});
+ $('.kwVisChk').each(function() {
+	var kwSection = $(this);
+	var unitRows = kwSection.find('.clFl, .clFlCH');
+	var freeRows = kwSection.find('div.ATln, div.mw1, div.mw2, div.mw3').has('> a').not('.clFl, .clFlCH');
+	if (unitRows.length === 0 && freeRows.length === 0) {
+		unitRows = kwSection.find('div[style*="padding"]');
+	}
+	var anyShown = unitRows.filter(function() { return this.style.display !== 'none'; }).length > 0
+		|| freeRows.filter(function() { return this.style.display !== 'none'; }).length > 0;
+	if (anyShown) {
+		kwSection.css('display', '')}
+	else {
+		kwSection.hide()}
+});
+
+$('[id^="tooltip_content"]').each(function() {
+	var tip = $(this);
+	var warn = tip.children('.tooltipSelectionWarning');
+	if (warn.length == 0) {return}
+	var contents = tip.children('.tooltipFilterBody');
+	var filtered = contents.find('.clFl, .clFlCH');
+	var anyFilteredShown = filtered.filter(function() { return this.style.display !== 'none'; }).length > 0;
+	var anySectionShown = contents.find('.kwVisChk').filter(function() { return this.style.display !== 'none'; }).length > 0;
+	var anyUnfiltered = contents.find('div[style*="padding"]').not('.clFl, .clFlCH').filter(function() { return this.style.display !== 'none'; }).length > 0
+		|| contents.find('div.ATln').has('> a').not('.clFl, .clFlCH').length > 0;
+	if (filtered.length > 0 && !anyFilteredShown && !anySectionShown && !anyUnfiltered) {
+		contents.hide();
+		warn.show()}
+	else {
+		contents.show();
+		warn.hide()}
+});
+
+UpdateTooltipster(IsInit);
+	if (typeof window.syncTooltipContent === 'function') {
+		window.syncTooltipContent();
+	}
+};
+if (!($('#siteNav').attr('data-armylist-file'))) {
+	FilterApply(true);
+}
+
+function UpdateTooltipster(IsInit) {
+	if (IsInit) { return; }
+	if (typeof window.syncTooltipContent === 'function') {
+		window.syncTooltipContent();
+	}
+};
+(function(){
+	window.wahTryInjectTooltips = function() {
+		if (window._wahTooltipsInjected) { return; }
+		if (!window._wahFiltersPainted && typeof FilterApply === 'function') { return; }
+		var html = window._wahapediaTooltipsHtml;
+		if (html == null) { return; }
+		window._wahTooltipsInjected = true;
+		var host = $('#wahTooltipsHost');
+		if (!host.length) {
+			$('body').append('<div id="wahTooltipsHost"></div>');
+			host = $('#wahTooltipsHost');
+		}
+		setTimeout(function() {
+			host.html(html);
+			if (typeof FilterApply === 'function') {
+				window._wahFilterScope = '#wahTooltipsHost';
+				FilterApply(false);
+			} else {
+				if (typeof UpdateTooltipster === 'function') { UpdateTooltipster(false); }
+				if (typeof window.syncTooltipContent === 'function') { window.syncTooltipContent(); }
+			}
+		}, 0);
+	};
+	var _unlock = window.wahUnlockFiltersPaint;
+	window.wahUnlockFiltersPaint = function() {
+		if (typeof _unlock === 'function') { _unlock(); }
+		window.wahTryInjectTooltips();
+	};
+	document.addEventListener('click', function(e) {
+		var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+		if (!a) { return; }
+		var href = a.getAttribute('href') || '';
+		var hash = '';
+		if (href.charAt(0) === '#') { hash = href.slice(1); }
+		else {
+			var hi = href.indexOf('#');
+			if (hi < 0) { return; }
+			var path = href.slice(0, hi);
+			if (path && path !== location.pathname && href.indexOf(location.pathname) < 0) { return; }
+			hash = href.slice(hi + 1);
+		}
+		if (!hash) { return; }
+		try { hash = decodeURIComponent(hash); } catch (err) {}
+		var t = document.getElementById(hash) || document.getElementsByName(hash)[0];
+		if (!t) { return; }
+		t.style.contentVisibility = 'visible';
+		t.scrollIntoView();
+	}, true);
+})();
+function applyArmyListHtml(html) {
+	var siteNav = $('#siteNav');
+	var showDatasheetsTab = siteNav.attr('data-armylist-nav') !== '0';
+	var navAl = $('#navArmyList');
+	if (navAl.length && showDatasheetsTab) { navAl.html(html); }
+	var host = $('#tooltip_contentArmyList');
+	if (!host.length) {
+		$('body').append('<div class="tooltip_templates"><span id="tooltip_contentArmyList"></span></div>');
+		host = $('#tooltip_contentArmyList');
+	}
+	host.html(html);
+	var btn = $('#btnArmyList');
+	if (btn.length) {
+		btn.attr('data-tooltip-content', '#tooltip_contentArmyList');
+	}
+	if (showDatasheetsTab) {
+		$('.NavWrapper_P').show();
+	} else {
+		$('.NavWrapper_P').hide();
+	}
+}
+window.wahRefreshTooltipFromHost = function(instance, origin) {
+	var o = origin ? $(origin) : $();
+	if (!o.length) { return; }
+	var sel = o.attr('data-tooltip-content');
+	if (!sel) { return; }
+	var host = $(sel);
+	if (!host.length) { return; }
+	try { instance.content(host); } catch (e) {}
+};
+function syncTooltipContent() {
+	$('.tooltipstered[data-tooltip-content]').each(function() {
+		var el = $(this);
+		var sel = el.attr('data-tooltip-content');
+		if (!sel) { return; }
+		var host = $(sel);
+		if (!host.length) { return; }
+		try { el.tooltipster('content', host); } catch (e) {}
+	});
+}
+window.syncTooltipContent = syncTooltipContent;
+function syncArmyListTooltipContent() {
+	syncTooltipContent();
+}
+window.syncArmyListTooltipContent = syncArmyListTooltipContent;
+function loadArmyList(url, thenFn) {
+	if (!url) {
+		$('.NavWrapper_P').hide();
+		if (typeof thenFn === 'function') { thenFn(); }
+		return;
+	}
+	jQuery.get(url).done(function(html) {
+		applyArmyListHtml(html);
+		if (typeof thenFn === 'function') { thenFn(); }
+	}).fail(function() {
+		$('.NavWrapper_P').hide();
+		if (typeof thenFn === 'function') { thenFn(); }
+	});
+}
+window.loadArmyList = loadArmyList;
+function finishAfterArmyList() {
+	if (typeof window.syncUserSiteSettings === 'function') {
+		window.syncUserSiteSettings();
+	}
+	var afterFilter = function() {
+		if (!window._wahapediaTooltipsReady) {
+			window._wahapediaTooltipsReady = true;
+if ($(window).width() >= 800) {
+	$('.no_tooltip').addClass('tooltip').removeClass('no_tooltip');
+	sidesArr = ['top', 'bottom', 'left', 'right'];
+	}
+else {
+	sidesArr = ['top', 'bottom'];
+	}
+;
+sidesArrButt = ['left'];
+$('.tooltip_').addClass('tooltip').removeClass('tooltip_');
+$('.wTable:visible').each(function (index1, element1) {
+	var trg = true;
+	$(element1).children('.bkg:visible').each(function (index2, element2) {
+		if (trg) {$(element2).addClass('bkg0').removeClass('bkg1')}
+		else {$(element2).addClass('bkg1').removeClass('bkg0')};
+		trg = !trg;
+		if ($(element2).hasClass('bkg_reset')) {trg = true};
+	});
+});
+
+if (!window._wahTooltipLazyBound) {
+	window._wahTooltipLazyBound = true;
+	window._wahTsOpts = {
+functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},
+		plugins: ['sideTip', 'scrollableTip'],
+		contentCloning: true,
+		position: sidesArr,
+		restoration: 'current',
+		maxWidth: 600,
+		viewportAware: true,
+		repositionOnScroll: false,
+		trigger: 'custom',
+		triggerOpen: { mouseenter: true, tap: true },
+		triggerClose: { click: true, mouseleave: true, tap: true }
+	};
+	window._wahTsOptsK = {
+functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},
+		plugins: ['sideTip', 'scrollableTip'],
+		contentCloning: true,
+		position: sidesArr,
+		restoration: 'current',
+		maxWidth: 600,
+		viewportAware: true,
+		repositionOnScroll: false,
+		trigger: 'custom',
+		triggerOpen: { click: true, tap: true },
+		triggerClose: { click: true, tap: true }
+	};
+	$(document).on('mouseover.wahTTLazy', '.tooltip:not(.tooltipstered)', function(){
+		var el = $(this);
+		if (el.hasClass('tooltipstered') || el.hasClass('tooltipk') || el.hasClass('tooltipLogin')
+			|| el.is('#btnContents, #btnArmyList, .tooltipContents, .tooltipArmyList')) { return; }
+		el.tooltipster(window._wahTsOpts);
+		el.tooltipster('open');
+	});
+	$(document).on('click.wahTTLazyK', '.tooltipk:not(.tooltipstered)', function(){
+		var el = $(this);
+		if (el.hasClass('tooltipstered')) { return; }
+		el.tooltipster(window._wahTsOptsK);
+		el.tooltipster('open');
+	});
+}
+if (!$('#btnContents').hasClass('tooltipstered'))
+$('#btnContents').tooltipster({
+functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},
+plugins: ['sideTip', 'scrollableTip'],
+position: 'left',
+restoration: 'current',
+viewportAware: true,
+arrow: false,
+positionTracker: true,
+contentCloning: true,
+repositionOnScroll: false,
+maxWidth: 1100,
+trigger: 'custom',
+triggerOpen: {
+    mouseenter: true,
+    tap: true
+},
+triggerClose: {
+    click: true,
+	 mouseleave: true,
+    tap: true
+}
+});
+if (!$('#btnArmyList').hasClass('tooltipstered'))
+$('#btnArmyList').tooltipster({
+functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},
+plugins: ['sideTip', 'scrollableTip'],
+position: 'left',
+restoration: 'current',
+viewportAware: true,
+arrow: false,
+positionTracker: true,
+contentCloning: true,
+repositionOnScroll: false,
+maxWidth: 1100,
+trigger: 'custom',
+triggerOpen: {
+    mouseenter: true,
+    tap: true
+},
+triggerClose: {
+    click: true,
+	 mouseleave: true,
+    tap: true
+}
+});
+$('.tooltipLogin').not('.tooltipstered').tooltipster({
+functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},
+plugins: ['sideTip', 'scrollableTip'],
+contentCloning: true,
+position: sidesArr,
+restoration: 'current',
+maxWidth: 600,
+viewportAware: true,
+repositionOnScroll: false,
+trigger: 'custom',
+triggerOpen: {
+    click: true,
+    tap: true
+},
+triggerClose: {
+}
+});
+var arrTT = [{tCl:"AdeptusTitanicus"},{tCl:"00001"},{tCl:"00002"},{tCl:"Frame"},{tCl:"Imperium"},{tCl:"Titanic"},{tCl:"00003"},{tCl:"Towering"},{tCl:"Vehicle"},{tCl:"Walker"},{tCl:"00004"},{tCl:"00005"},{tCl:"00006"},{tCl:"00007"},{tCl:"00008"},{tCl:"00009"},{tCl:"00010"},{tCl:"00011"},{tCl:"00012"},{tCl:"00013"}];arrTT.forEach(function(item, i, arr) {
+$(document).off('mouseover.wahTT', '.tooltip'+item.tCl).on('mouseover.wahTT', '.tooltip'+item.tCl, function(){
+	var tooltipInstance;
+	if (!$(this).hasClass('tooltipstered')) 
+		{tooltipInstance = $(this).tooltipster({functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},plugins:['sideTip','scrollableTip'],contentCloning:true,position:sidesArr,restoration:'current',maxWidth:600,viewportAware:true,repositionOnScroll:false,trigger:'custom',triggerOpen:{mouseenter:true,tap:true},triggerClose:{click:true,mouseleave:true,tap:true}}); tooltipInstance.tooltipster('open')}
+	});
+$(document).off('click.wahTT', '.tooltipk'+item.tCl).on('click.wahTT', '.tooltipk'+item.tCl, function(){
+	var tooltipInstance;
+	if (!$(this).hasClass('tooltipstered')) 
+		{tooltipInstance = $(this).tooltipster({functionBefore: function(instance, helper){
+if (typeof window.wahRefreshTooltipFromHost === 'function') {window.wahRefreshTooltipFromHost(instance, helper.origin);}
+if (typeof window.wahCloseOtherTooltips === 'function') {window.wahCloseOtherTooltips(instance, helper.origin);}
+else {$.each($.tooltipster.instances(), function(i, inst){if (inst !== instance) {inst.close();}});}
+},plugins:['sideTip','scrollableTip'],contentCloning:true,position:sidesArr,restoration:'current',maxWidth:600,viewportAware:true,repositionOnScroll:false,trigger:'custom',triggerOpen:{click:true,tap:true},triggerClose:{click:true,tap:true}}); tooltipInstance.tooltipster('open')}
+	});
+});
+		} else if (typeof window.syncTooltipContent === 'function') {
+			window.syncTooltipContent();
+		}
+
+		if (typeof window.wahTryInjectTooltips === 'function') { window.wahTryInjectTooltips(); }
+	};
+	if (typeof FilterApply === 'function') {
+		FilterApply(true);
+		setTimeout(afterFilter, 0);
+	} else {
+		window._wahFiltersPainted = true;
+		if (typeof UpdateTooltipster === 'function') {
+			UpdateTooltipster(true);
+		}
+		afterFilter();
+	}
+}
+function initAfterNav() {
+	var siteNav = $('#siteNav');
+	var alFile = siteNav.attr('data-armylist-file') || '';
+	var alMapRaw = siteNav.attr('data-armylist-map') || '';
+	window._wahapediaArmyListMap = {};
+	if (alMapRaw) {
+		try { window._wahapediaArmyListMap = JSON.parse(alMapRaw); } catch (e) { window._wahapediaArmyListMap = {}; }
+	}
+	var filterKey = siteNav.attr('data-armylist-filter-key') || '';
+	if (filterKey && window._wahapediaArmyListMap) {
+		var cur = localStorage[filterKey];
+		if (cur && window._wahapediaArmyListMap[cur]) {
+			alFile = window._wahapediaArmyListMap[cur];
+		} else if (window._wahapediaArmyListMap['']) {
+			alFile = window._wahapediaArmyListMap[''];
+		}
+	}
+	if (alFile) {
+		loadArmyList(alFile, finishAfterArmyList);
+	} else {
+		$('.NavWrapper_P').hide();
+		finishAfterArmyList();
+	}
+}
+function applyNavAndInit() {
+	var siteNav = $('#siteNav');
+	if (window._wahapediaNavHtml) {
+		siteNav.html(window._wahapediaNavHtml);
+	}
+	if (typeof wahInitPagefind === 'function') { wahInitPagefind(); }
+	initAfterNav();
+	if (typeof loadErrors === 'function') { loadErrors(); }
+}
+var siteNav = $('#siteNav');
+var navSrc = siteNav.attr('data-nav-src');
+if (navSrc) {
+	if (window._wahapediaNavPromise) {
+		window._wahapediaNavPromise.always(applyNavAndInit);
+	} else {
+		jQuery.get(navSrc).done(function(html) {
+			siteNav.html(html);
+			applyNavAndInit();
+		}).fail(applyNavAndInit);
+	}
+} else {
+	if (typeof wahInitPagefind === 'function') { wahInitPagefind(); }
+	initAfterNav();
+}
+function faqErrataKeepTip(el) {
+	var tipEl = el && el.closest ? el.closest('.tooltipster-base') : null;
+	if (!tipEl || !$.tooltipster || !$.tooltipster.instances) { return; }
+	window._faqErrataTipGuard = Date.now();
+	$.each($.tooltipster.instances(), function(i, inst) {
+		var t = inst.elementTooltip && inst.elementTooltip();
+		if (t && (t === tipEl || $.contains(t, el))) {
+			try { inst.reposition(); } catch (err) {}
+		}
+	});
+	$(tipEl).trigger('mouseenter');
+}
+function faqErrataDoToggle(btn) {
+	var $btn = $(btn);
+	var $sp = $btn.closest('.faqErrataSpoiler');
+	$sp.toggleClass('faqErrataCollapsed');
+	var collapsed = $sp.hasClass('faqErrataCollapsed');
+	$btn.find('.FaqErrataToggleText').text(collapsed ? ($sp.attr('data-show') || 'Show') : ($sp.attr('data-hide') || 'Hide'));
+	faqErrataKeepTip(btn);
+}
+function faqErrataFromEvent(e) {
+	var t = e.target;
+	if (!t || !t.closest) { return null; }
+	return t.closest('.btnFaqErrataToggle') || t.closest('.faqErrataSpoiler');
+}
+function faqErrataStopTipClose(e) {
+	var el = faqErrataFromEvent(e);
+	if (el && el.closest('.tooltipster-base')) { e.stopPropagation(); }
+}
+document.addEventListener('mousedown', faqErrataStopTipClose, true);
+document.addEventListener('touchend', faqErrataStopTipClose, true);
+document.addEventListener('click', function(e) {
+	var t = e.target;
+	var btn = t && t.closest ? t.closest('.btnFaqErrataToggle') : null;
+	if (btn) {
+		e.preventDefault();
+		e.stopPropagation();
+		faqErrataDoToggle(btn);
+		return;
+	}
+	faqErrataStopTipClose(e);
+}, true);
+});
+window.wahTipNode = function(el) {
+	if (!el) { return null; }
+	return el.nodeType ? el : (el[0] || null);
+};
+window.wahTipBox = function(inst) {
+	try { return inst.elementTooltip && inst.elementTooltip(); } catch (e) { return null; }
+};
+window.wahTipOrigin = function(inst) {
+	try { return inst.elementOrigin && inst.elementOrigin(); } catch (e) { return null; }
+};
+window.wahTipIsOpen = function(inst) {
+	try {
+		var s = inst.status();
+		return !!(s && (s.open || s.state === 'appearing' || s.state === 'stable'));
+	} catch (e) { return false; }
+};
+window.wahTipIsAncestorOf = function(inst, node) {
+	var tip = window.wahTipBox(inst);
+	node = window.wahTipNode(node);
+	return !!(tip && node && (tip === node || $.contains(tip, node)));
+};
+if (!window._wahTipMouseBound) {
+	window._wahTipMouseBound = true;
+	document.addEventListener('mousemove', function(e) { window._wahTipLastEl = e.target; }, true);
+}
+window.wahTipPointerOver = function(el) {
+	if (!el) { return false; }
+	var t = window._wahTipLastEl;
+	if (t && (el === t || (el.contains && el.contains(t)))) { return true; }
+	try { return $(el).is(':hover'); } catch (e) { return false; }
+};
+window.wahCloseOtherTooltips = function(opening, origin) {
+	if (!$.tooltipster || !$.tooltipster.instances) { return; }
+	origin = window.wahTipNode(origin);
+	$.each($.tooltipster.instances(), function(i, inst) {
+		if (inst === opening) { return; }
+		if (origin && window.wahTipIsAncestorOf(inst, origin)) { return; }
+		try { inst.close(); } catch (e) {}
+	});
+};
+window.wahTipHasNestedKeep = function(inst) {
+	if (!$.tooltipster || !$.tooltipster.instances) { return false; }
+	var keep = false;
+	$.each($.tooltipster.instances(), function(i, other) {
+		if (other === inst || !window.wahTipIsOpen(other)) { return; }
+		if (window.wahTipIsAncestorOf(inst, window.wahTipOrigin(other))) {
+			keep = true;
+			return false;
+		}
+	});
+	return keep;
+};
+window.wahTipChainHovered = function(inst, seen) {
+	seen = seen || [];
+	if ($.inArray(inst, seen) !== -1) { return false; }
+	seen.push(inst);
+	if (window.wahTipPointerOver(window.wahTipOrigin(inst)) || window.wahTipPointerOver(window.wahTipBox(inst))) {
+		return true;
+	}
+	var nested = false;
+	$.each($.tooltipster.instances(), function(i, other) {
+		if (other === inst || !window.wahTipIsOpen(other)) { return; }
+		if (!window.wahTipIsAncestorOf(inst, window.wahTipOrigin(other))) { return; }
+		if (window.wahTipChainHovered(other, seen)) { nested = true; return false; }
+	});
+	return nested;
+};
+window.wahSweepOrphanTooltips = function() {
+	if (window._wahSweepTipsLock) { return; }
+	if (!$.tooltipster || !$.tooltipster.instances) { return; }
+	window._wahSweepTipsLock = true;
+	try {
+		var doomed = [];
+		$.each($.tooltipster.instances(), function(i, inst) {
+			if (!window.wahTipIsOpen(inst)) { return; }
+			if (window.wahTipChainHovered(inst)) { return; }
+			doomed.push(inst);
+		});
+		$.each(doomed, function(i, inst) { try { inst.close(); } catch (e) {} });
+	} finally {
+		window._wahSweepTipsLock = false;
+	}
+};
+window.wahTipRaiseNested = function(instance, origin) {
+	var node = window.wahTipNode(origin);
+	var z = 9999999;
+	if ($.tooltipster && $.tooltipster.instances) {
+		$.each($.tooltipster.instances(), function(i, inst) {
+			if (inst === instance) { return; }
+			if (!window.wahTipIsAncestorOf(inst, node)) { return; }
+			var box = window.wahTipBox(inst);
+			if (!box) { return; }
+			var pz = parseInt($(box).css('z-index'), 10);
+			if (!isNaN(pz) && pz >= z) { z = pz + 2; }
+		});
+	}
+	var myBox = window.wahTipBox(instance);
+	if (myBox) { $(myBox).css('z-index', z); }
+};
+
+function wahFitCardTooltip(instance) {
+	var tip = instance && instance.elementTooltip && instance.elementTooltip();
+	if (!tip) return;
+	var $tip = $(tip);
+	if (!$tip.find('.cgCardCA7, .cgCardLCA, .DOM_StashTipCard').length) return;
+	var cap = $tip.height();
+	if (!(cap > 0)) return;
+	$tip.css('min-height', 0);
+	$tip.children('.tooltipster-box').css({minHeight: 0, flex: '1 1 0%', overflow: 'hidden', maxHeight: cap + 'px'});
+	$tip.find('.tooltipster-content').css({
+		minHeight: 0,
+		maxHeight: cap + 'px',
+		overflowY: 'auto',
+		overflowX: 'hidden',
+		boxSizing: 'border-box',
+		webkitOverflowScrolling: 'touch'
+	});
+}
+$.tooltipster.setDefaults({
+arrow: true,
+delay: [200, 200],
+interactive: true,
+functionReady: function(instance, helper) {
+	if (typeof window.ChangeShowFAQErrata === 'function') { window.ChangeShowFAQErrata(); }
+	if (typeof window.wahTipRaiseNested === 'function') { window.wahTipRaiseNested(instance, helper.origin); }
+	if (!instance._wahCloseBound) {
+		instance._wahCloseBound = true;
+		instance.on('close', function(event) {
+			if (Date.now() - (window._faqErrataTipGuard || 0) < 500) { event.stop(); return; }
+			if (event.event && event.event.target && $(event.event.target).closest('.faqErrataSpoiler, .btnFaqErrataToggle').length) { event.stop(); return; }
+			if (typeof window.wahTipHasNestedKeep === 'function' && window.wahTipHasNestedKeep(instance)) { event.stop(); }
+		});
+	}
+	if (typeof wahFitCardTooltip === 'function') {
+		if (!instance._wahCardFitBound) {
+			instance._wahCardFitBound = true;
+			instance.on('repositioned', function(){ wahFitCardTooltip(instance); });
+		}
+		wahFitCardTooltip(instance);
+		requestAnimationFrame(function(){ wahFitCardTooltip(instance); });
+	}
+},
+functionAfter: function() {
+	if (typeof window.wahSweepOrphanTooltips === 'function') { window.wahSweepOrphanTooltips(); }
+},
+theme: ['tooltipster-noir', 'tooltipster-noir-customized']
+});
+</script>
+<script type="text/javascript">
+var touchHover = function() {
+    $('.tooltip, .tooltipLogin').on('touchstart', function(e) {
+          e.preventDefault();
+          return false;
+    });
+};
+$(document).ready(function() { touchHover(); });
+</script>
+</head>
+
+<body>
+<!--noindex-->
+
+<script type="text/javascript">
+$(document).ready(function(){
+var CookieSet = $.cookie('no_ads_for_boosters');
+
+if (jQuery.cookie('no_ads_for_boosters')!='turn_it_off') {
+window.yaContextCb.push(()=>{
+	Ya.Context.AdvManager.render({
+		"blockId": "R-A-3376916-3",
+		"renderTo": "yandex_rtb_R-A-3376916-3",
+		"type": "feed"
+	})
+})
+window.yaContextCb.push(()=>{
+	Ya.Context.AdvManager.render({
+		"blockId": "R-A-3376916-2",
+		"type": "fullscreen",
+		"platform": "desktop"
+	})
+})
+window.yaContextCb.push(()=>{
+	Ya.Context.AdvManager.render({
+		"blockId": "R-A-3376916-1",
+		"type": "fullscreen",
+		"platform": "touch"
+	})
+})
+window.yaContextCb.push(()=>{
+	Ya.Context.AdvManager.render({
+		"blockId": "R-A-3376916-5",
+		"type": "floorAd",
+		"platform": "touch"
+	})
+})
+window.yaContextCb.push(()=>{
+	Ya.Context.AdvManager.render({
+		"blockId": "R-A-3376916-6",
+		"type": "floorAd",
+		"platform": "desktop"
+	})
+})
+}});</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+var CookieSet = $.cookie('no_ads_for_boosters');
+
+if (jQuery.cookie('no_ads_for_boosters')=='turn_it_off') {
+	var oldlink = document.getElementsByTagName("link").namedItem('magnus_did_what');
+	oldlink.href = "/wh40k11ed/css/magnus_did1.css";
+}
+});
+</script>
+<div id="wrapper2">
+<div id="wrapper">
+<div class="noprint">
+<div id="siteNav" data-nav-src="/wh40k11ed/nav.html" data-armylist-file="/wh40k11ed/factions/adeptus-titanicus/armylist.html" data-armylist-map='{"":"/wh40k11ed/factions/adeptus-titanicus/armylist.html"}'></div>
+</div>
+<h1 class="page_header"><span class="page_header_span">Adeptus Titanicus</span></h1>
+<div class="noprint">
+
+</div>
+<!--/noindex-->
+<div id="wahMainContent">
+<p class="legend ShowFluff">Titans are amongst the largest war engines to be found anywhere in the galaxy, ponderous battleships of the land whose weapon batteries are capable of obliterating entire formations of enemy troops. Created before the dawn of the Imperium, each god-engine is a miracle of forgotten technology. During the catastrophic wars of the Horus Heresy, the once-mighty Titan Legions warred against one another in great numbers, but their numbers are now much diminished. While loyalist Titans still defend the forge worlds of the Adeptus Mechanicus and march against the Emperor’s foes, their traitorous brethren were consigned to the Eye of Terror where they became Chaos Titans – twisted mockeries of their former glory who now fight alongside traitors and renegades.</p>
+<div class="BreakInsideAvoid frameDark Corner31" style="max-width:390px;"><span ><div class="contents_header">Contents</div><div class="mw1 i10 ATln"><a href="#Books" class="cnClrInv"><b>Books</b></a></div><div class="mw1 i10 ATln"><a href="#FAQ" class="cnClrInv"><b>FAQ</b></a></div><div class="mw1 i10 ATln"><a href="#Keywords" class="cnClrInv"><b>Keywords</b></a></div><div class="mw1 i10 ATln"><a href="#Army-Rules" class="cnClrInv"><b>Army Rules</b></a></div><div class="mw1 i30 ATln"><a href="#Towering-Example" class="cnClrInv">Towering Example</a></div><div class="mw1 i30 ATln"><a href="#Titanic-Support" class="cnClrInv">Titanic Support</a></div><div class="mw1 i30 ATln"><a href="#Super-heavy-Walker" class="cnClrInv">Super-heavy Walker</a></div><div class="mw1 i30 ATln"><a href="#Titanicus-Traitoris" class="cnClrInv">Titanicus Traitoris</a></div></span></div>
+<hr>
+<a name="Books"></a>
+<h2 id="Books" class="outline_header_book" style="display:flex; align-items:baseline;">Books</h2>
+<table bordercolor="#888" cellspacing="0" style="margin-top:-16px;border-collapse:collapse;border-color:rgb(136,136,136);border-width:0px"><tbody><tr><td style="border:0" onclick="toggleShowHistory()" colspan="5">
+<div id="btnShowHistory"><div class="img-inv showHistory_img"></div><div id="btnShowHistoryText">Show History</div></div>
+</td></tr><tr style="border-bottom:1px solid #888"><td style="text-align:left" class="WD_name_width"><b>Book</b></td><td style="text-align:center;width:160px"><b>Kind</b></td><td style="text-align:center;width:60px"><b>Edition</b></td><td style="text-align:center;width:95px"><b>Version</b></td><td style="text-align:right; width:130px"><b>Last update</b></td></tr>
+<tr class="book_tight max"><td colspan="5">&nbsp;<img src="/wh40k11ed/img/expansions/FW_logo2.png"class="book_img"> Adeptus Titanicus (Forge World)</td></tr>
+<tr class=" max"><td style="text-align:left;max-width:320px"><span class="book_wide">&nbsp;<img src="/wh40k11ed/img/expansions/FW_logo2.png"class="book_img"> Adeptus Titanicus (Forge World)</span></td><td style="vertical-align:middle;text-align:center;width:160px">Faction Pack</td><td style="vertical-align:middle;text-align:center;width:60px">11</td><td style="vertical-align:middle;text-align:center;width:95px">1.1</td><td style="vertical-align:middle;text-align:right;width:130px"><a target="_blank" href="https://assets.warhammer-community.com/eng_22-07_warhammer_40,000_faction_pack_adeptus_titanicus-pkhrobh6xn-nmtoszeaxw.pdf" class="book_last_update">July 2026</a></td></tr><tr style="display:none" class="elShowHistory  max"><td colspan="2"></td><td style="vertical-align:middle;text-align:center;width:60px">11</td><td style="vertical-align:middle;text-align:center;width:95px">1.0</td><td style="vertical-align:middle;text-align:right;width:130px"><a target="_blank" href="https://assets.warhammer-community.com/eng_11-06_warhammer40000_faction_pack_adeptus_titanicus-w2uqxtzclf-9hqf20r3dc.pdf" class="book_last_update">June 2026</a></td></tr><tr style="display:none" class="elShowHistory  max"><td colspan="2"></td><td style="vertical-align:middle;text-align:center;width:60px">10</td><td style="vertical-align:middle;text-align:center;width:95px">1.0</td><td style="vertical-align:middle;text-align:right;width:130px"><a target="_blank" href="https://assets.warhammer-community.com/eng_08-10_warhammer40000_faction_pack_adeptus_titanicus-ovucwiw1o6-jmk9dpdulj.pdf" class="book_last_update">October 2025</a></td></tr>
+<tr class="book_tight bkg1"><td colspan="5">&nbsp;<img src="/wh40k11ed/img/expansions/ChapterApproved_logo2.png"class="book_img"> Munitorum Field Manual</td></tr>
+<tr class=" bkg1"><td style="text-align:left;max-width:320px"><span class="book_wide">&nbsp;<img src="/wh40k11ed/img/expansions/ChapterApproved_logo2.png"class="book_img"> Munitorum Field Manual</span></td><td style="vertical-align:middle;text-align:center;width:160px">Expansion</td><td style="vertical-align:middle;text-align:center;width:60px">11</td><td style="vertical-align:middle;text-align:center;width:95px">1.4</td><td style="vertical-align:middle;text-align:right;width:130px"><a target="_blank" href="https://mfm.warhammer-community.com/" class="book_last_update"></a></td></tr>
+</tbody></table>
+<script>
+function toggleShowHistory() {
+  const elements = document.getElementsByClassName("elShowHistory");
+  const btn = document.getElementById("btnShowHistoryText");
+  const wrap = document.getElementById("btnShowHistory");
+  const isHidden = elements[0].style.display === "none";
+  for (let i = 0; i < elements.length; i++) {
+    if (isHidden) {
+      elements[i].style.display = "table-row";
+    } else {
+      elements[i].style.display = "none";
+    }
+  }
+  btn.textContent = isHidden ? "Hide History" : "Show History";
+  if (wrap) {
+    if (isHidden) {wrap.classList.add("btnShowHistoryHide");}
+    else {wrap.classList.remove("btnShowHistoryHide");}
+  }
+}
+</script>
+
+<div><br></div>
+<a name="Keywords"></a>
+<h2 id="Keywords" style="display:flex; align-items:baseline;">Keywords</h2>
+<span><div class="ib8"><span class="tooltipkAdeptusTitanicus" data-tooltip-content="#tooltip_contentAdeptusTitanicus" data-tooltip-anchor="#tooltip_contentAdeptusTitanicus"><span class="kwb kwbd">ADEPTUS</span> <span class="kwb kwbd">TITANICUS</span></span> (4); </div><div class="ib8"><span class="tooltipkFrame" data-tooltip-content="#tooltip_contentFrame" data-tooltip-anchor="#tooltip_contentFrame"><span class="kwb kwbd">FRAME</span></span> (4); </div><div class="ib8"><span class="tooltipkImperium" data-tooltip-content="#tooltip_contentImperium" data-tooltip-anchor="#tooltip_contentImperium"><span class="kwb kwbd">IMPERIUM</span></span> (4); </div><div class="ib8"><span class="tooltipkTitanic" data-tooltip-content="#tooltip_contentTitanic" data-tooltip-anchor="#tooltip_contentTitanic"><span class="kwb kwbd">TITANIC</span></span> (4); </div><div class="ib8"><span class="tooltipkTowering" data-tooltip-content="#tooltip_contentTowering" data-tooltip-anchor="#tooltip_contentTowering"><span class="kwb kwbd">TOWERING</span></span> (4); </div><div class="ib8"><span class="tooltipkVehicle" data-tooltip-content="#tooltip_contentVehicle" data-tooltip-anchor="#tooltip_contentVehicle"><span class="kwb kwbd">VEHICLE</span></span> (4); </div><div class="ib8"><span class="tooltipkWalker" data-tooltip-content="#tooltip_contentWalker" data-tooltip-anchor="#tooltip_contentWalker"><span class="kwb kwbd">WALKER</span></span> (4)</div></span>
+<br><br><span class="itc"><i>The keywords presented in this section have a number of special features:<br><ul><li><span class="kwb">CLICK</span> on the link to open the tooltip.</li><li>The number in parentheses indicates the number of datasheets containing this keyword. This number represents the total number of datasheets in the faction, regardless of the filter.</li><li>The list does not include named keywords that match the datasheet’s name (unless there are other datasheets with such a keyword).</li></ul></i></span>
+<div class="noprint page_breaker_ads"><div class="page_ads_br1"></div><div class="page_ads_br2"></div>
+<div class="page_ads_wrapper"><div id="ezoic-pub-ad-placeholder-105"> </div><script>ezstandalone.cmd.push(function() {ezstandalone.showAds(105)});</script><div id="yandex_rtb_R-A-3376916-7"></div>
+<script type="text/javascript">
+$(document).ready(function(){
+var CookieSet = $.cookie('no_ads_for_boosters');
+
+if (jQuery.cookie('no_ads_for_boosters')!='turn_it_off') {
+window.yaContextCb.push(()=>{
+	Ya.Context.AdvManager.render({
+		"blockId": "R-A-3376916-7",
+		"renderTo": "yandex_rtb_R-A-3376916-7"
+	})
+})
+}});</script></div>
+<div class="page_ads_br2"></div><div class="page_ads_br3"></div></div><a name="Army-Rules"></a><h2 id="Army-Rules" class="outline_header">Army Rules</h2><div class="Columns2"><div class="BreakInsideAvoid"><a name="Towering-Example"></a><h3 id="Towering-Example" class="dsColorGradTL font-white padHeader">Towering Example</h3>When mustering your army, if your Army Faction is <span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span>, ignore the Select Detachment Rules step. In the Select Warlord step, select one <span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span> model from your army to be your <span class="kwb">WARLORD</span>, even though that model does not have the <span class="kwb">CHARACTER</span> keyword. Your army has the Take and Hold force disposition.<div ><br></div></div><div class="BreakInsideAvoid"><a name="Titanic-Support"></a><h3 id="Titanic-Support" class="dsColorGradTL font-white padHeader">Titanic Support</h3>If every model in your army has the <span class="kwb">IMPERIUM</span> keyword, you can include 1 <span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span> model in your army, even if it does not have the <span class="tooltip00005" data-tooltip-content="#tooltip_content00005"><span class="tt kwbu">Faction</span> <span class="tt kwbu">keyword</span></span> you selected in the Select Army Faction step.<div ><br></div></div><div class="BreakInsideAvoid"><a name="Super-heavy-Walker"></a><h3 id="Super-heavy-Walker" class="dsColorGradTL font-white padHeader">Super-heavy Walker</h3>Each time a model with this ability makes a <b><span class="tooltip00007" data-tooltip-content="#tooltip_content00007"><span class="tt kwbu">Normal</span></span></b>, <b><span class="tooltip00008" data-tooltip-content="#tooltip_content00008"><span class="tt kwbu">Advance</span></span></b> or <b><span class="tooltip00013" data-tooltip-content="#tooltip_content00013"><span class="tt kwbu">Fall</span> <span class="tt kwbu">Back</span> <span class="tt kwbu">move</span></span></b>, it can move over models (excluding <span class="kwb">TITANIC</span> models) and <b><a href="/wh40k11ed/the-rules/core-rules/#Terrain">terrain features</a></b> that are 4" or less in height as if they were not there.<div ><br></div></div><div class="BreakInsideAvoid"><div class="BreakInsideAvoid frameLight Corner25" style="max-width:100%;width:100%;box-sizing:border-box;min-width:0;"><div class="Corner25_in"><a name="Titanicus-Traitoris"></a><h3 id="Titanicus-Traitoris" class="dsColorGradTL font-white padHeader">Titanicus Traitoris</h3>You can use the <span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span> <a href="/wh40k11ed/the-rules/core-rules/#Datasheets">datasheets</a> in this document to represent <span class="kwb">TITANICUS</span> <span class="kwb">TRAITORIS</span> models if you wish. To do so, on those datasheets and on this Army Rules card, replace all instances of the <span class="kwb">IMPERIUM</span> keyword with <span class="kwb">CHAOS</span>, and replace all instances of the <span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span> <span class="tooltip00005" data-tooltip-content="#tooltip_content00005"><span class="tt kwbu">Faction</span> <span class="tt kwbu">keyword</span></span> with <span class="kwb">TITANICUS</span> <span class="kwb">TRAITORIS</span>. For the purposes of points values, use those published for the equivalent <span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span> models.</div></div><div ><br></div></div><div class="BreakInsideAvoid"><b>Designer’s Note:</b> <i>Titans are colossal war machines that can turn the tide of battle. As such, the points values of some of these models are greater than even Onslaught-sized battles can accommodate; they are designed for battlefields of the most apocalyptic scale you can imagine!</i></div></div>
+<div style="clear:both"></div>
+<hr>
+<!--noindex--><div class="tooltip_templates"><span id="tooltip_contentAdeptusTitanicus"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <a href="/wh40k11ed/factions/adeptus-titanicus"><span class="kwb">ADEPTUS</span> <span class="kwb">TITANICUS</span></a> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_content00001"><div class="tooltip_header">13.01 Placing Terrain</div><a href="/wh40k11ed/the-rules/core-rules/#Placing-Terrain"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+Before the battle, place a selection of <b><b><a href="/wh40k11ed/the-rules/core-rules/#Terrain">terrain features</a></b></b> on the battlefield using one or more of the following methods:<br><ul><li>Place a well-defined boundary (such as a base or mat) in each location you want to furnish with terrain, then place one or more <b>terrain features</b> wholly within that boundary.</li><li>Place one <b>terrain feature</b> directly on the battlefield.</li><li>Place two or more <b>terrain features</b> directly on the battlefield in such a way that together they define the boundary of an area.</li></ul><br>In each case, the area of the battlefield occupied by that boundary or <b>terrain feature</b> is known as a <b>terrain area</b>. A mission’s deployment map may define the location and dimensions of each <b>terrain area</b>. Otherwise, players must agree on this before the battle.
+<div class="faqErrataStrat"><div class="faqErrataSpoiler"><div class="faqErrataHead"><h3>FAQ</h3></div><div class="faqErrataSpoilerBody"><div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>Are models that are within the boundary of a <b><b><a href="/wh40k11ed/the-rules/core-rules/#Placing-Terrain">terrain area</a></b></b>, but not on the ground floor of a <b>terrain area</b> (e.g. overhanging parts of <span class="kwb">FRAME</span> <span class="kwb">VEHICLES</span> or models on <b><b><a href="/wh40k11ed/the-rules/core-rules/#Terrain">terrain features</a></b></b> that are within that <b>terrain area</b>) within that <b>terrain area</b>?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">Yes</div></td></tr></tbody></table></div>
+</div></div></div>
+</span></div><div class="tooltip_templates"><span id="tooltip_content00002"><div class="tooltip_header">17.02 Frame</div><a href="/wh40k11ed/the-rules/core-rules/#Frame"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+Some models do not have a base; many of these are <span class="kwb">MONSTER</span>/<span class="kwb">VEHICLE</span> models. Such models have the <span class="kwb">FRAME</span> keyword, as do some other large models. Whenever a rule refers to a model’s position in relation to anything else on the battlefield (e.g. when <a href="/wh40k11ed/the-rules/core-rules/#Measuring-Distances">measuring distances</a>), if that model has the <span class="kwb">FRAME</span> keyword, unless otherwise stated, measure to and from the closest point on that model (so not necessarily from its base, if it has one).<br><br>When rotating a <span class="kwb">FRAME</span> model as part of a move, if that model does not have a base, turn it any amount around its central axis, while keeping it upright.
+<div class="faqErrataStrat"><div class="faqErrataSpoiler"><div class="faqErrataHead"><h3>FAQ</h3></div><div class="faqErrataSpoilerBody"><div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>Are models that are within the boundary of a <b><b><span class="tooltip00001" data-tooltip-content="#tooltip_content00001"><span class="tt kwbu">terrain</span> <span class="tt kwbu">area</span></span></b></b>, but not on the ground floor of a <b>terrain area</b> (e.g. overhanging parts of <span class="kwb">FRAME</span> <span class="kwb">VEHICLES</span> or models on <b><b><a href="/wh40k11ed/the-rules/core-rules/#Terrain">terrain features</a></b></b> that are within that <b>terrain area</b>) within that <b>terrain area</b>?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">Yes</div></td></tr></tbody></table></div>
+</div></div></div>
+</span></div><div class="tooltip_templates"><span id="tooltip_contentFrame"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <span class="tooltip00002" data-tooltip-content="#tooltip_content00002"><span class="kwb kwbu">FRAME</span></span> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_contentImperium"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <span class="kwb">IMPERIUM</span> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_contentTitanic"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <span class="kwb">TITANIC</span> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_content00003"><div class="tooltip_header">22.05 Plunging Fire</div><a href="/wh40k11ed/the-rules/core-rules/#Plunging-Fire"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+Each time a model makes a ranged attack that targets a <b><b><a href="/wh40k11ed/the-rules/core-rules/#Visibility">visible</a></b></b> unit containing one or more models on ground level, if one or more of the following conditions apply, improve the <b>BS</b> characteristic of that attack by 1:<br><ul><li>The attacking model is on a section of a <b><b><a href="/wh40k11ed/the-rules/core-rules/#Terrain">terrain feature</a></b></b> that is 3" or more in height.</li><li>The attacking model has the <span class="kwb">TOWERING</span> keyword and the target unit is within 12".</li></ul>
+</span></div><div class="tooltip_templates"><span id="tooltip_contentTowering"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <span class="tooltip00003" data-tooltip-content="#tooltip_content00003"><span class="kwb kwbu">TOWERING</span></span> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_contentVehicle"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <span class="kwb">VEHICLE</span> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_contentWalker"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><p>The <span class="kwb">WALKER</span> keyword is used in the following Adeptus Titanicus datasheets:</p><span class="contents"><div class="kwVisChk" style="clear:both; margin-bottom:8px;"><div class="BatRole">Titanic</div><div class="BreakInsideAvoid"><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan" class="cnClr">Reaver Titan</a></div></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan" class="cnClr">Warbringer Nemesis Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan" class="cnClr">Warhound Titan</a></div><div style="clear:both"></div><div  class="clFl sForgeWorld" style="padding: 1px 10px 1px 15px"><a href="/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan" class="cnClr">Warlord Titan</a></div><div style="clear:both"></div></div></span></span></span></div><div class="tooltip_templates"><span id="tooltip_content00004"><div class="tooltip_header">02.05.01 Using Keywords & Mixed Keywords in Units</div><a href="/wh40k11ed/the-rules/rules-appendix/#Using-Keywords-Mixed-Keywords-in-Units"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+When using <a href="/wh40k11ed/the-rules/core-rules/#5.-Keywords">keywords</a>, the following points apply:<br><ul><li>A unit has all the keywords of all models in that unit. A model only has its own keywords.</li><li>If a rule specifies that it applies to a unit with a keyword, it applies to a unit which includes one or more models with that keyword.</li><li>If a rule specifies that it applies to a model with a keyword, it only applies to a model with that keyword.</li><li>If a rule specifies that it applies to ‘non-<span class="kwb">KEYWORD</span>’ models/units, it only applies to models/units that do not have that keyword. For example, if a rule applies to non-<span class="kwb">VEHICLE</span> units, it only applies to units that do not have the <span class="kwb">VEHICLE</span> keyword.</li><li>Some units can contain models that have different keywords. While this is the case, such a unit is considered to have all of the keywords of all of its models, and so is affected by any rule that applies to units with any of those keywords. Remember that attacks are made against units, not models.</li><li>If a rule only applies to models with a specific keyword, then it instead only applies to models in such a unit that have the correct keyword.</li><li>A rule with a comma-separated list of keywords, or a series of keywords separated by slashes (‘/’), or two keywords separated by the word ‘or’ (e.g. ‘an <span class="kwb">IMMORTALS</span>, <span class="kwb">DEATHMARKS</span> or <span class="kwb">LYCHGUARD</span> unit’) refers to a model/unit that has any one of those keywords.</li><li>A rule with multiple adjacent keywords (e.g. ‘an <span class="kwb">AELDARI</span> <span class="kwb">GUARDIANS</span> unit’) only refers to a model/unit that has all of those keywords.</li><li>Some older rules use keywords without specifying model or unit: for example, <span class="kwb">MONSTER</span>/<span class="kwb">VEHICLE</span> or <span class="kwb">TRANSPORT</span>. These rules refer to units with those keywords.</li><li>Singular and plural instances of the same keyword function in the same way.</li></ul>
+</span></div><div class="tooltip_templates"><span id="tooltip_content00005"><div class="tooltip_header">Keywords</div><a href="/wh40k11ed/the-rules/core-rules/#5.-Keywords"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+Datasheets have a list of keywords, separated into faction keywords and other keywords. The former are used when deciding which models to include in your army, but otherwise both are functionally the same. Keywords appear in full capitals, in <span class="kwb">KEYWORD</span> <span class="kwb">BOLD</span>.<br><br>Some rules are linked to one or more keywords. For example, a rule might say that it applies to <span class="kwb">INFANTRY</span> units. This means it only applies to units that have the <span class="kwb">INFANTRY</span> keyword. Singular and plural instances of the same keyword function in the same way.<br><br><div class="BreakInsideAvoid frameDark CornerSeeAlso"><span class="hi_custom">SEE ALSO</span><br><ul><li>Using Keywords & Mixed Keywords in Units <span class="tooltip00004" data-tooltip-content="#tooltip_content00004"><span class="tt kwbu">02.05.01</span></span></li></ul></div>
+<div class="faqErrataStrat"><div class="faqErrataSpoiler"><div class="faqErrataHead"><h3>FAQ</h3></div><div class="faqErrataSpoilerBody"><div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>Do rules that affect a keyword include multi-word keywords that contain that keyword? For example, would rules that affect <span class="kwb">COMMISSAR</span> units affect a unit that has the <span class="kwb">COMMISSAR</span> <span class="kwb">GRAVES</span> keyword?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">No.</div></td></tr></tbody></table></div>
+</div></div></div>
+</span></div><div class="tooltip_templates"><span id="tooltip_content00006"><div class="tooltip_header">03.04 Engagement</div><a href="/wh40k11ed/the-rules/core-rules/#Engagement"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+<div class="Columns2"><div class="BreakInsideAvoid">A model’s <b>engagement range</b> is the area of the battlefield within 2" horizontally and 5" vertically of it.<br><ul><li>While a friendly model is within <b>engagement range</b> of one or more enemy models, those models – and the units they belong to – are <b>engaged</b> with each other.</li><li>While a unit contains no <b>engaged</b> models, that unit is <b>unengaged</b>.</li></ul><br></div><div class="blackComment"><div class="bcHeader">WHAT IS ENGAGEMENT?</div>While opposing models are within each other’s <b>engagement range</b>, they are able to fight in vicious melee, so unless they are seeking to make melee attacks, models should keep out of their foes’ reach.</div></div><br><div class="center"><div class="BreakInsideAvoid" style="max-width:990px"><div class=" img-opa" style="display:flex;justify-content:center;align-items:center;"><div style="position:relative;display:inline-block;"><img border="0" src="/wh40k11ed/img/ex7.png" style="outline:3px solid #000; outline-offset:-3px; margin:0 0px -10px 0;"><div class="h_img11">ENGAGEMENT</div></div></div><div class="BreakInsideAvoid frameDark Corner36">These two units have at least one model within 2" of the opposing unit, and are therefore <b>engaged</b> with each other.</div></div></div>
+<div class="faqErrataStrat"><div class="faqErrataSpoiler"><div class="faqErrataHead"><h3>FAQ</h3></div><div class="faqErrataSpoilerBody"><div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>Does my model or unit become <b><b><a href="/wh40k11ed/the-rules/core-rules/#Engagement">engaged</a></b></b> while moving through a enemy units <b><b><a href="/wh40k11ed/the-rules/core-rules/#Engagement">engagement range</a></b></b> during a move?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">No</div></td></tr></tbody></table></div>
+</div></div></div>
+</span></div><div class="tooltip_templates"><span id="tooltip_content00007"><div class=" BreakInsideAvoid">
+<div class="str11Wrap">
+<div class="str11BodyWrap">
+	<div class="str11HeadBlock str11Name">NORMAL MOVE<span class="h_number">09.05</span></div>
+	
+</div>
+<div class="str11BodyWrap">
+	<div class="str11TextWrap">
+		
+		
+		<div class="str11Text"><div class="strGreyBg"><b>MAXIMUM DISTANCE:</b> Your unit’s <b>M</b> characteristic.</div><div class="str11Line"></div><b>ELIGIBLE IF:</b> Your unit is on the battlefield and <b><b><span class="tooltip00006" data-tooltip-content="#tooltip_content00006"><span class="tt kwbu">unengaged</span></span></b></b>.<br><div class="str11Line"></div><b>EFFECT:</b> Your unit moves as described in Moving (<span class="kwn"><a href="/wh40k11ed/the-rules/core-rules/#Moving">03</a></span>).<br><div class="str11Line"></div><b>AFTER MOVING:</b> Your unit must be <b>unengaged</b>.</li></ul></div>
+	</div>
+	<div class="str11Bg str11AMoveBg"><div class="str11Icon str11AMove"></div></div>
+</div>
+</div></div></span></div><div class="tooltip_templates"><span id="tooltip_content00008"><div class=" BreakInsideAvoid">
+<div class="str11Wrap">
+<div class="str11BodyWrap">
+	<div class="str11HeadBlock str11Name">ADVANCE MOVE<span class="h_number">09.06</span></div>
+	
+</div>
+<div class="str11BodyWrap">
+	<div class="str11TextWrap">
+		
+		
+		<div class="str11Text"><div class="strGreyBg"><b>MAXIMUM DISTANCE:</b> Advance roll + your unit’s <b>M</b> characteristic.</div><div class="str11Line"></div><b>ELIGIBLE IF:</b> Your unit is on the battlefield and <b><b><span class="tooltip00006" data-tooltip-content="#tooltip_content00006"><span class="tt kwbu">unengaged</span></span></b></b>.<br><div class="str11Line"></div><b>EFFECT:</b> Your unit moves as described in Moving (<span class="kwn"><a href="/wh40k11ed/the-rules/core-rules/#Moving">03</a></span>).<br><div class="str11Line"></div><b>BEFORE MOVING:</b> Make an <b>advance roll</b> by rolling one D6.<br><div class="str11Line"></div><b>AFTER MOVING:</b><br><ul><li>Your unit must be <b>unengaged</b>.</li><li>Until the end of the turn, unless otherwise stated, your unit is <u>not</u> <b><a href="/wh40k11ed/the-rules/core-rules/#2.-Charge-Step">eligible to declare a charge</a></b> or <b><b><a href="/wh40k11ed/the-rules/core-rules/#Starting-an-Action">start an action</a></b></b>.</li></ul></div>
+	</div>
+	<div class="str11Bg str11AMoveBg"><div class="str11Icon str11AMove"></div></div>
+</div>
+</div></div></span></div><div class="tooltip_templates"><span id="tooltip_content00009"><div class="abWrap BreakInsideAvoid"><div class="abNameWrap"><div class="abName">[HAZARDOUS]<span class="h_number">24.15</span></div><div class="abIcon"></div></div><p class="ShowFluff abLegend">Weapons powered by unstable and dangerous energy sources pose a substantial risk to the wielder and those that stand beside them.</p>Each time a unit is <b><b><a href="/wh40k11ed/the-rules/core-rules/#2.-Shoot">selected to shoot</a></b></b> or <b><b><a href="/wh40k11ed/the-rules/core-rules/#When-a-Unit-is-Selected-to-Fight">selected to fight</a></b></b>, after that unit has resolved all of its attacks, make a number of <b>hazard rolls</b> (<span class="kwn"><a href="/wh40k11ed/the-rules/core-rules/#Hazard-Rolls">06.03</a></span>) for that unit equal to the number of <span class="kwb">[HAZARDOUS]</span> weapons you selected in the <a href="/wh40k11ed/the-rules/core-rules/#1.-Select-Weapons">Select Weapons</a> step.</div></span></div><div class="tooltip_templates"><span id="tooltip_content00010"><div class="tooltip_header">06.02.01 Normal Damage</div><a href="/wh40k11ed/the-rules/rules-appendix/#Normal-Damage"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+Normal Damage is damage that was inflicted on a model as a result of a weapon’s <b>D</b> characteristic, rather than by other means such as <b><a href="/wh40k11ed/the-rules/core-rules/#Mortal-Wounds">mortal wounds</a></b>. <b>Mortal wounds</b> dealt in addition to normal damage from an attack are part of that same attack.
+</span></div><div class="tooltip_templates"><span id="tooltip_content00011"><div class="tooltip_header">06.02 Mortal Wounds</div><a href="/wh40k11ed/the-rules/core-rules/#Mortal-Wounds"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+Some attacks or rules inflict <b>mortal wounds</b> on units. Each time a unit suffers one or more <b>mortal wounds</b>, its controlling player must resolve the following sequence for each of those <b>mortal wounds</b>, until either all of them have been inflicted or that unit is <b><b><a href="/wh40k11ed/the-rules/rules-appendix/#Destroyed">destroyed</a></b></b>:<br><ol><li><b>Select Model:</b> Select one model in that unit by following the first instruction below that applies:<br><br><div class="BreakInsideAvoid"  style="""><table border="0" bordercolor="#888" cellpadding="4" cellspacing="0" style="border-collapse:collapse;border-width:0px"><tbody><tr><td><table class=" customTable" border="1" bordercolor="#888" cellpadding="4" style="border-collapse:collapse;border-color:#888888;border-width:0px"><tbody><tr><td style="border-width:1px 0 1px 1px;border-style:solid none solid solid;text-align:center;vertical-align:middle;width:40px;height:0px;"><div class="img-inv"><img border="0" src="/wh40k11ed/img/ArrowRight.png" style="margin:0px"></div></td><td style="border-width:1px 1px 1px 0;border-style:solid solid solid none;vertical-align:bottom;width:440px;height:0px;">If a non-<span class="kwb">CHARACTER</span> model in that unit has lost one or more wounds, you must select that model.</td></tr><tr><td style="border-width:1px 0 1px 1px;border-style:solid none solid solid;text-align:center;vertical-align:middle;width:40px;height:0px;"><div class="img-inv"><img border="0" src="/wh40k11ed/img/ArrowRight.png" style="margin:0px"></div></td><td style="border-width:1px 1px 1px 0;border-style:solid solid solid none;vertical-align:bottom;width:440px;height:0px;">Otherwise, if that unit contains one or more non-<span class="kwb">CHARACTER</span> models, you must select one of those models.</td></tr><tr><td style="border-width:1px 0 1px 1px;border-style:solid none solid solid;text-align:center;vertical-align:middle;width:40px;height:0px;"><div class="img-inv"><img border="0" src="/wh40k11ed/img/ArrowRight.png" style="margin:0px"></div></td><td style="border-width:1px 1px 1px 0;border-style:solid solid solid none;vertical-align:bottom;width:440px;height:0px;">Otherwise, if one or more <span class="kwb">CHARACTER</span> models in that unit have lost one or more wounds, you must select one of those models.</td></tr><tr><td style="border-width:1px 0 1px 1px;border-style:solid none solid solid;text-align:center;vertical-align:middle;width:40px;height:0px;"><div class="img-inv"><img border="0" src="/wh40k11ed/img/ArrowRight.png" style="margin:0px"></div></td><td style="border-width:1px 1px 1px 0;border-style:solid solid solid none;vertical-align:bottom;width:440px;height:0px;">Otherwise, you must select one <span class="kwb">CHARACTER</span> model in that unit.</td></tr></tbody></table></td></tr></tbody></table></div></li><br><li><b>Resolve Damage:</b> The selected model loses 1 wound. If this reduces that model’s remaining wounds to 0, it is <b>destroyed</b>.</li></ol><br><span class="hi_custom">MORTAL WOUNDS AND NORMAL DAMAGE</span><br>When resolving <b>attack dice</b>, if those attacks inflict a mixture of both <b>mortal wounds</b> and <a href="/wh40k11ed/the-rules/rules-appendix/#Normal-Damage">normal damage</a>, resolve all of the normal damage first, then resolve all of the <b>mortal wounds</b>.<br><br><div class="BreakInsideAvoid frameDark CornerSeeAlso"><span class="hi_custom">SEE ALSO</span><br><ul><li>Normal Damage  <span class="kwn"><span class="tooltip00010" data-tooltip-content="#tooltip_content00010"><span class="tt kwbu">06.02.01</span></span></span></li></ul></div>
+<div class="faqErrataStrat"><div class="faqErrataSpoiler"><div class="faqErrataHead"><h3>FAQ</h3></div><div class="faqErrataSpoilerBody"><div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>I have a rule that triggers when a <b><b><a href="/wh40k11ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a></b></b> is allocated to a model, when does this happen?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">When you select a model in the <b>Select Model step</b> of <b>Mortal Wounds</b> (<span class="kwn"><a href="/wh40k11ed/the-rules/core-rules/#Mortal-Wounds">06.02</a></span>).</div></td></tr></tbody></table></div>
+</div></div></div>
+</span></div><div class="tooltip_templates"><span id="tooltip_content00012"><div class="tooltip_header">06.03 Hazard Rolls</div><a href="/wh40k11ed/the-rules/core-rules/#Hazard-Rolls"><div class="tooltip_link"></div></a><div style="clear:both"></div>
+To make a <b>hazard roll</b> for a unit, roll one D6: on a 1-2, that roll fails and that unit suffers 1 <b><b><a href="/wh40k11ed/the-rules/core-rules/#Mortal-Wounds">mortal wound</a></b></b>, or 3 <b>mortal wounds</b> instead if each model in that unit is a <span class="kwb">MONSTER</span>/<span class="kwb">VEHICLE</span> model. If more than one <b>hazard roll</b> is required for a unit, make all of those rolls simultaneously.
+<div class="faqErrataStrat"><div class="faqErrataSpoiler"><div class="faqErrataHead"><h3>FAQ</h3></div><div class="faqErrataSpoilerBody"><div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>I failed <b><b><a href="/wh40k11ed/the-rules/core-rules/#Hazard-Rolls">hazard rolls</a></b></b> from <span class="kwb"><span class="tooltip00009" data-tooltip-content="#tooltip_content00009"><span class="tt kwbu">[Hazardous]</span></span></span> weapons, do those <b><b><span class="tooltip00011" data-tooltip-content="#tooltip_content00011"><span class="tt kwbu">mortal</span> <span class="tt kwbu">wounds</span></span></b></b> have to be allocated to the models with the <span class="kwb">[HAZARDOUS]</span> weapons?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">No, you allocate the <b>mortal wounds</b> to the unit as per <b>Mortal Wounds</b> (<span class="kwn"><span class="tooltip00011" data-tooltip-content="#tooltip_content00011"><span class="tt kwbu">06.02</span></span></span>). (This represents Bob the guardsmen picking up his fallen squad mates plasma gun or that the twisting power of James the Chaos Sorcerer pulling his followers into the warp.)</div></td></tr></tbody></table></div>
+<div class="faq BreakInsideAvoid"><table width="100%" border="0" bordercolor="#888" cellspacing="0" cellpadding="4"><tr class="faq_Q_line"><td align="center" class="faq_Q">Q:</td><td><i>If a rule says my unit must make a <b><b><a href="/wh40k11ed/the-rules/core-rules/#Hazard-Rolls">hazard roll</a></b></b> does every model in the unit make a <b>hazard roll</b>?</i></td></tr><tr><td align="center" class="faq_A">A:</td><td><div style="margin-top:1px">No, the unit would make 1 single <b>hazard roll</b>.</div></td></tr></tbody></table></div>
+</div></div></div>
+</span></div><div class="tooltip_templates"><span id="tooltip_content00013"><div class=" BreakInsideAvoid">
+<div class="str11Wrap">
+<div class="str11BodyWrap">
+	<div class="str11HeadBlock str11Name">FALL-BACK MOVE<span class="h_number">09.07</span></div>
+	
+</div>
+<div class="str11BodyWrap">
+	<div class="str11TextWrap">
+		
+		
+		<div class="str11Text"><div class="strGreyBg"><b>MAXIMUM DISTANCE:</b> Your unit’s <b>M</b> characteristic.</div><div class="str11Line"></div><b>ELIGIBLE IF:</b> Your unit is <b>engaged</b>.<br><div class="str11Line"></div><b>EFFECT:</b> Your unit moves as described in Moving (<span class="kwn"><a href="/wh40k11ed/the-rules/core-rules/#Moving">03</a></span>).<br><div class="str11Line"></div><b>BEFORE MOVING:</b> Select fall-back mode:<br><ul class="arrR"><li><span class="redPad">Ordered Retreat:</span> If your unit is not <b><b><a href="/wh40k11ed/the-rules/core-rules/#3.-Battle-shock-Step">battle-shocked</a></b></b>, you can select this mode.</li><li><span class="redPad">Desperate Escape:</span> Otherwise, you must select this mode. Make a <b>hazard roll</b> for each model in your unit (<span class="kwn"><span class="tooltip00012" data-tooltip-content="#tooltip_content00012"><span class="tt kwbu">06.03</span></span></span>).</li></ul><div class="str11Line"></div><b>WHILE MOVING:</b><br><ul><li><span class="redPad">Desperate Escape:</span> Each model that is moved can be moved through enemy models.</li></ul><div class="str11Line"></div><b>AFTER MOVING:</b><br><ul><li>Your unit must be <b><b><span class="tooltip00006" data-tooltip-content="#tooltip_content00006"><span class="tt kwbu">unengaged</span></span></b></b>.</li><li>Until the end of the turn, unless otherwise stated, your unit is <u>not</u> <b><b><a href="/wh40k11ed/the-rules/core-rules/#2.-Shoot">eligible to shoot</a></b></b>, <b><a href="/wh40k11ed/the-rules/core-rules/#2.-Charge-Step">declare a charge</a></b> or <b><b><a href="/wh40k11ed/the-rules/core-rules/#Starting-an-Action">start an action</a></b></b>.</li><li><span class="redPad">Desperate Escape:</span> If your unit is not <b>battle-shocked</b>, you must make a <b>battle-shock roll</b> for your unit (<span class="kwn"><a href="/wh40k11ed/the-rules/core-rules/#Battle-shock-Rolls">01.07</a></span>).</li></ul></div>
+	</div>
+	<div class="str11Bg str11AMoveBg"><div class="str11Icon str11AMove"></div></div>
+</div>
+</div></div></span></div><div class="tooltip_templates"><span id="tooltip_contentTooltipContents"><div class="tooltipSelectionWarning" style="display:none"><div class="WahapediaWarningSign"></div>This datasheet does not meet the selection criteria (see <b>Settings</b> tab).</div><span class="tooltipFilterBody"><div style="display:flex;justify-content:center;align-items:center;width:100%;min-width:0;box-sizing:border-box;"><div class="BreakInsideAvoid frameDark Corner31" style="max-width:100%;box-sizing:border-box;min-width:0;"><span ><div class="contents_header">Contents</div><div class="mw3 i10 ATln"><a href="#Books" class="cnClrInv"><b>Books</b></a></div><div class="mw3 i10 ATln"><a href="#FAQ" class="cnClrInv"><b>FAQ</b></a></div><div class="mw3 i10 ATln"><a href="#Keywords" class="cnClrInv"><b>Keywords</b></a></div><div class="mw3 i10 ATln"><a href="#Army-Rules" class="cnClrInv"><b>Army Rules</b></a></div><div class="mw3 i30 ATln"><a href="#Towering-Example" class="cnClrInv">Towering Example</a></div><div class="mw3 i30 ATln"><a href="#Titanic-Support" class="cnClrInv">Titanic Support</a></div><div class="mw3 i30 ATln"><a href="#Super-heavy-Walker" class="cnClrInv">Super-heavy Walker</a></div><div class="mw3 i30 ATln"><a href="#Titanicus-Traitoris" class="cnClrInv">Titanicus Traitoris</a></div></span></div></div></span></span></div><div class="tooltip_templates"><span id="tooltip_contentLoginForm"><form action="/login.php" method="POST" id="disable-ads">
+<div class="lfWrapper">
+<button type="button" class="lfClose" id="btnCloseLogin" aria-label="Close"></button>
+<h4 style="padding-bottom:6px">Disable Ads</h4>
+<label class="lfLabel" for="email" id="email">E-mail:</label> <input id="user-text-field" type="email" class="lfInput_w lfInput" autocomplete="username" name="email" id="email" value="" />
+<br><div><label class="lfLabel" for="passcode" type="password">Pin code:</label> <input id="password-text-field" type="password" autocomplete="current-password" style="width:68px" class="lfInput" name="passcode" value="" /> <button class="lfButton" id="btnDisableAds">Disable Ads</button></div>
+<input type="text" style="display:none"  name="g-recaptcha-response" id="captcha-box"></input>
+<button class="lfDisableAds" id="btnGetPin">Get new pin code</button>
+<br><a href="https://boosty.to/wahapedia">Boosty</a> subscribers may disable ads:
+<br>1. Enter e-mail you have used to login on Boosty.
+<br>2. Press <b>Get new pin code</b> button (if you don’t have it already)
+<br>3. Enter pin code.
+<br>
+<br><i>Note that login database updated once a day. So, if you are a new booster - try tomorrow. And thank you!</i>
+</div>
+</form></span></div><!--/noindex-->
+<div id="wahTooltipsHost"></div>
+<div style="clear:both"></div>
+<!--noindex-->
+
+</div>
+</div>
+<div class="noprint"><div id="btnBackToTop"></div></div>
+<div class="tooltipContents btnContents_AL" data-tooltip-content="#tooltip_contentTooltipContents" id="btnContents"></div>
+<div class="tooltipArmyList" data-tooltip-content="#tooltip_contentArmyList" id="btnArmyList"></div>
+<div class="tooltip_templates"><span id="tooltip_contentArmyList"></span></div>
+<script type='text/javascript'>
+$(window).scroll(function() {
+if ($(this).scrollTop() >= 200) {
+$('#btnBackToTop').fadeIn(300); 
+} else {
+$('#btnBackToTop').fadeOut(300); 
+}
+});
+
+$('#btnBackToTop').on('touchstart', function () {
+	'use strict';
+	$(this).attr('style', 'background-image: url(/wh40k11ed/img/Button_ToTop_Hover.png); background-image: var(--button-to-top-hover)');
+	$(this).fadeIn(300);
+	return true;
+});
+
+$('#btnBackToTop').on('touchend', function () {
+	'use strict';
+	$(this).attr('style', 'background-image: url(/wh40k11ed/img/Button_ToTop.png); background-image: var(--button-to-top)');
+		$(this).fadeOut(300);
+   document.body.scrollTop = 0;
+	document.documentElement.scrollTop = 0;
+	return true;
+});
+
+$('#btnBackToTop').on('click', function () { 
+	'use strict';
+   document.body.scrollTop = 0;
+   document.documentElement.scrollTop = 0;
+	return true;
+});
+
+$('#btnArmyList').on('touchstart', function () {
+	'use strict';
+	$(this).attr('style', 'background-image: url(/wh40k11ed/img/Button_ArmyList_Hover.png); background-image: var(--button-army-list-hover)');
+	return true;
+});
+$('#btnArmyList').on('touchend', function () {
+	'use strict';
+	$(this).attr('style', 'background-image: url(/wh40k11ed/img/Button_ArmyList.png); background-image: var(--button-army-list)');
+	return true;
+});
+
+$('#btnContents').on('touchstart', function () {
+	'use strict';
+	$(this).attr('style', 'background-image: url(/wh40k11ed/img/Button_Contents_Hover.png); background-image: var(--button-contents-hover)');
+	return true;
+});
+$('#btnContents').on('touchend', function () {
+	'use strict';
+	$(this).attr('style', 'background-image: url(/wh40k11ed/img/Button_Contents.png); background-image: var(--button-contents)');
+	return true;
+});
+</script>
+<div class="noprint">
+	<div align="center"><div class="author">© Vyacheslav Maltsev 2013-2026</div></div>
+	<div style="display:flex;justify-content:center;align-items:center;">
+		<div class="social_buttons">
+			<a target="_blank" href="https://boosty.to/wahapedia"><div class="boosty_logo no_tooltip" title="Support on Boosty"></div></a>
+			<a target="_blank" href="https://vk.com/wahapedia"><div class="social_vk no_tooltip" title="Follow on VKontakte"></div></a>
+			<a target="_blank" href="https://discord.gg/VAXG2jRjXY"><div class="social_dd no_tooltip" title="Join Discord server"></div></a>
+			<a target="_blank" href="mailto:info@wahapedia.ru"><div class="social_email no_tooltip" title="Send e-mail"></div></a>
+		</div>		
+	</div>
+	<div id="ezoic-pub-ad-placeholder-103"></div><script>ezstandalone.cmd.push(function() {ezstandalone.showAds(103)});</script><div id="yandex_rtb_R-A-3376916-3"></div>
+</div>
+</div>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-57173050-3', 'auto');
+ga('send', 'pageview');
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YCMHCMW8RQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-YCMHCMW8RQ');
+</script>
+<!--/noindex-->
+</body>
+</html>

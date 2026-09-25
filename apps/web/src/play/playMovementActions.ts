@@ -6,7 +6,7 @@ import {
   declarePlayUnitTakeToSkies,
   disembarkPlayUnit,
   embarkPlayUnit,
-  fallBackPlayUnit,
+  beginFallBackPlayUnit,
   playUnitCanAdvance,
   playUnitCanEmbark,
   playUnitCanFallBack,
@@ -102,7 +102,7 @@ export function resolveFallBackPlayUnitAction(
   rules: RulesEdition,
 ): { next: BattleState; action: MovementUnitAction } | null {
   if (!playUnitCanFallBack(state, selection.unitId, selection.side, rules)) return null;
-  const next = fallBackPlayUnit(state, selection.unitId, selection.side, rules);
+  const next = beginFallBackPlayUnit(state, selection.unitId, selection.side, rules);
   if (next === state) return null;
   return {
     next,

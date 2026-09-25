@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -78,7 +78,7 @@
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| AESTRED THURGA | (diameter 32mm) | 6" | 3 | 2+ | 4 | 6+ | 1 | 4+ |
+| AESTRED THURGA | (diameter 32mm) | 6" | 3 | 2+ | 4 | 6+ | 1 | -- |
 | AGATHAE DOLAN | (diameter 25mm) | 6" | 3 | 6+ | 3 | 7+ | 1 | 4+ |
 
 #### Weapons
@@ -88,12 +88,16 @@
 | melee | -- | Blade of Vigil | -- | Melee | 4 | 2+ | 5 | -2 | 2 |
 | melee | -- | Scribe's staff | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Acts of Faith
 - Auto-Tapestry of the Emperor's Judgement: While this unit is leading a unit and contains an Aestred Thurga model, weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability
-  Recount the Deeds of the Saints: While this unit is leading a unit and contains an Agathae Dolan model, each time that unit destroys an enemy unit, you gain 1 Miracle dice. When that Agathae Dolan model is destroyed, you gain D3 Miracle dice.
+- Recount the Deeds of the Saints: While this unit is leading a unit and contains an Agathae Dolan model, each time that unit destroys an enemy unit, you gain 1 Miracle dice. When that Agathae Dolan model is destroyed, you gain D3 Miracle dice.
 
 #### Unit Composition
 - 1 Aestred Thurga - EPIC HERO
@@ -109,6 +113,7 @@
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   - SISTERS NOVITIATE SQUAD
 
 #### Points
@@ -128,7 +133,7 @@ ADEPTA SORORITAS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| EPHRAEL STERN | (diameter 32mm) | 8" | 3 | 3+ | 5 | 7+ | 1 | 4+ |
+| EPHRAEL STERN | (diameter 32mm) | 8" | 3 | 3+ | 5 | 7+ | 1 | -- |
 | KYGANIL OF THE BLOODY TEARS | (diameter 32mm) | 8" | 3 | 6+ | 3 | 7+ | 1 | 4+ |
 
 #### Weapons
@@ -138,12 +143,18 @@ ADEPTA SORORITAS
 | melee | -- | Sanctity | anti-chaos 2+ precision | Melee | 4 | 2+ | 6 | -2 | 2 |
 | melee | -- | The Outcast's Weapons | precision | Melee | 6 | 2+ | 4 | -2 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Lone Operative
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Lone Operative
-- FACTION: Acts of Faith
 - Holy Judgement: At the start of your Shooting phase, select one enemy unit within 12" of and visible to this unit's Ephrael Stern model. That unit must take a Battle-shock test, subtracting 2 from the result if it is a CHAOS unit. If the test is failed, that enemy unit suffers 3 mortal wounds.
-  Mysterious Saviours: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Mysterious Saviours: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -170,7 +181,7 @@ ADEPTA SORORITAS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| CELESTINE | (diameter 40mm) | 12" | 3 | 2+ | 5 | 6+ | 1 | 4+ |
+| CELESTINE | (diameter 40mm) | 12" | 3 | 2+ | 5 | 6+ | 1 | -- |
 | GEMINAE SUPERIA | (diameter 32mm) | 12" | 3 | 2+ | 2 | 7+ | 1 | 4+ |
 
 #### Weapons
@@ -181,13 +192,18 @@ ADEPTA SORORITAS
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 4 | -2 | 1 |
 | melee | -- | The Ardent Blade | devastating wounds | Melee | 5 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Acts of Faith
 - Healing Tears: While this unit contains a Celestine model, in your Command phase, you can return 1 destroyed Geminae Superia model to this unit.
-  Lifewards: While this unit contains one or more Geminae Superia models, Celestine has the Feel No Pain 4+ ability.
-  Miraculous Intervention: The first time this unit's Celestine model is destroyed, roll one D6 at the end of the phase. On a 2+, set that Celestine model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
+- Lifewards: While this unit contains one or more Geminae Superia models, Celestine has the Feel No Pain 4+ ability.
+- Miraculous Intervention: The first time this unit's Celestine model is destroyed, roll one D6 at the end of the phase. On a 2+, set that Celestine model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
 
 #### Unit Composition
 - 1 Celestine - EPIC HERO
@@ -225,12 +241,16 @@ ADEPTA SORORITAS
 | ranged | -- | Bolt pistols | pistol | 12" | 6 | 2+ | 4 | 0 | 1 |
 | melee | -- | Relic weapons | -- | Melee | 18 | 2+ | 5 | -2 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Acts of Faith
 - Relics of the Matriarchs: At the start of the battle round, select up to two of the abilities in the Relics of the Matriarchs section (see left). Until the start of the next battle round, this model has those abilities.
-  Solemn Procession: Each time you gain 1 Miracle dice at the start of the battle round, if this model is on the battlefield, do not roll one D6 to determine the value of that Miracle dice; it has a value of 6.
+- Solemn Procession: Each time you gain 1 Miracle dice at the start of the battle round, if this model is on the battlefield, do not roll one D6 to determine the value of that Miracle dice; it has a value of 6.
 
 #### Unit Composition
 - 1 Triumph of Saint Katherine - EPIC HERO
@@ -240,6 +260,7 @@ ADEPTA SORORITAS
 - This model can be attached to the following units:
   - BATTLE SISTERS SQUAD
   - CRUSADERS
+  - SANCTIFIERS
 
 #### Damaged: 1-6 Wounds Remaining
 - While this model has 1-6 wounds remaining, the Attacks characteristics of all of its weapons are halved, and you can only select one ability when using its Relics of the Matriarchs ability, instead of up to two.
@@ -269,13 +290,18 @@ ADEPTA SORORITAS
 | ranged | -- | Twin Ministorum heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 6 | -1 | 1 |
 | melee | -- | Mace of Castigation | -- | Melee | 4 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Leader
-- FACTION: Acts of Faith
 - The Pulpit of Saint Holline's Basilica: This unit has Stealth
   Melee attacks that target this unit have -1 to hit rolls
-  Fiery Conviction: If this model is on the battlefield at the start of your Command phase, you can choose one of the following:
+- Fiery Conviction: If this model is on the battlefield at the start of your Command phase, you can choose one of the following:
   - Discard 1 Miracle dice and gain 1CP.
   - Take a Leadership test for this model, if that test is passed, gain 1CP.
 
@@ -291,6 +317,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   - SISTERS NOVITIATE SQUAD
 
 #### Points
@@ -321,12 +348,20 @@ ADEPTA SORORITAS
 | melee | -- | Mace of Saint Praxedes | sustained hits 1 | Melee | 4 | 2+ | 6 | -2 | 2 |
 | melee | -- | Throne of Blame | extra attacks | Melee | 4 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Acts of Faith
 - Righteous Denunciation: At the start of the Fight phase, each enemy unit within 6" of this model must take a Battle-shock test, subtracting 1 from that test.
-  Judged for Execution: At the end of your Movement phase, you can select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a friendly ADEPTA SORORITAS model makes an attack that targets that enemy unit, that attack has the [LETHAL HITS] ability.
+- Judged for Execution: At the end of your Movement phase, you can select one enemy unit within 18" of and visible to this model. Until the start of your next Command phase, each time a friendly ADEPTA SORORITAS model makes an attack that targets that enemy unit, that attack has the [LETHAL HITS] ability.
 
 #### Unit Composition
 - 1 Intranzia Fraye - EPIC HERO
@@ -360,12 +395,17 @@ ADEPTA SORORITAS
 | melee | -- | Lance of Illumination - strike | devastating wounds | Melee | 5 | 2+ | 8 | -2 | 3 |
 | melee | -- | Lance of Illumination - sweep | devastating wounds | Melee | 10 | 2+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Leader
-- FACTION: Acts of Faith
 - Abbess Sanctorum: While this model is leading a unit, each time a model in that unit makes an attack, you can re-roll the Hit roll and you can re-roll the Wound roll.
-  Righteous Repugnance: Each time this model's unit is selected to shoot or fight, you can discard 1 Miracle dice. If you do, until the end of the phase, add 3 to the Attacks characteristic of Fidelis and the Lance of Illumination. Each time an enemy unit is destroyed by this model, you gain 1 Miracle dice.
+- Righteous Repugnance: Each time this model's unit is selected to shoot or fight, you can discard 1 Miracle dice. If you do, until the end of the phase, add 3 to the Attacks characteristic of Fidelis and the Lance of Illumination. Each time an enemy unit is destroyed by this model, you gain 1 Miracle dice.
 
 #### Unit Composition
 - 1 Morvenn Vahl - EPIC HERO
@@ -410,14 +450,30 @@ ADEPTA SORORITAS
 | melee | -- | Hallowed Chainsword | -- | Melee | 5 | 2+ | 3 | -1 | 1 |
 | melee | -- | Power weapon | -- | Melee | 4 | 2+ | 4 | -2 | 2 |
 
+#### Wargear options
+- This model's bolt pistol can be replaced with one of the following:
+  - 1 condemnor boltgun
+  - 1 inferno pistol
+  - 1 plasma pistol
+- This model's hallowed chainsword can be replaced with one of the following:
+  - 1 blessed blade
+  - 1 power weapon
+- If this model is equipped with a hallowed chainsword, it can be equipped with one of the following:
+  - 1 brazier of holy fire
+  - 1 null rod
+- If this model is equipped with a plasma pistol and a power weapon, it can be equipped with:
+  - 1 rod of office
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Acts of Faith
 - Sacred Command: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  The Emperor's Grace: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 2+ invulnerable save.
-
-#### Wargear Abilities
+- The Emperor's Grace: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 2+ invulnerable save.
 - Null Rod: Models in the bearer's unit have the Feel No Pain 4+ ability against mortal wounds and Psychic Attacks.
 - Rod of Office: Each time a model in the bearer's unit makes an attack, re-roll a Hit roll of 1.
 
@@ -433,6 +489,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   - SISTERS NOVITIATE SQUAD
 
 #### Enhancements
@@ -486,12 +543,22 @@ ADEPTA SORORITAS
 | melee | -- | Holy Eviscerator | sustained hits 1 | Melee | 3 | 2+ | 6 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 2+ | 4 | -2 | 2 |
 
+#### Wargear options
+- This model's blessed halberd can be replaced with one of the following:
+  - 1 holy eviscerator
+  - 1 Ministorum hand flamer and 1 power weapon
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Acts of Faith
 - Sacred Command: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Divine Deliverance: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
+- Divine Deliverance: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 1 Canoness With Jump Pack
@@ -552,12 +619,16 @@ ADEPTA SORORITAS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Dialogus staff | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Acts of Faith
 - Laud Hailer: Once per battle, at the start of any phase, you can select one friendly ADEPTA SORORITAS unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
-  Stirring Rhetoric: While this model is leading a unit, each time this model's unit performs an Act of Faith, the value of one of the Miracle dice used in that Act of Faith is first changed to a 6.
+- Stirring Rhetoric: While this model is leading a unit, each time this model's unit performs an Act of Faith, the value of one of the Miracle dice used in that Act of Faith is first changed to a 6.
 
 #### Unit Composition
 - 1 Dialogus
@@ -571,6 +642,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   - SISTERS NOVITIATE SQUAD
   This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.
 
@@ -619,12 +691,16 @@ ADEPTA SORORITAS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Mace of the righteous | -- | Melee | 4 | 3+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Acts of Faith
 - Executioner of Heretics (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1.
-  Unflinching Determination: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
+- Unflinching Determination: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Dogmata
@@ -638,6 +714,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.
 
 #### Enhancements
@@ -685,12 +762,16 @@ ADEPTA SORORITAS
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Chirurgeon's tools | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Acts of Faith
 - Medicus Ministorum: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability.
-  Sacred Healing: While this model is leading a unit, in your Command phase, you can return up to 1 destroyed model (excluding CHARACTER models) to that unit. If you wish, you can first discard 1 Miracle dice; if you do, you can return up to D3+1 destroyed models (excluding CHARACTER models) to that unit instead.
+- Sacred Healing: While this model is leading a unit, in your Command phase, you can return up to 1 destroyed model (excluding CHARACTER models) to that unit. If you wish, you can first discard 1 Miracle dice; if you do, you can return up to D3+1 destroyed models (excluding CHARACTER models) to that unit instead.
 
 #### Unit Composition
 - 1 Hospitaller
@@ -704,6 +785,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   - SISTERS NOVITIATE SQUAD
   This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.
 
@@ -754,12 +836,16 @@ ADEPTA SORORITAS
 | ranged | -- | Boltgun | rapid fire 1 | 24" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Acts of Faith
 - Litany of Deeds: Each time you gain a Miracle dice as the result of an ADEPTA SORORITAS unit or model from your army being destroyed, if that unit or model was destroyed within 12" of this model, you can re-roll the result of that Miracle dice before adding it to your Miracle dice pool.
-  Stanchion of Holy Martyrs: While this model is leading a unit, models in that unit have a Save characteristic of 2+ and a 4+ invulnerable save.
+- Stanchion of Holy Martyrs: While this model is leading a unit, models in that unit have a Save characteristic of 2+ and a 4+ invulnerable save.
 
 #### Unit Composition
 - 1 Imagifier
@@ -773,6 +859,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.
 
 #### Enhancements
@@ -822,12 +909,19 @@ ADEPTA SORORITAS
 | melee | -- | Power Weapon | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 | melee | -- | Zealot's vindictor | -- | Melee | 3 | 4+ | 5 | -1 | 2 |
 
+#### Wargear options
+- This model's zealot's vindictor can be replaced with 1 holy pistol and 1 power weapon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Acts of Faith
 - Righteous Smiting: While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Zealot: Once per battle, in the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of melee weapons equipped by this model by 3.
+- Zealot: Once per battle, in the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of melee weapons equipped by this model by 3.
 
 #### Unit Composition
 - 1 Preacher
@@ -897,12 +991,19 @@ ADEPTA SORORITAS
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 2+ | 8 | -3 | 2 |
 | melee | -- | Palatine blade | -- | Melee | 4 | 2+ | 4 | -2 | 2 |
 
+#### Wargear options
+- This model's bolt pistol can be replaced with 1 plasma pistol.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Acts of Faith
 - Fury of the Righteous: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Rapturous Blows: Each time this model's unit is selected to fight, you can discard 1 Miracle dice. If you do, then until the end of the phase, each time a melee attack made by this model scores a wound, the target of that attack suffers 1 mortal wound in addition to any normal damage.
+- Rapturous Blows: Each time this model's unit is selected to fight, you can discard 1 Miracle dice. If you do, then until the end of the phase, each time a melee attack made by this model scores a wound, the target of that attack suffers 1 mortal wound in addition to any normal damage.
 
 #### Unit Composition
 - 1 Palatine
@@ -916,6 +1017,7 @@ ADEPTA SORORITAS
   - CRUSADERS
   - DOMINION SQUAD
   - RETRIBUTOR SQUAD
+  - SANCTIFIERS
   - SISTERS NOVITIATE SQUAD
 
 #### Enhancements
@@ -982,14 +1084,38 @@ ADEPTA SORORITAS
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Sister Superior's boltgun can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 combi-weapon
+  - 1 condemnor boltgun
+  - 1 inferno pistol
+  - 1 Ministorum hand flamer
+  - 1 plasma pistol
+- The Sister Superior can be equipped with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- 1 Battle Sister's boltgun can be replaced with one of the following:
+  - 1 artificer-crafted storm bolter
+  - 1 meltagun
+  - 1 Ministorum flamer
+- 1 Battle Sister's boltgun can be replaced with one of the following:
+  - 1 artificer-crafted storm bolter
+  - 1 heavy bolter
+  - 1 meltagun
+  - 1 Ministorum flamer
+  - 1 Ministorum heavy flamer
+  - 1 multi-melta
+- 1 Battle Sister equipped with 1 boltgun can be equipped with 1 simulacrum imperialis (that model's boltgun cannot be replaced).
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Acts of Faith
 - Cherub: Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice.
   Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.
-  Defenders of the Faith: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-
-#### Wargear Abilities
+- Defenders of the Faith: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
 - Simulacrum Imperialis: At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.
 
 #### Unit Composition
@@ -1026,19 +1152,29 @@ ADEPTA SORORITAS
 | ranged | -- | Twin multi-melta | melta 2 twin-linked | 18" | 2 | 3+ | 9 | -4 | D6 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model's immolation flamers can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin multi-melta
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Acts of Faith
 - Purge and Cleanse: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
-
-#### Unit Composition
-- 1 Immolator
-  This model is equipped with: heavy bolter; immolation flamers; armoured tracks.
 
 #### Transport
 - This model has a transport capacity of 6 ADEPTA SORORITAS INFANTRY models. It cannot transport JUMP PACK models or the TRIUMPH OF SAINT KATHERINE.
   At the start of the Declare Battle Formations step, you can select one BATTLE SISTERS SQUAD, DOMINION SQUAD or SISTERS NOVITIATE SQUAD from your army. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units. If you are splitting a unit that has the Cherub ability, only one of the new units can use that ability during the battle - make a note of which of the new units this will be). One of these units must start the battle embarked within this TRANSPORT; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.
+
+#### Unit Composition
+- 1 Immolator
+  This model is equipped with: heavy bolter; immolation flamers; armoured tracks.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **100 pts**
@@ -1068,18 +1204,26 @@ ADEPTA SORORITAS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Acts of Faith
 - Self Repair: At the start of your Command phase, this model regains 1 lost wound.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTA SORORITAS INFANTRY models. It cannot transport JUMP PACK models or the TRIUMPH OF SAINT KATHERINE.
 
 #### Unit Composition
 - 1 Sororitas Rhino
   This model is equipped with: storm bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTA SORORITAS INFANTRY models. It cannot transport JUMP PACK models or the TRIUMPH OF SAINT KATHERINE.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -1106,10 +1250,14 @@ ADEPTA SORORITAS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Arco-flails | sustained hits 1 | Melee | 4 | 4+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+
-- FACTION: Acts of Faith
 - Extremis Trigger Word: Each time this unit is selected to fight, you can choose to invoke its extremis trigger word. If you do, then until the end of the phase, arco-flails equipped by models in this unit have an Attacks characteristic of 6 and the [HAZARDOUS] ability.
 
 #### Unit Composition
@@ -1146,13 +1294,21 @@ ADEPTA SORORITAS
 | melee | -- | Null mace | anti-psyker 4+ devastating wounds | Melee | 3 | 3+ | 4 | -1 | 1 |
 | melee | -- | Virge of admonition | anti-psyker 4+ devastating wounds | Melee | 3 | 4+ | 6 | -2 | 3 |
 
+#### Wargear options
+- The Celestian Insidiant Superior's condemnor bolt pistol can be replaced with 1 inferno pistol.
+- Up to 2 Celestian Insidiants can each have their condemnor bolt pistol replaced with 1 Ministorum hand flamer.
+- Up to 2 Celestian Insidiants can each have their condemnor bolt pistol and null mace replaced with 1 blessed sword.
+- One Celestian Insidiant's condemnor bolt pistol and null mace can be replaced with 1 virge of admonition.
+- One Celestian Insidiant's condemnor bolt pistol can be replaced with 1 denuncia oratory.
+- One Celestian Insidiant equipped with 1 condemnor bolt pistol can be equipped with 1 simulacrum imperialis (that model's condemnor bolt pistol cannot be replaced).
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Acts of Faith
 - Rituale Nullificatus: Models in this unit have the Feel No Pain 4+ ability against Psychic Attacks and mortal wounds.
-  Virtue of Intolerance: At the start of the battle, select one unit from your opponent's army to be this unit's quarry. Each time a model in this unit makes an attack that targets its quarry, that attack has the [PRECISION] ability and you can re-roll the Hit roll. This ability can be used even if this unit is embarked within a TRANSPORT.
-
-#### Wargear Abilities
+- Virtue of Intolerance: At the start of the battle, select one unit from your opponent's army to be this unit's quarry. Each time a model in this unit makes an attack that targets its quarry, that attack has the [PRECISION] ability and you can re-roll the Hit roll. This ability can be used even if this unit is embarked within a TRANSPORT.
 - Simulacrum Imperialis: At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.
 - Denuncia Oratory: Each time the bearer's unit's quarry is destroyed, you can select a new unit from your opponent's army to be its quarry.
 
@@ -1165,7 +1321,7 @@ ADEPTA SORORITAS
 - YOUR UNIT COSTS: 10 models -- **120 pts**
 
 #### Keywords
-- **Unit:** KEYWORDS: INFANTRY; GRENADES; IMPERIUM; CELESTIAN INSIDIANTS
+- **Unit:** KEYWORDS: INFANTRY; GRENADES; IMPERIUM; CELESTIAN; CELESTIAN INSIDIANTS
 - **Faction keywords:** FACTION KEYWORDS:
 ADEPTA SORORITAS
 
@@ -1192,9 +1348,19 @@ ADEPTA SORORITAS
 | melee | -- | Hallowed mace | lethal hits | Melee | 3 | 3+ | 4 | -1 | 2 |
 | melee | -- | Spear of the faithful | -- | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their hallowed mace replaced with 1 anointed halberd.
+- The Sacresant Superior's bolt pistol can be replaced with one of the following:
+  - 1 inferno pistol
+  - 1 Ministorum hand flamer
+  - 1 plasma pistol
+- The Sacresant Superior's hallowed mace can be replaced with 1 spear of the faithful.
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Acts of Faith
 - Sworn Protectors: While an ADEPTA SORORITAS CHARACTER is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.
 
 #### Unit Composition
@@ -1245,15 +1411,34 @@ ADEPTA SORORITAS
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Dominion Superior's boltgun can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 combi-weapon
+  - 1 condemnor boltgun
+  - 1 inferno pistol
+  - 1 Ministorum hand flamer
+  - 1 plasma pistol
+- The Dominion Superior can be equipped with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- Up to 4 Dominions can each have their boltgun replaced with one of the following:
+  - 1 artificer-crafted storm bolter
+  - 1 meltagun
+  - 1 Ministorum flamer
+- 1 Dominion equipped with 1 boltgun can be equipped with 1 simulacrum imperialis (that model's boltgun cannot be replaced).
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Acts of Faith
 - Cherub: Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice.
   Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.
-  Righteous Awareness: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units it can make a Normal move of up to D6".
-
-#### Wargear Abilities
+- Righteous Awareness: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units it can make a Normal move of up to D6".
 - Simulacrum Imperialis: At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.
 
 #### Unit Composition
@@ -1283,7 +1468,7 @@ ADEPTA SORORITAS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| REPENTIA SUPERIOR | (diameter 32mm) | 7" | 3 | 3+ | 1 | 7+ | 1 | 6+ |
+| REPENTIA SUPERIOR | (diameter 32mm) | 7" | 3 | 3+ | 1 | 7+ | 1 | -- |
 | SISTERS REPENTIA | (diameter 28.5mm) | 7" | 3 | 7+ | 1 | 8+ | 1 | 6+ |
 
 #### Weapons
@@ -1293,10 +1478,14 @@ ADEPTA SORORITAS
 | melee | -- | Neural whips | anti-infantry 4+ | Melee | 4 | 3+ | 3 | -1 | 1 |
 | melee | -- | Penitent eviscerator | sustained hits 1 | Melee | 2 | 4+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Feel No Pain 5+
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+
-- FACTION: Acts of Faith
 - Overseer of Redemption: While this unit contains a Repentia Superior model, each time a Sisters Repentia model in this unit makes a melee attack, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
 #### Unit Composition
@@ -1343,12 +1532,29 @@ ADEPTA SORORITAS
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Retributor Superior's boltgun can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 combi-weapon
+  - 1 condemnor boltgun
+  - 1 inferno pistol
+  - 1 Ministorum hand flamer
+  - 1 plasma pistol
+- The Retributor Superior can be equipped with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- Each Retributor's heavy bolter can be replaced with one of the following:
+  - 1 Ministorum heavy flamer
+  - 1 multi-melta
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Acts of Faith
 - Cherubs: Twice per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice.
   Designer's Note: Place two Cherub tokens next to the unit, removing one each time this ability has been used.
-  Storm of Retribution: Each time a model in this unit makes a ranged attack, that model can re-roll a Hit roll of 1 and re-roll a Wound roll of 1. If such an attack targets an enemy unit that has destroyed one or more ADEPTA SORORITAS units from your army during the battle, add 1 to the Hit roll and add 1 to the Wound roll as well.
+- Storm of Retribution: Each time a model in this unit makes a ranged attack, that model can re-roll a Hit roll of 1 and re-roll a Wound roll of 1. If such an attack targets an enemy unit that has destroyed one or more ADEPTA SORORITAS units from your army during the battle, add 1 to the Hit roll and add 1 to the Wound roll as well.
 
 #### Unit Composition
 - 1 Retributor Superior
@@ -1391,15 +1597,23 @@ ADEPTA SORORITAS
 | melee | -- | Death Cult blades | precision | Melee | 4 | 2+ | 4 | -2 | 1 |
 | melee | -- | Sanctifier melee weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- 1 Missionary model can have its 1 plasma gun replaced with 1 meltagun.
+- 1 Missionary model equipped with 1 plasma gun can be equipped with 1 holy fire (this model's plasma gun cannot be replaced).
+- 1 Sanctifier model can have its 1 Sanctifier melee weapon replaced with 1 Ministorum hand flamer and 1 close combat weapon.
+- 1 Sanctifier model can have its 1 Sanctifier melee weapon replaced with 1 close combat weapon and 1 simulacrum imperialis.
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Acts of Faith
 - Ministorum Sermon: While this unit contains a MINISTORUM PRIEST, melee weapons equipped by models in this unit have the [SUSTAINED HITS 1] ability.
-  Cherub: Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice.
+- Cherub: Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice.
   Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.
-
-#### Wargear Abilities
 - Salvationist Medikit: In your Command phase, if the bearer is on the battlefield, you can return up to D3 destroyed models (excluding CHARACTER models) to this unit.
 - Simulacrum Imperialis: At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.
 
@@ -1447,10 +1661,25 @@ ADEPTA SORORITAS
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in the unit, up to 2 Seraphim can each have their 2 bolt pistols replaced with one of the following:
+  - 2 inferno pistols
+  - 2 Ministorum hand flamers
+- The Seraphim Superior's 2 bolt pistols can be replaced with one of the following:
+  - 1 bolt pistol and 1 chainsword
+  - 1 bolt pistol and 1 plasma pistol
+  - 1 bolt pistol and 1 power weapon
+  - 1 plasma pistol and 1 chainsword
+  - 1 plasma pistol and 1 power weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Acts of Faith
 - Angelic Ascent: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of any enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
@@ -1478,7 +1707,7 @@ ADEPTA SORORITAS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| NOVITIATE SUPERIOR | (diameter 32mm) | 6" | 3 | 3+ | 1 | 7+ | 2 | 6+ |
+| NOVITIATE SUPERIOR | (diameter 32mm) | 6" | 3 | 3+ | 1 | 7+ | 2 | -- |
 | SISTER NOVITIATE | (diameter 28.5mm) | 6" | 3 | 4+ | 1 | 8+ | 2 | 6+ |
 
 #### Weapons
@@ -1495,13 +1724,24 @@ ADEPTA SORORITAS
 | melee | -- | Novitiate melee weapons | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Novitiate Superior's bolt pistol and boltgun can be replaced with one of the following:
+  - 1 bolt pistol and 1 power weapon
+  - 1 plasma pistol and 1 power weapon
+- 1 Sister Novitiate's autogun can be replaced with 1 sacred banner.
+- 1 Sister Novitiate's autogun can be replaced with 1 simulacrum imperialis.
+- Up to 2 Sisters Novitiate can each have their autogun replaced with 1 Ministorum flamer.
+- Any number of Sisters Novitiate can each have their autogun and close combat weapon replaced with 1 Novitiate melee weapons.
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: Acts of Faith
 - Impetuous Fervour: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack is an enemy unit within range of an objective marker, you can re-roll the Hit roll instead.
-
-#### Wargear Abilities
 - Sacred Banner: You can re-roll Advance and Charge rolls made for the bearer's unit.
 - Simulacrum Imperialis: At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.
 
@@ -1538,16 +1778,22 @@ ADEPTA SORORITAS
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 3+ | 8 | -3 | 2 |
 | melee | -- | Power weapon | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Zephyrim Superior can be equipped with 1 sacred banner.
+- The Zephyrim Superior's bolt pistol can be replaced with 1 plasma pistol.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Acts of Faith
 - Embodied Prophecy: Each time this unit is selected to fight, select one of the following abilities to apply to melee weapons equipped by models in this unit until the end of the phase:
   - [SUSTAINED HITS 1]
   - [LETHAL HITS]
   If this unit made a Charge move this turn, until the end of the phase, select both abilities above to apply to melee weapons equipped by models in this unit instead.
-
-#### Wargear Abilities
 - Sacred Banner: You can re-roll Advance and Charge rolls made for the bearer's unit.
 
 #### Unit Composition
@@ -1587,10 +1833,19 @@ ADEPTA SORORITAS
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's Castigator autocannons can be replaced with 1 Castigator battle cannon.
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Acts of Faith
 - Rites of Castigation: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly ADEPTA SORORITAS unit makes a ranged attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.
 
 #### Unit Composition
@@ -1629,10 +1884,18 @@ ADEPTA SORORITAS
 | ranged | -- | Hunter-killer missile | one shot | 48" | 1 | 2+ | 14 | -3 | D6 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model's Exorcist missile launcher can be replaced with 1 Exorcist conflagration rockets.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Acts of Faith
 - Devastating Refrain: In your Shooting phase, after this model has shot, if one or more of those attacks made with an Indirect Fire weapon scored a hit against an enemy unit, that unit must take a Battle-shock test. Each time such an attack destroys an enemy model that has the Deadly Demise ability, that model's Deadly Demise ability inflicts mortal wounds on a D6 roll of 5+ instead of on a 6.
 
 #### Unit Composition
@@ -1675,13 +1938,25 @@ ADEPTA SORORITAS
 | melee | -- | Twin penitent buzz-blades | sustained hits 1 twin-linked | Melee | 4 | 3+ | 10 | -3 | 2 |
 | melee | -- | Twin penitent flails | sustained hits 1 twin-linked | Melee | 8 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- 1 model can be equipped with 1 anchorite sarcophagus.
+- Any number of models can each have their 2 heavy bolters replaced with one of the following:
+  - 1 heavy bolter and 1 Mortifier flamer
+  - 2 Mortifier flamers
+- Any number of models can each have their twin penitent buzz-blades replaced with one of the following:
+  - 1 twin penitent flails
+  - 1 penitent buzz-blade and 1 penitent flail
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Acts of Faith
 - Anguish of the Unredeemed: Each time a model in this unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 2+, do not remove it from play; That destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
-
-#### Wargear Abilities
 - Anchorite Sarcophagus: The bearer has a Move characteristic of 7" and a Save characteristic of 3+.
 
 #### Unit Composition
@@ -1720,9 +1995,18 @@ ADEPTA SORORITAS
 | melee | -- | Paragon war blade | -- | Melee | 4 | 3+ | 8 | -2 | 2 |
 | melee | -- | Paragon war mace | -- | Melee | 3 | 3+ | 12 | -1 | 3 |
 
+#### Wargear options
+- Any number of models can each have their Paragon storm bolters replaced with 1 Paragon grenade launchers.
+- Any number of models can each have their Paragon war blade replaced with 1 Paragon war mace.
+- Any number of models can each have their heavy bolter replaced with one of the following:
+  - 1 Ministorum heavy flamer
+  - 1 multi-melta
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Acts of Faith
 - Righteous Paragons: Each time a model in this unit makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll and add 1 to the Wound roll.
 
 #### Unit Composition
@@ -1760,10 +2044,20 @@ ADEPTA SORORITAS
 | melee | -- | Twin penitent buzz-blades | sustained hits 1 twin-linked | Melee | 4 | 4+ | 10 | -3 | 2 |
 | melee | -- | Twin penitent flails | sustained hits 1 twin-linked | Melee | 8 | 4+ | 5 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their twin penitent buzz-blades replaced with one of the following:
+  - 1 penitent buzz-blade and 1 penitent flail
+  - 1 twin penitent flails
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Acts of Faith
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Acts of Faith
 - Endless Suffering: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
@@ -1782,6 +2076,8 @@ ADEPTA SORORITAS
 ## Detachments
 
 ### Hallowed Martyrs (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- The Blood of Martyrs
 - Each time an ADEPTA SORORITAS model from your army makes an attack, add 1 to the Hit roll if that model's unit is below its Starting Strength, and add 1 to the Wound roll as well if that model's unit is Below Half-strength.
 
@@ -1835,6 +2131,8 @@ ADEPTA SORORITAS
   EFFECT: Your unit can shoot as if it were your Shooting phase, but it must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Penitent Host (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Desperate for Redemption
 - At the start of the battle round, you can select one of the following Vows of Atonement to be active for your army until the start of the next battle round. You can only select each Vow of Atonement once per battle.
   The Path of the Penitent
@@ -1852,7 +2150,8 @@ ADEPTA SORORITAS
 - Refrain of Enduring Faith 15 pts
 - PENITENT model only. While the bearer is leading a unit, models in that unit have a 5+ invulnerable save.
 - Catechism of Divine Penitence 15 pts
-- CANONESS, PALATINE or MINISTORUM PRIEST model only. The bearer gains the PENITENT keyword.
+- LEADER: REPENTIA SQUAD
+  CANONESS, PALATINE or MINISTORUM PRIEST model only. The bearer gains the PENITENT keyword.
 
 #### Stratagems
 - FINAL REDEMPTION
@@ -1893,6 +2192,8 @@ ADEPTA SORORITAS
   EFFECT: Your unit can make a surge move of up to D6"".
 
 ### Bringers of Flame (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Fervent Purgation
 - Ranged weapons equipped by ADEPTA SORORITAS models from your army have the [ASSAULT] ability, and each time an attack made with such a weapon targets a unit within 6", add 1 to the Strength characteristic of that attack.
 
@@ -1945,6 +2246,8 @@ ADEPTA SORORITAS
   EFFECT: One unit embarked within your TRANSPORT can disembark as if it were your Movement phase, and can then shoot as if it were your Shooting phase, but must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Army of Faith (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Sacred Rites
 - Each ADEPTA SORORITAS unit from your army can perform up to two Acts of Faith per phase, instead of just one.
 
@@ -1998,6 +2301,8 @@ ADEPTA SORORITAS
   RESTRICTIONS: You cannot select a unit that is within Engagement Range of one or more enemy units.
 
 ### Champions of Faith (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Righteous Purpose
 - In your Command phase, you can select up to 3 ADEPTA SORORITAS units from your army (including units that are embarked within TRANSPORTS), until the start of your next Command phase, those units are Righteous. While a unit is Righteous:
   - Add 1" to the Move characteristic of models in that unit.
@@ -2055,6 +2360,8 @@ ADEPTA SORORITAS
   EFFECT: Until the end of the turn, your unit is eligible to shoot in a turn in which it Fell Back. If your unit is Righteous, until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back instead.
 
 ### Chorus of Condemnation (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Angelic Judgement
 - Friendly ADEPTA SORORITAS INFANTRY FLY units have the following ability:
   Condemnatory Psalms: In your Shooting phase, this unit can select one visible enemy unit within 12". That enemy unit is condemned:
@@ -2087,6 +2394,8 @@ ADEPTA SORORITAS
   EFFECT: Select one enemy unit (excluding MONSTER/VEHICLE units) hit by those ranged attacks. Your unit's ranged attacks that target that unit have [DEVASTATING WOUNDS].
 
 ### Sacred Champions (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Holy Quest
 - Friendly CELESTIAN units' attacks have +1 BS and WS.
   This detachment has the REVEREND tag and cannot be taken with another REVEREND detachment.
@@ -2120,6 +2429,8 @@ ADEPTA SORORITAS
   - That move does not prevent your unit from being eligible to shoot/declare a charge.
 
 ### Sanctified Orators (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Hymns of Battle
 - Enhancements selected from this detachment do not count towards the total number of enhancements in your army.
   - Friendly ADEPTA SORORITAS CHARACTER units have +1 Ld.
@@ -2127,6 +2438,11 @@ ADEPTA SORORITAS
 #### Enhancements
 - HagiomnifexUPGRADE 25 pts
 - ADEPTA SORORITAS CHARACTER model only (excluding PENITENT units). (Once per turn, per unit) At the start of a phase, you can use this ability. If you do, select one of the abilities below:
+  - Rite of Revelation: While this unit is shooting, enemy units have +6" detection range.
+  - Sermon of Intolerance: This unit's battle-shock rolls automatically succeed.
+  - Catechism of Raging Fervour: This unit has +1" M.
+  - Psalm of Righteous Smiting: This unit's attacks have +1 S.
+  - Chorus of Repudiation: Attacks that target this unit with a S greater than this unit's T have -1 to wound rolls.
 
 ## Extraction audit
 

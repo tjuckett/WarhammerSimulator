@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/genestealer-cults/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -128,12 +128,19 @@
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lictor claws and talons | precision | Melee | 6 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Fights First
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Infiltrators, Lone Operative, Stealth
-- FACTION: Synapse
 - Feeder Tendrils: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
-  Fear of the Unseen (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1. In addition, in the Battle-shock step of your opponent's Command phase, if such an enemy unit is below its Starting Strength, it must take a Battle-shock test.
+- Fear of the Unseen (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1. In addition, in the Battle-shock step of your opponent's Command phase, if such an enemy unit is below its Starting Strength, it must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Deathleaper - EPIC HERO
@@ -167,12 +174,19 @@ TYRANIDS
 | melee | -- | Gaping maw | extra attacks devastating wounds precision | Melee | 1 | 2+ | 5 | - | D3+2 |
 | melee | -- | Scything talons | -- | Melee | 12 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- None.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Swallow Whole: Each time an attack with this model's gaping maw targets an INFANTRY, MOUNTED or BEASTS unit, each successful unmodified Wound roll is a Critical Wound. Each time an INFANTRY, MOUNTED or BEASTS model is destroyed as a result of an attack made by this model's gaping maw, this model regains up to D3+2 lost wounds.
-  Subterranean Hunter: At the end of the Fight phase, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
+- Subterranean Hunter: At the end of the Fight phase, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
 - 1 The Red Terror - EPIC HERO
@@ -202,11 +216,15 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Power sledgehammer | -- | Melee | 4 | 3+ | 12 | -2 | D6+1 |
 
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+, Leader
 - The Chosen One: While this model is leading a unit, each time a model in that unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 4+, do not remove the destroyed model from play; it can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
-  Regenerating Gene-mass: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
+- Regenerating Gene-mass: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.
 
 #### Unit Composition
 - 1 Abominant
@@ -261,11 +279,15 @@ GENESTEALER CULTS
 | ranged | -- | Autopistol | pistol | 12" | 1 | 3+ | 3 | 0 | 1 |
 | melee | -- | Cult claws | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader, Scouts 6"
 - Nexus of Devotion: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability. If that unit has the HYBRID METAMORPHS keyword, models in that unit have the Feel No Pain 4+ ability instead.
-  Summon the Cult: Once per battle, when you have to remove a Cult Ambush marker because your opponent has moved too close to it, if one or more models from your army with this ability are on the battlefield, you can use this ability. If you do, instead of removing that marker, you can place it anywhere on the battlefield that is within 12" of a model from your army with this ability and more than 8" horizontally away from all enemy units (if this is not possible, this ability is not considered to have been used and that marker is removed as normal).
+- Summon the Cult: Once per battle, when you have to remove a Cult Ambush marker because your opponent has moved too close to it, if one or more models from your army with this ability are on the battlefield, you can use this ability. If you do, instead of removing that marker, you can place it anywhere on the battlefield that is within 12" of a model from your army with this ability and more than 8" horizontally away from all enemy units (if this is not possible, this ability is not considered to have been used and that marker is removed as normal).
 
 #### Unit Composition
 - 1 Acolyte Iconward
@@ -324,11 +346,14 @@ GENESTEALER CULTS
 | ranged | -- | Psionic Cascade - focused witchfire | hazardous ignores cover psychic | 18" | 2 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
 - Bio-horror Disruption (Psychic): While this model is leading a unit, ranged weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Psionic Shield (Psychic): Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 4+ invulnerable save.
+- Psionic Shield (Psychic): Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 4+ invulnerable save.
 
 #### Unit Composition
 - 1 Benefictus
@@ -381,13 +406,14 @@ GENESTEALER CULTS
 | ranged | -- | Chemical vials | anti-infantry 2+ | 6" | 1 | 3+ | 1 | -1 | 2 |
 | melee | -- | Injector goad | anti-infantry 2+ | Melee | 1 | 3+ | 2 | 0 | D3 |
 
+#### Core Abilities
+- Deep Strike
+- Support
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Support
 - Twisted Science: While this model is leading a unit, melee weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Biological Warfare: Once per battle, when this model's unit is selected to fight, this model can use this ability. If it does, until the end of the phase, improve the Attacks and Damage characteristics of its injector goad by 3.
-
-#### Wargear Abilities
+- Biological Warfare: Once per battle, when this model's unit is selected to fight, this model can use this ability. If it does, until the end of the phase, improve the Attacks and Damage characteristics of its injector goad by 3.
 - Alchemicus Familiar: Once per battle, when the bearer's unit is selected to fight, the bearer can use its alchemicus familiar. If it does, until the end of the phase, each time a model in the bearer's unit makes an attack that targets an INFANTRY unit, add 1 to the Wound roll.
   Designer's Note: Place an Alchemicus Familiar token next to the bearer, removing it once this ability has been used.
 
@@ -446,11 +472,14 @@ GENESTEALER CULTS
 | ranged | -- | Autopistol | pistol | 12" | 1 | 3+ | 3 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Support
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Support
 - Voice of New Truths: In your Command phase, one model from your army with this ability can use it. If it does, select one enemy unit within 18" of it; that enemy unit must take a Battle-shock test.
-  Scrambler Array: Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" of this model.
+- Scrambler Array: Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" of this model.
 
 #### Unit Composition
 - 1 Clamavus
@@ -504,11 +533,14 @@ GENESTEALER CULTS
 | ranged | -- | Liberator autostubs | devastating wounds pistol | 12" | 6 | 2+ | 6 | -2 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative
 - Heroic Fusillade: Once per turn, after one model from your army with this ability has shot, you can select one INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
-  Hypersensory Abilities: Once per turn, in your opponent's Movement phase, when an enemy unit ends a Normal, Advance or Fall Back move within 8" of this model, if this model is not within Engagement Range of one or more enemy units, it can shoot at that unit as if it were your Shooting phase and then make a Normal move of up to D6" (it cannot embark within a TRANSPORT as part of this move).
+- Hypersensory Abilities: Once per turn, in your opponent's Movement phase, when an enemy unit ends a Normal, Advance or Fall Back move within 8" of this model, if this model is not within Engagement Range of one or more enemy units, it can shoot at that unit as if it were your Shooting phase and then make a Normal move of up to D6" (it cannot embark within a TRANSPORT as part of this move).
 
 #### Unit Composition
 - 1 Kelermorph
@@ -555,11 +587,15 @@ GENESTEALER CULTS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Locus blades | -- | Melee | 5 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Support
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Support
 - Sudden Assault: While this model is leading a unit, models in that unit have the Fights First ability.
-  Bodyguard: While this model is leading a unit, other CHARACTER models attached to that unit have the Feel No Pain 4+ ability.
+- Bodyguard: While this model is leading a unit, other CHARACTER models attached to that unit have the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Locus
@@ -614,12 +650,15 @@ GENESTEALER CULTS
 | ranged | -- | Autopistol | pistol | 12" | 1 | 3+ | 3 | 0 | 1 |
 | melee | -- | Magus stave | psychic | Melee | 3 | 3+ | 5 | -1 | D3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
 - Spiritual Leader: Once per battle, at the start of any phase, you can select one friendly GENESTEALER CULTS unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
-  Mind Control (Psychic): At the start of your opponent's Shooting phase, one PSYKER model from your army with this ability can use it. If used, select one enemy unit within 18" of that PSYKER model and roll one D6: on a 1, that PSYKER model suffers D3 mortal wounds; on a 2-5, until the end of the phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll; on a 6, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll and subtract 1 from the Wound roll.
-  Psychic Familiar: Once per battle, at the start of your opponent's Shooting phase, this model can use its psychic familiar. If it does, until the end of the phase, add 6 " to the range of its Mind Control ability.
+- Mind Control (Psychic): At the start of your opponent's Shooting phase, one PSYKER model from your army with this ability can use it. If used, select one enemy unit within 18" of that PSYKER model and roll one D6: on a 1, that PSYKER model suffers D3 mortal wounds; on a 2-5, until the end of the phase, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll; on a 6, each time a model in that enemy unit makes an attack, subtract 1 from the Hit roll and subtract 1 from the Wound roll.
+- Psychic Familiar: Once per battle, at the start of your opponent's Shooting phase, this model can use its psychic familiar. If it does, until the end of the phase, add 6 " to the range of its Mind Control ability.
   Designer's Note: Place a Psychic Familiar token next to the model, removing it once this ability has been used.
 
 #### Unit Composition
@@ -679,11 +718,14 @@ GENESTEALER CULTS
 | ranged | -- | Autopistol | pistol | 12" | 1 | 3+ | 3 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Support
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Support
 - Battlefield Analysis: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Cult Infiltration: At the start of each player's Command phase, if this model is on the battlefield, you can select one of your Cult Ambush markers that is on the battlefield and has not been moved this turn and move it up to 6".
+- Cult Infiltration: At the start of each player's Command phase, if this model is on the battlefield, you can select one of your Cult Ambush markers that is on the battlefield and has not been moved this turn and move it up to 6".
 
 #### Unit Composition
 - 1 Nexos
@@ -734,12 +776,16 @@ GENESTEALER CULTS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Patriarch's claws | devastating wounds twin-linked | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators, Leader
 - Might From Beyond: While this model is leading a unit, melee weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability.
-  Cosmic Horror (Psychic): At the start of the Fight phase, each enemy unit within 6" of this model must take a Battle-shock test.
-  Psychic Familiar: Once per battle, at the start of the Fight phase, this model can use its psychic familiar. If it does, until the end of the phase, add 6" to the range of its Cosmic Horror ability.
+- Cosmic Horror (Psychic): At the start of the Fight phase, each enemy unit within 6" of this model must take a Battle-shock test.
+- Psychic Familiar: Once per battle, at the start of the Fight phase, this model can use its psychic familiar. If it does, until the end of the phase, add 6" to the range of its Cosmic Horror ability.
   Designer's Note: Place a Psychic Familiar token next to the model, removing it once this ability has been used.
 
 #### Unit Composition
@@ -801,11 +847,14 @@ GENESTEALER CULTS
 | melee | -- | Cult bonesword | -- | Melee | 5 | 2+ | 5 | -2 | 1 |
 | melee | -- | Toxin injector claw | anti-infantry 2+ extra attacks | Melee | 2 | 2+ | 2 | 0 | D3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
 - Cult Demagogue: While this model is leading a unit, each time a model in that unit makes an attack, you can add 1 to the Hit roll.
-  Decoys and Misdirection: If your army includes one or more models with this ability, after both players have deployed their armies, select up to three GENESTEALER CULTS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
+- Decoys and Misdirection: If your army includes one or more models with this ability, after both players have deployed their armies, select up to three GENESTEALER CULTS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
 
 #### Unit Composition
 - 1 Primus
@@ -866,11 +915,16 @@ GENESTEALER CULTS
 | ranged | -- | Remote explosives | blast indirect fire | 24" | D6+3 | 3+ | 5 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+- Lone Operative
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators, Lone Operative, Stealth
 - Primed and Ready: In your Shooting phase, you can select one model from your army with this ability as the target of the Explosives Stratagem for 0CP, provided that model has not already been the target of that Stratagem this phase.
-  Planted Explosives: Once per battle, when an enemy unit ends a Normal, Advance or Fall Back move within 8" of this model, this model can use its Reductus mine. If it does, roll one D6: on a 2+, that enemy unit suffers D3+3 mortal wounds. Only one model from your army with this ability can use it in the same battle round.
+- Planted Explosives: Once per battle, when an enemy unit ends a Normal, Advance or Fall Back move within 8" of this model, this model can use its Reductus mine. If it does, roll one D6: on a 2+, that enemy unit suffers D3+3 mortal wounds. Only one model from your army with this ability can use it in the same battle round.
   Designer's Note: Place a Reductus Mine token next to the model, removing it once this ability has been used.
 
 #### Unit Composition
@@ -919,12 +973,20 @@ GENESTEALER CULTS
 | melee | -- | Sanctus bio-dagger | anti-infantry 3+ precision | Melee | 6 | 2+ | 3 | -2 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- This model's Sanctus bio-dagger can be replaced with 1 cult sniper rifle and 1 close combat weapon.
+
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+- Lone Operative
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators, Lone Operative, Stealth
 - Creeping Shadow: If this model is equipped with a cult sniper rifle, In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to 6".
-  Cloaked Assassin: Enemy units cannot target this unit with snap shooting attacks.
-  Psychic Spoor: At the start of the first battle round, select one enemy unit to be this model's prey. Each time this model makes an attack that targets its prey, you can re-roll the Hit roll and you can re-roll the Wound roll.
+- Cloaked Assassin: Enemy units cannot target this unit with snap shooting attacks.
+- Psychic Spoor: At the start of the first battle round, select one enemy unit to be this model's prey. Each time this model makes an attack that targets its prey, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
 #### Unit Composition
 - 1 Sanctus
@@ -979,11 +1041,22 @@ GENESTEALER CULTS
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 6 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 4 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- This model's chainsword can be replaced with one of the following:
+  - 1 boltgun and 1 close combat weapon
+  - 1 power fist
+  - 1 power weapon
+- This model's laspistol can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol
+
+#### Core Abilities
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
 - Senior Officer: While this model is leading a unit, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Get Back in the Fight: While this model is leading a unit, that unit is eligible to shoot in a turn in which it Fell Back.
+- Get Back in the Fight: While this model is leading a unit, that unit is eligible to shoot in a turn in which it Fell Back.
 
 #### Unit Composition
 - 1 Cadian Castellan
@@ -1036,12 +1109,35 @@ ASTRA MILITARUM
 | melee | -- | Power fist | -- | Melee | 3 | 4+ | 6 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 3 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- 1 Cadian Veteran Guardsman's lasgun and regimental standard can be replaced with one of the following:
+  - 1 flamer
+  - 1 grenade launcher
+  - 1 meltagun
+  - 1 plasma gun
+- 1 Cadian Veteran Guardsman's laspistol can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol
+- The Cadian Commander's laspistol can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol
+- 1 Cadian Veteran Guardsman's chainsword can be replaced with one of the following:
+  - 1 flamer and 1 close combat weapon
+  - 1 grenade launcher and 1 close combat weapon
+  - 1 meltagun and 1 close combat weapon
+  - 1 plasma gun and 1 close combat weapon
+  - 1 power fist
+  - 1 power weapon
+- The Cadian Commander's chainsword can be replaced with one of the following:
+  - 1 power fist
+  - 1 power weapon
+
+#### Core Abilities
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
 - Cadia Stands!: While this unit contains an OFFICER, each time a ranged attack targets this unit, if this unit is within range of an objective marker you control, models in this unit have the Benefit of Cover against that attack.
-
-#### Wargear Abilities
 - Master Vox: Each time the OFFICER in the bearer's unit issues an Order, it can issue it to an eligible unit up to 24" away.
 - Medi-pack: At the start of your Command phase, if the bearer's unit is below its Starting Strength, you can return up to D3 destroyed PLATOON models (excluding CHARACTERS) to this unit.
 - Regimental Standard: Add 1 to the Objective Control characteristic of models in the bearer's unit.
@@ -1104,12 +1200,33 @@ ASTRA MILITARUM
 | melee | -- | Power fist | -- | Melee | 3 | 4+ | 6 | -2 | 2 |
 | melee | -- | Power weapon | -- | Melee | 3 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Any number of Veteran Guardsmen can each have their lasgun replaced with one of the following*:
+  - 1 flamer
+  - 1 grenade launcher
+  - 1 heavy flamer
+  - 1 meltagun
+  - 1 plasma gun
+  - 1 sniper rifle
+- Veteran Guardsman equipped with a lasgun can be equipped with 1 master vox.**
+- Veteran Guardsman equipped with a lasgun can be equipped 1 medi-pack.**
+- 1 Veteran Guardsman equipped with a lasgun can be equipped with 1 regimental standard.**
+- The Catachan Commander's laspistol can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol
+- The Catachan Commander can be equipped with one of the following:
+  - 1 boltgun
+  - 1 chainsword
+  - 1 power fist
+  - 1 power weapon
+
+#### Core Abilities
+- Leader
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 6"
 - Gung-ho Command: While this unit contains an OFFICER, ranged weapons equipped by models in this unit have the [ASSAULT] ability.
-
-#### Wargear Abilities
 - Master Vox: Each time the OFFICER in the bearer's unit issues an Order, it can issue it to an eligible unit up to 24" away.
 - Medi-pack: At the start of your Command phase, if the bearer's unit is below its Starting Strength, you can return up to D3 destroyed PLATOON models (excluding CHARACTERS) to this unit.
 - Regimental Standard: Add 1 to the Objective Control characteristic of models in the bearer's unit.
@@ -1154,12 +1271,18 @@ ASTRA MILITARUM
 | melee | -- | Prime claws and talons | anti-monster 5+ anti-vehicle 5+ twin-linked | Melee | 6 | 3+ | 5 | -2 | 2 |
 | melee | -- | Ravener heavy claws and talons | anti-monster 5+ anti-vehicle 5+ twin-linked | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Shadow In The Warp (Ravener Prime only)
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Shadow In The Warp (Ravener Prime only), Synapse
 - Alpha Invader: Weapons equipped by models in this unit have the [SUSTAINED HITS 1] ability.
-  Hypersensory Array: Once per battle round, you can target this unit with the Rapid Ingress/Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Hypersensory Array: Once per battle round, you can target this unit with the Rapid Ingress/Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -1219,12 +1342,27 @@ TYRANIDS
 | melee | -- | Power weapon | -- | Melee | 3 | 4+ | 4 | -2 | 1 |
 | melee | -- | Trench club | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- 1 Veteran Guardsman's boltgun can be replaced with one of the following:
+  - 1 flamer
+  - 1 grenade launcher
+  - 1 meltagun
+  - 1 plasma gun
+- The Lord Commissar's power weapon can be replaced with 1 power fist.
+- The Lord Commissar can be equipped with 1 plasma pistol.
+- 1 Veteran Guardsman's chainsword can be replaced with one of the following:
+  - 1 trench club
+  - 1 power weapon
+- 1 Veteran Guardsman not equipped with alchemyk counteragents can replace its laspistol with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol
+
+#### Core Abilities
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
 - Grim Determination: While this unit contains an OFFICER, you can target this unit with Stratagems even while it is Battle-shocked and Orders issued to this unit do not cease to affect this unit if it becomes Battle-shocked.
-
-#### Wargear Abilities
 - Master Vox: Each time the OFFICER in the bearer's unit issues an Order, it can issue it to an eligible unit up to 24" away.
 - Alchemyk Counteragents: The bearer's unit has the Feel No Pain 6+ ability against mortal wounds.
 - Regimental Standard: Add 1 to the Objective Control characteristic of models in the bearer's unit.
@@ -1275,12 +1413,18 @@ ASTRA MILITARUM
 | melee | -- | Barbed ovipositor | anti-infantry 3+ extra attacks | Melee | 1 | 2+ | 3 | -2 | 3 |
 | melee | -- | Clawed limbs | -- | Melee | 6 | 2+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative, Stealth
-- FACTION: Synapse
 - Parasitic Infection: Each time an INFANTRY model is destroyed by an attack made with this model's barbed ovipositor, after this model has finished making its attacks, you can add one new Ripper Swarms unit to your army consisting of D3 models and set it up within 3" of this model. If you do, that RIPPER SWARMS unit can be set up within Engagement Range of the destroyed model's unit (but not within Engagement Range of any other enemy units).
-  It Itches!: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. That enemy unit must take a Battle-shock test.
+- It Itches!: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. That enemy unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Parasite of Mortrex
@@ -1316,11 +1460,13 @@ TYRANIDS
 | ranged | -- | Psychic Maelstrom - focused witchfire | blast devastating wounds hazardous psychic | 18" | D6+1 | 3+ | 6 | -2 | 2 |
 | melee | -- | Force weapon | psychic | Melee | 3 | 4+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
 - Malign Wardings(Psychic): While this model is leading a unit, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks.
-  Psychic Barrier (Psychic): At the start of your opponent's Shooting phase, you can roll one D6: on a 1, this PSYKER's unit suffers D3 mortal wounds; on a 2+, until the end of the phase, models in this PSYKER's unit have a 4+ invulnerable save.
+- Psychic Barrier (Psychic): At the start of your opponent's Shooting phase, you can roll one D6: on a 1, this PSYKER's unit suffers D3 mortal wounds; on a 2+, until the end of the phase, models in this PSYKER's unit have a 4+ invulnerable save.
 
 #### Unit Composition
 - 1 Primaris Psyker
@@ -1359,12 +1505,21 @@ ASTRA MILITARUM
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Prime talons | -- | Melee | 6 | 2+ | 6 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Shadow in the Warp, Synapse
 - Alpha Warrior: While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Death Blow: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
+- Death Blow: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
 
 #### Unit Composition
 - 1 Winged Tyranid Prime
@@ -1405,12 +1560,24 @@ TYRANIDS
 | melee | -- | Monstrous scything talons | extra attacks | Melee | 4 | 2+ | 7 | -2 | 2 |
 | melee | -- | Tyrant talons | -- | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- This model's monstrous bonesword and lash whip can be replaced with one of the following:
+  - 1 heavy venom cannon
+  - 1 stranglethorn cannon
+  - 1 monstrous scything talons
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Shadow in the Warp, Synapse
 - Will of the Hive Mind: Once per battle round, one model from your army with this ability can use it when a friendly TYRANIDS unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
-  Paroxysm (Psychic): At the start of the Fight phase, you can select one enemy unit within 12" of and visible to this model and roll one D6: on a 1, this PSYKER suffers D3 mortal wounds; on a 2+, until the end of the phase, subtract 1 from the Attacks characteristic of weapons equipped by models in that unit.
+- Paroxysm (Psychic): At the start of the Fight phase, you can select one enemy unit within 12" of and visible to this model and roll one D6: on a 1, this PSYKER suffers D3 mortal wounds; on a 2+, until the end of the phase, subtract 1 from the Attacks characteristic of weapons equipped by models in that unit.
 
 #### Unit Composition
 - 1 Winged Hive Tyrant
@@ -1446,11 +1613,15 @@ TYRANIDS
 | ranged | -- | Cult sniper rifle | heavy precision | 36" | 1 | 3+ | 5 | -2 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+- Scouts 9"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 9", Stealth
 - Priority Target: In your Shooting phase, after this model's unit has shot, select one enemy unit hit by one or more of those attacks made with a cult sniper rifle. Until the end of the phase, each time a friendly GENESTEALER CULTS model makes an attack that targets that enemy unit, re-roll a Hit roll of 1.
-  Master Outrider: In your Shooting phase, after this model's unit has shot, if it is not within Engagement Range of any enemy units, that unit can make a Normal move of up to 6" as if it were your Movement phase. If it does, until the end of the turn, that unit is not eligible to declare a charge.
+- Master Outrider: In your Shooting phase, after this model's unit has shot, if it is not within Engagement Range of any enemy units, that unit can make a Normal move of up to 6" as if it were your Movement phase. If it does, until the end of the turn, that unit is not eligible to declare a charge.
 
 #### Unit Composition
 - 1 Jackal Alphus
@@ -1513,11 +1684,34 @@ GENESTEALER CULTS
 | ranged | -- | Vanquisher battle cannon | heavy | 72" | 1 | 4+ | 18 | -4 | D6+6 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's Leman Russ battle cannon can be replaced with one of the following:
+  - 1 demolisher battle cannon
+  - 1 eradicator nova cannon
+  - 1 executioner plasma cannon
+  - 1 exterminator autocannon
+  - 1 punisher gatling cannon
+  - 1 vanquisher battle cannon
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Vox-net: Each time this model issues an Order, it can issue it to an eligible unit up to 12" away.
-  Death Befitting An Officer: When this model is destroyed, roll one D6: on a 2+, do not remove it from play - it can, after the attacking model's unit has finished making its attacks, shoot as if it were your Shooting phase and as if it had its full wounds remaining. This model is then removed from play.
+- Death Befitting An Officer: When this model is destroyed, roll one D6: on a 2+, do not remove it from play - it can, after the attacking model's unit has finished making its attacks, shoot as if it were your Shooting phase and as if it had its full wounds remaining. This model is then removed from play.
 
 #### Unit Composition
 - 1 Leman Russ Commander
@@ -1567,11 +1761,23 @@ ASTRA MILITARUM
 | ranged | -- | Twin battle cannon | blast twin-linked | 48" | D6+3 | 4+ | 10 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's twin battle cannon can be replaced with 1 oppressor cannon and 1 coaxial autocannon.
+- This model's castigator gatling cannon can be replaced with 1 pulveriser cannon.
+- This model can be equipped with one of the following:
+  - 2 meltaguns
+  - 2 additional heavy stubbers
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 multi-meltas
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Vox-net: Each time this model issues an Order, it can issue it to an eligible unit up to 12" away.
-  Called Shots: Each time this model is selected to shoot, you can re-roll one Hit roll, you can re-roll one Wound roll and you can re-roll one Damage roll when resolving its attacks.
+- Called Shots: Each time this model is selected to shoot, you can re-roll one Hit roll, you can re-roll one Wound roll and you can re-roll one Damage roll when resolving its attacks.
 
 #### Unit Composition
 - 1 Rogal Dorn Tank Commander
@@ -1611,13 +1817,20 @@ ASTRA MILITARUM
 | melee | -- | Heavy mining tool | anti-vehicle 4+ | Melee | 2 | 3+ | 5 | -2 | 3 |
 | melee | -- | Leader's bio-weapons | -- | Melee | 5 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- One Acolyte Hybrid's autopistol can be replaced with 1 cult icon.
+- For every 5 models in this unit, up to 3 Acolyte Hybrids can each have their autopistol and cult claws and knife replaced with 1 heavy mining tool.
+- The Acolyte Leader's cult claws and knife can be replaced with 1 Leader's bio-weapons.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Cult Ambush
 - Claimed for the Cult: At the start of your Command phase, roll one D6 for each objective marker you control that has one or more units from your army with this ability within range of it. If one or more of the results is a 4+, you gain 1CP.
-
-#### Wargear Abilities
 - Cult Icon: In your Command phase, you can return up to D3 destroyed models to the bearer's unit. If the bearer's unit is within range of an objective marker you control, you can return up to 3 destroyed models to that unit instead. This ability cannot be used to return destroyed CHARACTER models in Attached units and any [ONE SHOT] weapons equipped by returned models that were shot before they were destroyed are still considered to have been shot.
 
 #### Unit Composition
@@ -1653,13 +1866,20 @@ GENESTEALER CULTS
 | melee | -- | Cult claws and knife | -- | Melee | 3 | 3+ | 4 | -1 | 1 |
 | melee | -- | Leader's bio-weapons | -- | Melee | 5 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- One Acolyte Hybrid's hand flamer can be replaced with 1 cult icon.
+- For every 5 models in this unit, up to 2 Acolyte Hybrids can each have their hand flamer replaced with 1 demolition charges
+- The Acolyte Leader's cult claws and knife can be replaced with 1 Leader's bio-weapons.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Cult Ambush
 - Industrialised Destruction: Each time a model in this unit makes an attack, re-roll a Wound roll of 1. If the target of that attack is an enemy unit within range of an objective marker, you can re-roll the Wound roll.
-
-#### Wargear Abilities
 - Cult Icon: In your Command phase, you can return up to D3 destroyed models to the bearer's unit. If the bearer's unit is within range of an objective marker you control, you can return up to 3 destroyed models to that unit instead. This ability cannot be used to return destroyed CHARACTER models in Attached units and any [ONE SHOT] weapons equipped by returned models that were shot before they were destroyed are still considered to have been shot.
 
 #### Unit Composition
@@ -1704,13 +1924,29 @@ GENESTEALER CULTS
 | melee | -- | Power weapon | -- | Melee | 1 | 4+ | 4 | -2 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- One Neophyte Hybrid equipped with a Hybrid firearm can be equipped with 1 cult icon.
+- For every 10 models in this unit, up to 2 Neophyte Hybrids can each have their Hybrid firearm replaced with one of the following:
+  - Heavy stubber*
+  - Mining laser*
+  - Seismic cannon*
+- For every 10 models in this unit, up to 2 Neophyte Hybrids can each have their Hybrid firearm replaced with one of the following:
+  - Flamer*
+  - Grenade launcher*
+  - Webber*
+- The Neophyte Leader's Hybrid firearm and close combat weapon can be replaced with 1 of the following:
+  - 1 anointed pistol and 1 chainsword
+  - 1 anointed pistol and 1 power weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Cult Ambush
 - A Plan Generations in the Making: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-
-#### Wargear Abilities
 - Cult Icon: In your Command phase, you can return up to 3 destroyed models to the bearer's unit. If the bearer's unit is within range of an objective marker you control, you can return up to D3+3 destroyed models to that unit instead. This ability cannot be used to return destroyed CHARACTER models in Attached units and any [ONE SHOT] weapons equipped by returned models that were shot before they were destroyed are still considered to have been shot.
 
 #### Unit Composition
@@ -1757,11 +1993,19 @@ GENESTEALER CULTS
 | melee | -- | Chainsword | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- For every 10 models in this unit, up to 2 Shock Troopers can each have their lasgun replaced with one of the following*:
+  - 1 flamer
+  - 1 grenade launcher
+  - 1 meltagun
+  - 1 plasma gun
+- For every 10 models in this unit, 1 Shock Trooper equipped with a lasgun can be equipped with 1 vox-caster (that model's lasgun cannot be replaced).
+- Any number of Shock Trooper Sergeants can each have their laspistol replaced with 1 bolt pistol.
+- Any number of Shock Trooper Sergeants can each have their laspistol and chainsword replaced with 1 Sergeant's autogun and 1 close combat weapon.
+
 #### Abilities
 **ABILITIES:**
 - Shock Troops: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-
-#### Wargear Abilities
 - Vox-caster: Each time you target the bearer's unit with a Stratagem, roll one D6, adding 1 to the result if there are one or more friendly OFFICER models within 6": on a 5+, you gain 1CP.
 
 #### Unit Composition
@@ -1800,12 +2044,16 @@ ASTRA MILITARUM
 | ranged | -- | Laspistol | pistol | 12" | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Jungle Fighter's lasgun can be replaced with 1 flamer.
+- For every 10 models in this unit, 1 Jungle Fighter equipped with a lasgun can be equipped with 1 vox-caster (that model's lasgun cannot be replaced).
+
+#### Core Abilities
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
 - Jungle Fighters: Each time a model in this unit makes a melee attack, if this unit made a Charge move or was charged this turn, add 1 to the Wound roll.
-
-#### Wargear Abilities
 - Vox-caster: Each time you target the bearer's unit with a Stratagem, roll one D6, adding 1 to the result if there are one or more friendly OFFICER models within 6": on a 5+, you gain 1CP.
 
 #### Unit Composition
@@ -1856,11 +2104,24 @@ ASTRA MILITARUM
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- For every 10 models in this unit, up to 2 Death Korps Troopers can each have their lasgun replaced with one of the following*:
+  - 1 flamer
+  - 1 grenade launcher
+  - 1 long-las
+  - 1 meltagun
+  - 1 plasma gun
+- For every 10 models in this unit, 1 Death Korps Trooper equipped with a lasgun can be equipped with 1 Death Korps medi-pack (that model's lasgun cannot be replaced)**.
+- For every 10 models in this unit, 1 Death Korps Trooper equipped with a lasgun can be equipped with 1 vox-caster (that model's lasgun cannot be replaced).**
+- Any number of Death Korps Watchmasters can each replace their laspistol and chainsword with 1 boltgun and 1 close combat weapon.
+- Any number of Death Korps Watchmasters can each replace their chainsword with 1 power weapon.
+- Any number of Death Korps Watchmasters can each replace their laspistol with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol
+
 #### Abilities
 **ABILITIES:**
 - Grim Demeanour: Each time a model in this unit makes an attack, add 1 to the Hit roll if this unit is below its Starting Strength, and add 1 to the Wound roll as well if this unit is Below Half-strength.
-
-#### Wargear Abilities
 - Vox-caster: Each time you target the bearer's unit with a Stratagem, roll one D6, adding 1 to the result if there are one or more friendly OFFICER models within 6": on a 5+, you gain 1CP.
 - Death Korps Medi-pack: At the start of your Command phase, if the bearer's unit is below its Starting Strength, you can return up to D3 destroyed Death Korps Troopers to this unit (if this unit contains two models equipped with a Death Korps medi-pack, return up to D3+1 destroyed Death Korps Troopers to this unit instead).
 
@@ -1898,10 +2159,14 @@ ASTRA MILITARUM
 | ranged | -- | Fleshborer | assault | 18" | 1 | 4+ | 5 | 0 | 1 |
 | melee | -- | Blinding venom | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Winged Swarm: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of any enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
@@ -1936,17 +2201,20 @@ TYRANIDS
 | ranged | -- | Twin autocannon | twin-linked | 48" | 2 | 4+ | 9 | -1 | 3 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 6
 - Fire Support: In your Shooting phase, after this model has shot, select one enemy unit it scored one or more hits against this phase. Until the end of the phase, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 12 GENESTEALER CULTS INFANTRY models.
 
 #### Unit Composition
 - 1 Goliath Truck
   This model is equipped with: heavy stubber; twin autocannon; demolition charge cache; armoured hull.
-
-#### Transport
-- This model has a transport capacity of 12 GENESTEALER CULTS INFANTRY models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -1974,17 +2242,23 @@ GENESTEALER CULTS
 | ranged | -- | Pintle-mounted heavy stubber | rapid fire 3 | 36" | 3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 12
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 12
 - Rapid Strike Vehicle: While one or more units are embarked within this model, unless this model is Battle-shocked, add 1 to this model's Objective Control characteristic for every 3 models (rounding down) embarked within it.
+
+#### Transport
+- This model has a transport capacity of 12 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Centaur RSV
   This model is equipped with: 1 pintle-mounted heavy stubber; 1 armoured hull.
-
-#### Transport
-- This model has a transport capacity of 12 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -2018,17 +2292,30 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model's multi-laser can be replaced with one of the following:
+  - 1 heavy bolter*
+  - 1 heavy flamer*
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
 - Mobile Command Vehicle: In your Command phase, one OFFICER model embarked within this TRANSPORT can issue Orders even though it is not on the battlefield. When doing so, measure distances to and from this TRANSPORT.
+
+#### Transport
+- This model has a transport capacity of 12 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Chimera
   This model is equipped with: multi-laser; heavy bolter; lasgun array; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -2057,17 +2344,22 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Rapid Deployment: Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 12 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Taurox
   This model is equipped with: twin autocannon; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -2101,17 +2393,26 @@ ASTRA MILITARUM
 | ranged | -- | Twin Taurox hot-shot volley gun | rapid fire 3 twin-linked | 30" | 3 | 3+ | 4 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's Taurox battle cannon can be replaced with one of the following:
+  - 1 Taurox gatling cannon
+  - 1 Taurox missile launcher
+- This model's twin Taurox hot-shot volley gun can be replaced with 1 twin autocannon.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Transport Support: In your Shooting phase, after this model has shot, select one enemy unit that was hit by one or more of those attacks. Until the end of the phase, each time a model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Hit roll.
+
+#### Transport
+- This model has a transport capacity of 12 MILITARUM TEMPESTUS INFANTRY or ASTRA MILITARUM INFANTRY CHARACTER models.
 
 #### Unit Composition
 - 1 Taurox Prime
   This model is equipped with: Taurox battle cannon; twin Taurox hot-shot volley gun; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 MILITARUM TEMPESTUS INFANTRY or ASTRA MILITARUM INFANTRY CHARACTER models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -2139,18 +2440,23 @@ ASTRA MILITARUM
 | ranged | -- | Tyrannocyte bio-weapons | -- | 24" | 5 | 4+ | 5 | -1 | 2 |
 | melee | -- | Flensing whips | -- | Melee | 6 | 4+ | 7 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Synapse
 - Aerial Seeding: This model must start the battle in Reserves, but neither it nor any units embarked within it are counted towards any limits placed on the maximum number of Reserves units you can start the battle with. This model can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. Any units embarked within this model must immediately disembark after it has been set up on the battlefield, and they must be set up more than 8" away from all enemy models. After this model has been set up on the battlefield, no units can embark within it.
+
+#### Transport
+- This model has a transport capacity of 20 TYRANIDS INFANTRY models, or 1 TYRANIDS MONSTER model with a Wounds characteristic of 12 or less. Each INFANTRY model with a Wounds characteristic of more than 1 takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Tyrannocyte
   This model is equipped with: Tyrannocyte bio-weapons; flensing whips.
-
-#### Transport
-- This model has a transport capacity of 20 TYRANIDS INFANTRY models, or 1 TYRANIDS MONSTER model with a Wounds characteristic of 12 or less. Each INFANTRY model with a Wounds characteristic of more than 1 takes up the space of 3 models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **80 pts**
@@ -2181,9 +2487,15 @@ TYRANIDS
 | ranged | -- | Hunter-killer missile | one shot | 48" | 1 | 4+ | 14 | -3 | D6 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Earthshaker Rounds: In your Shooting phase, after this model has shot, if one or more of those attacks made with its earthshaker cannon scored a hit against an enemy INFANTRY unit, until the start of your next Shooting phase, that unit is shaken. While a unit is shaken, subtract 2" from its Move characteristic and subtract 2 from Charge rolls made for it.
 
 #### Unit Composition
@@ -2222,9 +2534,15 @@ ASTRA MILITARUM
 | ranged | -- | Hunter-killer missile | one shot | 48" | 1 | 3+ | 14 | -3 | D6 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Deathstrike Missile: In your Shooting phase, each time this model is selected to shoot, if it has not shot with its Deathstrike missile this battle, you can do one of the following in addition to resolving this model's ranged attacks:
   - Designate Target: If this model does not have a Deathstrike Target marker on the battlefield, place a unique Deathstrike Target marker for this model anywhere on the battlefield.
   - Adjust Target: If this model has a Deathstrike Target marker on the battlefield, move that marker to anywhere else on the battlefield.
@@ -2265,9 +2583,15 @@ ASTRA MILITARUM
 | ranged | -- | Storm eagle rockets | anti-infantry 2+ blast indirect fire | 120" | D6 | 4+ | 7 | -2 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Furious Barrage: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) that was hit by one or more of those attacks made with this model's storm eagle rockets. Until the start of your next Shooting phase, that enemy unit is staggered. While a unit is staggered, subtract 1 from the Objective Control characteristic of models in that unit (to a minimum of 1).
 
 #### Unit Composition
@@ -2306,9 +2630,15 @@ ASTRA MILITARUM
 | ranged | -- | Wyvern quad stormshard mortar | blast indirect fire twin-linked | 48" | 2D6 | 4+ | 5 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Suppression Bombardment: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) that was hit by one or more of those attacks made with this model's Wyvern quad stormshard mortar. Until the start of your next Shooting phase, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -2343,10 +2673,15 @@ ASTRA MILITARUM
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Aberrant weapons | -- | Melee | 3 | 3+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+
-- FACTION: Cult Ambush
 - Hulking Bodyguards: While a CHARACTER is leading this unit, each time an attack targets this unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of this unit, subtract 1 from the Wound roll.
 
 #### Unit Composition
@@ -2385,13 +2720,21 @@ GENESTEALER CULTS
 | melee | -- | Metamorph mutations - strike | -- | Melee | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Metamorph mutations - sweep | -- | Melee | 5 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their autopistol replaced with 1 hand flamer.
+- One Hybrid Metamorph's autopistol can be replaced with 1 cult icon.
+
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+- Scouts 6"
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+, Scouts 6"
-- FACTION: Cult Ambush
 - Brood Surge: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6".
-
-#### Wargear Abilities
 - Cult Icon: In your Command phase, you can return up to D3 destroyed models to the bearer's unit. If the bearer's unit is within range of an objective marker you control, you can return up to 3 destroyed models to that unit instead. This ability cannot be used to return destroyed CHARACTER models in Attached units and any [ONE SHOT] weapons equipped by returned models that were shot before they were destroyed are still considered to have been shot.
 
 #### Unit Composition
@@ -2427,10 +2770,15 @@ GENESTEALER CULTS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Cult claws and talons | -- | Melee | 4 | 2+ | 4 | -2 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators
-- FACTION: Cult Ambush
 - Swift and Deadly: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
@@ -2472,6 +2820,12 @@ GENESTEALER CULTS
 | ranged | -- | Siege cannon | blast heavy indirect fire | 48" | D6 | 5+ | 12 | -2 | 3 |
 | melee | -- | Crew close combat weapons | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy mortar can be replaced with one of the following:
+  - 1 siege cannon
+  - 1 heavy quad launcher
+  - 1 multiple rocket launcher
+
 #### Abilities
 **ABILITIES:**
 - Remorseless Barrage: In your Shooting phase, after this model has shot, if one or more of those attacks made with an Indirect Fire weapon scored a hit against an enemy unit, that unit must take a Battle-shock test (if an INFANTRY unit is hit by one or more attacks made by a multiple rocket launcher, they must subtract 1 from their Battle-shock test when doing so).
@@ -2510,6 +2864,13 @@ ASTRA MILITARUM
 | ranged | -- | Missile launcher - krak | heavy | 48" | 1 | 5+ | 9 | -2 | D6 |
 | ranged | -- | Mortar | blast heavy indirect fire | 48" | D6 | 5+ | 5 | 0 | 1 |
 | melee | -- | Weapons team close combat weapons | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
+
+#### Wargear options
+- Any number of models can each have their heavy bolter replaced with one of the following:
+  - 1 autocannon
+  - 1 lascannon
+  - 1 missile launcher
+  - 1 mortar
 
 #### Abilities
 **ABILITIES:**
@@ -2553,9 +2914,18 @@ ASTRA MILITARUM
 | ranged | -- | Mortar | blast heavy indirect fire | 48" | D6 | 5+ | 5 | 0 | 1 |
 | melee | -- | Weapons team close combat weapons | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their heavy bolter replaced with one of the following:
+  - 1 autocannon
+  - 1 lascannon
+  - 1 missile launcher
+  - 1 mortar
+
+#### Core Abilities
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
 - Bring it Down!: Each time a model in this unit makes a ranged attack that targets a MONSTER of VEHICLE unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
 
 #### Unit Composition
@@ -2593,6 +2963,11 @@ ASTRA MILITARUM
 | ranged | -- | Laspistol | pistol | 12" | 1 | 4+ | 3 | 0 | 1 |
 | ranged | -- | Malleus rocket launcher | blast heavy | 48" | D6+6 | 5+ | 6 | -1 | 1 |
 | melee | -- | Battery close combat weapons | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
+
+#### Wargear options
+- Any number of models can each have their malleus rocket launcher replaced with one of the following:
+  - 1 bombast field gun
+  - 1 heavy lascannon
 
 #### Abilities
 **ABILITIES:**
@@ -2642,12 +3017,27 @@ ASTRA MILITARUM
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 3 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Up to 4 Kasrkin Troopers can each have their hot-shot lasgun replaced with one of the following:*
+  - 1 flamer
+  - 1 grenade launcher
+  - 1 hot-shot volley gun
+  - 1 meltagun
+  - 1 plasma gun
+- 1 Kasrkin Trooper's hot-shot lasgun can be replaced with 1 hot-shot marksman rifle.
+- 1 Kasrkin Trooper's hot-shot lasgun can be replaced with 1 hot-shot laspistol and 1 melta mine.
+- 1 Kasrkin Trooper equipped with a hot-shot lasgun can be equipped with 1 vox-caster (that model's hot-shot lasgun cannot be replaced).
+- The Kasrkin Sergeant's chainsword can be replaced with 1 power weapon.
+- The Kasrkin Sergeant's hot-shot laspistol can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma pistol.
+
+#### Core Abilities
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
 - Warrior Elite: Once per battle round, at the start of any phase, you can select one Order to affect this unit until the start of your next Command phase, in addition to any other Orders issued to this unit by an OFFICER model this battle round.
-
-#### Wargear Abilities
 - Vox-caster: Each time you target the bearer's unit with a Stratagem, roll one D6, adding 1 to the result if there are one or more friendly OFFICER models within 6": on a 5+, you gain 1CP.
 - Melta Mine: Once per battle, at the start of any phase, you can select one enemy unit within 3" of the bearer and roll one D6: on a 2+, that enemy unit suffers D3 mortal wounds, or 2D3 mortal wounds instead if it is a VEHICLE unit.
 
@@ -2692,12 +3082,24 @@ ASTRA MILITARUM
 | melee | -- | Power weapon | -- | Melee | 3 | 4+ | 4 | -2 | 1 |
 | melee | -- | Trench club | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- 1 Krieg Combat Engineer's autopistol and trench club can be replaced with 1 flamer and 1 close combat weapon.
+- 1 Krieg Combat Engineer's autopistol and trench club can be replaced with 1 autopistol, 1 remote mine and 1 close combat weapon.
+- Any number of models can each have their autopistol and trench club replaced with 1 combat shotgun and 1 close combat weapon.
+- The Krieg Engineer Watchmaster's autopistol can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 hand flamer
+  - 1 plasma pistol
+- The Krieg Engineer Watchmaster's trench club can be replaced with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+
+#### Core Abilities
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
 - Grenadiers: Once per turn, you can target this unit with the Explosives Stratagem for 0CP.
-
-#### Wargear Abilities
 - Remote Mine: Once per battle, at the start of your Shooting phase, you can select one enemy unit within 9" of and visible to the bearer and roll one D6: on a 3+, that enemy unit suffers D3 mortal wounds, or 2D3 mortal wounds instead if it is a VEHICLE or FORTIFICATIONS unit.
   Designer's Note: Place a Remote Mine token next to the unit, removing it once this ability has been used.
 
@@ -2738,6 +3140,11 @@ ASTRA MILITARUM
 | ranged | -- | Twin Krieg heavy stubber | heavy rapid fire 3 twin-linked | 48" | 3 | 5+ | 6 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- Any number of Heavy Weapons Gunners can each have their lascannon replaced with one of the following:
+  - 1 Krieg heavy flamer
+  - 1 twin Krieg heavy stubber
+
 #### Abilities
 **ABILITIES:**
 - Final Duty: While the Fire Coordinator model is on the battlefield, each time a Heavy Weapons Gunner model is destroyed, roll one D6: on a 3+, do not remove it from play. The destroyed model can shoot after the attacking model's unit has finished making its attacks, and is then removed from play.
@@ -2776,12 +3183,19 @@ ASTRA MILITARUM
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lictor claws and talons | precision | Melee | 6 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Fights First
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Infiltrators, Lone Operative, Stealth
-- FACTION: Synapse
 - Feeder Tendrils: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
-  Pheromone Trail: Once per battle round, you can target one model with this ability with the Rapid Ingress Stratagem for 0CP.
+- Pheromone Trail: Once per battle round, you can target one model with this ability with the Rapid Ingress Stratagem for 0CP.
 
 #### Unit Composition
 - 1 Lictor
@@ -2811,13 +3225,20 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Piercing claws and talons | precision | Melee | 6 | 2+ | 6 | -2 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Lone Operative, Stealth
-- FACTION: Shadow in the Warp, Synapse
 - Feeder Tendrils: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
-  Neural Disruption: In your Command phase, select one enemy unit within 12" of this model. That unit must take a Battle-shock test.
-  Psychological Saboteur (Aura): While an enemy unit is within 12" of this model, if that unit is Battle-shocked:
+- Neural Disruption: In your Command phase, select one enemy unit within 12" of this model. That unit must take a Battle-shock test.
+- Psychological Saboteur (Aura): While an enemy unit is within 12" of this model, if that unit is Battle-shocked:
   - Each time a model in that unit makes an attack, subtract 1 from the Hit roll.
   - Each time a friendly TYRANIDS model makes an attack that targets that unit, add 1 to the Wound roll.
 
@@ -2850,10 +3271,17 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Ravener claws and talons | twin-linked | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Death From Below: At the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
@@ -2885,10 +3313,16 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Leaper's talons | -- | Melee | 6 | 3+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Fights First
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Infiltrators, Stealth
-- FACTION: Synapse
 - Pouncing Leap: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
@@ -2923,10 +3357,14 @@ TYRANIDS
 | melee | -- | Distensible jaw | anti-infantry 4+ devastating wounds extra attacks | Melee | 1 | 3+ | 5 | 0 | 3 |
 | melee | -- | Mawloc scything talons | -- | Melee | 16 | 3+ | 8 | -2 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Terror From The Deep: Each time this model is set up on the battlefield using the Deep Strike ability, roll one D6 for each enemy unit within 12" of this model: on a 2-4, that unit suffers D3 mortal wounds; on a 5+, that unit suffers 3 mortal wounds and must take a Battle-shock test.
 
 #### Unit Composition
@@ -2961,10 +3399,14 @@ TYRANIDS
 | ranged | -- | Bio-electric pulse | sustained hits 2 | 12" | 6 | 3+ | 5 | 0 | 1 |
 | melee | -- | Trygon scything talons | -- | Melee | 12 | 3+ | 9 | -2 | 3 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Subterranean Tunnels: In your Movement phase, when this model is set up on the battlefield using the Deep Strike ability, it can use a subterranean tunnel. If it does, this model can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge.
 
 #### Unit Composition
@@ -3006,12 +3448,24 @@ TYRANIDS
 | melee | -- | Atalan power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- For every 4 Atalan Jackals in this unit, up to 2 Atalan Jackals' close combat weapons can each be replaced with 1 Atalan power weapon.
+- For every 4 Atalan Jackals in this unit, 1 Atalan Jackal's Atalan small arms can be replaced with 1 grenade launcher.
+- Any number of Atalan Wolfquads can each have their heavy stubber replaced with one of the following:
+  - 1 Atalan incinerator
+  - 1 mining laser
+
+#### Core Abilities
+- Scouts 9"
+- Stealth
+
+#### Army Rules
+- Cult Ambush
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 9", Stealth
-- FACTION: Cult Ambush
 - Outrider Gangs: Each time you use the Cult Ambush ability to set this unit back upon the battlefield, in addition to the normal rules, all of its models must be set up wholly within 9" of a battlefield edge and at least one of its models must be touching one of your Cult Ambush markers (that marker is then removed from the battlefield). If this cannot be done, this unit cannot be set back up.
-  Demolition Run: Once per turn, in your Movement phase, when this unit ends a Normal, Advance or Fall Back move, you can select one enemy unit within 6" of and visible to this unit and roll one D6 for each ATALAN JACKALS model in this unit: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).
+- Demolition Run: Once per turn, in your Movement phase, when this unit ends a Normal, Advance or Fall Back move, you can select one enemy unit within 6" of and visible to this unit and roll one D6 for each ATALAN JACKALS model in this unit: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).
 
 #### Unit Composition
 - 4-8 Atalan Jackals
@@ -3054,6 +3508,10 @@ GENESTEALER CULTS
 | melee | -- | Hunting lance - melta tip | lance | Melee | 1 | 3+ | 9 | -4 | D6 |
 | melee | -- | Power sabre | -- | Melee | 4 | 3+ | 4 | -2 | 1 |
 | melee | -- | Steed's hooves | extra attacks | Melee | 2 | 4+ | 4 | 0 | 1 |
+
+#### Wargear options
+- For every 5 models in this unit, 1 model's hunting lance can be replaced with 1 goad lance.
+- The Rough Rider Sergeant can be equipped with 1 power sabre.
 
 #### Abilities
 **ABILITIES:**
@@ -3135,9 +3593,17 @@ ASTRA MILITARUM
 | ranged | -- | Twin heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
 - Rolling Fortress: Each time a ranged attack is allocated to an ASTRA MILITARUM model from your army, if that model is not fully visible to every model in the attacking unit because of this BANEBLADE model, that model has the Benefit of Cover against that attack.
 
 #### Unit Composition
@@ -3176,10 +3642,22 @@ ASTRA MILITARUM
 | ranged | -- | Twin heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+- Firing Deck 6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2, Firing Deck 6
 - Tremor Quake: In your Shooting phase, just after selecting a target for this model's tremor cannon, the target unit and every other enemy INFANTRY unit within 3" of that unit must take a Battle-shock test.
+
+#### Transport
+- This model has a transport capacity of 26 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Banehammer
@@ -3187,9 +3665,6 @@ ASTRA MILITARUM
 
 #### Damaged: 1-8 Wounds Remaining
 - While this model has 1-8 wounds remaining, subtract 4 from its Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 26 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **385 pts**
@@ -3220,9 +3695,17 @@ ASTRA MILITARUM
 | ranged | -- | Twin heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
 - Armour Obliteration: Each time an attack made with this model's quake cannon destroys an enemy model that has the Deadly Demise ability, that model's Deadly Demise ability inflicts mortal wounds on a D6 roll of 3+ instead of on a 6.
 
 #### Unit Composition
@@ -3261,10 +3744,22 @@ ASTRA MILITARUM
 | ranged | -- | Twin heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+- Firing Deck 6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2, Firing Deck 6
 - Close-range Titan Killer: Each time this model's magma cannon targets a MONSTER or VEHICLE unit, that target is always considered to be within half range of that weapon.
+
+#### Transport
+- This model has a transport capacity of 26 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Doomhammer
@@ -3272,9 +3767,6 @@ ASTRA MILITARUM
 
 #### Damaged: 1-8 Wounds Remaining
 - While this model has 1-8 wounds remaining, subtract 4 from its Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 26 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **380 pts**
@@ -3308,9 +3800,17 @@ ASTRA MILITARUM
 | ranged | -- | Twin heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
 - Close-quarters Warfare: This model does not suffer the penalty to its Hit rolls for making ranged attacks while enemy units are within Engagement Range of it.
 
 #### Unit Composition
@@ -3349,9 +3849,17 @@ ASTRA MILITARUM
 | ranged | -- | Volcano cannon | blast heavy | 96" | D3+1 | 4+ | 24 | -5 | 12 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
 - Titan-killer: Each time this model makes a ranged attack with its volcano cannon that targets a MONSTER or VEHICLE unit, that attack has the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
@@ -3391,10 +3899,22 @@ ASTRA MILITARUM
 | ranged | -- | Vulcan mega-bolter | sustained hits 1 | 48" | 20 | 4+ | 6 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+- Firing Deck 12
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2, Firing Deck 12
 - Mount Up!: At the end of your opponent's Movement phase, if there are no models currently embarked within this TRANSPORT, you can select one friendly ASTRA MILITARUM INFANTRY unit (excluding ARTILLERY units) that is wholly within 6" of this TRANSPORT. Unless that unit is within Engagement Range of one or more enemy units, it can embark within this TRANSPORT.
+
+#### Transport
+- This model has a transport capacity of 40 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Stormlord
@@ -3402,9 +3922,6 @@ ASTRA MILITARUM
 
 #### Damaged: 1-8 Wounds Remaining
 - While this model has 1-8 wounds remaining, subtract 4 from its Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 40 ASTRA MILITARUM INFANTRY models. Each OGRYN model takes up the space of 3 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **395 pts**
@@ -3435,9 +3952,17 @@ ASTRA MILITARUM
 | ranged | -- | Twin heavy flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 6 | -1 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin heavy flamers can be replaced with 2 twin heavy bolters.
+- This model can be equipped with one of the following:
+  - 2 lascannons and 2 twin heavy bolters
+  - 2 lascannons and 2 twin heavy flamers
+
+#### Core Abilities
+- Deadly Demise D6+2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
 - Concussive Wave: In your Shooting phase, just after selecting a target for this model's Stormsword siege cannon, roll one D6 for the target unit and every other unit within 3" of that unit: on a 5+, the unit being rolled for is struck by a concussive wave. After this model has finished making its attacks against that target unit this phase, each unit struck by a concussive wave suffers D3 mortal wounds.
 
 #### Unit Composition
@@ -3477,10 +4002,21 @@ ASTRA MILITARUM
 | ranged | -- | Heavy stubber | rapid fire 3 | 36" | 3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Drilldozer blade | -- | Melee | 8 | 3+ | 10 | -2 | 2 |
 
+#### Wargear options
+- This model's heavy mining laser can be replaced with one of the following:
+  - 1 clearance incinerator
+  - 1 heavy seismic cannon
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 6
 - Grinding Clearance: Each time an enemy unit (excluding MONSTERS and VEHICLES) that is within Engagement Range of this model Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
+
+#### Transport
+- This model has a transport capacity of 6 GENESTEALER CULTS INFANTRY models.
 
 #### Unit Composition
 - 1 Goliath Rockgrinder
@@ -3488,9 +4024,6 @@ ASTRA MILITARUM
 
 #### Damaged: 1-3 Wounds Remaining
 - While this model has 1-3 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 6 GENESTEALER CULTS INFANTRY models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **120 pts**
@@ -3521,12 +4054,21 @@ GENESTEALER CULTS
 | ranged | -- | Twin heavy stubber | twin-linked rapid fire 3 | 36" | 3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their heavy mining laser replaced with one of the following:
+  - 1 achilles missile launcher
+  - 1 heavy mortar
+- Any number of models can each have their flare launcher replaced with one of the following:
+  - 1 spotter
+  - 1 survey augur
+
+#### Core Abilities
+- Deadly Demise 1
+- Scouts 9"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Scouts 9"
 - Crossfire: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly GENESTEALER CULTS unit makes an attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.
-
-#### Wargear Abilities
 - Flare Launcher: The bearer's unit has the SMOKE keyword and you can target it with the Smokescreen Stratagem for 0CP.
 - Spotter: The bearer's ranged weapons have a Ballistic Skill characteristic of 3+.
 - Survey Augur: Each time the bearer's unit has shot, select one enemy unit that was hit by one or more attacks made by the bearer this phase. Until the end of the phase, each time a friendly GENESTEALER CULTS model makes an attack against that unit, that attack has the [IGNORES COVER] ability.
@@ -3570,9 +4112,20 @@ GENESTEALER CULTS
 | ranged | -- | Multi-melta | melta 2 | 18" | 2 | 4+ | 9 | -4 | D6 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's inferno cannon can be replaced with one of the following:
+  - 1 chem cannon
+  - 1 melta cannon
+- This model's heavy flamer can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 multi-melta
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Flush Them Out: In your Shooting phase, after this model has shot, select one enemy unit that was hit by one or more of those attacks. Until the start of your next Shooting phase, that unit is scattered. While a unit is scattered, it cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -3613,9 +4166,18 @@ ASTRA MILITARUM
 | ranged | -- | Vigilator cannon | assault blast | 36" | D6 | 4+ | 8 | -1 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their heavy stubber replaced with 1 meltagun.
+- Any number of models can each have their vigilator cannon replaced with one of the following:
+  - 1 chiron gatling cannon
+  - 1 lascannon
+  - 1 melta cannon
+
+#### Core Abilities
+- Deadly Demise 1
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
 - Convoy Escort Vehicle: In your Shooting phase, after this unit has shot, it can make a Normal move of up to D6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
@@ -3651,9 +4213,15 @@ ASTRA MILITARUM
 | ranged | -- | Hydra autocannon | anti-fly 2+ twin-linked | 72" | 4 | 4+ | 9 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Flak Battery: Each time this model makes an attack that targets a unit that can FLY, you can re-roll the Hit roll.
 
 #### Unit Composition
@@ -3697,9 +4265,25 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Armoured Spearhead: Each time this model makes an attack that targets an enemy unit, re-roll a Hit roll of 1 and, if that unit is within range of an objective marker you do not control, you can re-roll the Hit roll instead.
 
 #### Unit Composition
@@ -3747,9 +4331,25 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Line-breaker: When making ranged attacks with its demolisher battle cannon, this model can target enemy units within Engagement Range of it (provided no other friendly units are also within Engagement Range of that enemy unit). In addition, when making ranged attacks, this model does not suffer the penalty to its Hit rolls for being within Engagement Range of one or more enemy units.
 
 #### Unit Composition
@@ -3797,9 +4397,25 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Urban Warfare: Each time a ranged attack targets this model, if this model has the Benefit of Cover against that attack, subtract 1 from the Damage characteristic of that attack.
 
 #### Unit Composition
@@ -3848,9 +4464,25 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Gung-ho Executioners: Each time this model makes an attack with its executioner plasma cannon that targets a unit that is Below Half-strength, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -3898,9 +4530,25 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Withering Hail: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with its exterminator autocannon. Until the end of the phase, each time a friendly ASTRA MILITARUM unit makes an attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per phase.
 
 #### Unit Composition
@@ -3948,9 +4596,25 @@ ASTRA MILITARUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Mow Down the Enemy: Each time this model makes an attack with its punisher gatling cannon that targets an enemy unit (excluding MONSTERS and VEHICLES), that attack has the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
@@ -3998,9 +4662,25 @@ ASTRA MILITARUM
 | ranged | -- | Vanquisher battle cannon | heavy | 72" | 1 | 4+ | 18 | -4 | D6+6 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's lascannon can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 heavy flamer
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 heavy flamers
+  - 2 multi-meltas
+  - 2 plasma cannons
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Tank-killer: Each time this model makes a ranged attack with its vanquisher battle cannon that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll.
 
 #### Unit Composition
@@ -4047,9 +4727,21 @@ ASTRA MILITARUM
 | ranged | -- | Twin battle cannon | blast twin-linked | 48" | D6+3 | 4+ | 10 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 7 | 0 | 1 |
 
+#### Wargear options
+- This model's twin battle cannon can be replaced with 1 oppressor cannon and 1 coaxial autocannon.
+- This model's castigator gatling cannon can be replaced with 1 pulveriser cannon.
+- This model can be equipped with one of the following:
+  - 2 meltaguns
+  - 2 additional heavy stubbers
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 multi-meltas
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Ablative Plating: Once per battle, when an attack is allocated to this model, you change the Damage characteristic of that attack to 0.
 
 #### Unit Composition
@@ -4084,11 +4776,16 @@ ASTRA MILITARUM
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 1
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
 - Demolition Charges: Each time this model or an enemy unit ends a move, if this model is within 3" of one or more enemy units, select one of those enemy units. This model is destroyed, but instead of rolling for its Deadly Demise ability, roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D6 mortal wounds.
-  Unstable Payload: When rolling for this model's Deadly Demise ability, units within 6" suffer mortal wounds on a 4+, instead of on a 6.
+- Unstable Payload: When rolling for this model's Deadly Demise ability, units within 6" suffer mortal wounds on a 4+, instead of on a 6.
 
 #### Unit Composition
 - 1 Cyclops Demolition Vehicle
@@ -4132,9 +4829,21 @@ ASTRA MILITARUM
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 6 | 0 | 1 |
 | melee | -- | Sentinel chainsaw | -- | Melee | 3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their multi-laser replaced with one of the following:
+  - 1 autocannon
+  - 1 heavy flamer
+  - 1 lascannon
+  - 1 missile launcher
+  - 1 plasma cannon
+- Any number of models can each be equipped with 1 Sentinel chainsaw.
+- Any number of models can each be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise 1
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
 - Mobile Hunter-killers: Each time a model in this unit makes an attack that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll.
 
 #### Unit Composition
@@ -4176,9 +4885,22 @@ ASTRA MILITARUM
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 6 | 0 | 1 |
 | melee | -- | Sentinel chainsaw | -- | Melee | 3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their multi-laser replaced with one of the following:
+  - 1 autocannon
+  - 1 heavy flamer
+  - 1 lascannon
+  - 1 missile launcher
+  - 1 plasma cannon
+- Any number of models can each be equipped with 1 Sentinel chainsaw.
+- Any number of models can each be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise 1
+- Scouts 9"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Scouts 9"
 - Daring Recon: At the start of your Shooting phase, select one enemy unit within 18" of and visible to this unit. Until the end of the phase, each time a friendly ASTRA MILITARUM model makes an attack that targets that unit, re-roll a Hit roll of 1.
 
 #### Unit Composition
@@ -4210,12 +4932,15 @@ ASTRA MILITARUM
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Wargear options
+- None
+
 #### Abilities
 **ABILITIES:**
 - Emplacement Platform: Friendly ASTRA MILITARUM INFANTRY models can be set up or end any type of move on top of the platform section of this FORTIFICATION.
-  Reinforced Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
-  Defence Line: While an ASTRA MILITARUM INFANTRY model has the Benefit of Cover as a result of this terrain feature (see above), that model has a 4+ invulnerable save.
-  Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
+- Reinforced Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Defence Line: While an ASTRA MILITARUM INFANTRY model has the Benefit of Cover as a result of this terrain feature (see above), that model has a 4+ invulnerable save.
+- Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
 
@@ -4236,6 +4961,8 @@ ASTRA MILITARUM
 ## Detachments
 
 ### Host of Ascension (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- A Perfect Ambush
 - Each time a GENESTEALER CULTS unit from your army is set up on the battlefield as Reinforcements, until the end of your next Fight phase, weapons equipped by models in that unit have the [SUSTAINED HITS 1] and [IGNORES COVER] abilities.
 
@@ -4289,6 +5016,8 @@ ASTRA MILITARUM
   EFFECT: Roll one D6: on a 2-4, that enemy unit suffers D3 mortal wounds; on a 5+, that enemy unit suffers 3 mortal wounds.
 
 ### Xenocreed Congregation (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Unquestioning Fanaticism
 - For each ACOLYTE HYBRIDS, HYBRID METAMORPHS and NEOPHYTE HYBRIDS unit from your army, while one or more CHARACTER models are leading that unit, you can re-roll Advance and Charge rolls made for it. If that CHARACTER model is a MAGUS, PRIMUS or ACOLYTE ICONWARD, that model has the Feel No Pain 3+ ability while leading that unit.
 
@@ -4345,12 +5074,18 @@ ASTRA MILITARUM
   EFFECT: Your unit can make a move of up to D6", but it unit must end that move as close as possible to the closest enemy unit (excluding AIRCRAFT), When doing so, models in your unit can be moved within Engagement Range of that enemy unit.
 
 ### Biosanctic Broodsurge (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Hypermorphic Fury
 - Add 1 to Charge rolls made for ABERRANTS, BIOPHAGUS and PURESTRAIN GENESTEALERS units from your army. In addition, each time such a unit is selected to fight, if it made a Charge move this turn, until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit.
 
 #### Enhancements
 - Predatory Instincts 20 pts
 - ABOMINANT, BIOPHAGUS or PATRIARCH model only.
+  - Models in the bearer's unit have the Infiltrators ability.
+  - You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+  - That use is -1 CP.
+  - That use does not prevent any uses of that stratagem on other units this phase.
 - Biomorph Adaptation 25 pts
 - ABOMINANT or PATRIARCH model only. Improve the Armour Penetration and Damage characteristics of melee weapons equipped by the bearer by 1.
 - Mutagenic Regeneration 10 pts
@@ -4397,6 +5132,8 @@ ASTRA MILITARUM
   EFFECT: Until the end of the phase, each time an enemy unit within 9" of your unit is selected to shoot, it must take a Leadership test, subtracting 1 from the result. If that test is failed, until the end of the phase, each time a model in that enemy unit makes an attack that targets your unit, subtract 1 from the Hit roll.
 
 ### Outlander Claw (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Rapid Takeover
 - While a GENESTEALER CULTS MOUNTED/VEHICLE model from your army is not Battle-shocked, add 1 to its Objective Control characteristic. In addition, at the end of your Command phase, if one or more ATALAN JACKALS units from your army are within range of an objective you control, that objective remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
 
@@ -4449,6 +5186,8 @@ ASTRA MILITARUM
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Brood Brother Auxilia (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Integrated Tactics
 - Each time an ASTRA MILITARUM unit from your army (see below) is selected to shoot, you can select one enemy unit within 18" of and visible to that unit. If you do, until the end of the phase, models in that ASTRA MILITARUM unit can only target that enemy unit (and only if it is an eligible target) and that enemy unit is caught in overlapping fire. While an enemy unit is caught in overlapping fire, each time a GENESTEALER CULTS model from your army targets that enemy unit with a ranged attack, add 1 to the Hit roll.
 #### Detachment rule -- BROOD BROTHERS
@@ -4508,6 +5247,8 @@ ASTRA MILITARUM
   EFFECT: Your unit can make a Normal move of up to 6".
 
 ### Final Day (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Psionic Parasitism
 - At the end of your Movement phase, for each TYRANIDS SYNAPSE unit from your army, you can select one friendly GENESTEALER CULTS unit (excluding PURESTRAIN GENESTEALER and PATRIARCH units) and one friendly TYRANIDS unit each within 9" of and visible to that SYNAPSE unit. If you do, that GENESTEALER CULTS unit from your army suffers D3+1 mortal wounds and one model in the selected TYRANIDS unit regains up to that many lost wounds and until the start of your next Movement phase, each time a model in the selected TYRANIDS unit makes an attack, add 1 to the Hit roll.
   TYRANIDS units from your army have the following ability:
@@ -4573,6 +5314,8 @@ ASTRA MILITARUM
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Heroes of the Uprising (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Killer Reputation
 - Friendly KELERMORPH/LOCUS/REDUCTUS SABOTEUR/SANCTUS models have KILLER.
   Friendly KILLER models' attacks can:
@@ -4608,6 +5351,8 @@ ASTRA MILITARUM
   - On a 2+, do not remove that model from the battlefield. When your unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.
 
 ### Purestrain Broodswarm (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Enemy Within
 - At the end of your opponent's Fight phase, friendly unengaged PURESTRAIN GENESTEALER units can be placed in strategic reserves.
   This detachment has the PURESTRAIN tag and cannot be taken with another PURESTRAIN detachment.
@@ -4615,6 +5360,9 @@ ASTRA MILITARUM
 #### Enhancements
 - Mark of the Star ChildrenUPGRADE 30 pts
 - PURESTRAIN GENESTEALERS unit only. This unit has:
+  - +1 T.
+  - 4+ Sv.
+  - This unit's melee attacks have +1 S.
 - Talons of the Sire 15 pts
 - PATRIARCH model only. This unit's attacks can re-roll wound rolls of 1.
 
@@ -4639,6 +5387,8 @@ ASTRA MILITARUM
   EFFECT: Your unit can make a normal move of up to D3+3".
 
 ### Xenocult Masses (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Hordes of the Faithful
 - In your Command phase, if a friendly NEOPHYTE HYBRIDS unit is within a terrain area, that unit heals 3 wounds.
   This detachment has the HOSTS tag and cannot be taken with another HOSTS detachment.

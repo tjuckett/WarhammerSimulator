@@ -1,5 +1,5 @@
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
-import { fightPlayUnitWeapon, fightPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
+import { advancePlayCombatResolution, beginPlayCombatResolution, clearPlayCombatResolution, fightPlayUnitWeapon, fightPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
 import { buildMeleeAttackAllocations } from './playAttackAllocations';
@@ -33,6 +33,7 @@ export function createPlayFightResolution({
   setFightResolutionStatus,
   setSelectedFightWeaponIndex,
   setFightResultWeaponOptions,
+  onCombatResolutionAdvanced,
 }: {
   battleStateRef: StateRef;
   playModelSelection: PlayModelSelection | null;
@@ -63,11 +64,31 @@ export function createPlayFightResolution({
   setFightResolutionStatus: (status: 'idle' | 'rolled') => void;
   setSelectedFightWeaponIndex: (weaponIndex: 'all' | string) => void;
   setFightResultWeaponOptions: (options: typeof selectedPlayFightOptions) => void;
+  onCombatResolutionAdvanced?: (state: BattleState) => void;
 }) {
   function resolveSelectedPlayFight() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'fight' || !selection) return;
+    const pendingStage = prev.pendingCombatResolution;
+    const hasQueuedStageToAdvance = !!pendingStage?.continuationQueue?.some(entry => (entry.stage ?? 'hits') !== 'damage');
+    if (fightResolutionStatus === 'rolled'
+      && pendingStage?.kind === 'fight'
+      && pendingStage.attackerUnitId === selection.unitId
+      && (pendingStage.stage !== 'damage' || hasQueuedStageToAdvance)) {
+      const advanced = advancePlayCombatResolution(prev, 'fight', selection.unitId);
+      if (advanced !== prev) {
+        pushPlayUndo(playUndoEntry(prev), advanced, {
+          type: GAME_ACTION_TYPE.AdvanceCombatResolution,
+          kind: 'fight',
+          unitId: selection.unitId,
+          side: selection.side,
+        });
+        commitBattleState(advanced);
+        onCombatResolutionAdvanced?.(advanced);
+      }
+      return;
+    }
     if (!damageAllocationLocked && fightResolutionStatus === 'rolled') {
       // A defender review is still meaningful when every wound was saved (or
       // every point of damage was ignored). The typed resolution owns those
@@ -81,6 +102,15 @@ export function createPlayFightResolution({
         return;
       }
       setFightResolutionStatus('idle');
+      const cleared = clearPlayCombatResolution(prev, selection.unitId);
+      if (cleared !== prev) {
+        pushPlayUndo(playUndoEntry(prev), cleared, {
+          type: GAME_ACTION_TYPE.ClearCombatResolution,
+          unitId: selection.unitId,
+          side: selection.side,
+        });
+        commitBattleState(cleared);
+      }
       setTargetErrorMsg(null);
       return;
     }
@@ -118,7 +148,9 @@ export function createPlayFightResolution({
         let resolved = prev;
         const mergedWeapons: NonNullable<BattleState['lastShootingResolution']>['weapons'] = [];
         for (const [sourceUnitId, allocations] of allocationGroups) {
-          const afterComponent = fightPlayUnitWeapons(resolved, sourceUnitId, selection.side, allocations, activeRulesForBattle);
+          const afterComponent = fightPlayUnitWeapons(resolved, sourceUnitId, selection.side, allocations, activeRulesForBattle, {
+            interactiveStage: allocationGroups.size === 1,
+          });
           if (afterComponent === resolved) return prev;
           for (const result of afterComponent.lastShootingResolution?.weapons ?? []) {
             const displayOption = selectedPlayFightOptions.find(option =>
@@ -134,6 +166,7 @@ export function createPlayFightResolution({
             shooterUnitId: selection.unitId,
             weapons: mergedWeapons,
           };
+          resolved = beginPlayCombatResolution(resolved, 'fight', selection.unitId, selection.side);
         }
         return resolved;
       }, { unitId: selection.unitId, weaponIndex: 'all' });
@@ -200,13 +233,19 @@ export function createPlayFightResolution({
       return;
     }
     const targetUnitId = usesSplit ? targetSplits[0].targetUnitId : selectedFightTargetId;
-    if (!targetUnitId) return;
+    if (!targetUnitId) {
+      setTargetErrorMsg('Select an engaged target before resolving this Fight.');
+      return;
+    }
     const next = measurePerformanceTrace(
       'fight-resolution-core',
       () => fightPlayUnitWeapon(prev, selection.unitId, selection.side, targetUnitId, weaponIndex, activeRulesForBattle, usesSplit ? targetSplits : undefined),
       { unitId: selection.unitId, weaponIndex: String(weaponIndex) },
     );
-    if (next === prev) return;
+    if (next === prev) {
+      setTargetErrorMsg('Fight declaration could not be resolved. Check the selected target and melee allocation.');
+      return;
+    }
     setFightResultWeaponOptions(selectedPlayFightOptions);
     setFightResolutionStatus('rolled');
     setTargetErrorMsg(null);

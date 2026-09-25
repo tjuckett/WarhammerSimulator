@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, type BattleState, type BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import { attachedUnitProfilesFor, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { attachedUnitComponents } from '@warhammer-simulator/core/engine/attachedUnits';
@@ -47,7 +47,11 @@ export function normalizePlaySelectionForState(
   // selection always expands to the complete attached unit and uses the
   // bodyguard-first representative as its stable action identity. Rules that
   // explicitly target a Leader bypass board selection and use typed targets.
-  if (allowedUnitIds.size > 1) {
+  // Deployment is the one phase where the board is a formation editor rather
+  // than a rules-unit action selector. Keep a clicked leader/bodyguard model
+  // as the actual selection there so it can be repositioned independently;
+  // attached groups are still expanded for movement and combat actions.
+  if (allowedUnitIds.size > 1 && state.phase !== BATTLE_PHASE.Deployment) {
     const representative = attachedBattleUnitRepresentativeForSelection(state, primary.unitId);
     const groupParts = [...allowedUnitIds]
       .map(unitId => state.units.find(unit => unit.id === unitId && unit.side === primary.side && !unit.destroyed))
@@ -66,6 +70,7 @@ export function normalizePlaySelectionForState(
       side: primary.side,
       parts: groupParts,
       ...(modelHighlights.length ? { modelHighlights } : {}),
+      ...(selection.preserveModelGroupOnDrag ? { preserveModelGroupOnDrag: true } : {}),
     } : null;
   }
 
@@ -83,6 +88,7 @@ export function normalizePlaySelectionForState(
     side: primary.side,
     parts,
     ...(modelHighlights.length ? { modelHighlights } : {}),
+    ...(selection.preserveModelGroupOnDrag ? { preserveModelGroupOnDrag: true } : {}),
   } : null;
 }
 

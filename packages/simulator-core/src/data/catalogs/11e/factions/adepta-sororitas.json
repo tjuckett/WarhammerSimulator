@@ -1,0 +1,73 @@
+{
+  "id": "adepta-sororitas",
+  "name": "Adepta Sororitas",
+  "edition": "11e",
+  "unitRefs": [
+    "adepta-sororitas.aestred-thurga-and-agathae-dolan",
+    "adepta-sororitas.daemonifuge",
+    "adepta-sororitas.saint-celestine",
+    "adepta-sororitas.triumph-of-saint-katherine",
+    "adepta-sororitas.junith-eruita",
+    "adepta-sororitas.intranzia-fraye",
+    "adepta-sororitas.morvenn-vahl",
+    "adepta-sororitas.canoness",
+    "adepta-sororitas.canoness-with-jump-pack",
+    "adepta-sororitas.dialogus",
+    "adepta-sororitas.dogmata",
+    "adepta-sororitas.hospitaller",
+    "adepta-sororitas.imagifier",
+    "adepta-sororitas.ministorum-priest",
+    "adepta-sororitas.palatine",
+    "adepta-sororitas.battle-sisters-squad",
+    "adepta-sororitas.immolator",
+    "adepta-sororitas.sororitas-rhino",
+    "adepta-sororitas.arco-flagellants",
+    "adepta-sororitas.celestian-insidiants",
+    "adepta-sororitas.celestian-sacresants",
+    "adepta-sororitas.dominion-squad",
+    "adepta-sororitas.repentia-squad",
+    "adepta-sororitas.retributor-squad",
+    "adepta-sororitas.sanctifiers",
+    "adepta-sororitas.seraphim-squad",
+    "adepta-sororitas.sisters-novitiate-squad",
+    "adepta-sororitas.zephyrim-squad",
+    "adepta-sororitas.castigator",
+    "adepta-sororitas.exorcist",
+    "adepta-sororitas.mortifiers",
+    "adepta-sororitas.paragon-warsuits",
+    "adepta-sororitas.penitent-engines"
+  ],
+  "ruleRefs": [
+    "adepta-sororitas.army-rule.acts-of-faith"
+  ],
+  "detachmentRefs": [
+    "adepta-sororitas.detachment.hallowed-martyrs",
+    "adepta-sororitas.detachment.penitent-host",
+    "adepta-sororitas.detachment.bringers-of-flame",
+    "adepta-sororitas.detachment.army-of-faith",
+    "adepta-sororitas.detachment.champions-of-faith",
+    "adepta-sororitas.detachment.chorus-of-condemnation",
+    "adepta-sororitas.detachment.sacred-champions",
+    "adepta-sororitas.detachment.sanctified-orators"
+  ],
+  "factionKeywords": [
+    "adepta-sororitas",
+    "Adepta Sororitas"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Adepta Sororitas faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 33,
+    "normalizedEntryCount": 33,
+    "excludedLegendCount": 5,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

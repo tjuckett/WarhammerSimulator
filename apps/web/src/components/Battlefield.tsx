@@ -40,6 +40,8 @@ export type PlayModelSelection = {
   parts: Array<{ unitId: string; side: 0 | 1; modelIndices: number[] }>;
   /** Models directly clicked on the board, kept separate from the unit-level action selection. */
   modelHighlights?: Array<{ unitId: string; side: 0 | 1; modelIndices: number[] }>;
+  /** A box selection may move together when dragged, while a click still selects one model. */
+  preserveModelGroupOnDrag?: boolean;
 };
 
 type LOSModelVisibility = {
@@ -133,6 +135,8 @@ interface Props {
     fixedOverlay?: ReactNode;
     /** Optional battlefield anchor used only by fixedOverlay. */
     fixedOverlayAnchor?: PlayModelSelection | null;
+    /** Fixed overlays can be tied to a unit or presented along the board bottom. */
+    fixedOverlayPlacement?: 'anchor' | 'bottom';
     canPlaceUnit?: boolean;
     placementPreview?: { profile: UnitProfile; attachedProfiles?: UnitProfile[]; side: 0 | 1 } | null;
     onSelectModel?: (selection: PlayModelSelection | null, additive?: boolean) => void;
@@ -502,6 +506,13 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
       .join('|') ?? '';
   }
 
+  /** A manually placed popup belongs to its rules unit, not one model in it. */
+  function selectedActionsScopeKey(selection: PlayModelSelection | null | undefined): string {
+    return [...new Set(selection?.parts.map(part => `${part.side}:${part.unitId}`) ?? [])]
+      .sort()
+      .join('|');
+  }
+
   function renderCanvas(
     drawState: BattleState = rotationPreviewRef.current?.previewState ?? state,
     dragPreview: { selection: PlayModelSelection; dx: number; dy: number } | null = null,
@@ -593,14 +604,21 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
   const updateFixedOverlayPositionEvent = useStableLayoutEvent(updateFixedOverlayPosition);
 
   useLayoutEffect(() => {
-    manuallyPositionedActionsKeyRef.current = null;
+    const selection = deployer?.selectedModelActionsAnchor ?? deployer?.selectedModel;
+    const scopeKey = selectedActionsScopeKey(selection);
+    // Keep a manually positioned popup where the player put it while they
+    // inspect another model from the same unit. Changing units (or clearing
+    // the selection) deliberately returns to automatic placement.
+    if (manuallyPositionedActionsKeyRef.current !== scopeKey) {
+      manuallyPositionedActionsKeyRef.current = null;
+    }
     selectedActionsDragRef.current = null;
     updateSelectedActionsPositionEvent();
   }, [deployer?.selectedModel, deployer?.selectedModelActionsAnchor, hasSelectedModelActions, hideSelectedActions, zoom, updateSelectedActionsPositionEvent]);
 
   useLayoutEffect(() => {
     updateFixedOverlayPositionEvent();
-  }, [state, deployer?.fixedOverlay, deployer?.fixedOverlayAnchor, zoom, updateFixedOverlayPositionEvent]);
+  }, [state, deployer?.fixedOverlay, deployer?.fixedOverlayAnchor, deployer?.fixedOverlayPlacement, zoom, updateFixedOverlayPositionEvent]);
 
   // Once the popup mounts, measure its real width/height and apply the board
   // bounds. The first pass cannot measure it because it has no position yet.
@@ -729,9 +747,16 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
   function selectedModelActionAnchor(sourceState: BattleState, selection: PlayModelSelection): { anchor: Position; bounds: { left: number; right: number; top: number; bottom: number } } | null {
     const selectedUnitIds = new Set(selection.parts.map(part => `${part.side}:${part.unitId}`));
     const selectedModels = sourceState.units.filter(unit =>
-      selectedUnitIds.has(`${unit.side}:${unit.id}`) && !unit.destroyed,
+      selectedUnitIds.has(`${unit.side}:${unit.id}`),
     ).flatMap(unit => {
-      return unit.modelPositions.flatMap((model, modelIndex) => {
+      const positions = unit.destroyed
+        ? unit.lastDestroyedModelPositions?.length
+          ? unit.lastDestroyedModelPositions
+          : unit.lastDestroyedPosition
+            ? [unit.lastDestroyedPosition]
+            : []
+        : unit.modelPositions;
+      return positions.flatMap((model, modelIndex) => {
         if (!model) return [];
         const radius = modelBaseRadiusForUnit(unit, modelIndex);
         return [{
@@ -766,7 +791,7 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
       setSelectedActionsPosition(current => current === null ? current : null);
       return;
     }
-    if (manuallyPositionedActionsKeyRef.current === selectedActionsKey(selection)) return;
+    if (manuallyPositionedActionsKeyRef.current === selectedActionsScopeKey(selection)) return;
     const selectionGeometry = selectedModelActionAnchor(state, selection);
     if (!selectionGeometry) {
       selectedActionsPositionRef.current = null;
@@ -835,12 +860,7 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
   function updateFixedOverlayPosition() {
     const canvas = canvasRef.current;
     const selection = deployer?.fixedOverlayAnchor;
-    if (!canvas || !selection || !deployer?.fixedOverlay) {
-      setFixedOverlayPosition(current => current === null ? current : null);
-      return;
-    }
-    const geometry = selectedModelActionAnchor(state, selection);
-    if (!geometry) {
+    if (!canvas || !deployer?.fixedOverlay) {
       setFixedOverlayPosition(current => current === null ? current : null);
       return;
     }
@@ -848,6 +868,18 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
     const overlayRect = fixedOverlayRef.current?.getBoundingClientRect();
     const width = overlayRect?.width ?? Math.min(360, Math.max(220, canvasRect.width - 28));
     const height = overlayRect?.height ?? 160;
+    if (deployer.fixedOverlayPlacement === 'bottom') {
+      setFixedOverlayPosition({
+        left: Math.max(canvasRect.left + 8, Math.min(canvasRect.right - width - 8, canvasRect.left + (canvasRect.width - width) / 2)),
+        top: Math.max(canvasRect.top + 8, canvasRect.bottom - height - 12),
+      });
+      return;
+    }
+    const geometry = selection ? selectedModelActionAnchor(state, selection) : null;
+    if (!geometry) {
+      setFixedOverlayPosition(current => current === null ? current : null);
+      return;
+    }
     const scale = sizeRef.current.scale;
     const gap = 18;
     const minLeft = canvasRect.left + 8;
@@ -880,7 +912,7 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
       left: position.left,
       top: position.top,
     };
-    manuallyPositionedActionsKeyRef.current = selectedActionsKey(deployer?.selectedModel);
+    manuallyPositionedActionsKeyRef.current = selectedActionsScopeKey(deployer?.selectedModelActionsAnchor ?? deployer?.selectedModel);
     e.currentTarget.setPointerCapture(e.pointerId);
     e.preventDefault();
   }
@@ -1066,7 +1098,6 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
   }
 
   function selectedIndicesForHit(hit: { unitId: string; side: 0 | 1; modelIndex: number }): PlayModelSelection {
-    const current = deployer?.selectedModel;
     const pendingDamageModel = state.units.find(unit =>
       unit.id === hit.unitId
       && unit.side === hit.side
@@ -1083,20 +1114,6 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
       : [];
     const isPendingChargeModel = state.pendingChargeMovement?.side === hit.side
       && pendingChargeUnitIds.includes(hit.unitId);
-    // A direct click during normal placement/movement always selects exactly
-    // that model. Reusing a prior selection here could turn a stale
-    // whole-unit selection into an unintended whole-unit drag merely because
-    // it happened to contain the clicked model. Box selection is the explicit
-    // multi-model movement gesture.
-    if (deployer?.onMoveModel
-      && state.phase !== BATTLE_PHASE.Setup
-      && state.phase !== BATTLE_PHASE.Movement
-      && !isPendingFightModel
-      && !isPendingChargeModel
-      && current
-      && selectionContainsHit(current, hit)) {
-      return current;
-    }
     if (isPendingChargeModel) {
       return {
         side: hit.side,
@@ -1130,7 +1147,9 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
     // unit rather than an isolated model. This keeps attached leaders in the
     // same selection footprint, popup anchor, and action target as their
     // bodyguard unit.
-    if (state.phase !== BATTLE_PHASE.Setup && state.phase !== BATTLE_PHASE.Movement) {
+    if (state.phase !== BATTLE_PHASE.Deployment
+      && state.phase !== BATTLE_PHASE.Setup
+      && state.phase !== BATTLE_PHASE.Movement) {
       const groupIds = attachedBattleUnitIdsForSelection(state, hit.unitId);
       const groupParts = groupIds.flatMap(unitId => {
         const unit = state.units.find(candidate => candidate.id === unitId && !candidate.destroyed);
@@ -1184,7 +1203,12 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
     });
 
     const primary = selectedParts[0];
-    return primary ? { side: primary.side, parts: selectedParts } : null;
+    return primary ? {
+      side: primary.side,
+      parts: selectedParts,
+      modelHighlights: selectedParts,
+      preserveModelGroupOnDrag: true,
+    } : null;
   }
 
   function nearestVertex(point: { x: number; y: number }) {
@@ -1254,6 +1278,13 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
       const modelHit = hitTestModel(point);
       if (modelHit) {
         const modelSelection = selectedIndicesForHit(modelHit);
+        const existingSelection = deployer.selectedModel;
+        // A box-selected group remains a grouped drag, but an ordinary click
+        // immediately changes the visible selection to the clicked model.
+        const dragSelection = existingSelection?.preserveModelGroupOnDrag
+          && selectionContainsHit(existingSelection, modelHit)
+          ? existingSelection
+          : modelSelection;
         const pendingChargeUnitIds = hasPendingChargeMovement(state)
           ? attachedBattleUnitIdsForSelection(state, state.pendingChargeMovement.unitId)
           : [];
@@ -1283,8 +1314,13 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
         // it with the clicked model selection. Charge and Fight clicks still
         // go through onSelectUnit because those phases have target/action
         // selection rules of their own.
-        const modelMovementClick = deployer.onMoveModel
-          && (state.phase === BATTLE_PHASE.Setup || state.phase === BATTLE_PHASE.Movement);
+        // Deployment, setup, and normal movement use direct model editing.
+        // Charge/Fight keep their unit-level target selection path unless a
+        // pending movement explicitly owns the click.
+        const modelMovementClick = !!deployer.onMoveModel
+          && (state.phase === BATTLE_PHASE.Deployment
+            || state.phase === BATTLE_PHASE.Setup
+            || state.phase === BATTLE_PHASE.Movement);
         const selectFightUnitForClick = !isPendingFightModel || isLockedPendingFightModel;
         // A pending damage click is not a general unit-selection action. Its
         // only meaning is "apply the core-owned next packet to this exact
@@ -1301,9 +1337,9 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
           deployer.onSelectModel?.(modelSelection, false);
         }
         if (deployer.onMoveModel && !isLockedPendingFightModel && !isOtherPendingFightUnit) {
-          deployer.onBeginModelMove?.(modelSelection);
+          deployer.onBeginModelMove?.(dragSelection);
           modelDragRef.current = {
-            selection: modelSelection,
+            selection: dragSelection,
             start: point,
             current: point,
           originState: state,
@@ -1732,7 +1768,7 @@ export const Battlefield = memo(function Battlefield({ state, selectedUnitId = n
         />
         {selectedActionsPosition && deployer?.selectedModelActions && (
           <div
-            key={selectedActionsKey(deployer.selectedModelActionsAnchor ?? deployer.selectedModel) || 'selected-actions'}
+            key={selectedActionsScopeKey(deployer.selectedModelActionsAnchor ?? deployer.selectedModel) || 'selected-actions'}
             ref={selectedActionsRef}
             className={`selected-unit-actions ${deployer.selectedModelActionsClassName ?? ''}`.trim()}
             onPointerDown={beginSelectedActionsDrag}
@@ -2223,7 +2259,7 @@ function draw(
     // that unit readable even if it is not otherwise eligible to fight.
     const fightUnitIsIneligible = fightIneligibleUnitIds.has(unit.id)
       && !(unit.pendingDamageAllocations?.length);
-    drawUnit(ctx, previewUnit, state, scale, movementHudIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !showModelWarnings || !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelVisibility, shooterGroupUnitIds.has(unit.id) ? shootingModelStates : undefined, visualShootingRole, visualShootingRole === 'target' && selectedGroupUnitIds.has(unit.id), state.phase === 'charge', drawsFormationOutline && readyGroupUnitIds.has(unit.id), drawsFormationOutline && noTargetGroupUnitIds.has(unit.id), fightFirstUnitIds.has(unit.id), drawsFormationOutline && activeSimulationGroupUnitIds.has(unit.id), unitWarningUnitId === unit.id ? unitWarning : null, showMovementCircles, drawsFormationOutline && fightPileInStepActive && readyGroupUnitIds.has(unit.id), drawsFormationOutline && (fightPileInStepActive || fightConsolidationStepActive) && selectedGroupUnitIds.has(unit.id), fightMovementInvalidModelIds, fightMovementLockedModelIds, fightUnitIsIneligible, fightEngagementModelIds, modelWarningIds, modelRenderGeometryByUnitId, transportPassengerLabels, formationBoundsByUnitId.get(unit.id));
+    drawUnit(ctx, previewUnit, state, scale, movementHudIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !showModelWarnings || !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelVisibility, shooterGroupUnitIds.has(unit.id) ? shootingModelStates : undefined, visualShootingRole, visualShootingRole === 'target' && selectedGroupUnitIds.has(unit.id), state.phase === 'charge', drawsFormationOutline && readyGroupUnitIds.has(unit.id), drawsFormationOutline && noTargetGroupUnitIds.has(unit.id), fightFirstUnitIds.has(unit.id), drawsFormationOutline && activeSimulationGroupUnitIds.has(unit.id), unitWarningUnitId === unit.id ? unitWarning : null, showMovementCircles, drawsFormationOutline && fightPileInStepActive && readyGroupUnitIds.has(unit.id), drawsFormationOutline && (fightPileInStepActive || fightConsolidationStepActive) && selectedGroupUnitIds.has(unit.id), fightMovementInvalidModelIds, fightMovementLockedModelIds, fightUnitIsIneligible, fightEngagementModelIds, modelWarningIds, modelRenderGeometryByUnitId, transportPassengerLabels, formationBoundsByUnitId.get(unit.id), drawsFormationOutline && selectedGroupUnitIds.has(unit.id));
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);
@@ -2791,6 +2827,7 @@ function drawUnit(
   modelRenderGeometryByUnitId: ModelRenderGeometryByUnitId = new Map(),
   transportPassengerLabels: ReadonlyMap<string, string[]> = new Map(),
   formationBoundsOverride: FormationBounds | undefined = undefined,
+  unitSelected = false,
 ) {
   const board = boardFormatForState(state);
   const color = state.armies[unit.side].color;
@@ -2956,7 +2993,7 @@ function drawUnit(
   } else if (shootingReady || shootingNoTarget) {
     drawShootingReadyOutline(ctx, outlineLeftX, outlineTopY, outlineRightX, outlineBottomY, scale, shootingNoTarget);
   }
-  if (fightPileInSelected) {
+  if (unitSelected || fightPileInSelected) {
     drawSelectedUnitOutline(ctx, outlineLeftX, outlineTopY, outlineRightX, outlineBottomY, scale);
   }
   if (unitWarning) {

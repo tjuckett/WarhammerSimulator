@@ -1,0 +1,64 @@
+{
+  "id": "leagues-of-votann",
+  "name": "Leagues of Votann",
+  "edition": "11e",
+  "unitRefs": [
+    "leagues-of-votann.berehk-stornbrow",
+    "leagues-of-votann.buri-aegnirssen",
+    "leagues-of-votann.uthar-the-destined",
+    "leagues-of-votann.arkanyst-evaluator",
+    "leagues-of-votann.brokhyr-iron-master",
+    "leagues-of-votann.einhyr-champion",
+    "leagues-of-votann.grimnyr",
+    "leagues-of-votann.k-hl",
+    "leagues-of-votann.memnyr-strategist",
+    "leagues-of-votann.hearthkyn-warriors",
+    "leagues-of-votann.kapricus-carrier",
+    "leagues-of-votann.sagitaur",
+    "leagues-of-votann.brokhyr-thunderkyn",
+    "leagues-of-votann.cthonian-beserks",
+    "leagues-of-votann.cthonian-earthshakers",
+    "leagues-of-votann.einhyr-hearthguard",
+    "leagues-of-votann.hernkyn-yaegirs",
+    "leagues-of-votann.ironkin-steeljacks-with-heavy-volkanite-disintegrators",
+    "leagues-of-votann.ironkin-steeljacks-with-melee-weapons",
+    "leagues-of-votann.hernkyn-pioneers",
+    "leagues-of-votann.hekaton-land-fortress",
+    "leagues-of-votann.kapricus-defenders"
+  ],
+  "ruleRefs": [
+    "leagues-of-votann.army-rule.prioritised-efficiency"
+  ],
+  "detachmentRefs": [
+    "leagues-of-votann.detachment.needgaard-oathband",
+    "leagues-of-votann.detachment.persecution-prospect",
+    "leagues-of-votann.detachment.delve-assault-shift",
+    "leagues-of-votann.detachment.brandfast-oathband",
+    "leagues-of-votann.detachment.hearthfyre-arsenal",
+    "leagues-of-votann.detachment.hearthband",
+    "leagues-of-votann.detachment.mercenary-oathband",
+    "leagues-of-votann.detachment.armoured-trailblazers",
+    "leagues-of-votann.detachment.farseekers",
+    "leagues-of-votann.detachment.hearthguard-covenant"
+  ],
+  "factionKeywords": [
+    "leagues-of-votann",
+    "Leagues of Votann"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Leagues of Votann faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 22,
+    "normalizedEntryCount": 22,
+    "excludedLegendCount": 0,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

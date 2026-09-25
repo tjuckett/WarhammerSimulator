@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/imperial-agents/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/imperial-agents/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -75,16 +75,23 @@
 | ranged | -- | Neural shredder | anti-infantry 2+ precision torrent | 12" | D6 | N/A | 5 | -2 | 1 |
 | melee | -- | Phase sword and poison blades | lethal hits precision | Melee | 5 | 2+ | 5 | -4 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Fights First
+- Infiltrators
+- Lone Operative
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Fights First, Infiltrators, Lone Operative
-- FACTION: Assigned Agents
 - Acrobatic Escape:
   - At the end of the Fight phase, if this unit is engaged, this unit can make a fall-back move of up to D6".
   - At the end of your opponent's turn, if this unit is more than 3" from all enemy units, you can use this ability. If you do:
   - Place this unit in strategic reserves.
   - This unit must make an ingress move in your next Movement phase (including in your first turn).
-  Reign of Confusion: Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, this model can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
+- Reign of Confusion: Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, this model can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
 
 #### Unit Composition
 - 1 Callidus Assassin - EPIC HERO
@@ -122,13 +129,19 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Animus speculum | anti-psyker 2+ assault precision psychic assassin | 24" | 3 | 2+ | 5 | -2 | D3 |
 | melee | -- | Life-draining touch | anti-psyker 2+ devastating wounds precision | Melee | 4 | 2+ | 4 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative, Stealth
-- FACTION: Assigned Agents
 - Etheric Emergence: In your Movement phase, when this model is set up on the battlefield using the Deep Strike ability, it can perform an etheric emergence. If it does, this model can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge.
-  Abomination: This model has the Feel No Pain 2+ ability against Psychic Attacks.
-  Soulless Horror: Once per battle, at the start of any Command phase, this model can use this ability. If it does, each enemy unit within 9" of this model must take a Battle-shock test, subtracting 1 from that test (or subtracting 2 if that unit is a PSYKER).
+- Abomination: This model has the Feel No Pain 2+ ability against Psychic Attacks.
+- Soulless Horror: Once per battle, at the start of any Command phase, this model can use this ability. If it does, each enemy unit within 9" of this model must take a Battle-shock test, subtracting 1 from that test (or subtracting 2 if that unit is a PSYKER).
 
 #### Unit Composition
 - 1 Culexus Assassin - EPIC HERO
@@ -166,12 +179,18 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Executioner pistol | ANTI-INFANTRY 3+ PISTOL PRECISION SUSTAINED HITS 3 | 12" | 4 | 2+ | 4 | 0 | 1 |
 | melee | -- | Power sword and neuro gauntlet | ANTI-INFANTRY 3+ PRECISION SUSTAINED HITS 3 | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Lone Operative
+- Scouts 9"
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Lone Operative, Scouts 9"
-- FACTION: Assigned Agents
 - Frenzon: This model is eligible to shoot and declare a charge in a turn in which it Advanced.
-  Overkill: Once per battle, in your Movement phase, this model can use this ability before it makes a Normal move. If it does, until the end of the turn, add 6" to this model's Move characteristic and add 3 to the Attacks characteristic of this model's melee weapons.
+- Overkill: Once per battle, in your Movement phase, this model can use this ability before it makes a Normal move. If it does, until the end of the turn, add 6" to this model's Move characteristic and add 3 to the Attacks characteristic of this model's melee weapons.
 
 #### Unit Composition
 - 1 Eversor Assassin - EPIC HERO
@@ -211,15 +230,17 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Psychic Blast | anti-daemon 4+ anti-infantry 5+ devastating wounds psychic | 18" | D6 | 3+ | 3 | -1 | 1 |
 | melee | -- | Nemesis daemon hammer | psychic | Melee | 3 | 3+ | 9 | -3 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Authority of the Inquisition: While this model is leading a unit, it can embark within any TRANSPORT that its Bodyguard unit can embark within.
-  Malefic Wardings (Psychic): While this model is leading a unit, models in that unit have a 6+ invulnerable save, and a 4+ invulnerable save against Psychic Attacks and attacks made by DAEMON models.
-  Spy Network: Each time your opponent gains a CP as the result of an ability, roll one D6: on a 2+, you also gain 1CP.
-
-#### Wargear Abilities
+- Malefic Wardings (Psychic): While this model is leading a unit, models in that unit have a 6+ invulnerable save, and a 4+ invulnerable save against Psychic Attacks and attacks made by DAEMON models.
+- Spy Network: Each time your opponent gains a CP as the result of an ability, roll one D6: on a 2+, you also gain 1CP.
 - Glovodan Psyber-eagle: In your Command phase, you can select one enemy unit within 18" of the bearer. Until the start of your next Command phase, that unit cannot have the Benefit of Cover.
   Designer's Note: Place a Glovodan Psyber-eagle token next to the selected unit to remind you.
 
@@ -268,13 +289,17 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Psychic Tempest | psychic sustained hits 2 | 18" | 6 | 3+ | 6 | 0 | 2 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Authority of the Inquisition: While this model is leading a unit, it can embark within any TRANSPORT that its Bodyguard unit can embark within.
-  Xenos Hunter: While this model is leading a unit, each time a model in that unit makes an attack that targets an enemy unit that does not have the IMPERIUM or CHAOS keywords, add 1 to the Hit roll.
-  Psychic Veil (Psychic): In your Command phase, this PSYKER can use this ability. If it does, roll one D6: on a 1, this PSYKER's unit suffers D3 mortal wounds; on a 2+, until the start of your next Command phase, this PSYKER's unit can only be selected as the target of a ranged attack if the attacking model is within 18".
+- Xenos Hunter: While this model is leading a unit, each time a model in that unit makes an attack that targets an enemy unit that does not have the IMPERIUM or CHAOS keywords, add 1 to the Hit roll.
+- Psychic Veil (Psychic): In your Command phase, this PSYKER can use this ability. If it does, roll one D6: on a 1, this PSYKER's unit suffers D3 mortal wounds; on a 2+, until the start of your next Command phase, this PSYKER's unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 #### Unit Composition
 - 1 Inquisitor Draxus - EPIC HERO
@@ -322,13 +347,17 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Condemnor stake | anti-psyker 2+ devastating wounds precision rapid fire 1 | 24" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Master-crafted power sword | -- | Melee | 4 | 3+ | 4 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Authority of the Inquisition: While this model is leading a unit, it can embark within any TRANSPORT that its Bodyguard unit can embark within.
-  Psyoculum: While this model is leading a unit, ranged weapons equipped by models in that unit have the [ANTI-PSYKER 4+] ability.
-  No Mercy: While this model is leading a unit, each time a model in that unit makes an attack that targets a unit that is Below Half-strength, add 1 to the Hit roll.
+- Psyoculum: While this model is leading a unit, ranged weapons equipped by models in that unit have the [ANTI-PSYKER 4+] ability.
+- No Mercy: While this model is leading a unit, each time a model in that unit makes an attack that targets a unit that is Below Half-strength, add 1 to the Hit roll.
 
 #### Unit Composition
 - 1 Inquisitor Greyfax - EPIC HERO
@@ -376,14 +405,20 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Exitus rifle | devastating wounds heavy ignores cover precision | 48" | 1 | 2+ | 8 | -3 | D3+3 |
 | melee | -- | Vindicare combat knife | -- | Melee | 4 | 2+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Lone Operative, Stealth
-- FACTION: Assigned Agents
 - Deadshot: When this unit is selected to shoot, until this unit has shot:
   - Enemy units do not have Lone Operative.
   - Hidden enemy units have +15" detection range.
-  Shieldbreaker: Once per battle, when selecting targets for this model's exitus rifle, it can fire a shieldbreaker round. If it does, until the end of the phase, each time this model makes an attack with that weapon, add 1 to the Wound roll and any successful Wound roll scores a Critical Wound.
+- Shieldbreaker: Once per battle, when selecting targets for this model's exitus rifle, it can fire a shieldbreaker round. If it does, until the end of the phase, each time this model makes an attack with that weapon, add 1 to the Wound roll and any successful Wound roll scores a Critical Wound.
 
 #### Unit Composition
 - 1 Vindicare Assassin - EPIC HERO
@@ -422,12 +457,17 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Hellfire Extremis | anti-infantry 4+ devastating wounds ignores cover torrent | 12" | D6 | N/A | 4 | -1 | 1 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 6 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Leader
-- FACTION: Assigned Agents
 - Tactical Instinct: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Unstoppable Champion: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 1 wound remaining.
+- Unstoppable Champion: The first time this model is destroyed, roll one D6 at the end of the phase. On a 2+, set this model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 1 wound remaining.
 
 #### Unit Composition
 - 1 Watch Captain Artemis
@@ -470,20 +510,24 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Butcher blade | -- | Melee | 5 | 3+ | 4 | -2 | 1 |
 | melee | -- | Garralisk's claws and teeth | extra attacks | Melee | 4 | 4+ | 5 | -1 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Lone Operative
+- Scouts 6"
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative, Scouts 6"
-- FACTION: Assigned Agents
 - On My Signal, Fire!: After this unit has shot, you can select one enemy unit hit by those attacks. Until the end of the phase, each time an AGENTS OF THE IMPERIUM or IMPERIUM INFANTRY BATTLELINE model from your army makes an attack that targets that enemy unit, you can re-roll the Hit roll.
-  Tox-cycler: In your Shooting phase, after this unit has shot, if this model scored a hit with its Jindarii tox-cycler, until the end of the battle, add 2 to the Strength and Damage characteristics of that weapon (to a maximum Damage characteristic of 6).
+- Tox-cycler: In your Shooting phase, after this unit has shot, if this model scored a hit with its Jindarii tox-cycler, until the end of the battle, add 2 to the Strength and Damage characteristics of that weapon (to a maximum Damage characteristic of 6).
 
 #### Unit Composition
 - 1 Inquisitor Kroyle - EPIC HERO
   This model is equipped with: Jindarii tox-cycler; stubcarbine; butcher blade; Garralisk's claws and teeth.
-
-#### Leader
-- This model can be attached to the following unit:
-  - SANCTIFIERS
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **100 pts**
@@ -513,14 +557,21 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Inquisitorial melee weapon | -- | Melee | 5 | 3+ | 4 | -2 | 1 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 5 | -2 | D3 |
 
+#### Wargear options
+- This model's bolt pistol can be replaced with 1 combi-weapon.
+- This model's blessed wardings can be replaced with 1 psychic gifts and 1 Psychic Shock Wave.
+- If this model is equipped with 1 psychic gifts, its Inquisitorial melee weapon can be replaced with 1 force weapon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Authority of the Inquisition: While this model is leading a unit, it can embark within any Transport that its Bodyguard unit can embark within.
-  Power of the Rosette: Each time you target this model's unit with a Stratagem, roll one D6: on a 3+, you gain 1CP.
-
-#### Wargear Abilities
+- Power of the Rosette: Each time you target this model's unit with a Stratagem, roll one D6: on a 3+, you gain 1CP.
 - Blessed Wardings: While this model is leading a unit, models in that unit have the 6+ invulnerable save.
 - Psychic Gifts: The bearer has the PSYKER keyword.
 
@@ -587,12 +638,19 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Power weapon | -- | Melee | 3 | 4+ | 4 | -2 | 1 |
 | melee | -- | Zealot's vindictor | -- | Melee | 3 | 4+ | 5 | -1 | 2 |
 
+#### Wargear options
+- This model's zealot's vindictor can be replaced with 1 holy pistol and 1 power weapon
+
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Assigned Agents
 - Holy Hatred: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Zealot: Once per battle, in the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of melee weapons equipped by this model by 3.
+- Zealot: Once per battle, in the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of melee weapons equipped by this model by 3.
 
 #### Unit Composition
 - 1 Ministorum Priest
@@ -642,12 +700,16 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Laspistol | pistol | 12" | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Force-orb cane | psychic | Melee | 3 | 4+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Gaze into the Empyrean (Psychic): Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" of this model.
-  Third Eye (Psychic): At the start of your Shooting phase, select one enemy unit within 12" of and visible to this model. That unit must take a Battle-shock test, subtracting 2 from the result if it is an INFANTRY unit. If the test is failed, that enemy unit suffers 3 mortal wounds.
+- Third Eye (Psychic): At the start of your Shooting phase, select one enemy unit within 12" of and visible to this model. That unit must take a Battle-shock test, subtracting 2 from the result if it is an INFANTRY unit. If the test is failed, that enemy unit suffers 3 mortal wounds.
 
 #### Unit Composition
 - 1 Navigator
@@ -684,7 +746,7 @@ AGENTS OF THE IMPERIUM
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| ROGUE TRADER | (diameter 25mm) | 6" | 3 | 4+ | 4 | 6+ | 1 | 4+ |
+| ROGUE TRADER | (diameter 25mm) | 6" | 3 | 4+ | 4 | 6+ | 1 | -- |
 | OTHER MODELS | (diameter 25mm) | 6" | 3 | 4+ | 2 | 7+ | 1 | 4+ |
 
 #### Weapons
@@ -698,14 +760,16 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Death Cult power blade | precision | Melee | 5 | 2+ | 4 | -2 | 1 |
 | melee | -- | Monomolecular cane-rapier | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Backroom Deals: If your army contains one or more units with this ability, during the Declare Battle Formations step, select one of those units. While the selected unit is leading a unit, models in that unit have the Infiltrators ability.
-  Warrant of Trade: If your army includes one or more units with this ability, after both players have deployed their armies, select upto D3 IMPERIUM BATTLELINE units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
-
-#### Wargear Abilities
+- Warrant of Trade: If your army includes one or more units with this ability, after both players have deployed their armies, select upto D3 IMPERIUM BATTLELINE units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
 - Healing Serum: At the start of your Command phase, if the bearer's unit is below its Starting Strength, you can return up to D3 destroyed models (excluding CHARACTERS) to the bearer's unit.
 
 #### Unit Composition
@@ -759,12 +823,16 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Vigil spear | -- | 24" | 2 | 2+ | 4 | -1 | 2 |
 | melee | -- | Vigil spear | lance | Melee | 6 | 2+ | 6 | -2 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Assigned Agents
 - Strategic Knowledge: While this model is leading a unit, that unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
-  Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
+- Rites of Battle: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Watch Master
@@ -831,15 +899,23 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Power weapon | sustained hits 1 | Melee | 4 | 3+ | 5 | -2 | 2 |
 | melee | -- | Xenophase blade | devastating wounds | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in the unit, up to 1 model's infernus heavy bolter can be replaced with one of the following:
+  - 1 frag cannon.
+  - 1 hellstorm bolt rifle and 1 Astartes grenade launcher.
+- For every 5 models in the unit, up to 1 model's heavy thunder hammer can be replaced with 1 power weapon and 1 Astartes shield.
+- For every 5 models in the unit, up to 1 model's stalker bolt rifle can be replaced with 1 plasma incinerator.
+- For every 5 models in the unit, up to 1 model's Deathwatch marksman bolt carbine can be replaced with 1 combat knife.
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Death to the Alien: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack does not have the IMPERIUM or CHAOS keywords, you can re-roll the Hit roll instead.
-  Kill Team: Each time an attack targets this unit, if it contains models with different Toughness characteristics, until the attacking unit has finished making its attacks, use the Toughness characteristic of the majority of the models in that unit when determining what roll is required for that attack to successfully wound. If two or more Toughness characteristics are tied for majority, use the highest value.
+- Kill Team: Each time an attack targets this unit, if it contains models with different Toughness characteristics, until the attacking unit has finished making its attacks, use the Toughness characteristic of the majority of the models in that unit when determining what roll is required for that attack to successfully wound. If two or more Toughness characteristics are tied for majority, use the highest value.
   For the purposes of determining which models in this unit can embark within a TRANSPORT, Gravis Veteran models take up the space of 2 models, but can otherwise embark within any TRANSPORT their unit can embark within, even though similar models in other units have the GRAVIS keyword.
   Designer's Note: While the abstractions in the above rule cause some models to behave differently to similar models in other units, they are designed to minimise complicated Transport rules.
-
-#### Wargear Abilities
 - Astartes Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -893,12 +969,25 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Power weapon | -- | Melee | 3 | 3+ | 5 | -2 | 1 |
 | melee | -- | Xenophase blade | devastating wounds | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 2 models can each have their boltgun and power weapon replaced with one of the following:
+  - 1 boltgun and 1 Astartes shield
+  - 1 power weapon and 1 Astartes shield
+- For every 5 models in this unit, up to 2 models can each have their boltgun and power weapon replaced with 1 Deathwatch thunder hammer.
+- For every 5 models in this unit, 1 model can have their boltgun and power weapon replaced with 1 stalker-pattern boltgun and 1 close combat weapon.
+- For every 5 models in this unit, up to 2 models can each have their boltgun and power weapon replaced with 1 Deathwatch shotgun and 1 close combat weapon.
+- For every 5 models in this unit, 1 model can have its boltgun and power weapon replaced with 1 frag cannon and 1 close combat weapon.
+- For every 5 models in this unit, 1 model can have its boltgun and power weapon replaced with 1 infernus heavy bolter and 1 close combat weapon.
+- One model's boltgun and power weapon can be replaced with 1 Black Shield blades.
+- The Watch Sergeant's power weapon can be replaced with 1 xenophase blade.
+- The Watch Sergeant's boltgun can be replaced with 1 combi-weapon.
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Death to the Alien: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack does not have the IMPERIUM or CHAOS keywords, you can re-roll the Hit roll instead.
-
-#### Wargear Abilities
 - Astartes Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -943,15 +1032,26 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Navis Sergeant-at-Arms' Navis shotgun can be replaced with one of the following:
+  - 1 autopistol and 1 chainsword
+  - 1 bolt pistol and 1 power weapon
+- 1 Navis Armsman's Navis las-volley can be replaced with one of the following:
+  - 1 meltagun
+  - 1 plasma gun
+- 1 Navis Armsman's Navis shotgun can be replaced with 1 autopistol and 1 power weapon.
+- 1 Navis Armsman's Navis shotgun can be replaced with 1 autopistol and 1 chainfist.
+- 1 Navis Armsman can be equipped with 1 demolition charge.
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Breaching Team: Each time a model in this unit makes an attack, re-roll a Wound roll of 1. If the target is within range of an objective marker, you can re-roll the Wound roll instead.
-  Gheistskull: Once per battle, when you select this unit as the target of the Explosives Stratagem, you can target one enemy unit visible to and within 18" of this unit that is not within Engagement Range of any units from your army, instead of one within 8".
-  CAT Unit: Once per battle, when this unit is selected to shoot, until the end of the phase, ranged weapons equipped by models in this unit gain the [IGNORES COVER] ability.
+- Gheistskull: Once per battle, when you select this unit as the target of the Explosives Stratagem, you can target one enemy unit visible to and within 18" of this unit that is not within Engagement Range of any units from your army, instead of one within 8".
+- CAT Unit: Once per battle, when this unit is selected to shoot, until the end of the phase, ranged weapons equipped by models in this unit gain the [IGNORES COVER] ability.
   Designer's Note: Place one Gheistskull and one CAT Unit token next to this unit, removing each token once the relevant ability has been used.
-
-#### Wargear Abilities
 - Endurant Shield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -997,12 +1097,20 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 | melee | -- | Mechanical bite | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- Up to 2 Vigilants can each have their Arbites combat shotgun replaced with one of the following (duplicates are not allowed):
+  - 1 executioner shotgun
+  - 1 Arbites grenade launcher
+  - 1 heavy stubber
+  - 1 webber
+- The Proctor-Vigilant can be equipped with 1 nuncio aquila.
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Merciless Judgement: Each time a model in this unit makes a ranged attack that targets a unit that is Below Half-strength, add 1 to the Wound roll.
-
-#### Wargear Abilities
 - Nuncio Aquila (Aura): Once per battle, at the start of any Command phase, you can select one objective marker within 6" of the bearer. All enemy units (excluding MONSTERS and VEHICLES) within range of that objective marker must take a Battle-shock test. Each objective marker can only be targeted by this ability once per turn.
   Designer's Note: Place one Nuncio-aquila token next to the bearer, removing it once it uses this ability.
 
@@ -1039,18 +1147,26 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Assigned Agents
 - Self Repair: At the end of your Command phase, this model regains 1 lost wound.
+
+#### Transport
+- This model has a transport capacity of 12 AGENTS OF THE IMPERIUM INFANTRY models. It cannot transport TERMINATOR or OFFICIO ASSASSINORUM models.
 
 #### Unit Composition
 - 1 Imperial Rhino
   This model is equipped with: storm bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 AGENTS OF THE IMPERIUM INFANTRY models. It cannot transport TERMINATOR or OFFICIO ASSASSINORUM models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -1084,18 +1200,33 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's heavy bolter can be replaced with 1 heavy flamer.
+- This model's multi-laser can be replaced with one of the following:
+  - 1 Heavy bolter*
+  - 1 Heavy flamer*
+- This model can be equipped with one of the following:
+  - 1 heavy stubber
+  - 1 storm bolter
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Assigned Agents
 - Rapid Deployment: Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 13 INQUISITOR INFANTRY and INQUISITORIAL AGENT models. It cannot transport TERMINATOR models.
 
 #### Unit Composition
 - 1 Inquisitorial Chimera
   This model is equipped with: multi-laser; heavy bolter; lasgun array; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 13 INQUISITOR INFANTRY and INQUISITORIAL AGENT models. It cannot transport TERMINATOR models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **60 pts**
@@ -1127,19 +1258,29 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Twin multi-melta | melta 2 twin-linked | 18" | 2 | 3+ | 9 | -4 | D6 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's immolation flamers can be replaced with one of the following:
+  - 1 twin heavy bolter
+  - 1 twin multi-melta
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Assigned Agents
 - Purge and Cleanse: Each time this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
-
-#### Unit Composition
-- 1 Immolator
-  This model is equipped with: heavy bolter; immolation flamers; armoured tracks.
 
 #### Transport
 - This model has a transport capacity of 6 ORDO HERETICUS INFANTRY models.
   At the start of the Declare Battle Formations step, you can select one SISTERS OF BATTLE SQUAD from your army. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units). One of these units must start the battle embarked within this TRANSPORT; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.
+
+#### Unit Composition
+- 1 Immolator
+  This model is equipped with: heavy bolter; immolation flamers; armoured tracks.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **90 pts**
@@ -1179,12 +1320,23 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Excruciator maul | -- | Melee | 2 | 3+ | 4 | -1 | 2 |
 | melee | -- | Mechanical bite | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- Up to 2 Exaction Vigilants can each have their Arbites combat shotgun replaced with one of the following (duplicates are not allowed):
+  - 1 executioner shotgun
+  - 1 Arbites grenade launcher
+  - 1 heavy stubber
+  - 1 webber
+- 1 Exaction Vigilant that is equipped with an Arbites combat shotgun can be equipped with 1 excruciator maul.*
+- 1 other Exaction Vigilant that is equipped with an Arbites combat shotgun can be equipped with 1 Arbites medi-kit.*
+- 1 other Exaction Vigilant that is equipped with an Arbites combat shotgun can be equipped with 1 soulguilt scanner.*
+- The Proctor-Exactant can be equipped with 1 nuncio aquila.
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Imperial Law: At the start of the battle, select one unit from your opponent's army. Each time a model in this unit makes an attack that targets that unit, that attack has the [LETHAL HITS] and [PRECISION] abilities.
-
-#### Wargear Abilities
 - Arbites Medi-kit: At the start of your Command phase, if the bearer's unit is below its Starting Strength, you can return up to D3 destroyed Exaction Vigilants to this unit.
 - Nuncio Aquila: Once per battle, at the start of any Command phase, you can select one objective marker within 6" of the bearer. All enemy units (excluding MONSTERS and VEHICLES) within range of that objective marker must take a Battle-shock test. Each objective marker can only be targeted by this ability once per turn.
   Designer's Note: Place one Nuncio-aquila token next to the bearer, removing it once it uses this ability.
@@ -1230,13 +1382,23 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Nemesis force weapon | psychic | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Grey Knights Terminator's storm bolter can be replaced with one of the following:
+  - 1 incinerator
+  - 1 psilencer
+  - 1 psycannon
+- 1 Grey Knights Terminator equipped with a storm bolter can be equipped with 1 Ancient's banner.*
+- 1 Grey Knights Terminator can have its storm bolter replaced with 1 narthecium.*
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Assigned Agents
 - Hammerhand (Psychic): Each time a model in this unit makes a Charge move, until the end of the turn, melee weapons equipped by models in this unit have the [LETHAL HITS] ability.
-
-#### Wargear Abilities
 - Ancient's Banner: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 - Narthecium: In your Command phase, you can return 1 destroyed model (excluding CHARACTERS) to the bearer's unit.
 
@@ -1284,12 +1446,21 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Eviscerator | devastating wounds | Melee | 2 | 3+ | 6 | -2 | 2 |
 | melee | -- | Mystic stave | ANTI-INFANTRy 4+ psychic | Melee | 2 | 3+ | 5 | -1 | D3 |
 
+#### Wargear options
+- For every 5 Inquisitorial Agents in this unit, it can be equipped with 1 Tome-skull.
+- For every 5 Inquisitorial Agents in this unit, 1 Inquisitorial Agent can be equipped with 1 plasma pistol.**
+- For every 5 Inquisitorial Agents in this unit, 1 Inquisitorial Agent can be equipped with 1 eviscerator.**
+- For every 5 Inquisitorial Agents in this unit, 1 Inquisitorial Agent can be equipped with 1 mystic stave.**
+- Any number of Gun Servitors can each have their heavy bolter replaced with one of the following:
+  - 1 multi-melta
+  - 1 plasma cannon
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Loyal Henchmen: While an INQUISITOR model is leading this unit, each time an attack is made against this unit, subtract 1 from the Wound roll.
-
-#### Wargear Abilities
 - Tome-skull: Once per battle for each Tome-skull this unit is equipped with, at the start of any phase, you can select either one friendly AGENTS OF THE IMPERIUM unit that is Battle-shocked and within 6" of this unit or one enemy unit within 6" of this unit. If you select a friendly unit, that unit is no longer Battle-shocked. If you select an enemy unit, it must take a Battle-shock test.
   Designer's Note: Place the appropriate number of Tome-skull tokens next to the unit at the start of the battle, removing one each time this unit uses this ability.
 
@@ -1339,15 +1510,23 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Death Cult blades | precision | Melee | 4 | 2+ | 4 | -2 | 1 |
 | melee | -- | Sanctifier melee weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- 1 Missionary model can have its 1 plasma gun replaced with 1 meltagun.
+- 1 Missionary model equipped with 1 plasma gun can be equipped with 1 holy fire (this model's plasma gun cannot be replaced).
+- 1 Sanctifier model can have its 1 Sanctifier melee weapon replaced with 1 Ministorum hand flamer and 1 close combat weapon.
+- 1 Sanctifier model can have its 1 Sanctifier melee weapon replaced with 1 close combat weapon and 1 simulacrum imperialis.
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Assigned Agents
 - Ministorum Sermon: While this unit contains a MINISTORUM PRIEST, each time a model in this unit makes a melee attack, add 1 to the Wound roll.
-  Cherub: Once per battle, you can target this unit with the Command Re-roll Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
+- Cherub: Once per battle, you can target this unit with the Command Re-roll Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
   Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.
-
-#### Wargear Abilities
 - Salvationist Medikit: In your Command phase, if the bearer is on the battlefield, you can return up to D3 destroyed models (excluding CHARACTER models) to this unit.
 - Simulacrum Imperialis: Improve the Leadership characteristic of models in the bearer's unit by 1.
 
@@ -1404,14 +1583,38 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | -1 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Sister Superior's boltgun can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 combi-weapon
+  - 1 condemnor boltgun
+  - 1 inferno pistol
+  - 1 Ministorum hand flamer
+  - 1 plasma pistol
+- The Sister Superior can be equipped with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- 1 Battle Sister's boltgun can be replaced with one of the following:
+  - 1 artificer-crafted storm bolter
+  - 1 meltagun
+  - 1 Ministorum flamer
+- 1 Battle Sister's boltgun can be replaced with one of the following:
+  - 1 artificer-crafted storm bolter
+  - 1 heavy bolter
+  - 1 meltagun
+  - 1 Ministorum flamer
+  - 1 Ministorum heavy flamer
+  - 1 multi-melta
+- 1 Battle Sister equipped with 1 boltgun can be equipped with 1 simulacrum imperialis (that model's boltgun cannot be replaced).
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Defenders of the Faith: If you control an objective marker at the end of your Command phase and this unit is within range of that objective marker, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-  Incensor Cherub: Once per battle, you can target this unit with the Command Re-roll Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
+- Incensor Cherub: Once per battle, you can target this unit with the Command Re-roll Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
   Designer's Note: Place an Incensor Cherub token next to the unit, removing it once this ability has been used.
-
-#### Wargear Abilities
 - Simulacrum Imperials: Improve the Leadership characteristic of models in the bearer's unit by 1.
 
 #### Unit Composition
@@ -1446,12 +1649,15 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Mechanical bite | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Shock maul | -- | Melee | 2 | 4+ | 4 | -1 | 1 |
 
+#### Wargear options
+- The Proctor-Subductor can be equipped with 1 nuncio aquila.
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Dedication to Duty: Each time a model in this unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
-
-#### Wargear Abilities
 - Nuncio Aquila: Once per battle, at the start of any Command phase, you can select one objective marker within 6" of the bearer. All enemy units (excluding MONSTERS and VEHICLES) within range of that objective marker must take a Battle-shock test. Each objective marker can only be targeted by this ability once per turn.
   Designer's Note: Place one Nuncio-aquila token next to the bearer, removing it once it uses this ability.
 
@@ -1492,9 +1698,11 @@ AGENTS OF THE IMPERIUM
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Vicious bite | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Assigned Agents
 - Masters of Close Confines: Each time a model in this unit makes a ranged attack that targets the closest eligible target, that attack has the [LETHAL HITS] ability.
 
 #### Unit Composition
@@ -1542,15 +1750,30 @@ AGENTS OF THE IMPERIUM
 | ranged | -- | Twin lascannon | twin-linked | 48" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin assault cannon can be replaced with 1 twin lascannon.
+- This model's 2 Blackstar rocket launchers can be replaced with 2 stormstrike missile launchers.
+- This model can be equipped with 1 hurricane bolter.
+- This model can be equipped with one of the following:
+  - 1 auspex array
+  - 1 infernum halo-launcher
+
+#### Core Abilities
+- Deadly Demise D6
+- Hover
+- Stealth
+
+#### Army Rules
+- Assigned Agents
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Hover, Stealth
-- FACTION: Assigned Agents
 - Blackstar Cluster Launcher: Each time this model ends a Normal move, you can select one enemy unit it moved over during that move and roll six D6: for each 5+, that unit suffers 1 mortal wound.
-
-#### Wargear Abilities
 - Auspex Array: Ranged weapons equipped by the bearer have the [IGNORES COVER] ability.
 - Infernum Halo-launcher: The bearer has the Smoke keyword.
+
+#### Transport
+- This model has a transport capacity of 12 DEATHWATCH INFANTRY models.
 
 #### Unit Composition
 - 1 Corvus Blackstar
@@ -1558,9 +1781,6 @@ AGENTS OF THE IMPERIUM
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 DEATHWATCH INFANTRY models.
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **180 pts**
@@ -1573,6 +1793,8 @@ AGENTS OF THE IMPERIUM
 ## Detachments
 
 ### Ordo Xenos Alien Hunters (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Deathwatch Mission Tactics
 - At the start of your Command phase, you can select one of the Mission Tactics listed below. Until the start of your next Command phase, that Mission Tactic is active and its effects apply to all DEATHWATCH units from your army. Each Mission Tactic can only be selected once per battle.
   Furor Tactics
@@ -1635,6 +1857,8 @@ AGENTS OF THE IMPERIUM
   RESTRICTIONS: You cannot select a unit that is within Engagement Range of one or more enemy units.
 
 ### Ordo Hereticus Purgation Force (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Root out Heresy
 - Ranged weapons equipped by ADEPTUS ARBITES, INQUISITOR, INQUISITORIAL AGENTS and ORDO HERETICUS models from your army have the [IGNORES COvER] ability.
   Each time an ADEPTUS ARBITES, INQUISITOR, INQUISITORIAL AGENTS or ORDO HERETICUS model from your army makes an attack that targets a CHAOS unit containing 5 or more models, that attack has the [SUSTAINED HITS 1] ability.
@@ -1688,6 +1912,8 @@ AGENTS OF THE IMPERIUM
   EFFECT: After the attacking unit has shot, your unit can shoot as if it were your Shooting phase, but when resolving those attacks it can only target that enemy unit (and only if it is an eligible target).
 
 ### Ordo Malleus Daemon Hunters (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Destroy the Daemonic
 - Each time an INQUISITOR, INQUISITORIAL AGENTS or ORDO MALLEUS model from your army makes an attack, re-roll a Hit roll of 1 and, if the target of that attack is a DAEMON unit, re-roll a Wound roll of 1 as well.
 
@@ -1740,6 +1966,8 @@ AGENTS OF THE IMPERIUM
   EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [LETHAL HITS] and [PSYCHIC] abilities.
 
 ### Imperialis Fleet (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- At all Costs
 - At the start of your Command phase, you can select one of the following to apply:
   Eliminate At All Costs
@@ -1796,6 +2024,8 @@ AGENTS OF THE IMPERIUM
   EFFECT: Until the end of the phase, each time an attack with the [PRECISION] ability is allocated to a CHARACTER model in your unit, if there are one or more Bodyguard models in your unit, roll one D6: on a 2+, that attack is allocated to a Bodyguard model of your choice in your unit instead.
 
 ### Veiled Blade Elimination Force (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Extremis Sanction
 - OFFICIO ASSASSINORUM units from your army can use the Overkill, Soulless Horror and Shieldbreaker abilities twice per battle, instead of once per battle (but cannot use such an ability more than once in the same battle round).
   When mustering your army, each OFFICIO ASSASSINORUM unit from your army has the relevant Extremis ability shown on the right, and you must increase the points cost of each of those units by the amount shown. If this causes your army to exceed the points limit for the battle you are playing, you cannot include that unit in your army.

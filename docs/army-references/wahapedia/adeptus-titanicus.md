@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -54,12 +54,27 @@
 | melee | -- | Reaver power fist - strike | -- | Melee | 6 | 4+ | 20 | -4 | 14 |
 | melee | -- | Reaver power fist - sweep | -- | Melee | 12 | 4+ | 12 | -3 | 6 |
 
+#### Wargear options
+- This model's Reaver gatling blaster can be replaced with one of the following:
+  - 1 Reaver laser blaster
+  - 1 Reaver melta cannon
+  - 1 Reaver volcano cannon
+  - 1 Reaver power fist
+- This model's Reaver laser blaster can be replaced with one of the following:
+  - 1 Reaver gatling blaster
+  - 1 Reaver melta cannon
+  - 1 Reaver volcano cannon
+
+#### Core Abilities
+- Deadly Demise D6+6
+
+#### Army Rules
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+6
-- FACTION: Super-heavy Walker
 - Striding Colossus: Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.
-  God-machine: This model is eligible to shoot and declare a charge in a turn in which it Fell Back.
+- God-machine: This model is eligible to shoot and declare a charge in a turn in which it Fell Back.
 
 #### Unit Composition
 - 1 Reaver Titan
@@ -100,12 +115,27 @@ ADEPTUS TITANICUS
 | ranged | -- | Reaver volcano cannon | blast heavy | 120" | D3+1 | 3+ | 24 | -5 | 14 |
 | melee | -- | Nemesis feet | -- | Melee | 6 | 4+ | 12 | -2 | 4 |
 
+#### Wargear options
+- This model's Nemesis quake cannon can be replaced with 1 Nemesis volcano cannon.
+- This model's Reaver gatling blaster can be replaced with one of the following:
+  - 1 Reaver laser blaster
+  - 1 Reaver melta cannon
+  - 1 Reaver volcano cannon
+- This model's Reaver laser blaster can be replaced with one of the following:
+  - 1 Reaver gatling blaster
+  - 1 Reaver melta cannon
+  - 1 Reaver volcano cannon
+
+#### Core Abilities
+- Deadly Demise D6+6
+
+#### Army Rules
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+6
-- FACTION: Super-heavy Walker
 - Striding Colossus: Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.
-  Titanic Fire Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly Imperium model makes an attack that targets that enemy unit, on a Critical Wound, improve the Armour Penetration characteristic of that attack by 1.
+- Titanic Fire Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly Imperium model makes an attack that targets that enemy unit, on a Critical Wound, improve the Armour Penetration characteristic of that attack by 1.
 
 #### Unit Composition
 - 1 Warbringer Nemesis Titan
@@ -143,12 +173,26 @@ ADEPTUS TITANICUS
 | ranged | -- | Warhound vulcan mega-bolter | sustained hits 1 | 48" | 20 | 3+ | 6 | -1 | 2 |
 | melee | -- | Warhound feet | -- | Melee | 8 | 4+ | 10 | -1 | 2 |
 
+#### Wargear options
+- This model's Warhound plasma blastgun can be replaced with one of the following:
+  - 1 Warhound inferno gun
+  - 1 Warhound turbo-laser destructor
+  - 1 Warhound vulcan mega-bolter
+- This model's Warhound vulcan mega-bolter can be replaced with one of the following:
+  - 1 Warhound inferno gun
+  - 1 Warhound plasma blastgun
+  - 1 Warhound turbo-laser destructor
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Super-heavy Walker
 - Striding Colossus: Each time you target this model with a Stratagem, you must spend twice that Stratagem's stated CP cost to do so.
-  Flank Speed: Each time this model Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 8" to the Move characteristic of this model.
+- Flank Speed: Each time this model Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 8" to the Move characteristic of this model.
 
 #### Unit Composition
 - 1 Warhound Titan
@@ -193,12 +237,29 @@ ADEPTUS TITANICUS
 | melee | -- | Arioch power claw - sweep | -- | Melee | 12 | 4+ | 12 | -3 | 8 |
 | melee | -- | Warlord feet | -- | Melee | 6 | 4+ | 12 | -2 | 4 |
 
+#### Wargear options
+- This model's 2 apocalypse launchers can be replaced with 2 laser blasters.
+- This model's arioch power claw can be replaced with one of the following:
+  - 1 belicosa volcano cannon
+  - 1 macro gatling blaster
+  - 1 mori quake cannon
+  - 1 sunfury plasma annihilator
+- This model's macro gatling blaster can be replaced with one of the following:
+  - 1 arioch power claw
+  - 1 belicosa volcano cannon
+  - 1 mori quake cannon
+  - 1 sunfury plasma annihilator
+
+#### Core Abilities
+- Deadly Demise 2D6+6
+
+#### Army Rules
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6+6
-- FACTION: Super-heavy Walker
 - Striding Colossus: Each time you target this model with a Stratagem, you must spend four times that Stratagem's stated CP cost to do so.
-  Wrath of the Omnissiah: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. That unit must take a Battle-shock test.
+- Wrath of the Omnissiah: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Warlord Titan

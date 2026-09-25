@@ -1,0 +1,68 @@
+{
+  "id": "imperial-knights",
+  "name": "Imperial Knights",
+  "edition": "11e",
+  "unitRefs": [
+    "imperial-knights.sir-hekhtur",
+    "imperial-knights.canis-rex",
+    "imperial-knights.skitarii-marshal",
+    "imperial-knights.tech-priest-dominus",
+    "imperial-knights.tech-priest-manipulus",
+    "imperial-knights.knight-destrier",
+    "imperial-knights.knight-castellan",
+    "imperial-knights.knight-crusader",
+    "imperial-knights.knight-defender",
+    "imperial-knights.knight-errant",
+    "imperial-knights.knight-gallant",
+    "imperial-knights.knight-paladin",
+    "imperial-knights.knight-preceptor",
+    "imperial-knights.knight-valiant",
+    "imperial-knights.knight-warden",
+    "imperial-knights.cerastus-knight-acheron",
+    "imperial-knights.cerastus-knight-atrapos",
+    "imperial-knights.cerastus-knight-castigator",
+    "imperial-knights.cerastus-knight-lancer",
+    "imperial-knights.questoris-knight-magaera",
+    "imperial-knights.questoris-knight-styrix",
+    "imperial-knights.skitarii-rangers",
+    "imperial-knights.skitarii-vanguard",
+    "imperial-knights.acastus-knight-asterius",
+    "imperial-knights.acastus-knight-porphyrion",
+    "imperial-knights.armiger-helverin",
+    "imperial-knights.armiger-warglaive",
+    "imperial-knights.armiger-moirax"
+  ],
+  "ruleRefs": [
+    "imperial-knights.army-rule.code-chivalric"
+  ],
+  "detachmentRefs": [
+    "imperial-knights.detachment.valourstrike-lance",
+    "imperial-knights.detachment.gate-warden-lance",
+    "imperial-knights.detachment.questoris-companions",
+    "imperial-knights.detachment.spearhead-at-arms",
+    "imperial-knights.detachment.freeblade-company",
+    "imperial-knights.detachment.dominus-foebreakers",
+    "imperial-knights.detachment.questor-forgepact",
+    "imperial-knights.detachment.throne-bonded-outriders"
+  ],
+  "factionKeywords": [
+    "imperial-knights",
+    "Imperial Knights"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Imperial Knights faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-knights/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 28,
+    "normalizedEntryCount": 28,
+    "excludedLegendCount": 0,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

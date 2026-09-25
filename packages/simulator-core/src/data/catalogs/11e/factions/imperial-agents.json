@@ -1,0 +1,67 @@
+{
+  "id": "imperial-agents",
+  "name": "Imperial Agents",
+  "edition": "11e",
+  "unitRefs": [
+    "imperial-agents.callidus-assassin",
+    "imperial-agents.culexus-assassin",
+    "imperial-agents.eversor-assassin",
+    "imperial-agents.inquisitor-coteaz",
+    "imperial-agents.inquisitor-draxus",
+    "imperial-agents.inquisitor-greyfax",
+    "imperial-agents.vindicare-assassin",
+    "imperial-agents.watch-captain-artemis",
+    "imperial-agents.inquisitor-kroyle",
+    "imperial-agents.inquisitor",
+    "imperial-agents.ministorum-priest",
+    "imperial-agents.navigator",
+    "imperial-agents.rogue-trader-entourage",
+    "imperial-agents.watch-master",
+    "imperial-agents.aquila-kill-team",
+    "imperial-agents.deathwatch-kill-team",
+    "imperial-agents.imperial-navy-breachers",
+    "imperial-agents.vigilant-squad",
+    "imperial-agents.imperial-rhino-1",
+    "imperial-agents.inquisitorial-chimera",
+    "imperial-agents.sisters-of-battle-immolator",
+    "imperial-agents.exaction-squad",
+    "imperial-agents.grey-knights-terminator-squad",
+    "imperial-agents.inquisitorial-agents",
+    "imperial-agents.sanctifiers",
+    "imperial-agents.sisters-of-battle-squad",
+    "imperial-agents.subductor-squad",
+    "imperial-agents.voidsmen-at-arms",
+    "imperial-agents.corvus-blackstar"
+  ],
+  "ruleRefs": [
+    "imperial-agents.army-rule.assigned-agents",
+    "imperial-agents.army-rule.kill-team"
+  ],
+  "detachmentRefs": [
+    "imperial-agents.detachment.ordo-xenos-alien-hunters",
+    "imperial-agents.detachment.ordo-hereticus-purgation-force",
+    "imperial-agents.detachment.ordo-malleus-daemon-hunters",
+    "imperial-agents.detachment.imperialis-fleet",
+    "imperial-agents.detachment.veiled-blade-elimination-force"
+  ],
+  "factionKeywords": [
+    "imperial-agents",
+    "Imperial Agents"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Imperial Agents faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/imperial-agents/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 29,
+    "normalizedEntryCount": 29,
+    "excludedLegendCount": 17,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

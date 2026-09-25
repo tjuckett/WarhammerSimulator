@@ -1,0 +1,38 @@
+{
+  "id": "adeptus-titanicus",
+  "name": "Adeptus Titanicus",
+  "edition": "11e",
+  "unitRefs": [
+    "adeptus-titanicus.reaver-titan",
+    "adeptus-titanicus.warbringer-nemesis-titan",
+    "adeptus-titanicus.warhound-titan",
+    "adeptus-titanicus.warlord-titan"
+  ],
+  "ruleRefs": [
+    "adeptus-titanicus.army-rule.towering-example",
+    "adeptus-titanicus.army-rule.titanic-support",
+    "adeptus-titanicus.army-rule.super-heavy-walker",
+    "adeptus-titanicus.army-rule.titanicus-traitoris"
+  ],
+  "detachmentRefs": [],
+  "factionKeywords": [
+    "adeptus-titanicus",
+    "Adeptus Titanicus"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Adeptus Titanicus faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 4,
+    "normalizedEntryCount": 4,
+    "excludedLegendCount": 0,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

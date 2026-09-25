@@ -10,8 +10,17 @@ test('bundled Ork sample uses current 11th-edition profiles and bases', () => {
 
   const warboss = army.units.find(unit => unit.name === 'Warboss in Mega Armour');
   assert.equal(warboss?.move, 5);
+  assert.equal(warboss?.toughness, 7);
   assert.equal(warboss?.save, 2);
   assert.equal(warboss?.invulnSave, 5);
+  assert.equal(warboss?.weapons.find(weapon => weapon.name === "'Uge choppa")?.attacks, '5');
+  assert.equal(warboss?.weapons.find(weapon => weapon.name === "'Uge choppa")?.damage, '3');
+  assert.deepEqual(warboss?.abilities.map(ability => ability.name), [
+    'Leader',
+    'Waaagh!',
+    "Krushin' Impetus",
+    'Intimidating Motivation (Once per battle round, per army)',
+  ]);
   assert.deepEqual(warboss?.modelBases, [{ shape: 'round', diameterMm: 50 }]);
 
   const boyz = army.units.find(unit => unit.rosterId === 'orks.boyz-default-1');

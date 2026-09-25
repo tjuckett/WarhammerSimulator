@@ -1,11 +1,10 @@
 import { useRef, useState, type MutableRefObject } from 'react';
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
-import { clone } from '@warhammer-simulator/core/engine/clone';
 import type { PracticeTimeline as GameSessionTimeline, TimelineStateResult } from '@warhammer-simulator/core/practice/timeline';
 import { currentTimelineState, truncateTimelineAtCursor } from '@warhammer-simulator/core/practice/timeline';
 import {
   currentScenarioState,
-  scenarioFromTimeline,
+  scenarioFromCheckpointState,
   timelineForScenario,
   type PracticeCheckpointKind as GameSessionCheckpointKind,
 } from '@warhammer-simulator/core/practice/scenarios';
@@ -84,10 +83,13 @@ export function useGameSessionController({
     mode: SaveMode = 'current',
     options: SaveOptions = {},
   ) {
-    // Autosaves include a complete timeline snapshot. Let the just-completed
-    // phase render before doing that work so persistence cannot make the
-    // phase button appear to hang on a long-running game.
-    if (kind === 'auto-phase') await new Promise<void>(resolve => setTimeout(resolve, 0));
+    // Autosaves include snapshot cloning and JSON serialization. A zero-delay
+    // timer can still run before the browser has painted the completed phase,
+    // making a save look like the phase button hung. Wait for two frames so
+    // the new phase is visible before preparing the checkpoint.
+    if (kind === 'auto-phase') {
+      await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
     const sourceTimeline = gameSessionTimelineRef.current;
     setSaveInProgress(true);
     try {
@@ -105,8 +107,7 @@ export function useGameSessionController({
       const gameId = isNewGame ? createBranchId() : activeGameIdRef.current ?? timeline.metadata.id;
       const branchId = isNewGame ? createBranchId() : checkpointBranchIdRef.current;
       const checkpointId = options.overwriteCheckpointId ?? activeCheckpointIdRef.current;
-      const scenario = {
-        ...scenarioFromTimeline(timeline, {
+      const scenario = scenarioFromCheckpointState(state, timeline, {
           id: mode === 'new-game' ? undefined : checkpointId ?? undefined,
           name: label,
           gameId,
@@ -116,12 +117,7 @@ export function useGameSessionController({
           checkpointLabel: label,
           sequence: await nextCheckpointSequence(gameSessionRepository, gameId),
           timelineCursor: timeline.cursor,
-        }),
-        // The React battle state is authoritative at save time. The timeline
-        // is updated alongside it, but autosaves can begin in the same event
-        // turn as a phase transition and briefly expose the previous cursor.
-        initialState: clone(state),
-      };
+        });
       const summaries = await gameSessionRepository.saveScenario(scenario);
       // Saving is asynchronous. A player can advance one or more steps while
       // this request is in flight, so never restore the snapshot used by the

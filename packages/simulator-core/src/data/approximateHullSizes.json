@@ -1,0 +1,255 @@
+{
+  "source": {
+    "title": "Approximate community model measurements",
+    "lastUpdated": "September 2026",
+    "notes": "These are gameplay approximations for hull models. Games Workshop publishes Hull as a category rather than a numeric footprint. Values include the model's practical ground footprint where a usable measurement was available.",
+    "references": [
+      "https://www.dakkadakka.com/dakkaforum/posts/list/595000.page?userfilterid=26765",
+      "https://www.reddit.com/r/orks/comments/18gcu3q/guide_ork_and_kitbash_vehicle_size/",
+      "https://www.reddit.com/r/TheAstraMilitarum/comments/yctfap/psyched_about_the_rogal_dorne_worried_about_its_size/",
+      "https://www.reddit.com/r/LeaguesofVotann/comments/1jpqwto/bought_a_hekaton_and_two_sagitaurs_massive_gains_for_the_leagues_id_say/",
+      "https://www.reddit.com/r/genestealercult/comments/kyntxr/goliath_dimensions/",
+      "https://www.reddit.com/r/deathguard40k/comments/1dc04aq/plagueburst_crawler_kitbash/",
+      "https://www.reddit.com/r/Warhammer40k/comments/1rt5ih2/size_of_invader_atv/",
+      "https://www.adeptusars.com/features/top-10-biggest-warhammer-40k-models"
+    ]
+  },
+  "factions": [
+    {
+      "faction": "Adepta Sororitas",
+      "units": {
+        "castigator": { "base": { "shape": "hull", "widthMm": 90, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "exorcist": { "base": { "shape": "hull", "widthMm": 80, "lengthMm": 125, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "immolator": { "base": { "shape": "hull", "widthMm": 80, "lengthMm": 125, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "sororitas rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Adeptus Custodes",
+      "units": {
+        "anathema psykana rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "venerable land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Adeptus Mechanicus",
+      "units": {
+        "skorpius disintegrator": { "base": { "shape": "hull", "widthMm": 90, "lengthMm": 155, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "skorpius dunerider": { "base": { "shape": "hull", "widthMm": 90, "lengthMm": 155, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Adeptus Titanicus",
+      "units": {
+        "warhound titan": { "base": { "shape": "hull", "widthMm": 160, "lengthMm": 200, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "reaver titan": { "base": { "shape": "hull", "widthMm": 190, "lengthMm": 250, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "warbringer nemesis titan": { "base": { "shape": "hull", "widthMm": 220, "lengthMm": 300, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "warlord titan": { "base": { "shape": "hull", "widthMm": 250, "lengthMm": 350, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Aeldari",
+      "units": {
+        "phantom titan": { "base": { "shape": "hull", "widthMm": 250, "lengthMm": 350, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "revenant titan": { "base": { "shape": "hull", "widthMm": 140, "lengthMm": 200, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Astra Militarum",
+      "units": {
+        "aegis defence line": { "base": { "shape": "hull", "widthMm": 50, "lengthMm": 280, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "baneblade": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "banehammer": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "banesword": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "basilisk": { "base": { "shape": "hull", "widthMm": 85, "lengthMm": 180, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chimera": { "base": { "shape": "hull", "widthMm": 82, "lengthMm": 112, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "cyclops demolition vehicle": { "base": { "shape": "hull", "widthMm": 45, "lengthMm": 70, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "deathstrike": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "doomhammer": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "hellhammer": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "hellhound": { "base": { "shape": "hull", "widthMm": 82, "lengthMm": 125, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "hydra": { "base": { "shape": "hull", "widthMm": 82, "lengthMm": 125, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ battle tank": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ commander": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ demolisher": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ eradicator": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ executioner": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ exterminator": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ punisher": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "leman russ vanquisher": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 114, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "manticore": { "base": { "shape": "hull", "widthMm": 85, "lengthMm": 180, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "rogal dorn battle tank": { "base": { "shape": "hull", "widthMm": 130, "lengthMm": 145, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "rogal dorn commander": { "base": { "shape": "hull", "widthMm": 130, "lengthMm": 145, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "shadowsword": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "stormlord": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "stormsword": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 240, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "taurox": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 110, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "taurox prime": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 110, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "wyvern": { "base": { "shape": "hull", "widthMm": 85, "lengthMm": 180, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Blood Angels",
+      "units": {
+        "baal predator": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Chaos Daemons",
+      "units": {
+        "feculent gnarlmaw": { "base": { "shape": "hull", "widthMm": 88, "lengthMm": 115, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "skull altar": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 70, "footprint": "circle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Chaos Knights",
+      "units": {
+        "chaos acastus knight asterius": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 200, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos acastus knight porphyrion": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 200, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Chaos Space Marines",
+      "units": {
+        "chaos land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator annihilator": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator destructor": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos vindicator": { "base": { "shape": "hull", "widthMm": 80, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "khorne lord of skulls": { "base": { "shape": "hull", "widthMm": 160, "lengthMm": 220, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "noctilith crown": { "base": { "shape": "hull", "widthMm": 60, "lengthMm": 60, "footprint": "circle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Death Guard",
+      "units": {
+        "chaos land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator annihilator": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator destructor": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "miasmic malignifier": { "base": { "shape": "hull", "widthMm": 100, "lengthMm": 100, "footprint": "circle", "label": "Hull (approx.)" } },
+        "plagueburst crawler": { "base": { "shape": "hull", "widthMm": 120, "lengthMm": 145, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Emperor's Children",
+      "units": {
+        "chaos land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Genestealer Cults",
+      "units": {
+        "goliath rockgrinder": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "goliath truck": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 124, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Grey Knights",
+      "units": {
+        "grey knights land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "grey knights land raider crusader": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "grey knights land raider redeemer": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "grey knights razorback": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "grey knights rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "land raider banisher": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Imperial Agents",
+      "units": {
+        "imperial rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "inquisitorial chimera": { "base": { "shape": "hull", "widthMm": 82, "lengthMm": 112, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "sisters of battle immolator": { "base": { "shape": "hull", "widthMm": 80, "lengthMm": 125, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Imperial Knights",
+      "units": {
+        "acastus knight asterius": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 200, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "acastus knight porphyrion": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 200, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Leagues of Votann",
+      "units": {
+        "hekaton land fortress": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 190, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "sagitaur": { "base": { "shape": "hull", "widthMm": 76, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Necrons",
+      "units": {
+        "convergence of dominion": { "base": { "shape": "hull", "widthMm": 100, "lengthMm": 180, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "triarch stalker": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 150, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "seraptek heavy construct": { "base": { "shape": "hull", "widthMm": 160, "lengthMm": 180, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Orks",
+      "units": {
+        "battlewagon": { "base": { "shape": "hull", "widthMm": 90, "lengthMm": 180, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "big'ed bossbunka": { "base": { "shape": "hull", "widthMm": 75, "lengthMm": 75, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "gargantuan squiggoth": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 300, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "mek gunz": { "base": { "shape": "hull", "widthMm": 50, "lengthMm": 70, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "stompa": { "base": { "shape": "hull", "widthMm": 230, "lengthMm": 250, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "trukk": { "base": { "shape": "hull", "widthMm": 75, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Space Marines",
+      "units": {
+        "astraeus": { "base": { "shape": "hull", "widthMm": 180, "lengthMm": 292, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "drop pod": { "base": { "shape": "hull", "widthMm": 100, "lengthMm": 100, "footprint": "circle", "label": "Hull (approx.)" } },
+        "hammerfall bunker": { "base": { "shape": "hull", "widthMm": 50, "lengthMm": 85, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "invader atv": { "base": { "shape": "hull", "widthMm": 65, "lengthMm": 85, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "land raider crusader": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "land raider redeemer": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "predator annihilator": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "predator destructor": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "razorback": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "vindicator": { "base": { "shape": "hull", "widthMm": 80, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "whirlwind": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "T'au Empire",
+      "units": {
+        "tidewall defence platform": { "base": { "shape": "hull", "widthMm": 150, "lengthMm": 150, "footprint": "circle", "label": "Hull (approx.)" } },
+        "tidewall droneport": { "base": { "shape": "hull", "widthMm": 150, "lengthMm": 150, "footprint": "circle", "label": "Hull (approx.)" } },
+        "tidewall gunrig": { "base": { "shape": "hull", "widthMm": 150, "lengthMm": 150, "footprint": "circle", "label": "Hull (approx.)" } },
+        "tidewall shieldline": { "base": { "shape": "hull", "widthMm": 50, "lengthMm": 250, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Thousand Sons",
+      "units": {
+        "chaos land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator annihilator": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator destructor": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos vindicator": { "base": { "shape": "hull", "widthMm": 80, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "Tyranids",
+      "units": {
+        "hierophant": { "base": { "shape": "hull", "widthMm": 255, "lengthMm": 305, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "sporocyst": { "base": { "shape": "hull", "widthMm": 100, "lengthMm": 100, "footprint": "circle", "label": "Hull (approx.)" } }
+      }
+    },
+    {
+      "faction": "World Eaters",
+      "units": {
+        "chaos land raider": { "base": { "shape": "hull", "widthMm": 110, "lengthMm": 175, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator annihilator": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos predator destructor": { "base": { "shape": "hull", "widthMm": 95, "lengthMm": 140, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "chaos rhino": { "base": { "shape": "hull", "widthMm": 70, "lengthMm": 120, "footprint": "rectangle", "label": "Hull (approx.)" } },
+        "khorne lord of skulls": { "base": { "shape": "hull", "widthMm": 160, "lengthMm": 220, "footprint": "rectangle", "label": "Hull (approx.)" } }
+      }
+    }
+  ]
+}

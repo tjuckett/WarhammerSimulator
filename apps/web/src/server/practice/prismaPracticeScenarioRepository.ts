@@ -198,19 +198,26 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
       where: { id },
       include: {
         game: { select: { ruleset: true, setup: true } },
-        branch: {
-          select: {
-            initialState: true,
-            timelineMetadata: true,
-            timelineEntries: { orderBy: { index: 'asc' } },
-          },
-        },
       },
     });
-    return checkpoint ? scenarioFromCheckpoint(checkpoint) : null;
+    if (!checkpoint) return null;
+    const branch = await prisma.practiceBranch.findUnique({
+      where: { id: checkpoint.branchId },
+      select: {
+        initialState: true,
+        timelineMetadata: true,
+      },
+    });
+    if (!branch) return null;
+    // A checkpoint already stores its authoritative current BattleState.
+    // Timeline rows each carry before/after board snapshots, so returning a
+    // long branch here can turn a resume into a multi-megabyte download and
+    // hundreds of JSON clones. Omit optional history on the hot load path;
+    // `timelineForScenario` rebases the resumed checkpoint onto its snapshot.
+    return scenarioFromCheckpoint({ ...checkpoint, branch: { ...branch, timelineEntries: [] } });
   },
 
-  async saveScenario(scenario: PracticeScenario) {
+  async saveScenario(scenario: PracticeScenario, timelineEntryStartIndex = 0) {
     const gameId = scenario.metadata.gameId ?? scenario.timeline.metadata.id;
     const branchId = scenario.metadata.branchId ?? scenario.timeline.metadata.id;
     const sequence = scenario.metadata.sequence ?? 1;
@@ -221,10 +228,11 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
     const checkpointState = scenario.initialState;
     const now = new Date(scenario.metadata.updatedAt);
     const checkpointMetadata = metadataValue(scenario);
-    const timelineEntryData = scenario.timeline.entries.map((entry, index) => ({
-      id: databaseTimelineEntryId(branchId, index),
+    const entryStartIndex = Math.max(0, Math.min(timelineEntryStartIndex, timelineCursor));
+    const timelineEntryData = scenario.timeline.entries.map((entry, offset) => ({
+      id: databaseTimelineEntryId(branchId, entryStartIndex + offset),
       branchId,
-      index,
+      index: entryStartIndex + offset,
       action: entry.action,
       stateBefore: entry.stateBefore,
       stateAfter: entry.stateAfter,
@@ -272,7 +280,12 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
         },
       });
 
-      await tx.practiceTimelineEntry.deleteMany({ where: { branchId } });
+      // Entries before the supplied start are already persisted immutable
+      // history. Replacing only the tail avoids rewriting every full board
+      // snapshot on every autosave.
+      await tx.practiceTimelineEntry.deleteMany({
+        where: { branchId, index: { gte: entryStartIndex } },
+      });
       if (timelineEntryData.length) {
         await tx.practiceTimelineEntry.createMany({
           data: timelineEntryData,

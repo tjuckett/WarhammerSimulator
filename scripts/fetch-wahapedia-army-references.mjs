@@ -46,7 +46,7 @@ async function exists(filePath) {
   }
 }
 
-async function fetchGet(url, cachePath, label) {
+async function fetchGet(url, cachePath, label, contentType = 'html') {
   if (!refresh && await exists(cachePath)) {
     log(`cache hit: ${label}`);
     return fs.readFile(cachePath, 'utf8');
@@ -68,8 +68,12 @@ async function fetchGet(url, cachePath, label) {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} ${response.statusText}`);
       }
-      if (!body.toLowerCase().includes('<html')) {
+      const normalizedBody = body.toLowerCase();
+      if (contentType === 'html' && !normalizedBody.includes('<html')) {
         throw new Error('response did not look like an HTML page');
+      }
+      if (contentType === 'xml' && !normalizedBody.includes('<urlset') && !normalizedBody.includes('<sitemapindex')) {
+        throw new Error('response did not look like an XML sitemap');
       }
 
       await fs.mkdir(path.dirname(cachePath), { recursive: true });
@@ -198,6 +202,24 @@ function renderUnit(unit, factionSlug) {
   if (!unit.weapons.length) output.push('| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |');
   output.push('');
 
+  if (unit.wargearOptions?.length) {
+    output.push('#### Wargear options');
+    output.push(...formatItems(unit.wargearOptions));
+    output.push('');
+  }
+
+  if (unit.coreAbilities?.length) {
+    output.push('#### Core Abilities');
+    output.push(...formatItems(unit.coreAbilities));
+    output.push('');
+  }
+
+  if (unit.armyRules?.length) {
+    output.push('#### Army Rules');
+    output.push(...formatItems(unit.armyRules));
+    output.push('');
+  }
+
   for (const section of unit.sections) {
     const normalizedHeading = ascii(section.heading).toUpperCase();
     if (normalizedHeading === 'STRATAGEMS' || normalizedHeading === 'DETACHMENT ABILITY') continue;
@@ -286,6 +308,10 @@ function renderFaction(faction, root, datasheets) {
   for (const detachment of root.detachments) {
     const points = detachment.dp ? ` (${ascii(detachment.dp)} DP)` : '';
     output.push(`### ${ascii(detachment.name)}${points}`);
+    if (detachment.forceDispositions?.length) {
+      output.push(`- **Force dispositions:** ${detachment.forceDispositions.map(ascii).join('; ')}`);
+      output.push('');
+    }
     if (detachment.rules.length) {
       for (const rule of detachment.rules) {
         output.push(`#### Detachment rule -- ${ascii(rule.title)}`);
@@ -453,11 +479,9 @@ async function parseRootPage(page, html, slug, rootUrl) {
         const name = spans[0] ? clean(spans[0]) : clean(li || entry);
         const points = spans[1] ? clean(spans[1]).replace(/\s*pts?$/i, '') : '';
         const wrapper = entry.closest('.BreakInsideAvoid') || entry.parentElement;
-        const text = [...wrapper.querySelectorAll('p')]
-          .filter((paragraph) => !paragraph.matches('.ShowFluff,.legend2'))
-          .map(clean)
-          .filter(Boolean)
-          .join('\n');
+        const body = wrapper.cloneNode(true);
+        body.querySelectorAll('.EnhancementsPts,.ShowFluff,.legend2').forEach((node) => node.remove());
+        const text = clean(body);
         if (name && !results.some((item) => item.name === name && item.points === points)) results.push({ name, points, text });
       }
       return results;
@@ -494,10 +518,17 @@ async function parseRootPage(page, html, slug, rootUrl) {
       const detachment = {
         name: headingWithoutPoints(heading),
         dp: clean(heading.querySelector('.dpPts')).replace(/[^0-9]/g, ''),
+        forceDispositions: [...new Set(
+          [...section.querySelectorAll('.dpFD[title]')]
+            .map(image => normalize(image.getAttribute('title') || ''))
+            .map(title => title.match(/^Force Disposition:\s*(.+)$/i)?.[1]?.trim())
+            .filter(Boolean),
+        )],
         rules: [],
         enhancements: parseEnhancements(section),
         stratagems: parseStratagems(section),
       };
+      if (!detachment.dp && !detachment.forceDispositions.length) continue;
       const detachmentHeader = h2ByText(section, /^Detachment Rules?$/i);
       const enhancementHeader = h2ByText(section, /^Enhancements$/i);
       const stratagemHeader = h2ByText(section, /^Stratagems$/i);
@@ -637,6 +668,24 @@ async function parseDatasheetPage(page, html, slug, rootUrl) {
       return weapons;
     }
 
+    function parseWargearOptions(block) {
+      const list = block.querySelector('.dsWargearOptionsList > ul');
+      if (!list) return [];
+      return [...list.children]
+        .filter((item) => item.tagName === 'LI')
+        .map((item) => {
+          const clone = item.cloneNode(true);
+          const nested = [...clone.querySelectorAll(':scope > ul, :scope > ol')];
+          const childItems = nested.flatMap((childList) => [...childList.children]
+            .filter((child) => child.tagName === 'LI')
+            .map((child) => clean(child)));
+          nested.forEach((childList) => childList.remove());
+          const parent = clean(clone);
+          return [parent, ...childItems].filter(Boolean).join('\n');
+        })
+        .filter(Boolean);
+    }
+
     function parseCosts(right) {
       const costs = [];
       const costTables = [...new Set(
@@ -675,6 +724,22 @@ async function parseDatasheetPage(page, html, slug, rootUrl) {
       return { sections: sections.filter((section) => section.items.length), costs };
     }
 
+    function parseCoreArmy(block) {
+      const values = { coreAbilities: [], armyRules: [] };
+      const table = block.querySelector('.dsCoreArmy');
+      for (const row of table?.querySelectorAll('tr') || []) {
+        const label = clean(row.querySelector('.dsCoreArmyLabel')).toUpperCase();
+        const value = clean(row.querySelector('.dsCoreArmyValue'));
+        if (!value) continue;
+        const entries = value.split(',').map((entry) => entry.trim()).filter(Boolean);
+        if (label === 'CORE ABILITIES') values.coreAbilities.push(...entries);
+        if (label === 'ARMY RULES') values.armyRules.push(...entries);
+      }
+      values.coreAbilities = [...new Set(values.coreAbilities)];
+      values.armyRules = [...new Set(values.armyRules)];
+      return values;
+    }
+
     function parseFeatureEnhancements(block) {
       const feature = block.querySelector('.ShowDatasheetFeatures');
       if (!feature) return [];
@@ -692,7 +757,7 @@ async function parseDatasheetPage(page, html, slug, rootUrl) {
     }
 
     function parseKeywords(block) {
-      const container = block.querySelector('.ds2colKW');
+      const container = block.querySelector('.ds2colKW, .ds2colKWFlat');
       const columns = [...container?.children || []].filter((child) => child.tagName === 'DIV');
       return { unit: clean(columns[0]), faction: clean(columns[1]) };
     }
@@ -765,6 +830,7 @@ async function parseDatasheetPage(page, html, slug, rootUrl) {
       const mainColumns = block.querySelector('.ds2col');
       const right = [...mainColumns?.children || []].find((child) => String(child.className).includes('dsRight'));
       const sectionData = parseSections(right);
+      const coreArmy = parseCoreArmy(block);
       const keywordData = parseKeywords(block);
       const allBases = [...new Set([...bases, ...profile.map((item) => item.base).filter(Boolean)])];
       units.push({
@@ -781,7 +847,10 @@ async function parseDatasheetPage(page, html, slug, rootUrl) {
           invulnerable: item.invulnerable,
         })),
         weapons: parseWeapons(block),
+        wargearOptions: parseWargearOptions(block),
         sections: sectionData.sections,
+        coreAbilities: coreArmy.coreAbilities,
+        armyRules: coreArmy.armyRules,
         costs: sectionData.costs,
         featureEnhancements: parseFeatureEnhancements(block),
         unitKeywords: keywordData.unit,
@@ -810,7 +879,7 @@ async function main() {
   if (!refresh && await exists(localSitemapPath)) {
     sitemap = await fs.readFile(localSitemapPath, 'utf8');
   } else {
-    sitemap = await fetchGet(`${origin}${editionPath}/SiteMap.xml`, localSitemapPath, '11th-edition sitemap');
+    sitemap = await fetchGet(`${origin}${editionPath}/SiteMap.xml`, localSitemapPath, '11th-edition sitemap', 'xml');
   }
 
   let factions = factionRootsFromSitemap(sitemap);

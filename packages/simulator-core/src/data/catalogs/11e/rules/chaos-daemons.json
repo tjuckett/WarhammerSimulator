@@ -1,0 +1,1662 @@
+{
+  "factionId": "chaos-daemons",
+  "rules": [
+    {
+      "id": "chaos-daemons.army-rule.the-shadow-of-chaos",
+      "name": "The Shadow of Chaos",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is LEGIONES DAEMONICA, certain areas of the battlefield are considered to be within your army's Shadow of Chaos, as follows: Your deployment zone is always within your army's Shadow of Chaos. At the start of any phase, if you control at least half of the objective markers within No Man's Land, until the end of that phase, No Man's Land is within your army's Shadow of Chaos. At the start of any phase, if you control at least half of the objective markers within your opponent's deployment zone, until the end of that phase, your opponent's deployment zone is within your army's Shadow of Chaos. DAEMONIC MANIFESTATION While a friendly LEGIONES DAEMONICA unit is within your army's Shadow of Chaos, each time that unit makes a battle-shock roll, that unit has +1 to that battle-shock roll and, if that roll is successful, one model in that unit heals D3 wounds (if that unit is a BATTLELINE unit and that roll is successful, up to D3 destroyed models (excluding CHARACTER models) can be returned to that unit instead). DAEMONIC TERROR While an enemy unit is within your army's Shadow of Chaos and/or it is within 6\" of one or more BLOODTHIRSTER, GREAT UNCLEAN ONE, KAIROS FATEWEAVER, KEEPER OF SECRETS, LORD OF CHANGE, ROTIGUS, SHALAXI HELBANE or SKARBRAND units from your army, each time that unit takes a Battle-shock test, subtract 1 from that test and, if that test is failed, that enemy unit suffers D3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons The Shadow of Chaos",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "The Shadow of Chaos"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.army-rule.daemonic-pact",
+      "name": "Daemonic Pact",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If every model from your army has the CHAOS KNIGHTS or HERETIC ASTARTES keyword, you can include LEGIONES DAEMONICA units in your army, even if they do not have the Faction keyword you selected in the Select Army Faction step. The combined points cost of such units you can include depends on your battle size, as shown below. IncursionUp to 250 pts Strike ForceUp to 500 pts OnslaughtUp to 750 pts None of these models can be your WARLORD, and they cannot be given Enhancements. In addition, for each of the following keywords, the number of non-BATTLELINE units with that keyword you include in this way cannot be greater than the number of BATTLELINE units with that keyword you include in this way: KHORNE TZEENTCH NURGLE SLAANESH",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Pact",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Pact"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion",
+      "name": "Daemonic Incursion - Warp Rifts",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time a LEGIONES DAEMONICA unit from your army is set up on the battlefield using the Deep Strike ability, if it is set up wholly within your army's Shadow of Chaos, and/or if it is set up wholly within 6\" of one or more friendly BLOODTHIRSTER, GREAT UNCLEAN ONE, KAIROS FATEWEAVER, KEEPER OF SECRETS, LORD OF CHANGE, ROTIGUS, SHALAXI HELBANE or SKARBRAND units with which it shares the KHORNE, TZEENTCH, NURGLE or SLAANESH keyword, it can be set up anywhere that is more than 6\" horizontally away from all enemy models, instead of more than 8\".",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.enhancement.argath-the-king-of-blades",
+      "name": "A'rgath, the King of Blades",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "20 pts. KHORNE LEGIONES DAEMONICA model only. Add 1 to the Attacks and Strength characteristics of the bearer's melee weapons. While the bearer is within your army's Shadow of Chaos, add 2 to the Attacks and Strength characteristics of the bearer's melee weapons instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.enhancement.soulstealer",
+      "name": "Soulstealer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "15 pts. SLAANESH LEGIONES DAEMONICA model only. Each time the bearer destroys an enemy model with a melee attack, roll one D6, adding 1 to the result if the bearer is within your army's Shadow of Chaos. On a 4+, the bearer regains 1 lost wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.enhancement.the-endless-gift",
+      "name": "The Endless Gift",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "30 pts. NURGLE LEGIONES DAEMONICA model only. The bearer has the Feel No Pain 5+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.enhancement.the-everstave",
+      "name": "The Everstave",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "25 pts. TZEENTCH LEGIONES DAEMONICA model only. Add 1 to the Strength characteristic of the bearer's ranged weapons and increase the Range characteristic of such weapons by 3\". While the bearer is within your army's Shadow of Chaos, add 2 to the Strength characteristic of the bearer's ranged weapons and increase the Range characteristic of such weapons by 6\" instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.stratagem.corrupt-realspace",
+      "name": "CORRUPT REALSPACE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "1CP. Demonic Incursion - Strategic Ploy Stratagem. WHEN: Start of any Command phase. TARGET: One LEGIONES DAEMONICA unit from your army that is within range of an objective marker you control. EFFECT: That objective marker is said to be Corrupted and remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn. In addition, while an objective marker is Corrupted and under your control, the area of the battlefield within 6\" of that objective marker is considered to be within your army's Shadow of Chaos.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion - CORRUPT REALSPACE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion - CORRUPT REALSPACE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.stratagem.warp-surge",
+      "name": "WARP SURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "1CP. Demonic Incursion - Strategic Ploy Stratagem. WHEN: Your Charge phase. TARGET: One LEGIONES DAEMONICA unit from your army that is within your army's Shadow of Chaos. EFFECT: Until the end of the phase, your unit is eligible to declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion - WARP SURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion - WARP SURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.stratagem.draught-of-terror",
+      "name": "DRAUGHT OF TERROR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "1CP. Demonic Incursion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One LEGIONES DAEMONICA unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, improve the Armour Penetration characteristic of weapons equipped by models in that unit by 1. In addition, until the end of the phase, each time such a weapon targets a unit that is Battle-shocked, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion - DRAUGHT OF TERROR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion - DRAUGHT OF TERROR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.stratagem.denizens-of-the-warp",
+      "name": "DENIZENS OF THE WARP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "1CP. Demonic Incursion - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One LEGIONES DAEMONICA unit from your army that is arriving using the Deep Strike ability this phase. EFFECT: Your unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy models.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion - DENIZENS OF THE WARP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion - DENIZENS OF THE WARP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.stratagem.the-realm-of-chaos",
+      "name": "THE REALM OF CHAOS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "1CP. Demonic Incursion - Battle Tactic Stratagem. WHEN: End of your opponent's turn. TARGET: Up to two LEGIONES DAEMONICA units from your army that are within your army's Shadow of Chaos, or one other LEGIONES DAEMONICA unit from your army. EFFECT: Place your unit in strategic reserves. Your unit must make an ingress move in your next Movement phase (including in your first turn). RESTRICTION: You cannot target units that are within Engagement Range of one or more enemy units with this Stratagem.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion - THE REALM OF CHAOS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion - THE REALM OF CHAOS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.daemonic-incursion.stratagem.daemonic-invulnerability",
+      "name": "DAEMONIC INVULNERABILITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.daemonic-incursion",
+      "description": "1CP. Demonic Incursion - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One LEGIONES DAEMONICA unit from your army that was selected as the target of one or more of that enemy unit's attacks. EFFECT: Until the end of the phase, each time an invulnerable saving throw is made for a model in your unit, re-roll a saving throw of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Daemonic Incursion - DAEMONIC INVULNERABILITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Daemonic Incursion - DAEMONIC INVULNERABILITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion",
+      "name": "Shadow Legion - Thralls of the First Prince",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "When mustering your army, you cannot include any DAEMON PRINCE, DAEMON PRINCE WITH WINGS or EPIC HERO units (excluding BE'LAKOR), but you can include the following HERETIC ASTARTES units: CHAOS LORD CHAOS LORD IN TERMINATOR ARMOUR CHAOS LORD WITH JUMP PACK CHAOS TERMINATOR SQUAD CHOSEN DAMNED units DARK APOSTLE HAVOCS LEGIONARIES MASTER OF POSSESSION POSSESSED RAPTORS SORCERER SORCERER IN TERMINATOR ARMOUR WARP TALONS The combined points value of such units depends on your battle size, as shown below. Incursion: Up to 500 pts Strike Force: Up to 1000 pts Onslaught: Up to 1500 pts KEYWORDS BE'LAKOR and HERETIC ASTARTES units from your army gain the SHADOW LEGION and UNDIVIDED keywords. LEGIONES DAEMONICA units from your army gain the SHADOW LEGION keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.enhancement.leaping-shadows",
+      "name": "Leaping Shadows",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "25 pts. SHADOW LEGION model only. Models in the bearer's unit have the Scouts 9\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.enhancement.mantle-of-gloom-aura",
+      "name": "Mantle of Gloom (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "20 pts. SHADOW LEGION model only. While an enemy unit is within Engagement Range of the bearer's unit, subtract 1 from the Objective Control characteristic of models in that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.enhancement.fade-to-darkness",
+      "name": "Fade to Darkness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "30 pts. SHADOW LEGION model only. At the end of the Fight phase, if the bearer's unit destroyed one or more enemy units this phase and is not within Engagement Range of one or more enemy units, you can remove the bearer's unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.enhancement.malice-made-manifest",
+      "name": "Malice Made Manifest",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "25 pts. SHADOW LEGION model only. At the start of the Fight phase, select one enemy unit within Engagement Range of the bearer's unit and roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.stratagem.spiteful-demise",
+      "name": "SPITEFUL DEMISE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "1CP. Shadow Legion - Strategic Ploy Stratagem. WHEN: Any phase, just after a SHADOW LEGION unit from your army is destroyed, before removing the last model in that unit from the battlefield and before rolling any dice for the Deadly Demise ability. TARGET: That SHADOW LEGION unit. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Roll one D6 for each enemy unit that is within Engagement Range of the last model in your unit, adding 2 to the result if your unit has the SLAANESH keyword: on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6+, that enemy unit suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion - SPITEFUL DEMISE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion - SPITEFUL DEMISE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.stratagem.channelled-wrath",
+      "name": "CHANNELLED WRATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "1CP. Shadow Legion - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One SHADOW LEGION unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [LANCE] ability. If your unit has the KHORNE keyword, until the end of the phase, improve the Armour Penetration characteristic of those weapons by 1 as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion - CHANNELLED WRATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion - CHANNELLED WRATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.stratagem.death-denied",
+      "name": "DEATH DENIED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "1CP. Shadow Legion - Battle Tactic Stratagem. WHEN: Your Command phase. TARGET: One SHADOW LEGION unit from your army. EFFECT: One model in your unit regains up to 3 lost wounds. In addition, If your unit has the TZEENTCH keyword, return up to one destroyed model (excluding CHARACTER models) to your unit with its full wounds remaining.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion - DEATH DENIED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion - DEATH DENIED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.stratagem.encroaching-darkness",
+      "name": "ENCROACHING DARKNESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "1CP. Shadow Legion - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: Up to one SHADOW LEGION HERETIC ASTARTES unit from your army and up to one SHADOW LEGION LEGIONES DAEMONICA unit from your army. You can only select units that arrived from Reserves this turn. EFFECT: Until the end of the phase, weapons equipped by models in your selected units have the [IGNORES COVER] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion - ENCROACHING DARKNESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion - ENCROACHING DARKNESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.stratagem.shade-path",
+      "name": "SHADE PATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "2CP. Shadow Legion - Battle Tactic Stratagem. WHEN: Start of your opponent's Charge phase. TARGET: One friendly SHADOW LEGION unit. EFFECT: Select one visible enemy unit within 12\" of your unit. When that enemy unit declares a charge, that enemy unit has -1 to charge rolls. If your unit has NURGLE, that enemy unit must make a battle-shock roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion - SHADE PATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion - SHADE PATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.shadow-legion.stratagem.binding-shadow",
+      "name": "BINDING SHADOW",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.shadow-legion",
+      "description": "1CP. Shadow Legion - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: Up to one SHADOW LEGION HERETIC ASTARTES unit from your army and up to one SHADOW LEGION LEGIONES DAEMONICA unit from your army. You can only select units that are not within Engagement Range of one or more enemy units. EFFECT: Remove those selected units from the battlefield and place them into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Shadow Legion - BINDING SHADOW",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Shadow Legion - BINDING SHADOW"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion",
+      "name": "Blood Legion - Murdercall",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "In your opponent's movement phase, each time an enemy unit (excluding AIRCRAFT) ends a move within 8\" of one or more LEGIONES DAEMONICA KHORNE units from your army, one of those LEGIONES DAEMONICA KHORNE units can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.enhancement.slaughterthirst-aura",
+      "name": "Slaughterthirst (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "25 pts. LEGIONES DAEMONICA KHORNE model only. While a friendly LEGIONES DAEMONICA KHORNE unit (excluding MONSTERS) is within 6\" of the bearer, weapons equipped by models in that unit have the [LANCE] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.enhancement.furys-cage",
+      "name": "Fury's Cage",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "20 pts. LEGIONES DAEMONICA KHORNE MONSTER model only. Each time the bearer is selected to fight, it can use this Enhancement. If it does, the bearer suffers D3+1 mortal wounds, and until the end of the phase, each time it makes an attack, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.enhancement.brazenmaw",
+      "name": "Brazenmaw",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "15 pts. LEGIONES DAEMONICA KHORNE model only. Add 2 to Charge rolls made for the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.enhancement.gateway-unto-damnation",
+      "name": "Gateway Unto Damnation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "10 pts. LEGIONES DAEMONICA KHORNE MONSTER model only. The bearer's Deadly Demise ability inflicts mortal wounds on a D6 roll of 2+ instead of on a 6. In addition, if the bearer has destroyed one or more enemy units this battle, the bearer has the Deadly Demise D3+3 ability, instead of any other Deadly Demise ability on its datasheet.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.stratagem.wrath-undeniable",
+      "name": "WRATH UNDENIABLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "1CP. Blood Legion - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One LEGIONES DAEMONICA KHORNE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6: on a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion - WRATH UNDENIABLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion - WRATH UNDENIABLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.stratagem.gorehungry-onslaught",
+      "name": "GOREHUNGRY ONSLAUGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "1CP. Blood Legion - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One LEGIONES DAEMONICA KHORNE unit from your army. EFFECT: Until the end of the phase, each time a model in your unit makes a move, it can move through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion - GOREHUNGRY ONSLAUGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion - GOREHUNGRY ONSLAUGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.stratagem.skulls-beget-blood",
+      "name": "SKULLS BEGET BLOOD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "1CP. Blood Legion - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One LEGIONES DAEMONICA KHORNE INFANTRY or LEGIONES DAEMONICA KHORNE MOUNTED unit from your army (excluding units that Fell Back this turn) that is not within Engagement Range of one or more enemy units. EFFECT: Select one enemy unit that is not within Engagement Range of one or more units from your army and is within 8\" of and visible to your unit. Roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion - SKULLS BEGET BLOOD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion - SKULLS BEGET BLOOD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.stratagem.blood-begets-skulls",
+      "name": "BLOOD BEGETS SKULLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "1CP. Blood Legion - Strategic Ploy Stratagem. WHEN: Your Charge phase. TARGET: One LEGIONES DAEMONICA KHORNE unit from your army that has not been selected to charge this phase. EFFECT: Until the end of the phase, your unit is eligible to declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion - BLOOD BEGETS SKULLS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion - BLOOD BEGETS SKULLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.stratagem.fools-flight",
+      "name": "FOOLS' FLIGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "2CP. Blood Legion - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a fall-back move. TARGET: One friendly unengaged LEGIONES DAEMONICA KHORNE unit that is within 6\" of that enemy unit. EFFECT: Declare a charge with your unit. When selecting charge targets, you can only select enemy units that made a fall-back move this phase and are within the maximum distance.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion - FOOLS' FLIGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion - FOOLS' FLIGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.blood-legion.stratagem.sheathed-in-brass",
+      "name": "SHEATHED IN BRASS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.blood-legion",
+      "description": "1CP. Blood Legion - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One LEGIONES DAEMONICA KHORNE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a Save characteristic of 3+.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Blood Legion - SHEATHED IN BRASS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Blood Legion - SHEATHED IN BRASS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess",
+      "name": "Legion of Excess - Beguiling Aura",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "LEGIONES DAEMONICA SLAANESH units from your army are eligible to declare a charge in a turn in which they Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.enhancement.false-majesty-aura",
+      "name": "False Majesty (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "30 pts. LEGIONES DAEMONICA SLAANESH model only. While a friendly LEGIONES DAEMONICA SLAANESH unit (excluding MONSTERS) is within 6\" of the bearer, each time a model in that unit makes a melee attack, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.enhancement.dreaming-crown-aura",
+      "name": "Dreaming Crown (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "30 pts. LEGIONES DAEMONICA SLAANESH model only. While a friendly LEGIONES DAEMONICA SLAANESH unit (excluding MONSTERS) is within 6\" of the bearer, each time a model in that unit makes a melee attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.enhancement.avatar-of-perfection",
+      "name": "Avatar of Perfection",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "15 pts. LEGIONES DAEMONICA SLAANESH MONSTER model only. At the start of each phase, if there are no other friendly units within 6\" of the bearer, you can: re-roll Advance rolls made for the bearer; re-roll Charge rolls made for the bearer; ignore any or all modifiers to its Move characteristic and to any Advance and/or Charge rolls made for the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.enhancement.soul-glutton",
+      "name": "Soul Glutton",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "10 pts. LEGIONES DAEMONICA SLAANESH MONSTER model only. At the end of the Fight phase, if one or more enemy models were destroyed this phase as a result of one or more of the bearer's attacks, it can use this Enhancement. If it does, it regains up to D3 lost wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.stratagem.thieves-of-pain",
+      "name": "THIEVES OF PAIN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "1CP. Legion of Excess - Strategic Ploy Stratagem. WHEN: Any phase, when an enemy unit targets a friendly LEGIONES DAEMONICA SLAANESH unit (excluding MONSTER/VEHICLE units), or when a friendly LEGIONES DAEMONICA SLAANESH unit (excluding MONSTER/VEHICLE units) suffers a mortal wound. TARGET: That LEGIONES DAEMONICA SLAANESH unit. EFFECT: Select one other friendly LEGIONES DAEMONICA SLAANESH unit that is within 9\" of and visible to your unit. Until the end of the phase, while the selected unit is on the battlefield, each time a model in your unit would lose a wound, inflict 1 mortal wound on the selected unit instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess - THIEVES OF PAIN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess - THIEVES OF PAIN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.stratagem.archagonists",
+      "name": "ARCHAGONISTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "2CP. Legion of Excess - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One LEGIONES DAEMONICA SLAANESH MONSTER unit or up to two LEGIONES DAEMONICA SLAANESH units (excluding MONSTERS) from your army that have not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in one of those units makes an attack, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess - ARCHAGONISTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess - ARCHAGONISTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.stratagem.sensory-excruciation",
+      "name": "SENSORY EXCRUCIATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "1CP. Legion of Excess - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One LEGIONES DAEMONICA SLAANESH MONSTER unit from your army that is on the battlefield. EFFECT: Each unit on the battlefield that is within your army's Shadow of Chaos must take a Battle-shock test, subtracting 1 from that test if they are Below Half-strength. Designer's Note: This Stratagem forces all friendly and enemy units alike within your army's Shadow of Chaos to take a Battle-shock test. This can allow a Chaos Daemons player to heal units from their army through the Daemonic Terror army rule, at the risk of causing some of their own units to become Battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess - SENSORY EXCRUCIATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess - SENSORY EXCRUCIATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.stratagem.phantasmal-longing",
+      "name": "PHANTASMAL LONGING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "1CP. Legion of Excess - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One LEGIONES DAEMONICA SLAANESH unit from your army. EFFECT: Until the end of the phase, each time a model in your unit makes a move, it can move through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess - PHANTASMAL LONGING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess - PHANTASMAL LONGING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.stratagem.cavalcade-of-blades",
+      "name": "CAVALCADE OF BLADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "1CP. Legion of Excess - Battle Tactic Stratagem. WHEN: Your Charge phase, just after a LEGIONES DAEMONICA SLAANESH unit from your army ends a Charge move. TARGET: That LEGIONES DAEMONICA SLAANESH unit. EFFECT: Select one enemy unit within Engagement Range of your unit, then roll one D6 for each model in your unit that is within Engagement Range of that enemy unit, or roll six D6 instead if your unit is a MONSTER unit: for each 4+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess - CAVALCADE OF BLADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess - CAVALCADE OF BLADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.legion-of-excess.stratagem.overwhelming-excess",
+      "name": "OVERWHELMING EXCESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.legion-of-excess",
+      "description": "1CP. Legion of Excess - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One LEGIONES DAEMONICA SLAANESH unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Legion of Excess - OVERWHELMING EXCESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Legion of Excess - OVERWHELMING EXCESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion",
+      "name": "Plague Legion - Melancholic Miasma",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "While an enemy unit is within 9\" of one or more LEGIONES DAEMONICA NURGLE units from your army, that enemy unit is within your army's Shadow of Chaos. In each player's Command phase, select one enemy unit within your army's Shadow of Chaos. That unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.enhancement.cankerblight",
+      "name": "Cankerblight",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "15 pts. LEGIONES DAEMONICA NURGLE model only. Each time an enemy unit (excluding MONSTERS and VEHICLES) that is within 6\" of the bearer fails a Battle-shock test, the bearer can use this Enhancement. If it does, one model in that unit is destroyed (chosen by its controlling player). Each time the bearer uses this Enhancement, no mortal wounds are inflicted by your army's Daemonic Terror rule.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.enhancement.maggot-maws",
+      "name": "Maggot Maws",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "15 pts. LEGIONES DAEMONICA NURGLE model only. In your Shooting phase, select one enemy unit within 6\" of the bearer; that enemy unit must take a Battle-shock test. Then roll one D6: on a 3+, that enemy unit suffers D3 mortal wounds. Each time the bearer uses this Enhancement, no mortal wounds are inflicted by your army's Daemonic Terror rule.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.enhancement.droning-shroud-aura",
+      "name": "Droning Shroud (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "35 pts. LEGIONES DAEMONICA NURGLE MONSTER model only. While a friendly LEGIONES DAEMONICA NURGLE unit is within 6\" of the bearer, that unit can only be targeted by a ranged attack if the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.enhancement.font-of-spores-aura",
+      "name": "Font of Spores (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "20 pts. LEGIONES DAEMONICA NURGLE MONSTER model only. While a friendly LEGIONES DAEMONICA NURGLE unit is within 6\" of the bearer, improve the Armour Penetration characteristic of weapons equipped by models in that unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.stratagem.seeping-virulence",
+      "name": "SEEPING VIRULENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "1CP. Plague Legion - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One LEGIONES DAEMONICA NURGLE unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in that unit makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion - SEEPING VIRULENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion - SEEPING VIRULENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.stratagem.fever-visions",
+      "name": "FEVER VISIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "1CP. Plague Legion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One LEGIONES DAEMONICA NURGLE unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Hit roll. After your unit has finished making its attacks, select one enemy unit hit by one or more of those attacks; that enemy unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion - FEVER VISIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion - FEVER VISIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.stratagem.foetid-resurgence",
+      "name": "FOETID RESURGENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "2CP. Plague Legion - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One LEGIONES DAEMONICA NURGLE unit from your army that is on the battlefield. EFFECT: Return up to 1 destroyed model to your unit (excluding CHARACTER models) or up to D3 destroyed models instead (excluding CHARACTER models) if your unit is a BATTLELINE unit, with their full wounds remaining. If your unit is a MONSTER unit, one model in your unit regains up to D3+1 lost wounds instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion - FOETID RESURGENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion - FOETID RESURGENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.stratagem.rot-and-renewal",
+      "name": "ROT AND RENEWAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "1CP. Plague Legion - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One LEGIONES DAEMONICA NURGLE unit from your army. EFFECT: Until the end of the phase, each time a model in your unit makes a move, it can move through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion - ROT AND RENEWAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion - ROT AND RENEWAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.stratagem.murkshadows",
+      "name": "MURKSHADOWS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "1CP. Plague Legion - Battle Tactic Stratagem. WHEN: Your Movement phase. TARGET: One LEGIONES DAEMONICA NURGLE INFANTRY unit from your army. EFFECT: Until the end of the phase, each time your unit makes a Normal move, add 5\" to the Move characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion - MURKSHADOWS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion - MURKSHADOWS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.plague-legion.stratagem.plague-of-woes",
+      "name": "PLAGUE OF WOES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.plague-legion",
+      "description": "1CP. Plague Legion - Strategic Ploy Stratagem. WHEN: Your opponent's Command phase, before selecting any targets for the Melancholic Miasma Detachment rule. TARGET: One LEGIONES DAEMONICA NURGLE unit from your army. EFFECT: Until the end of the phase, after an enemy unit takes a Battle-shock test as a result of the Melancholic Miasma Detachment rule, select one other enemy unit within 9\" of your unit; that enemy unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Plague Legion - PLAGUE OF WOES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Plague Legion - PLAGUE OF WOES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion",
+      "name": "Scintillating Legion - Fates in Flux",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "You start the battle with three Flux tokens (we recommend using a dice to track how many Flux tokens you have). You can spend one Flux token just after an Advance roll, Hit roll, Wound roll, Damage roll, saving throw or Hazardous test is made for a LEGIONES DAEMONICA TZEENTCH model or LEGIONES DAEMONICA TZEENTCH unit from your army to re-roll the result of that roll, throw or test. Flux tokens can also be spent to enhance the effect of some Stratagems. Each time you spend a Flux token, reduce the number of Flux tokens you have by one and your opponent gains one Flux token. Whenever your opponent has one or more Flux tokens, they can spend one Flux token after an Advance roll, Hit roll, Wound roll or saving throw is made for a model or unit from their army, to re-roll the result of that roll or throw. If they do, they reduce the number of Flux tokens they have by one and you gain one Flux token. This is ignored if your opponent has the Fates in Flux Detachment rule. In your Command phase, if your opponent has one or more Flux tokens, you gain one Flux token. Designer's Note: When using fast dice rolling, this rule can be used to spend any number of Flux tokens (up to the amount you have), to re-roll a number of dice up to the amount spent, after rolling multiple rolls or saving throws at once.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.enhancement.inescapable-eye",
+      "name": "Inescapable Eye",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "15 pts. LEGIONES DAEMONICA TZEENTCH model only. In your Command phase, if the bearer is on the battlefield, if your opponent has one or more Flux tokens, you gain one additional Flux token.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.enhancement.infernal-puppeteer",
+      "name": "Infernal Puppeteer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "20 pts. LEGIONES DAEMONICA TZEENTCH MONSTER model only. In your Shooting phase, when this unit is selected to shoot, while an enemy unit is visible to a friendly LEGIONES DAEMONICA TZEENTCH unit, that enemy unit has +9\" detection range until this unit has shot.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.enhancement.neverblade",
+      "name": "Neverblade",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "25 pts. LEGIONES DAEMONICA TZEENTCH MONSTER model only. Improve the Strength characteristic of melee weapons equipped by the bearer by 2, improve the Attacks and Armour Penetration characteristics of melee weapons equipped by the bearer by 1, and each time the bearer makes a melee attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.enhancement.improbable-shield-aura",
+      "name": "Improbable Shield (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "30 pts. LEGIONES DAEMONICA TZEENTCH model only. While a friendly LEGIONES DAEMONICA TZEENTCH unit is within 6\" of the bearer, models in that unit have the Feel No Pain 4+ ability against Psychic Attacks and mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.stratagem.impossible-eclipse",
+      "name": "IMPOSSIBLE ECLIPSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "1CP. Scintillating Legion - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One LEGIONES DAEMONICA TZEENTCH MONSTER unit from your army that is on the battlefield. EFFECT: Select No Man's Land or your opponent's deployment zone, or spend one Flux token and select both. Until the end of the phase, the selected areas of the battlefield are within your army's Shadow of Chaos.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion - IMPOSSIBLE ECLIPSE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion - IMPOSSIBLE ECLIPSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.stratagem.pyrogenesis",
+      "name": "PYROGENESIS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "1CP. Scintillating Legion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One LEGIONES DAEMONICA TZEENTCH unit from your army that has not been selected to shoot or fight that phase. EFFECT: Until the end of the phase, add 2 to the Strength characteristic of weapons equipped by models in your unit, or spend one Flux token and add 3 to the Strength characteristic of those weapons and improve the Armour Penetration characteristic of those weapons by 1 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion - PYROGENESIS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion - PYROGENESIS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.stratagem.flickering-reality",
+      "name": "FLICKERING REALITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "1CP. Scintillating Legion - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One LEGIONES DAEMONICA TZEENTCH unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Roll one D6, then you can spend one Flux token to re-roll the result: until the end of the phase, each time an attack targets your unit, on an unmodified Hit roll (after any re-roll) of that result, the attack sequence ends, even if the original Hit roll would have been a Critical Hit. Example: If you roll a 2 and choose to spend one Flux token to re-roll the result, and the re-roll is a 6, then until the end of the phase, each time an attack targets your unit, on an unmodified Hit roll of 6 the attack sequence ends, that attack fails to hit and no Critical Hit effects (e.g. Lethal Hits) are resolved.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion - FLICKERING REALITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion - FLICKERING REALITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.stratagem.fateborne-nightmares",
+      "name": "FATEBORNE NIGHTMARES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "1CP. Scintillating Legion - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One LEGIONES DAEMONICA TZEENTCH unit from your army. EFFECT: Until the end of the phase, each time a model in your unit makes a move, it can move through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion - FATEBORNE NIGHTMARES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion - FATEBORNE NIGHTMARES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.stratagem.ficklefire",
+      "name": "FICKLEFIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "1CP. Scintillating Legion - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One LEGIONES DAEMONICA TZEENTCH unit from your army that is within Engagement Range of one or more enemy units. EFFECT: Until the end of the phase, enemy units are not considered to be within Engagement Range of your unit for the purposes of selecting targets for, and resolving attacks with, ranged weapons. Until the end of the phase, each time an enemy model is destroyed while its unit is within Engagement Range of your unit, roll one D6: on a 5+, your unit suffers 1 mortal wound after the attacking unit has finished making its attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion - FICKLEFIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion - FICKLEFIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.scintillating-legion.stratagem.delirium-unmade",
+      "name": "DELIRIUM UNMADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.scintillating-legion",
+      "description": "1CP. Scintillating Legion - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One LEGIONES DAEMONICA TZEENTCH unit from your army that is not within Engagement Range of one or more enemy units. Alternatively, you can spend one Flux token when you use this Stratagem and target up to two LEGIONES DAEMONICA TZEENTCH units from your army instead (including those within Engagement Range of one or more enemy units). EFFECT: Remove your units from the battlefield and place them into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Scintillating Legion - DELIRIUM UNMADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Scintillating Legion - DELIRIUM UNMADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "name": "Cavalcade of Chaos - Unholy Avalanche",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "If a friendly LEGIONES DAEMONICA MOUNTED unit made a fall-back move this turn, that move does not prevent that unit from being eligible to shoot/eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Cavalcade of Chaos",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Cavalcade of Chaos"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.cavalcade-of-chaos.enhancement.apocalyptic-steedsupgrade",
+      "name": "Apocalyptic SteedsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "maximumSelections": 3,
+      "description": "10 pts. LEGIONES DAEMONICA MOUNTED unit only. This unit has +1\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Cavalcade of Chaos enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Cavalcade of Chaos enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.cavalcade-of-chaos.enhancement.soul-shattering-chargeupgrade",
+      "name": "Soul-Shattering ChargeUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "maximumSelections": 3,
+      "description": "10 pts. LEGIONES DAEMONICA MOUNTED unit only. When this unit is selected to fight, if this unit made a charge move this turn, you can use this ability. If you do, when determining which models in this unit can fight, friendly models that are within 3\" of enemy units engaged with this unit can target those enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Cavalcade of Chaos enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Cavalcade of Chaos enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.cavalcade-of-chaos.stratagem.from-beyond-the-veil",
+      "name": "FROM BEYOND THE VEIL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "description": "1CP. Cavalcade of Chaos Stratagem. WHEN: End of the Movement phase, from the start of the battle. TARGET: One friendly LEGIONES DAEMONICA MOUNTED unit in strategic reserves. EFFECT: Your unit can make an ingress move.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Cavalcade of Chaos - FROM BEYOND THE VEIL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Cavalcade of Chaos - FROM BEYOND THE VEIL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.cavalcade-of-chaos.stratagem.warp-riders",
+      "name": "WARP-RIDERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "description": "1CP. Cavalcade of Chaos Stratagem. WHEN: Your Movement phase, when a friendly LEGIONES DAEMONICA MOUNTED unit is selected to move. TARGET: That LEGIONES DAEMONICA MOUNTED unit. EFFECT: Your unit has MOBILE.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Cavalcade of Chaos - WARP-RIDERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Cavalcade of Chaos - WARP-RIDERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.cavalcade-of-chaos.stratagem.inescapable-manifestations",
+      "name": "INESCAPABLE MANIFESTATIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.cavalcade-of-chaos",
+      "description": "1CP. Cavalcade of Chaos Stratagem. WHEN: Your opponent's Movement phase, when a unit is selected to make a fall-back move, if that unit is engaged with a friendly LEGIONES DAEMONICA MOUNTED unit. TARGET: That LEGIONES DAEMONICA MOUNTED unit. EFFECT: When an enemy unit engaged with your unit is selected to make a fall-back move, that enemy unit must use the desperate escape mode. If that enemy unit is battle-shocked, -1 from those hazard rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Cavalcade of Chaos - INESCAPABLE MANIFESTATIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Cavalcade of Chaos - INESCAPABLE MANIFESTATIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.lords-of-the-warp",
+      "name": "Lords of the Warp - Loci of Power",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.lords-of-the-warp",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly LEGIONES DAEMONICA CHARACTER models (excluding MONSTER models) have +1 Ld and OC.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Lords of the Warp",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of the Warp"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.lords-of-the-warp.enhancement.swollen-with-powerupgrade",
+      "name": "Swollen with PowerUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.lords-of-the-warp",
+      "maximumSelections": 3,
+      "description": "10 pts. LEGIONES DAEMONICA CHARACTER model only (excluding MONSTER units). This model has +2 W.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Lords of the Warp enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of the Warp enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.lords-of-the-warp.stratagem.carnival-of-excess",
+      "name": "CARNIVAL OF EXCESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.lords-of-the-warp",
+      "description": "1CP. Lords of the Warp Stratagem. WHEN: Fight phase, when an enemy unit has fought. TARGET: One friendly LEGIONES DAEMONICA CHARACTER SLAANESH unit (excluding MONSTER units) that has not been selected to fight this phase. EFFECT: Your unit has Fights First and must be the next unit you select to fight.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Lords of the Warp - CARNIVAL OF EXCESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of the Warp - CARNIVAL OF EXCESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.lords-of-the-warp.stratagem.call-to-murder",
+      "name": "CALL TO MURDER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.lords-of-the-warp",
+      "description": "1CP. Lords of the Warp Stratagem. WHEN: Fight phase, when a friendly LEGIONES DAEMONICA KHORNE CHARACTER unit (excluding MONSTER units) that made a charge move this turn is selected to fight. TARGET: That LEGIONES DAEMONICA CHARACTER KHORNE unit. EFFECT: Your unit's melee attacks have +1 A.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Lords of the Warp - CALL TO MURDER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of the Warp - CALL TO MURDER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.lords-of-the-warp.stratagem.bilious-blessing",
+      "name": "BILIOUS BLESSING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.lords-of-the-warp",
+      "description": "1CP. Lords of the Warp Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly LEGIONES DAEMONICA CHARACTER NURGLE unit (excluding MONSTER units). EFFECT: Select one visible enemy unit within 8\" of your unit and roll seven D6: For each 4+, that enemy unit suffers 1 mortal wound",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Lords of the Warp - BILIOUS BLESSING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of the Warp - BILIOUS BLESSING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.lords-of-the-warp.stratagem.skirling-magicks",
+      "name": "SKIRLING MAGICKS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.lords-of-the-warp",
+      "description": "1CP. Lords of the Warp Stratagem. WHEN: Your Shooting phase, when a friendly LEGIONES DAEMONICA CHARACTER TZEENTCH unit (excluding MONSTER units) is selected to shoot. TARGET: That LEGIONES DAEMONICA CHARACTER TZEENTCH unit. EFFECT: Your unit's ranged attacks have [LETHAL HITS].",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Lords of the Warp - SKIRLING MAGICKS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of the Warp - SKIRLING MAGICKS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.warptide",
+      "name": "Warptide - Shudderblink",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.warptide",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "When a friendly LEGIONES DAEMONICA BATTLELINE unit is selected to make an advance move: That unit's ranged attacks have [ASSAULT] until the end of the turn. That move does not prevent that unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Warptide",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Warptide"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.warptide.enhancement.bane-forged-weaponsupgrade",
+      "name": "Bane-Forged WeaponsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.warptide",
+      "maximumSelections": 3,
+      "description": "15 pts. LEGIONES DAEMONICA BATTLELINE unit only. This unit's attacks have +1 S.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Warptide enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Warptide enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.warptide.enhancement.soul-hungry-slaughterersupgrade",
+      "name": "Soul-Hungry SlaughterersUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.warptide",
+      "maximumSelections": 3,
+      "description": "10 pts. LEGIONES DAEMONICA BATTLELINE unit only. When you target this unit with the Heroic Intervention/Fire Overwatch stratagem, that use is -1 CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Warptide enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Warptide enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.warptide.stratagem.daemonic-infestation",
+      "name": "DAEMONIC INFESTATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.warptide",
+      "description": "1CP. Warptide Stratagem. WHEN: Your Command phase. TARGET: One friendly LEGIONES DAEMONICA BATTLELINE unit (excluding PINK HORRORS units). EFFECT: Your unit heals 3 wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Warptide - DAEMONIC INFESTATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Warptide - DAEMONIC INFESTATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.warptide.stratagem.soulseeing",
+      "name": "SOULSEEING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.warptide",
+      "description": "1CP. Warptide Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly LEGIONES DAEMONICA BATTLELINE unit. EFFECT: Select one visible enemy unit within 12\" of your unit. That enemy unit has +6\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Warptide - SOULSEEING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Warptide - SOULSEEING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-daemons.detachment.warptide.stratagem.incorporeal-entities",
+      "name": "INCORPOREAL ENTITIES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-daemons.detachment.warptide",
+      "description": "1CP. Warptide Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly LEGIONES DAEMONICA BATTLELINE unit. TARGET: That LEGIONES DAEMONICA BATTLELINE unit. EFFECT: Ranged attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Daemons Warptide - INCORPOREAL ENTITIES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-daemons/",
+          "capturedAt": "2026-09-25",
+          "section": "Warptide - INCORPOREAL ENTITIES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

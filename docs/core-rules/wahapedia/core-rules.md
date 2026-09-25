@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Source: [Wahapedia Core Rules](https://wahapedia.ru/wh40k11ed/the-rules/core-rules/).
 - This is a normalized text reference generated from the source page. Images, navigation, advertisements, and hidden tooltip templates are omitted; rule headings, lists, tables, examples, FAQ content, and errata are retained.
 - The source page is the authority. This file is a handoff reference for implementation and auditing, not a replacement for the published rules.
@@ -159,96 +159,97 @@
 147. [Secured Objectives 14.03](#source-section-147-secured-objectives-14-03)
 148. [FAQ](#source-section-148-faq)
 149. [Stratagems 15](#source-section-149-stratagems-15)
-150. [Using Stratagems 15.01](#source-section-150-using-stratagems-15-01)
-151. [FAQ](#source-section-151-faq)
-152. [Core Stratagems](#source-section-152-core-stratagems)
-153. [Stratagems Key](#source-section-153-stratagems-key)
-154. [COMMAND RE-ROLL 15.02](#source-section-154-command-re-roll-15-02)
-155. [EPIC CHALLENGE 15.03](#source-section-155-epic-challenge-15-03)
-156. [INSANE BRAVERY 15.04](#source-section-156-insane-bravery-15-04)
-157. [EXPLOSIVES 15.05](#source-section-157-explosives-15-05)
-158. [Errata](#source-section-158-errata)
-159. [CRUSHING IMPACT 15.06](#source-section-159-crushing-impact-15-06)
-160. [Errata](#source-section-160-errata)
-161. [RAPID INGRESS 15.07](#source-section-161-rapid-ingress-15-07)
-162. [FIRE OVERWATCH 15.08](#source-section-162-fire-overwatch-15-08)
-163. [SNAP SHOOTING 15.09](#source-section-163-snap-shooting-15-09)
-164. [SMOKESCREEN 15.10](#source-section-164-smokescreen-15-10)
-165. [HEROIC INTERVENTION 15.11](#source-section-165-heroic-intervention-15-11)
-166. [COUNTEROFFENSIVE 15.12](#source-section-166-counteroffensive-15-12)
-167. [Actions 16](#source-section-167-actions-16)
-168. [Performing Actions 16.01](#source-section-168-performing-actions-16-01)
-169. [FAQ](#source-section-169-faq)
-170. [Starting an Action](#source-section-170-starting-an-action)
-171. [Completing an Action](#source-section-171-completing-an-action)
-172. [ADVANCED RULES](#source-section-172-advanced-rules)
-173. [Monsters and Vehicles 17](#source-section-173-monsters-and-vehicles-17)
-174. [Moving Monsters and Vehicles 17.01](#source-section-174-moving-monsters-and-vehicles-17-01)
-175. [FAQ](#source-section-175-faq)
-176. [Frame 17.02](#source-section-176-frame-17-02)
-177. [FAQ](#source-section-177-faq)
-178. [Shooting at Engaged Monsters and Vehicles 17.03](#source-section-178-shooting-at-engaged-monsters-and-vehicles-17-03)
-179. [Errata](#source-section-179-errata)
-180. [Transports 18](#source-section-180-transports-18)
-181. [Errata](#source-section-181-errata)
-182. [Transport Capacity 18.01](#source-section-182-transport-capacity-18-01)
-183. [Embarking 18.02](#source-section-183-embarking-18-02)
-184. [FAQ](#source-section-184-faq)
-185. [Able To Embark 18.02.01](#source-section-185-able-to-embark-18-02-01)
-186. [Disembarking 18.03](#source-section-186-disembarking-18-03)
-187. [DISEMBARK MOVE 18.04](#source-section-187-disembark-move-18-04)
-188. [EMERGENCY DISEMBARK MOVE 18.05](#source-section-188-emergency-disembark-move-18-05)
-189. [ASSAULT DISEMBARK MOVE 18.06](#source-section-189-assault-disembark-move-18-06)
-190. [SHOCK DISEMBARK MOVE 18.07](#source-section-190-shock-disembark-move-18-07)
-191. [FAQ](#source-section-191-faq)
-192. [Attached Units 19](#source-section-192-attached-units-19)
-193. [Forming Attached Units 19.01](#source-section-193-forming-attached-units-19-01)
-194. [FAQ](#source-section-194-faq)
-195. [Attacking Attached Units 19.02](#source-section-195-attacking-attached-units-19-02)
-196. [Keywords in Attached Units 19.03](#source-section-196-keywords-in-attached-units-19-03)
-197. [FAQ](#source-section-197-faq)
-198. [Abilities in Attached Units 19.04](#source-section-198-abilities-in-attached-units-19-04)
-199. [Strategic Reserves 20](#source-section-199-strategic-reserves-20)
-200. [Placing Units in Strategic Reserves 20.01](#source-section-200-placing-units-in-strategic-reserves-20-01)
-201. [FAQ](#source-section-201-faq)
-202. [Strategic Reserves at the End of the Battle 20.01.02](#source-section-202-strategic-reserves-at-the-end-of-the-battle-20-01-02)
-203. [Repositioned Units 20.02](#source-section-203-repositioned-units-20-02)
-204. [Arriving from Strategic Reserves 20.03](#source-section-204-arriving-from-strategic-reserves-20-03)
-205. [INGRESS MOVE 20.04](#source-section-205-ingress-move-20-04)
-206. [Flying and Surging 21](#source-section-206-flying-and-surging-21)
-207. [Surge Moves 21.01](#source-section-207-surge-moves-21-01)
-208. [SURGE MOVE 21.02](#source-section-208-surge-move-21-02)
-209. [Flying Models 21.03](#source-section-209-flying-models-21-03)
-210. [FAQ](#source-section-210-faq)
-211. [Other Rules and Abilities 22](#source-section-211-other-rules-and-abilities-22)
-212. [Aura Abilities 22.01](#source-section-212-aura-abilities-22-01)
-213. [Faction Abilities 22.02](#source-section-213-faction-abilities-22-02)
-214. [Psychic Abilities 22.03](#source-section-214-psychic-abilities-22-03)
-215. [Wargear Abilities 22.04](#source-section-215-wargear-abilities-22-04)
-216. [Plunging Fire 22.05](#source-section-216-plunging-fire-22-05)
-217. [Aircraft 23](#source-section-217-aircraft-23)
-218. [Deployment 23.01](#source-section-218-deployment-23-01)
-219. [Movement 23.02](#source-section-219-movement-23-02)
-220. [Shooting 23.03](#source-section-220-shooting-23-03)
-221. [Charging and Fighting 23.04](#source-section-221-charging-and-fighting-23-04)
-222. [REFERENCE](#source-section-222-reference)
-223. [Core Abilities 24](#source-section-223-core-abilities-24)
-224. [FAQ](#source-section-224-faq)
-225. [Abilities 24.01](#source-section-225-abilities-24-01)
-226. [Duplicated Abilities 24.02](#source-section-226-duplicated-abilities-24-02)
-227. [24.28.01 Precision and Devastating Wounds](#source-section-227-24-28-01-precision-and-devastating-wounds)
-228. [SCOUT MOVE 24.32](#source-section-228-scout-move-24-32)
-229. [24.37.01](#source-section-229-24-37-01)
-230. [Muster Armies 25](#source-section-230-muster-armies-25)
-231. [Start Your Army Roster 25.01](#source-section-231-start-your-army-roster-25-01)
-232. [Select Army Faction 25.02](#source-section-232-select-army-faction-25-02)
-233. [Select Battle Size 25.03](#source-section-233-select-battle-size-25-03)
-234. [Fill Your Army Roster 25.04](#source-section-234-fill-your-army-roster-25-04)
-235. [FAQ](#source-section-235-faq)
-236. [Select Detachments](#source-section-236-select-detachments)
-237. [Select Units](#source-section-237-select-units)
-238. [Attach Leaders and Support Units](#source-section-238-attach-leaders-and-support-units)
-239. [Select Enhancements](#source-section-239-select-enhancements)
+150. [FAQ](#source-section-150-faq)
+151. [Using Stratagems 15.01](#source-section-151-using-stratagems-15-01)
+152. [FAQ](#source-section-152-faq)
+153. [Core Stratagems](#source-section-153-core-stratagems)
+154. [Stratagems Key](#source-section-154-stratagems-key)
+155. [COMMAND RE-ROLL 15.02](#source-section-155-command-re-roll-15-02)
+156. [EPIC CHALLENGE 15.03](#source-section-156-epic-challenge-15-03)
+157. [INSANE BRAVERY 15.04](#source-section-157-insane-bravery-15-04)
+158. [EXPLOSIVES 15.05](#source-section-158-explosives-15-05)
+159. [Errata](#source-section-159-errata)
+160. [CRUSHING IMPACT 15.06](#source-section-160-crushing-impact-15-06)
+161. [Errata](#source-section-161-errata)
+162. [RAPID INGRESS 15.07](#source-section-162-rapid-ingress-15-07)
+163. [FIRE OVERWATCH 15.08](#source-section-163-fire-overwatch-15-08)
+164. [SNAP SHOOTING 15.09](#source-section-164-snap-shooting-15-09)
+165. [SMOKESCREEN 15.10](#source-section-165-smokescreen-15-10)
+166. [HEROIC INTERVENTION 15.11](#source-section-166-heroic-intervention-15-11)
+167. [COUNTEROFFENSIVE 15.12](#source-section-167-counteroffensive-15-12)
+168. [Actions 16](#source-section-168-actions-16)
+169. [Performing Actions 16.01](#source-section-169-performing-actions-16-01)
+170. [FAQ](#source-section-170-faq)
+171. [Starting an Action](#source-section-171-starting-an-action)
+172. [Completing an Action](#source-section-172-completing-an-action)
+173. [ADVANCED RULES](#source-section-173-advanced-rules)
+174. [Monsters and Vehicles 17](#source-section-174-monsters-and-vehicles-17)
+175. [Moving Monsters and Vehicles 17.01](#source-section-175-moving-monsters-and-vehicles-17-01)
+176. [FAQ](#source-section-176-faq)
+177. [Frame 17.02](#source-section-177-frame-17-02)
+178. [FAQ](#source-section-178-faq)
+179. [Shooting at Engaged Monsters and Vehicles 17.03](#source-section-179-shooting-at-engaged-monsters-and-vehicles-17-03)
+180. [Errata](#source-section-180-errata)
+181. [Transports 18](#source-section-181-transports-18)
+182. [Errata](#source-section-182-errata)
+183. [Transport Capacity 18.01](#source-section-183-transport-capacity-18-01)
+184. [Embarking 18.02](#source-section-184-embarking-18-02)
+185. [FAQ](#source-section-185-faq)
+186. [Able To Embark 18.02.01](#source-section-186-able-to-embark-18-02-01)
+187. [Disembarking 18.03](#source-section-187-disembarking-18-03)
+188. [DISEMBARK MOVE 18.04](#source-section-188-disembark-move-18-04)
+189. [EMERGENCY DISEMBARK MOVE 18.05](#source-section-189-emergency-disembark-move-18-05)
+190. [ASSAULT DISEMBARK MOVE 18.06](#source-section-190-assault-disembark-move-18-06)
+191. [SHOCK DISEMBARK MOVE 18.07](#source-section-191-shock-disembark-move-18-07)
+192. [FAQ](#source-section-192-faq)
+193. [Attached Units 19](#source-section-193-attached-units-19)
+194. [Forming Attached Units 19.01](#source-section-194-forming-attached-units-19-01)
+195. [FAQ](#source-section-195-faq)
+196. [Attacking Attached Units 19.02](#source-section-196-attacking-attached-units-19-02)
+197. [Keywords in Attached Units 19.03](#source-section-197-keywords-in-attached-units-19-03)
+198. [FAQ](#source-section-198-faq)
+199. [Abilities in Attached Units 19.04](#source-section-199-abilities-in-attached-units-19-04)
+200. [Strategic Reserves 20](#source-section-200-strategic-reserves-20)
+201. [Placing Units in Strategic Reserves 20.01](#source-section-201-placing-units-in-strategic-reserves-20-01)
+202. [FAQ](#source-section-202-faq)
+203. [Strategic Reserves at the End of the Battle 20.01.02](#source-section-203-strategic-reserves-at-the-end-of-the-battle-20-01-02)
+204. [Repositioned Units 20.02](#source-section-204-repositioned-units-20-02)
+205. [Arriving from Strategic Reserves 20.03](#source-section-205-arriving-from-strategic-reserves-20-03)
+206. [INGRESS MOVE 20.04](#source-section-206-ingress-move-20-04)
+207. [Flying and Surging 21](#source-section-207-flying-and-surging-21)
+208. [Surge Moves 21.01](#source-section-208-surge-moves-21-01)
+209. [SURGE MOVE 21.02](#source-section-209-surge-move-21-02)
+210. [Flying Models 21.03](#source-section-210-flying-models-21-03)
+211. [FAQ](#source-section-211-faq)
+212. [Other Rules and Abilities 22](#source-section-212-other-rules-and-abilities-22)
+213. [Aura Abilities 22.01](#source-section-213-aura-abilities-22-01)
+214. [Faction Abilities 22.02](#source-section-214-faction-abilities-22-02)
+215. [Psychic Abilities 22.03](#source-section-215-psychic-abilities-22-03)
+216. [Wargear Abilities 22.04](#source-section-216-wargear-abilities-22-04)
+217. [Plunging Fire 22.05](#source-section-217-plunging-fire-22-05)
+218. [Aircraft 23](#source-section-218-aircraft-23)
+219. [Deployment 23.01](#source-section-219-deployment-23-01)
+220. [Movement 23.02](#source-section-220-movement-23-02)
+221. [Shooting 23.03](#source-section-221-shooting-23-03)
+222. [Charging and Fighting 23.04](#source-section-222-charging-and-fighting-23-04)
+223. [REFERENCE](#source-section-223-reference)
+224. [Core Abilities 24](#source-section-224-core-abilities-24)
+225. [FAQ](#source-section-225-faq)
+226. [Abilities 24.01](#source-section-226-abilities-24-01)
+227. [Duplicated Abilities 24.02](#source-section-227-duplicated-abilities-24-02)
+228. [24.28.01 Precision and Devastating Wounds](#source-section-228-24-28-01-precision-and-devastating-wounds)
+229. [SCOUT MOVE 24.32](#source-section-229-scout-move-24-32)
+230. [[TORRENT]](#source-section-230-torrent)
+231. [Muster Armies 25](#source-section-231-muster-armies-25)
+232. [Start Your Army Roster 25.01](#source-section-232-start-your-army-roster-25-01)
+233. [Select Army Faction 25.02](#source-section-233-select-army-faction-25-02)
+234. [Select Battle Size 25.03](#source-section-234-select-battle-size-25-03)
+235. [Fill Your Army Roster 25.04](#source-section-235-fill-your-army-roster-25-04)
+236. [FAQ](#source-section-236-faq)
+237. [Select Detachments](#source-section-237-select-detachments)
+238. [Select Units](#source-section-238-select-units)
+239. [Attach Leaders and Support Units](#source-section-239-attach-leaders-and-support-units)
+240. [Select Enhancements](#source-section-240-select-enhancements)
 
 ## Source text
 
@@ -1539,15 +1540,30 @@ Both players make pile-in moves (see below) with all of their eligible units the
 <a id="source-section-110-pile-in-move-12-03"></a>
 ### PILE-IN MOVE 12.03
 
-MAXIMUM DISTANCE: 3".ELIGIBLE IF: It is the Fight phase and one or more of the following apply to your unit:
-It is engaged.It made a charge move this turn.It was selected to make an overrun fight this phase (12.06).EFFECT: Your unit moves as described in Moving (03).
+MAXIMUM DISTANCE: 3".
+ELIGIBLE IF: It is the Fight phase and one or more of the following apply to your unit:
+- It is engaged.
+- It made a charge move this turn.
+- It was selected to make an overrun fight this phase (12.06).
+
+EFFECT: Your unit moves as described in Moving (03).
 BEFORE MOVING: Select pile-in targets:
-If your unit is engaged, select every enemy unit it is engaged with.Otherwise, select one or more enemy units within 5" of your unit.WHILE MOVING:
-Models in base-contact with one or more enemy models cannot be moved.Each model that is moved must end its move closer to the closest pile-in target, and engaged with it if possible.AFTER MOVING:
-Your unit must be engaged.Each model that started this move engaged with an enemy unit must still be engaged with that enemy unit.
+- If your unit is engaged, select every enemy unit it is engaged with.
+- Otherwise, select one or more enemy units within 5" of your unit.
+
+WHILE MOVING:
+- Models in base-contact with one or more enemy models cannot be moved.
+- Each model that is moved must end its move closer to the closest pile-in target, and engaged with it if possible.
+
+AFTER MOVING:
+- Your unit must be engaged.
+- Each model that started this move engaged with an enemy unit must still be engaged with that enemy unit.
+
 START OF FIGHT PHASE
 Because both RED units made charge moves this turn, they are both Fights First units this phase and are both eligible to make pile-in moves, even though the MONSTER is unengaged as it destroyed its charge target in the Charge phase using the Crushing Impact stratagem (15.06).
-PILE-IN MOVESThe RED player makes pile-in moves first.The BLUE player makes pile-in moves next, but as their model is in base-contact with enemy models, it is not moved.
+PILE-IN MOVES
+- The RED player makes pile-in moves first.
+- The BLUE player makes pile-in moves next, but as their model is in base-contact with enemy models, it is not moved.
 
 <a id="source-section-111-3-fight-step-12-04"></a>
 ## 3. Fight Step 12.04
@@ -1924,7 +1940,14 @@ battle-shocked, so the OC characteristic of all of its models is ‘-’.
 
 Stratagems can be used by spending Command Points, to create epic moments of tactical brilliance or peerless martial might. They are used when a player deems that a critical point in the battle is reached, where extra combat prowess or fleeting but powerful effects are required to tip the balance in their favour.
 
-<a id="source-section-150-using-stratagems-15-01"></a>
+<a id="source-section-150-faq"></a>
+### FAQ
+
+| Q: | Can I use the Insane Bravery stratagem on a battle-shocked unit? |
+| --- | --- |
+| A: | No, as a unit’s controlling player cannot target that unit with stratagems (01.07). |
+
+<a id="source-section-151-using-stratagems-15-01"></a>
 ## Using Stratagems 15.01
 
 During the battle, both players can use stratagems. Each stratagem states:
@@ -1951,7 +1974,7 @@ SEE ALSO
 
 Some stratagems feature optional conditions that carry on additional CP cost. This can depend on the effect you select (see HEROIC INTERVENTION stratagem for example) or other variables such os the keywords of the unit being targeted.
 
-<a id="source-section-151-faq"></a>
+<a id="source-section-152-faq"></a>
 ### FAQ
 
 | Q: | After using an ability that increases the CP cost of a stratagem, must my opponent continue to use the selected stratagem at the increased cost if they have the necessary CP available? |
@@ -1966,12 +1989,12 @@ Some stratagems feature optional conditions that carry on additional CP cost. Th
 | --- | --- |
 | A: | No, a stratagem that costs 1CP and is making use of an optional +1CP section has an original cost of 2CP. |
 
-<a id="source-section-152-core-stratagems"></a>
+<a id="source-section-153-core-stratagems"></a>
 ### Core Stratagems
 
 All players can use core stratagems (see below). Additional stratagems can be found in Codexes and other publications.
 
-<a id="source-section-153-stratagems-key"></a>
+<a id="source-section-154-stratagems-key"></a>
 ### Stratagems Key
 
 Used in:
@@ -1981,7 +2004,7 @@ Your turn
 Used in:
 Opponent’s turn
 
-<a id="source-section-154-command-re-roll-15-02"></a>
+<a id="source-section-155-command-re-roll-15-02"></a>
 ### COMMAND RE-ROLL 15.02
 
 1CP
@@ -2001,7 +2024,7 @@ TARGET: That unit or model.
 
 EFFECT: You re-roll that roll. If you are rolling more than one dice together, select one of those dice to re-roll (excluding charge rolls, which you must re-roll in full).
 
-<a id="source-section-155-epic-challenge-15-03"></a>
+<a id="source-section-156-epic-challenge-15-03"></a>
 ### EPIC CHALLENGE 15.03
 
 1CP
@@ -2013,7 +2036,7 @@ TARGET: That CHARACTER unit.
 
 EFFECT: Select one CHARACTER model in your unit. Until the end of the phase, that model’s melee weapons have the [PRECISION] ability.
 
-<a id="source-section-156-insane-bravery-15-04"></a>
+<a id="source-section-157-insane-bravery-15-04"></a>
 ### INSANE BRAVERY 15.04
 
 1CP
@@ -2027,7 +2050,7 @@ EFFECT: That battle-shock roll is automatically successful.
 
 RESTRICTIONS: You cannot use this stratagem more than once per battle.
 
-<a id="source-section-157-explosives-15-05"></a>
+<a id="source-section-158-explosives-15-05"></a>
 ### EXPLOSIVES 15.05
 
 1CP
@@ -2042,13 +2065,13 @@ EFFECT: Resolve the following sequence:
 2. Select one unengaged enemy unit within 8" of and visible to that model.
 3. Roll six D6: for each 4+, that enemy unit suffers 1 mortal wound (06.02).
 
-<a id="source-section-158-errata"></a>
+<a id="source-section-159-errata"></a>
 ### Errata
 
 Grenades Stratagem
 The Grenade Stratagem is the same as the Explosives stratagem.
 
-<a id="source-section-159-crushing-impact-15-06"></a>
+<a id="source-section-160-crushing-impact-15-06"></a>
 ### CRUSHING IMPACT 15.06
 
 1CP
@@ -2063,13 +2086,13 @@ EFFECT: Resolve the following sequence:
 2. Select one model in your unit engaged with that enemy unit.
 3. Roll a number of D6 equal to the T characteristic of that model: for each 1, your unit suffers 1 mortal wound; for each 5+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds per unit).
 
-<a id="source-section-160-errata"></a>
+<a id="source-section-161-errata"></a>
 ### Errata
 
 Tank Shock Stratagem
 The Tank Shock Stratagem is the same as the Crushing Impact stratagem.
 
-<a id="source-section-161-rapid-ingress-15-07"></a>
+<a id="source-section-162-rapid-ingress-15-07"></a>
 ### RAPID INGRESS 15.07
 
 1CP
@@ -2083,7 +2106,7 @@ EFFECT: Your unit makes an ingress move (20.04).
 
 RESTRICTIONS: You cannot use this stratagem during the first battle round.
 
-<a id="source-section-162-fire-overwatch-15-08"></a>
+<a id="source-section-163-fire-overwatch-15-08"></a>
 ### FIRE OVERWATCH 15.08
 
 1CP
@@ -2095,7 +2118,7 @@ TARGET: One friendly unengaged unit (excluding TITANIC units).
 
 EFFECT: Your unit shoots using snap shooting.
 
-<a id="source-section-163-snap-shooting-15-09"></a>
+<a id="source-section-164-snap-shooting-15-09"></a>
 ### SNAP SHOOTING 15.09
 
 ELIGIBLE IF: As stated in the rule allowing this shooting type.
@@ -2107,7 +2130,7 @@ WHILE SHOOTING:
 
 AFTER SHOOTING: Until the end of the phase, your unit is not eligible to start an action.
 
-<a id="source-section-164-smokescreen-15-10"></a>
+<a id="source-section-165-smokescreen-15-10"></a>
 ### SMOKESCREEN 15.10
 
 1CP
@@ -2119,7 +2142,7 @@ TARGET: One friendly SMOKE unit.
 
 EFFECT: Until the end of the phase, each time an attack targets either your SMOKE unit, or a unit that is not fully visible to the attacking model because of one or more models in your SMOKE unit, the target has the benefit of cover against that attack (13.08).
 
-<a id="source-section-165-heroic-intervention-15-11"></a>
+<a id="source-section-166-heroic-intervention-15-11"></a>
 ### HEROIC INTERVENTION 15.11
 
 1CP
@@ -2137,7 +2160,7 @@ EFFECT: Resolve a charge with your unit (11.02). While doing so, before making t
 - When making the charge roll, if the result is greater than 6 (after modifiers), change it to 6.
 - When selecting charge targets, you can select any enemy units that are within 6" of your unit and within the maximum distance.
 
-<a id="source-section-166-counteroffensive-15-12"></a>
+<a id="source-section-167-counteroffensive-15-12"></a>
 ### COUNTEROFFENSIVE 15.12
 
 2CP
@@ -2149,12 +2172,12 @@ TARGET: One friendly unit that is eligible to fight.
 
 EFFECT: Until the end of the phase, your unit has the Fights First ability and it must be the next unit you select to fight (12.04).
 
-<a id="source-section-167-actions-16"></a>
+<a id="source-section-168-actions-16"></a>
 ## Actions 16
 
 Actions represent vital battlefield tasks your forces must carry out, from searching for missing archeotech to completing a blasphemous ritual.
 
-<a id="source-section-168-performing-actions-16-01"></a>
+<a id="source-section-169-performing-actions-16-01"></a>
 ## Performing Actions 16.01
 
 Some rules allow units to perform actions. Each action states:
@@ -2168,7 +2191,7 @@ Some rules allow units to perform actions. Each action states:
 WHERE TO FIND ACTIONS
 The actions players can use can be found in other publications such as mission packs. All players can use core actions, while other actions may have restrictions such as army faction.
 
-<a id="source-section-169-faq"></a>
+<a id="source-section-170-faq"></a>
 ### FAQ
 
 | Q: | If a unit has a rule that allows it to start an action when it is battle-shocked can it also continue doing that action if it becomes battle-shocked after starting an action? |
@@ -2179,7 +2202,7 @@ The actions players can use can be found in other publications such as mission p
 | --- | --- |
 | A: | Yes |
 
-<a id="source-section-170-starting-an-action"></a>
+<a id="source-section-171-starting-an-action"></a>
 ### Starting an Action
 
 A unit is eligible to start an action unless one or more of the following apply to that unit:
@@ -2195,47 +2218,47 @@ If a unit starts an action, until the end of the turn:
 - It is not eligible to shoot (excluding TITANIC units).
 - It is not eligible to declare a charge.
 
-<a id="source-section-171-completing-an-action"></a>
+<a id="source-section-172-completing-an-action"></a>
 ### Completing an Action
 
 If a unit performing an action makes a move (excluding pile-in and consolidation moves) or leaves the battlefield, that unit does not complete that action. Otherwise, when an action is completed, its ‘Effect’ section is triggered.
 Example action for illustrative purposes only.
 
-<a id="source-section-172-advanced-rules"></a>
+<a id="source-section-173-advanced-rules"></a>
 ## ADVANCED RULES
 
-<a id="source-section-173-monsters-and-vehicles-17"></a>
+<a id="source-section-174-monsters-and-vehicles-17"></a>
 ## Monsters and Vehicles 17
 
 Due to their imposing bulk and implacable nature, Monsters and Vehicles function differently on the battlefield. This section details the additional rules required to use these units in your games.
 
-<a id="source-section-174-moving-monsters-and-vehicles-17-01"></a>
+<a id="source-section-175-moving-monsters-and-vehicles-17-01"></a>
 ## Moving Monsters and Vehicles 17.01
 
 Each time you make a normal or advance move with a unit, MONSTER/VEHICLE models in that unit can be moved through friendly and enemy models (excluding other MONSTER/VEHICLE models).
 
-<a id="source-section-175-faq"></a>
+<a id="source-section-176-faq"></a>
 ### FAQ
 
 | Q: | While making a move type other than a normal/advance move, can my MONSTER/VEHICLE unit move through friendly units? |
 | --- | --- |
 | A: | Yes. |
 
-<a id="source-section-176-frame-17-02"></a>
+<a id="source-section-177-frame-17-02"></a>
 ## Frame 17.02
 
 Some models do not have a base; many of these are MONSTER/VEHICLE models. Such models have the FRAME keyword, as do some other large models. Whenever a rule refers to a model’s position in relation to anything else on the battlefield (e.g. when measuring distances), if that model has the FRAME keyword, unless otherwise stated, measure to and from the closest point on that model (so not necessarily from its base, if it has one).
 
 When rotating a FRAME model as part of a move, if that model does not have a base, turn it any amount around its central axis, while keeping it upright.
 
-<a id="source-section-177-faq"></a>
+<a id="source-section-178-faq"></a>
 ### FAQ
 
 | Q: | Are models that are within the boundary of a terrain area, but not on the ground floor of a terrain area (e.g. overhanging parts of FRAME VEHICLES or models on terrain features that are within that terrain area) within that terrain area? |
 | --- | --- |
 | A: | Yes |
 
-<a id="source-section-178-shooting-at-engaged-monsters-and-vehicles-17-03"></a>
+<a id="source-section-179-shooting-at-engaged-monsters-and-vehicles-17-03"></a>
 ## Shooting at Engaged Monsters and Vehicles 17.03
 
 In your Shooting phase, enemy MONSTER/VEHICLE units that are engaged can be selected as targets of ranged attacks (excluding attacks made with [BLAST] weapons).
@@ -2246,7 +2269,7 @@ A unit that is engaged with an enemy MONSTER/VEHICLE unit is still not eligible 
 SEE ALSO
 - Shooting While Engaged With Monsters/Vehicles 17.03.01
 
-<a id="source-section-179-errata"></a>
+<a id="source-section-180-errata"></a>
 ### Errata
 
 17.03 - Change to First Sentence
@@ -2261,12 +2284,12 @@ The VEHICLE can shoot at this INFANTRY unit using close-quarters shooting. While
 
 This INFANTRY unit is engaged, but can shoot at the VEHICLE using close-quarters shooting. While doing so, it can only make attacks with its [CLOSE-QUARTERS] weapons and can only target the VEHICLE it is engaged with.
 
-<a id="source-section-180-transports-18"></a>
+<a id="source-section-181-transports-18"></a>
 ### Transports 18
 
 TRANSPORT models can carry passengers across the battlefield. This section explains how to use such models in your battles, and how units can embark within and disembark from them.
 
-<a id="source-section-181-errata"></a>
+<a id="source-section-182-errata"></a>
 ### Errata
 
 18.05 - Change to Emergency Disembark Move
@@ -2276,7 +2299,7 @@ WHILE MOVING: Set up each model in your unit:
 
 Each model that still cannot be set up is destroyed.
 
-<a id="source-section-182-transport-capacity-18-01"></a>
+<a id="source-section-183-transport-capacity-18-01"></a>
 ## Transport Capacity 18.01
 
 TRANSPORT models have a transport capacity listed on their datasheet. This determines the type and maximum number of friendly models that are eligible to embark within them. More than one unit can be embarked within the same TRANSPORT model at the same time, provided it has sufficient transport capacity.
@@ -2285,7 +2308,7 @@ Before the battle, in the Declare Battle Formations step, your units can start e
 
 A friendly unit must be embarked within each friendly DEDICATED TRANSPORT model. At the end of this step, each friendly DEDICATED TRANSPORT model without an embarked unit is destroyed, but they do not trigger rules that are triggered when a model is destroyed.
 
-<a id="source-section-183-embarking-18-02"></a>
+<a id="source-section-184-embarking-18-02"></a>
 ## Embarking 18.02
 
 Once the first battle round has started, a friendly unit can embark within a friendly TRANSPORT model after making a normal, advance or fall-back move, if all of the following conditions apply:
@@ -2298,7 +2321,7 @@ When a unit embarks, the active player removes that unit from the battlefield an
 SEE ALSO
 - Not on the Battlefield 01.02.04
 
-<a id="source-section-184-faq"></a>
+<a id="source-section-185-faq"></a>
 ### FAQ
 
 | Q: | Do a unit's abilities continue to function while they are embarked within a TRANSPORT? |
@@ -2309,12 +2332,12 @@ SEE ALSO
 | --- | --- |
 | A: | Yes |
 
-<a id="source-section-185-able-to-embark-18-02-01"></a>
+<a id="source-section-186-able-to-embark-18-02-01"></a>
 ### Able To Embark 18.02.01
 
 A unit is able to embark if it meets all of the conditions in Embarking (18.02). Note that one or more of these conditions may be modified by other rules, in which case a unit must satisfy those modified conditions in addition to any unmodified conditions to be able to embark.
 
-<a id="source-section-186-disembarking-18-03"></a>
+<a id="source-section-187-disembarking-18-03"></a>
 ## Disembarking 18.03
 
 In the active player’s Movement phase, each friendly unit embarked within a TRANSPORT model can disembark from it by making a disembark move (see below).
@@ -2323,8 +2346,9 @@ If a TRANSPORT model is destroyed, before removing it from the battlefield, the 
 SEE ALSO
 - Persisting Rules Effects 01.02.02
 - Hazard Rolls 06.03
+- Rapid Disembark And Limitations 18.04.01
 
-<a id="source-section-187-disembark-move-18-04"></a>
+<a id="source-section-188-disembark-move-18-04"></a>
 ### DISEMBARK MOVE 18.04
 
 SET-UP DISTANCE:
@@ -2353,7 +2377,7 @@ AFTER MOVING:
 RAPID DISEMBARK
 When a unit uses the rapid disembark mode after its TRANSPORT makes an ingress move, the models must follow the same rules and restrictions as that TRANSPORT did. For example, if that TRANSPORT had to be set up more than 8" from all enemy units and not within your opponent’s deployment zone, the same applies to the disembarking unit.
 
-<a id="source-section-188-emergency-disembark-move-18-05"></a>
+<a id="source-section-189-emergency-disembark-move-18-05"></a>
 ### EMERGENCY DISEMBARK MOVE 18.05
 
 SET-UP DISTANCE: 6"
@@ -2363,7 +2387,7 @@ BEFORE MOVING: Make a hazard roll for each model in your unit (06.03).
 WHILE MOVING: Set up each model in your unit: (1) Wholly within the set-up distance of that TRANSPORT, and as close as possible to that TRANSPORT. OR: (2) If the above is not possible while remaining unengaged, set up that model wholly within the set-up distance of that TRANSPORT, as close as possible to that TRANSPORT, and engaged. Each model that still cannot be set up is destroyed.
 AFTER MOVING: Your unit is battle-shocked and, until the end of the turn, it is not eligible to declare a charge.
 
-<a id="source-section-189-assault-disembark-move-18-06"></a>
+<a id="source-section-190-assault-disembark-move-18-06"></a>
 ### ASSAULT DISEMBARK MOVE 18.06
 
 SET-UP DISTANCE: 3"
@@ -2375,7 +2399,7 @@ ELIGIBLE IF:
 EFFECT: Set up as described in Set Up (03.02).
 WHILE MOVING: Set up each model wholly within the set-up distance of that TRANSPORT.
 
-<a id="source-section-190-shock-disembark-move-18-07"></a>
+<a id="source-section-191-shock-disembark-move-18-07"></a>
 ### SHOCK DISEMBARK MOVE 18.07
 
 SET-UP DISTANCE: 3"
@@ -2387,17 +2411,17 @@ EFFECT: Set up as described in Set Up (03.02).
 WHILE MOVING: Set up each model wholly within the set-up distance of that TRANSPORT.
 AFTER MOVING: Each model that started this move engaged with an enemy unit must still be engaged with that enemy unit. If one or more enemy units engaged with your unit have not been selected to fight this phase, your opponent must select each of those units, one at a time; when each is selected, it becomes eligible to fight and is selected to fight.
 
-<a id="source-section-191-faq"></a>
+<a id="source-section-192-faq"></a>
 ### FAQ
 
 | Q: | If a unit makes any disembark move in a turn (i.e. Disembark move, Emergency Disembark move etc.) has it disembarked that turn? |
 | --- | --- |
 | A: | Yes. |
 
-<a id="source-section-192-attached-units-19"></a>
+<a id="source-section-193-attached-units-19"></a>
 ## Attached Units 19
 
-<a id="source-section-193-forming-attached-units-19-01"></a>
+<a id="source-section-194-forming-attached-units-19-01"></a>
 ## Forming Attached Units 19.01
 
 Some units have the Leader or Support ability listed on their datasheet (see below). Such units are known as leader units and support units respectively. Both of these abilities allow such units to lead other friendly units (known as bodyguard units) to form attached units. An attached unit is a single unit for all rules purposes. Leader and support units can only lead specific bodyguard units, as listed in the datasheet.
@@ -2409,34 +2433,34 @@ Unless otherwise stated, each bodyguard unit can only have one leader unit and o
 SEE ALSO
 - Attached Units After Their Bodyguard Unit is Destroyed 19.01.01
 
-<a id="source-section-194-faq"></a>
+<a id="source-section-195-faq"></a>
 ### FAQ
 
 | Q: | The Munitorium Field Manual shows my unit can attach to different units then are on it’s datasheet, which do I use? |
 | --- | --- |
 | A: | Use the Munitorium Field Manual. |
 
-<a id="source-section-195-attacking-attached-units-19-02"></a>
+<a id="source-section-196-attacking-attached-units-19-02"></a>
 ## Attacking Attached Units 19.02
 
 Each time an attack targets an attached unit, if that unit contains one or more bodyguard models, use the highest T characteristic of the bodyguard models in that unit while resolving that attack, even if a leader/support unit in that attached unit has a different T characteristic. If that unit only contains leader/support models, use the highest T characteristic of those models while resolving that attack instead.
 
 Rules that are triggered when a unit is destroyed are only triggered when the last model that started the battle in an attached unit is destroyed.
 
-<a id="source-section-196-keywords-in-attached-units-19-03"></a>
+<a id="source-section-197-keywords-in-attached-units-19-03"></a>
 ## Keywords in Attached Units 19.03
 
 An attached unit has all of the keywords of all of its component units. As such, an attached unit is affected by any rule that applies to units with any of those keywords. Note that models in an attached unit do not gain the keywords of other models in that unit that they do not already have. Remember that attacks target units, not models.
 Example: An attached unit contains a leader model with the PSYKER keyword. While that model is part of that unit, that unit has the PSYKER keyword, even if the bodyguard models do not have that keyword. If that unit is attacked by a weapon with the [ANTI-PSYKER 4+] ability, any unmodified wound roll of 4+ made against that unit is a critical wound, even if the attack itself is not allocated to that leader model.
 
-<a id="source-section-197-faq"></a>
+<a id="source-section-198-faq"></a>
 ### FAQ
 
 | Q: | Units have all the keywords of all their models, and attached units have all the keywords of all of their component units. How are destroyed models taken into account for these purposes? |
 | --- | --- |
 | A: | These statements are only true so long as the models possessing those keywords remain part of the unit; destroyed models do not contribute their keywords to their prior unit. Example: The Aspiring Sorcerer model in a unit of Rubric Marines is destroyed; as none of the remaining models in the unit possess the PSYKER keyword, that unit is no longer a PSYKER unit. |
 
-<a id="source-section-198-abilities-in-attached-units-19-04"></a>
+<a id="source-section-199-abilities-in-attached-units-19-04"></a>
 ## Abilities in Attached Units 19.04
 
 Abilities/rules that affect a single specified model (e.g. from an enhancement or an item of wargear) only ever apply to that model, even while part of an attached unit.
@@ -2452,12 +2476,12 @@ SEE ALSO
 ONLY IN DEATH DOES DUTY END
 Leader and support units often have abilities that make the models they are leading more powerful. In the same way, some bodyguard units’ abilities can enhance the power of those leading them. The rules on the left mean that once the models conferring such effects are destroyed, that attached unit does not continue to benefit from them. Should those models later be revived, however, those abilities will once more apply to their attached unit.
 
-<a id="source-section-199-strategic-reserves-20"></a>
+<a id="source-section-200-strategic-reserves-20"></a>
 ## Strategic Reserves 20
 
 Strategic reserves are units that arrive on the battlefield at different times, either because they were held back during deployment, or because they are using special abilities to reposition themselves.
 
-<a id="source-section-200-placing-units-in-strategic-reserves-20-01"></a>
+<a id="source-section-201-placing-units-in-strategic-reserves-20-01"></a>
 ## Placing Units in Strategic Reserves 20.01
 
 Before the battle, in the Declare Battle Formations step, you can select one or more friendly units (excluding FORTIFICATIONS) to place in strategic reserves. Instead of setting up these units on the battlefield during deployment, place them to one side; they are strategic reserves units, and will arrive later in the battle.
@@ -2466,7 +2490,7 @@ Unless otherwise stated, the combined points value of all of your strategic rese
 SEE ALSO
 - Reserves 20.01.01
 
-<a id="source-section-201-faq"></a>
+<a id="source-section-202-faq"></a>
 ### FAQ
 
 | Q: | If I place units in strategic reserves during the battle, can this exceed the 50% of my points limit for the battle restriction as mentioned in Placing Units in Strategic Reserves (20.01)? |
@@ -2477,12 +2501,12 @@ SEE ALSO
 | --- | --- |
 | A: | Yes. |
 
-<a id="source-section-202-strategic-reserves-at-the-end-of-the-battle-20-01-02"></a>
+<a id="source-section-203-strategic-reserves-at-the-end-of-the-battle-20-01-02"></a>
 ### Strategic Reserves at the End of the Battle 20.01.02
 
 At the end of the final turn, units in strategic reserves are destroyed, but they do not trigger rules that apply when a model is destroyed.
 
-<a id="source-section-203-repositioned-units-20-02"></a>
+<a id="source-section-204-repositioned-units-20-02"></a>
 ## Repositioned Units 20.02
 
 Some rules allow units to be removed from the battlefield and placed in strategic reserves during the battle. Units that use such rules are known as repositioned units. In addition to any other rules that apply to such units (such as where they can or cannot arrive), all of the following rules apply to them:
@@ -2492,12 +2516,12 @@ Some rules allow units to be removed from the battlefield and placed in strategi
 
 Example: A unit that was within range of an aura ability when removed from the battlefield would no longer be affected by that aura ability if it is no longer within range of it when it makes an ingress move, but a unit that was battle-shocked when removed from the battlefield would still be battle-shocked if it makes an ingress move in the same turn.
 
-<a id="source-section-204-arriving-from-strategic-reserves-20-03"></a>
+<a id="source-section-205-arriving-from-strategic-reserves-20-03"></a>
 ## Arriving from Strategic Reserves 20.03
 
 To arrive on the battlefield, each strategic reserves unit must make an ingress move (see below). Unless otherwise stated, they can only do so from the second battle round onwards.
 
-<a id="source-section-205-ingress-move-20-04"></a>
+<a id="source-section-206-ingress-move-20-04"></a>
 ### INGRESS MOVE 20.04
 
 SET-UP DISTANCE: 6"
@@ -2518,17 +2542,17 @@ SEE ALSO
 - Setting Up Large Models 03.02.02
 - Set Up As Reinforcements 20.03.01
 
-<a id="source-section-206-flying-and-surging-21"></a>
+<a id="source-section-207-flying-and-surging-21"></a>
 ## Flying and Surging 21
 
 This section supplements the basic rules for moving models, explaining how some units can fly over obstacles or surge closer to the enemy.
 
-<a id="source-section-207-surge-moves-21-01"></a>
+<a id="source-section-208-surge-moves-21-01"></a>
 ## Surge Moves 21.01
 
 Some rules allow a unit to make a surge move, as described below.
 
-<a id="source-section-208-surge-move-21-02"></a>
+<a id="source-section-209-surge-move-21-02"></a>
 ### SURGE MOVE 21.02
 
 SET-UP DISTANCE: As stated in the rule allowing this move type.
@@ -2553,7 +2577,7 @@ SEE ALSO
 
 MAKING A SURGE MOVE
 
-<a id="source-section-209-flying-models-21-03"></a>
+<a id="source-section-210-flying-models-21-03"></a>
 ## Flying Models 21.03
 
 Models with the FLY keyword, and units such models are part of, are said to be able to FLY. Some rules also refer to such models/units as FLYING models/FLYING units.
@@ -2564,7 +2588,7 @@ Each time a FLYING unit is selected to make a normal, advance, fall-back or char
 Each time a FLYING model moves:
 Ignore all vertical distance for the purposes of how far it has moved.It can move through all types of model (including enemy models and MONSTER/VEHICLE models).It can move horizontally and vertically through all categories of terrain feature.
 
-<a id="source-section-210-faq"></a>
+<a id="source-section-211-faq"></a>
 ### FAQ
 
 | Q: | When do the effects of a FLYING unit taking to the skies apply? |
@@ -2573,12 +2597,12 @@ Ignore all vertical distance for the purposes of how far it has moved.It can mov
 
 TAKING TO THE SKIES
 
-<a id="source-section-211-other-rules-and-abilities-22"></a>
+<a id="source-section-212-other-rules-and-abilities-22"></a>
 ## Other Rules and Abilities 22
 
 In addition to the core abilities presented elsewhere, many units have access to other rules and types of abilities that function as described below.
 
-<a id="source-section-212-aura-abilities-22-01"></a>
+<a id="source-section-213-aura-abilities-22-01"></a>
 ## Aura Abilities 22.01
 
 Abilities that affect models or units within a stated range are aura abilities, and are tagged with the word ‘Aura’.
@@ -2587,28 +2611,28 @@ While a model with an aura ability is on the battlefield, it is always within ra
 
 A unit can be affected by more than one aura ability at a time, but if a unit is within range of the same aura ability more than once, that aura ability only applies to that unit once.
 
-<a id="source-section-213-faction-abilities-22-02"></a>
+<a id="source-section-214-faction-abilities-22-02"></a>
 ## Faction Abilities 22.02
 
 Some abilities are common to each unit that belongs to a particular faction – these are faction abilities (also known as army rules), and are listed in the Faction Abilities section of a datasheet.
 
 Unless otherwise stated, a unit’s faction abilities only apply if the army faction you selected while mustering your army matches a faction keyword listed on that unit’s datasheet.
 
-<a id="source-section-214-psychic-abilities-22-03"></a>
+<a id="source-section-215-psychic-abilities-22-03"></a>
 ## Psychic Abilities 22.03
 
 Abilities tagged with the word ‘Psychic’ are psychic abilities. If a psychic ability causes a model to lose one or more wounds, each of those wounds is said to be inflicted by a psychic attack (this can be important for the triggering of other rules).
 SEE ALSO
 - Psychic Abilities with a Psychic Level (22.03.01)
 
-<a id="source-section-215-wargear-abilities-22-04"></a>
+<a id="source-section-216-wargear-abilities-22-04"></a>
 ## Wargear Abilities 22.04
 
 Abilities that are gained when a unit (or one of its models) has a particular item of wargear are wargear abilities, and are listed in the Wargear Abilities section of a datasheet.
 
 If a unit has an item of wargear that has a wargear ability, that ability applies to that unit. If a model within a unit has an item of wargear that has a wargear ability, that model is the ‘bearer’ of that item of wargear and that ability applies until that model is destroyed.
 
-<a id="source-section-216-plunging-fire-22-05"></a>
+<a id="source-section-217-plunging-fire-22-05"></a>
 ## Plunging Fire 22.05
 
 Each time a model makes a ranged attack that targets a visible unit containing one or more models on ground level, if one or more of the following conditions apply, improve the BS characteristic of that attack by 1:
@@ -2621,17 +2645,17 @@ This attacking model is on ground level, but has the TOWERING keyword. The targe
 B
 All of these attacking models are on a section of terrain feature that is 3" or more in height, and the target unit contains models on ground level, so Plunging Fire improves the BS characteristic of those attacks by 1.
 
-<a id="source-section-217-aircraft-23"></a>
+<a id="source-section-218-aircraft-23"></a>
 ## Aircraft 23
 
 AIRCRAFT fulfil a unique but limited role on Warhammer 40,000 battlefields. Hurtling through the skies while they duel one another, strafe ground forces or perform bombing runs, they are constantly on the move.
 
-<a id="source-section-218-deployment-23-01"></a>
+<a id="source-section-219-deployment-23-01"></a>
 ## Deployment 23.01
 
 - In the Declare Battle Formations step, all AIRCRAFT units must be placed in strategic reserves (20.01).
 
-<a id="source-section-219-movement-23-02"></a>
+<a id="source-section-220-movement-23-02"></a>
 ## Movement 23.02
 
 - AIRCRAFT units are only eligible to make an ingress move (20.04); they are not eligible to make any other type of move.
@@ -2640,26 +2664,26 @@ AIRCRAFT fulfil a unique but limited role on Warhammer 40,000 battlefields. Hurt
 - Each time a unit makes a pile-in, consolidation or surge move, unless that unit can FLY, while making that move, ignore AIRCRAFT units for the purposes of selecting enemy units and determining the closest enemy unit.
 - Being engaged solely with one or more AIRCRAFT units does not prevent a unit from being eligible to make a normal or advance move.
 
-<a id="source-section-220-shooting-23-03"></a>
+<a id="source-section-221-shooting-23-03"></a>
 ## Shooting 23.03
 
 - The Plunging Fire rule (22.05) has no effect on attacks made by, or targeting, AIRCRAFT units.
 
-<a id="source-section-221-charging-and-fighting-23-04"></a>
+<a id="source-section-222-charging-and-fighting-23-04"></a>
 ## Charging and Fighting 23.04
 
 - AIRCRAFT units are not eligible to declare a charge, and can only make melee attacks that target FLYING units.
 - Only FLYING units can select AIRCRAFT units as a charge target, and only FLYING models can make melee attacks that target AIRCRAFT units.
 
-<a id="source-section-222-reference"></a>
+<a id="source-section-223-reference"></a>
 ## REFERENCE
 
-<a id="source-section-223-core-abilities-24"></a>
+<a id="source-section-224-core-abilities-24"></a>
 ## Core Abilities 24
 
 This section presents the most common abilities used in Warhammer 40,000. When these appear in other places, they are usually only referenced by name.
 
-<a id="source-section-224-faq"></a>
+<a id="source-section-225-faq"></a>
 ### FAQ
 
 | Q: | What does the X" in Lone Operative X" mean? |
@@ -2690,7 +2714,7 @@ This section presents the most common abilities used in Warhammer 40,000. When t
 | --- | --- |
 | A: | No. |
 
-<a id="source-section-225-abilities-24-01"></a>
+<a id="source-section-226-abilities-24-01"></a>
 ## Abilities 24.01
 
 Many units have core abilities listed on their datasheets, and weapon abilities listed in their weapon profiles.
@@ -2703,7 +2727,7 @@ Example: The [LETHAL HITS: VEHICLE] ability only applies to attacks that target 
 SEE ALSO
 - With The ’X’ Ability 24.01.01
 
-<a id="source-section-226-duplicated-abilities-24-02"></a>
+<a id="source-section-227-duplicated-abilities-24-02"></a>
 ### Duplicated Abilities 24.02
 
 Multiple instances of the same core ability or weapon ability are not cumulative, regardless of any numbers or keywords included in them. In such cases, the controlling player must select which instance will apply at any one time. In the case of duplicated weapon abilities, this selection must be made each time that unit makes attacks, in the Select Weapons step.
@@ -2837,7 +2861,7 @@ Designer’s Note: [PISTOL] is a pre-existing ability that will be superseded by
 Precision attacks can pick high-value targets out in a crowd.
 While resolving attacks made with one or more [PRECISION] weapons, at the start of the Allocation Order step (05.03), if the target unit contains one or more CHARACTER models visible to one or more of the attacking models, the active player can select one allocation group that contains one of those visible CHARACTER models. If they do, until those attacks are resolved, or until that CHARACTER group is destroyed (whichever happens first), that CHARACTER group is the current allocation group.
 
-<a id="source-section-227-24-28-01-precision-and-devastating-wounds"></a>
+<a id="source-section-228-24-28-01-precision-and-devastating-wounds"></a>
 ### 24.28.01 Precision and Devastating Wounds
 
 Mortal Wounds inflicted by a [PRECISION] attack with the [DEVASTATING WOUNDS] ability are first applied to the CHARACTER group that was selected for those [PRECISION] attacks (if that group is not already destroyed).
@@ -2856,7 +2880,7 @@ This ability always takes the form Scouts X". In the Resolve Pre-battle Abilitie
 - If that unit is wholly within your deployment zone, it can make a scout move (see below).
 - If that unit is embarked within a DEDICATED TRANSPORT that is wholly within your deployment zone, and if every model embarked within that DEDICATED TRANSPORT has the Scouts ability, that DEDICATED TRANSPORT can make a scout move.
 
-<a id="source-section-228-scout-move-24-32"></a>
+<a id="source-section-229-scout-move-24-32"></a>
 ### SCOUT MOVE 24.32
 
 MAXIMUM DISTANCE: The X" in Scouts X".
@@ -2881,39 +2905,41 @@ Example: An attack made with a [SUSTAINED HITS 2] weapon results in a critical h
 Torrent weapons project clouds of fire, gas or other lethal substances that few foes can hope to evade.
 Each time an attack is made with a [TORRENT] weapon, that attack automatically hits the target.
 
-<a id="source-section-229-24-37-01"></a>
-### 24.37.01
+<a id="source-section-230-torrent"></a>
+### [TORRENT]
 
 [TORRENT] weapons cannot have [INDIRECT FIRE] or [PRECISION].
 [TWIN-LINKED]24.38
 Dual weapons are often grafted to the same targeting system for greater lethality.
 Each time an attack is made with a [TWIN-LINKED] weapon, you can re-roll the wound roll.
+DAMAGED24.39
+This ability always takes the form Damaged X. While a model’s remaining wounds are equal to or less than X, that model is damaged: while damaged, that model’s attacks have -1 to hit rolls.
 
-<a id="source-section-230-muster-armies-25"></a>
+<a id="source-section-231-muster-armies-25"></a>
 ## Muster Armies 25
 
 The following rules tell you how to create an army list out of models and units from your Warhammer 40,000 collection.
 
-<a id="source-section-231-start-your-army-roster-25-01"></a>
+<a id="source-section-232-start-your-army-roster-25-01"></a>
 ### Start Your Army Roster 25.01
 
 The details of your army must be recorded on an army roster. You can either write this down or use the Warhammer 40,000 app. Players should show their finished army roster to their opponent before battle commences.
 
-<a id="source-section-232-select-army-faction-25-02"></a>
+<a id="source-section-233-select-army-faction-25-02"></a>
 ### Select Army Faction 25.02
 
 Note on your army roster one faction keyword to be your army faction.
 
-<a id="source-section-233-select-battle-size-25-03"></a>
+<a id="source-section-234-select-battle-size-25-03"></a>
 ### Select Battle Size 25.03
 
 With your opponent, select one of the battle sizes below. This will determine the total number of points (also known as the points total) each player can spend to build their army. The points values for units can be found in the Warhammer 40,000 app. You will need to refer to these when building your army. The battle size will also determine the total number of Detachment Points (DP) players will have to unlock detachments with, the number of units with the same datasheet name that they can include in their army, and the number of enhancements that they can include in their army. These are summarised below.
-| BATTLE SIZEPoints TotalDetachment Points (DP)Enhancement LimitUnit Limit*INCURSION1000222STRIKE FORCE2000343 |
+| BATTLE SIZEPoints TotalDetach­ment Points (DP)Enhan­cement LimitUnit Limit*INCURSION1000222STRIKE FORCE2000343 |
 | --- |
 
 * The unit limit for BATTLELINE and DEDICATED TRANSPORT units is double the relevant amount shown above, and every EPIC HERO has a unit limit of 1, regardless of the battle size.
 
-<a id="source-section-234-fill-your-army-roster-25-04"></a>
+<a id="source-section-235-fill-your-army-roster-25-04"></a>
 ### Fill Your Army Roster 25.04
 
 You will now select your detachments, units, WARLORD and enhancements that will be in your army. You will also attach your leader and support units to other units.
@@ -2922,7 +2948,7 @@ When doing so:
 - No unit (including attached units) can have more than one enhancement.
 - Your army roster must follow all restrictions placed on it by the rules and units being included in it.
 
-<a id="source-section-235-faq"></a>
+<a id="source-section-236-faq"></a>
 ### FAQ
 
 | Q: | Can an attached unit be given an Upgrade? |
@@ -2941,32 +2967,37 @@ When doing so:
 | --- | --- |
 | A: | Yes. |
 
-<a id="source-section-236-select-detachments"></a>
+<a id="source-section-237-select-detachments"></a>
 ### Select Detachments
 
 You can now use your DP to select detachments for your army. You can only select from those available to your army faction. Each one will give you access to different force dispositions, detachment rules, enhancements and/or stratagems to use in the coming battle. You cannot select the same detachment more than once. Record your selected detachments on your army roster.
 
 Note that some detachment rules list units and other detachments that your army either must include or cannot include; you must follow all such rules when building your army for the detachments you have selected.
 
-<a id="source-section-237-select-units"></a>
+<a id="source-section-238-select-units"></a>
 ### Select Units
 
 Select all the units you want to include in your army. You can only select units with your faction keyword and units available to your army faction. Each time you include a unit in your army, it can take any wargear or options it has access to. Note on your army roster the number of models in the unit, any wargear and upgrades it has, and its points value.
 
 Select one CHARACTER unit to be your Warlord’s unit. This must be a unit that has the faction keyword you chose as your army faction. Then select one CHARACTER model in that unit to be your Warlord the supreme leader of your army and make a note of this on your army roster. That model gains the WARLORD keyword. Some units have a rule on their datasheet stating that they must be your WARLORD. If you want to include one or more of these units in your army, you must select one of them to be your WARLORD. Rules that state that a model cannot be your WARLORD take precedence over ones that require it to be your WARLORD.
 
-<a id="source-section-238-attach-leaders-and-support-units"></a>
+<a id="source-section-239-attach-leaders-and-support-units"></a>
 ### Attach Leaders and Support Units
 
 For each leader and support unit in your roster, you can attach them to a bodyguard unit that they can join, following the rules for Forming Attached Units (19.01). Each support unit in your roster must be attached to a bodyguard unit.
 
-<a id="source-section-239-select-enhancements"></a>
+<a id="source-section-240-select-enhancements"></a>
 ### Select Enhancements
 
 Select all of the enhancements you want to include from the detachments you selected and give each one to a different unit in your army. When you do, increase those units points values accordingly. The points values for enhancements can be found on faction pages.
 
 Unless otherwise stated:
-Only CHARACTER units can be given enhancements. If such a unit contains more than one model, select one CHARACTER model in that unit to have that enhancement.EPIC HEROES models cannot be given enhancements.Your army cannot include more than one of the same enhancement.
+- Only CHARACTER units can be given enhancements. If such a unit contains more than one model, select one CHARACTER model in that unit to have that enhancement.
+- EPIC HEROES models cannot be given enhancements.
+- Your army cannot include more than one of the same enhancement.
+
 Upgrades: Some enhancements are tagged with ’Upgrade’. Unlike other enhancements:
-These can be given to non-CHARACTER units.You can include up to three of the same Upgrade in your army (the second and third instances of the same Upgrade do not count towards the total number of enhancements in your army, but you must still spend the stated points cost each time).
+- These can be given to non-CHARACTER units.
+- You can include up to three of the same Upgrade in your army (the second and third instances of the same Upgrade do not count towards the total number of enhancements in your army, but you must still spend the stated points cost each time).
+
 If you are playing an Incursion battle, you can select a 3DP detachment as your only detachment.

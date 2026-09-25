@@ -1,4 +1,4 @@
-import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BeaconWhenDrawnSelection, type BurdenOfTrustWhenDrawnSelection, type FightConsolidationMode, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState, type TemptingTargetWhenDrawnSelection } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BeaconWhenDrawnSelection, type BurdenOfTrustWhenDrawnSelection, type CombatRerollSelection, type FightConsolidationMode, type Phase, type Position, type PreBattleFormationResolution, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState, type TemptingTargetWhenDrawnSelection } from '../types/battle';
 import { clone } from '../engine/clone';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
@@ -9,9 +9,12 @@ import type { AbilityTiming } from '../types/ability';
 import type { CommandRerollRollType, HeroicInterventionMode } from '../types/stratagem';
 import {
   advancePlayUnit,
+  advancePlayCombatResolution,
+  clearPlayCombatResolution,
   allocatePlayDamageToModel,
   assignPlayWoundedModel,
   beginPlayBattle,
+  resolvePreBattleFormation,
   chargePlayUnitTarget,
   chargePlayUnitTargets,
   completePlayChargeMovement,
@@ -48,6 +51,7 @@ import {
   remainStationaryPlayUnit,
   removePlayCasualtyModels,
   removePlayModels,
+  rerollPlayFeelNoPainAllocation,
   resolvePlaySurgeMove,
   reorganizePlayModelsGrid,
   rollPlayBattleshock,
@@ -139,6 +143,8 @@ export const GAME_ACTION_TYPE = {
   AssignWoundedModel: 'play.assignWoundedModel',
   AllocateDamage: 'play.allocateDamage',
   ShootUnitWeapon: 'play.shootUnitWeapon',
+  AdvanceCombatResolution: 'play.advanceCombatResolution',
+  ClearCombatResolution: 'play.clearCombatResolution',
   SelectFiringDeckWeapons: 'play.selectFiringDeckWeapons',
   StartScoutMove: 'play.startScoutMove',
   CompleteScoutMove: 'play.completeScoutMove',
@@ -162,6 +168,7 @@ export const GAME_ACTION_TYPE = {
   AdvanceConsolidationStep: 'play.advanceConsolidationStep',
   PassFight: 'play.passFight',
   BeginBattle: 'play.beginBattle',
+  ResolvePreBattleFormation: 'play.resolvePreBattleFormation',
   RollBattleshock: 'play.rollBattleshock',
   StepPhase: 'play.stepPhase',
   UseStratagem: 'play.useStratagem',
@@ -324,6 +331,17 @@ export type GameAction =
       weaponIndex: number | 'all';
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.AdvanceCombatResolution;
+      kind: 'shooting' | 'fight';
+      unitId: string;
+      side: Side;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.ClearCombatResolution;
+      unitId: string;
+      side: Side;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SelectFiringDeckWeapons;
       side: Side;
       unitId: string;
@@ -440,6 +458,10 @@ export type GameAction =
       type: typeof GAME_ACTION_TYPE.BeginBattle;
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.ResolvePreBattleFormation;
+      resolution: PreBattleFormationResolution;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.RollBattleshock;
       side: Side;
       unitId: string;
@@ -464,6 +486,8 @@ export type GameAction =
       sides?: number;
       label?: string;
       rollType?: CommandRerollRollType;
+      combatRoll?: CombatRerollSelection;
+      rollUnitId?: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.UseUnitAbility;
@@ -814,6 +838,12 @@ export function applyGameAction(
         context.rules,
       );
 
+    case GAME_ACTION_TYPE.AdvanceCombatResolution:
+      return advancePlayCombatResolution(state, normalizedAction.kind, normalizedAction.unitId);
+
+    case GAME_ACTION_TYPE.ClearCombatResolution:
+      return clearPlayCombatResolution(state, normalizedAction.unitId);
+
     case GAME_ACTION_TYPE.SelectFiringDeckWeapons:
       return selectPlayFiringDeckWeapons(
         state,
@@ -913,6 +943,9 @@ export function applyGameAction(
     case GAME_ACTION_TYPE.BeginBattle:
       return beginPlayBattle(state);
 
+    case GAME_ACTION_TYPE.ResolvePreBattleFormation:
+      return resolvePreBattleFormation(state, normalizedAction.resolution);
+
     case GAME_ACTION_TYPE.RollBattleshock:
       return rollPlayBattleshock(state, normalizedAction.unitId, normalizedAction.side);
 
@@ -923,10 +956,16 @@ export function applyGameAction(
       return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId, normalizedAction.targetModelIndex, normalizedAction.secondaryTargetUnitId, normalizedAction.sourceModelIndex, normalizedAction.heroicInterventionMode);
 
     case GAME_ACTION_TYPE.ResolveCommandReroll:
+      if (normalizedAction.combatRoll?.groupKind === 'feel-no-pain') {
+        return rerollPlayFeelNoPainAllocation(state, normalizedAction.combatRoll, normalizedAction.originalRolls[0]);
+      }
       return resolveCommandReroll(state, normalizedAction.side, normalizedAction.originalRolls, {
         sides: normalizedAction.sides,
         label: normalizedAction.label,
         rollType: normalizedAction.rollType,
+        combatRoll: normalizedAction.combatRoll,
+        rules: context.rules,
+        rollUnitId: normalizedAction.rollUnitId,
       });
 
     case GAME_ACTION_TYPE.UseUnitAbility:
@@ -1041,6 +1080,9 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case GAME_ACTION_TYPE.SelectFiringDeckWeapons:
     case GAME_ACTION_TYPE.StartScoutMove:
     case GAME_ACTION_TYPE.CompleteScoutMove:
+    case GAME_ACTION_TYPE.ShootUnitWeapon:
+    case GAME_ACTION_TYPE.AdvanceCombatResolution:
+    case GAME_ACTION_TYPE.ClearCombatResolution:
       return normalizedAction.unitId === unitId;
     case GAME_ACTION_TYPE.AdvanceFightPileInStep:
     case GAME_ACTION_TYPE.PassFight:

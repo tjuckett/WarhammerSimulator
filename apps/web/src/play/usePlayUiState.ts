@@ -8,6 +8,7 @@ export type DamageAllocationOutcome = {
   modelIndex: number;
   damage: number;
   killedModels: number;
+  feelNoPain?: { target: number; rolls: number[]; ignored: number };
 };
 
 export const PLAY_DEPLOY_SELECTION_KIND = {

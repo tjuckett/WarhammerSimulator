@@ -3,154 +3,67 @@
   "rules": [
     {
       "id": "orks.army-rule.waaagh",
-      "runtimeId": "waaagh",
       "name": "Waaagh!",
       "kind": "army-rule",
+      "status": "current",
       "implementationStatus": "partial",
-      "description": "If your Army Faction is ORKS, once per battle, at the start of your Command phase, you can call a Waaagh!. Until the start of your next Command phase, units from your army with this ability are eligible to declare a charge in a turn in which they Advanced, melee weapons equipped by models from your army with this ability add 1 to Strength and Attacks, and models from your army with this ability have a 5+ invulnerable save.",
-      "runtime": {
-        "ability": {
-          "timing": "command-phase",
-          "target": "none",
-          "oncePerBattle": true,
-          "armyWideOncePerBattle": true,
-          "effects": [
-            { "type": "activate-army-ability", "abilityId": "waaagh" }
-          ]
-        }
-      },
+      "description": "Friendly ORKS units with this ability can: Re-roll advance rolls. Become riled up, as stated in other rules. While a unit is riled up: That unit has 5+ InSv. That unit's ranged attacks have [ASSAULT]. When that unit is selected to make an advance move, that advance move does not prevent that unit from being eligible to declare a charge. War Cry (Once per battle, per army): At the start of the Command phase, you can use this ability. If you do, friendly ORKS units with the Waaagh! ability are riled up until the end of the next turn.",
       "sources": [
         {
-          "title": "Wahapedia Orks army rule",
+          "title": "Wahapedia Orks Waaagh!",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
+          "capturedAt": "2026-09-25",
           "section": "Waaagh!"
         }
-      ],
-      "notes": ["The current runtime models activation and charge eligibility; the remaining Waaagh! stat modifiers are still source-scoped work."]
+      ]
     },
     {
-      "id": "orks.unit-rule.kunnin-infiltrator",
-      "runtimeId": "kunnin-infiltrator",
-      "name": "Kunnin' Infiltrator (Once per battle, per army)",
-      "kind": "unit-ability",
-      "implementationStatus": "complete",
-      "description": "In your Movement phase, if this unit is unengaged, place this unit in Strategic Reserves. This unit has Deep Strike until the end of the phase and must make an ingress move this phase, including in your first turn.",
-      "runtime": {
-        "ability": {
-          "timing": "manual",
-          "target": "self",
-          "oncePerBattle": true,
-          "armyWideOncePerBattle": true,
-          "phases": ["movement"],
-          "requiresUnengaged": true,
-          "effects": [
-            {
-              "type": "move-to-strategic-reserves",
-              "target": "source-unit",
-              "grantDeepStrikeUntil": "phase-end"
-            }
-          ]
-        }
-      },
+      "id": "orks.army-rule.da-boss",
+      "name": "Da Boss",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "At the start of the battle round, if a model with this ability is your WARLORD, gain 1CP.",
       "sources": [
         {
-          "title": "Wahapedia Boss Snikrot datasheet",
-          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Boss-Snikrot",
-          "capturedAt": "2026-08-29",
-          "section": "Kunnin' Infiltrator"
+          "title": "Wahapedia Orks Da Boss",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Boss"
         }
       ]
     },
     {
-      "id": "orks.unit-rule.grot-riggers",
-      "runtimeId": "grot-riggers",
-      "name": "Grot Riggers",
-      "kind": "unit-ability",
-      "implementationStatus": "complete",
-      "description": "At the start of your Command phase, this model regains 1 lost wound.",
-      "runtime": {
-        "ability": {
-          "timing": "command-phase",
-          "target": "self",
-          "automatic": true,
-          "effects": [
-            { "type": "restore-wounds", "target": "source-unit", "amount": 1 }
-          ]
-        }
-      },
+      "id": "orks.army-rule.unstable-energies",
+      "name": "Unstable Energies",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "ORKS PSYKER units with this ability have a psyker level of 1 or higher, specified in that unit's abilities. Each psychic ability has a psychic level of 1 or higher, specified in that ability's name. In a battle round, a friendly ORKS PSYKER unit can use a number of psychic abilities whose total psychic level does not exceed that PSYKER unit's psyker level. Example: In a battle round, a psyker level 3 PSYKER unit could use three psychic level 1abilities, or one psychic level 1 ability and one psychic level 2 ability, or one psychic level 3 ability.",
       "sources": [
         {
-          "title": "Wahapedia Trukk datasheet",
-          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Trukk",
-          "capturedAt": "2026-08-29",
-          "section": "Grot Riggers"
+          "title": "Wahapedia Orks Unstable Energies",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Unstable Energies"
         }
       ]
     },
     {
-      "id": "orks.unit-rule.red-skull-kommandos",
-      "name": "Red Skull Kommandos",
-      "kind": "unit-ability",
-      "implementationStatus": "display-only",
-      "description": "This unit has +1 to its Save characteristic against ranged attacks.",
+      "id": "orks.army-rule.special-move-types",
+      "name": "Special Move Types",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "The following are special move types that certain or all of your units are eligible to make. PULSE JET MOVE MAXIMUM DISTANCE: Pulse roll + 18\" ELIGIBLE IF: As stated in the rule allowing this move type. EFFECT: Your unit moves as described in Moving (Core Rules, 03). BEFORE MOVING: Make a pulse roll by rolling one D6. WHILE MOVING: Ignore all vertical distance for the purposes of how far your unit has moved. Your unit can move through all types of model. Your unit can move horizontally and vertically through all categories of terrain feature. AFTER MOVING: Your unit must be unengaged. Until the end of the turn, your unit is not eligible to declare a charge or start an action. Until the start of your next turn, attacks that target your unit have -1 to hit rolls. ASSAULT DISEMBARK MOVE18.06 SET-UP DISTANCE: 3\" ELIGIBLE IF: Embarked within a TRANSPORT on the battlefield Did not embark within that TRANSPORT this phase That TRANSPORT has not made an advance/fall-back move this phase EFFECT: Set up as described in Set Up (03.02). WHILE MOVING: Set up each model wholly within the set-up distance of that TRANSPORT.",
       "sources": [
         {
-          "title": "Wahapedia Boss Snikrot datasheet",
-          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Boss-Snikrot",
-          "capturedAt": "2026-08-29",
-          "section": "Red Skull Kommandos"
+          "title": "Wahapedia Orks Special Move Types",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Special Move Types"
         }
-      ],
-      "notes": ["Retained for display and audit; no generic ranged-save modifier effect exists yet."]
-    },
-    {
-      "id": "orks.unit-rule.prophet-of-da-great-waaagh",
-      "name": "Prophet of Da Great Waaagh!",
-      "kind": "unit-ability",
-      "implementationStatus": "display-only",
-      "description": "While this unit is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll and, if the Waaagh! is active for your army, a Critical Hit is scored on a successful unmodified Hit roll of 5+.",
-      "sources": [
-        {
-          "title": "Wahapedia Ghazghkull Thraka datasheet",
-          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Ghazghkull-Thraka",
-          "capturedAt": "2026-08-29",
-          "section": "Prophet of Da Great Waaagh!"
-        }
-      ],
-      "notes": ["Retained for display and audit; attached-unit attack modifiers need a broader typed modifier vocabulary."]
-    },
-    {
-      "id": "orks.unit-rule.ghazghkulls-waaagh-banner",
-      "name": "Ghazghkull's Waaagh! Banner (Aura)",
-      "kind": "unit-ability",
-      "implementationStatus": "display-only",
-      "description": "While a friendly ORKS unit is within 12 inches of Makari, if the Waaagh! is active for your army, melee weapons equipped by models in that unit have the Lethal Hits ability.",
-      "sources": [
-        {
-          "title": "Wahapedia Ghazghkull Thraka datasheet",
-          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Ghazghkull-Thraka",
-          "capturedAt": "2026-08-29",
-          "section": "Ghazghkull's Waaagh! Banner"
-        }
-      ],
-      "notes": ["Retained for display and audit; aura range and conditional weapon keywords need typed aura support."]
-    },
-    {
-      "id": "orks.unit-rule.get-da-good-bitz",
-      "name": "Get Da Good Bitz",
-      "kind": "unit-ability",
-      "implementationStatus": "display-only",
-      "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
-      "sources": [
-        {
-          "title": "Wahapedia Boyz datasheet",
-          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Boyz",
-          "capturedAt": "2026-08-29",
-          "section": "Get Da Good Bitz"
-        }
-      ],
-      "notes": ["Retained for display and audit; objective retention is not yet represented as a generic rule effect."]
+      ]
     },
     {
       "id": "orks.detachment.war-horde",
@@ -159,117 +72,1761 @@
       "status": "current",
       "implementationStatus": "display-only",
       "detachmentId": "orks.detachment.war-horde",
-      "description": "Melee weapons equipped by ORKS models from your army have the Sustained Hits 1 ability.",
+      "forceDispositions": [
+        "take-and-hold",
+        "purge-the-foe"
+      ],
+      "description": "Friendly ORKS units' melee attacks have [Sustained Hits 1].",
       "sources": [
         {
-          "title": "Wahapedia War Horde detachment",
+          "title": "Wahapedia Orks War Horde",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
+          "capturedAt": "2026-09-25",
           "section": "War Horde"
         }
       ],
-      "notes": ["Detachment rule is cataloged now; always-on detachment weapon modifiers will be added through the shared effect vocabulary."]
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
     },
     {
-      "id": "orks.stratagem.war-horde.careen",
-      "name": "Careen!",
+      "id": "orks.detachment.war-horde.enhancement.headwoppas-killchoppa",
+      "name": "Headwoppa's Killchoppa",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "15 pts. ORKS model only. If this unit made a charge move this turn, this model's melee attacks have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.enhancement.da-boss-is-watchin",
+      "name": "Da Boss is Watchin'",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "25 pts. ORKS model only. (Once per battle, per army) In your Movement phase, you can use this ability. If you do, this unit is riled up until the start of your next turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.enhancement.kunnin-but-brutal",
+      "name": "Kunnin' But Brutal",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "20 pts. ORKS model only. When this unit is selected to make a fall-back move, that fall-back move does not prevent this unit from being eligible to shoot/declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.enhancement.follow-me-ladz",
+      "name": "Follow Me Ladz",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "20 pts. ORKS model only. This unit has +2\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.stratagem.breakin-heads",
+      "name": "BREAKIN' HEADS",
       "kind": "stratagem",
       "status": "unsupported",
       "implementationStatus": "display-only",
       "detachmentId": "orks.detachment.war-horde",
-      "description": "1CP. Any phase, just after an ORKS VEHICLE unit with Deadly Demise is destroyed. If you roll a 6 for Deadly Demise, that unit can make a Normal or Fall Back move before Deadly Demise and emergency disembark moves are resolved.",
+      "description": "1CP. War Horde Stratagem. WHEN: Any phase, when a friendly attached ORKS INFANTRY unit becomes battle-shocked. TARGET: That ORKS INFANTRY unit. You can target that unit with this stratagem even though it is battle-shocked. EFFECT: Roll one D3: Your unit suffers a number of mortal wounds equal to the result. Your unit is no longer battle-shocked.",
       "sources": [
         {
-          "title": "Wahapedia War Horde stratagem",
+          "title": "Wahapedia Orks War Horde - BREAKIN' HEADS",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
-          "section": "War Horde - Careen!"
+          "capturedAt": "2026-09-25",
+          "section": "War Horde - BREAKIN' HEADS"
         }
       ],
-      "notes": ["Stored as source data only until destroyed-unit movement and Deadly Demise timing are represented by typed effects."]
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
     },
     {
-      "id": "orks.stratagem.war-horde.orks-is-never-beaten",
-      "name": "Orks Is Never Beaten",
+      "id": "orks.detachment.war-horde.stratagem.hit-em-harder",
+      "name": "HIT 'EM HARDER",
       "kind": "stratagem",
       "status": "unsupported",
       "implementationStatus": "display-only",
       "detachmentId": "orks.detachment.war-horde",
-      "description": "2CP. Fight phase, just after an enemy unit selects its targets. One ORKS unit selected as a target can fight after models in the attacking unit finish making attacks when its models are destroyed before fighting.",
+      "description": "1CP. War Horde Stratagem. WHEN: Fight phase, when a friendly ORKS unit is selected to fight. TARGET: That ORKS unit. EFFECT: Your unit's melee attacks have [Lethal Hits].",
       "sources": [
         {
-          "title": "Wahapedia War Horde stratagem",
+          "title": "Wahapedia Orks War Horde - HIT 'EM HARDER",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
-          "section": "War Horde - Orks Is Never Beaten"
+          "capturedAt": "2026-09-25",
+          "section": "War Horde - HIT 'EM HARDER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.stratagem.orks-is-never-beaten",
+      "name": "ORKS IS NEVER BEATEN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. War Horde Stratagem. WHEN: Fight phase, when an enemy unit targets a friendly ORKS unit (excluding TITANIC units). TARGET: That ORKS unit. EFFECT: When a model in your unit is destroyed, if your unit has not been selected to fight this phase, roll one D6, with +1 to that roll if your unit is riled up: On a 4+, do not remove that model from the battlefield. When your unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde - ORKS IS NEVER BEATEN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde - ORKS IS NEVER BEATEN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.stratagem.mow-em-down",
+      "name": "MOW 'EM DOWN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. War Horde Stratagem. WHEN: Fight phase, when a friendly ORKS VEHICLE unit (excluding WALKER units) that made a charge move this turn is selected to fight. TARGET: That ORKS VEHICLE unit. EFFECT: Your unit's melee attacks have: [Cleave 1]. Or: If that attack already has [CLEAVE], +1 to the value of that [CLEAVE] (e.g. [CLEAVE 1] becomes [CLEAVE 2]).",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde - MOW 'EM DOWN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde - MOW 'EM DOWN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.stratagem.fungus-fuel-injection",
+      "name": "FUNGUS-FUEL INJECTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. War Horde Stratagem. WHEN: Your Movement phase, when a friendly ORKS MOUNTED/VEHICLE unit is selected to move. TARGET: That ORKS MOUNTED/VEHICLE unit. EFFECT: Your unit has +2\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde - FUNGUS-FUEL INJECTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde - FUNGUS-FUEL INJECTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.war-horde.stratagem.close-range-dakka",
+      "name": "CLOSE-RANGE DAKKA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. War Horde Stratagem. WHEN: Your Shooting phase, when a friendly ORKS unit is selected to shoot. TARGET: That ORKS unit. EFFECT: Your unit's ranged attacks have: [Rapid Fire 1]. Or: If that attack already has [RAPID FIRE], +1 to the value of that [RAPID FIRE] (e.g. [RAPID FIRE 1] becomes [RAPID FIRE 2]).",
+      "sources": [
+        {
+          "title": "Wahapedia Orks War Horde - CLOSE-RANGE DAKKA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "War Horde - CLOSE-RANGE DAKKA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.green-tide",
+      "name": "Green Tide - Mob-handed Brutality",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.green-tide",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly BOYZ units' melee attacks have [Sustained Hits 1]. If a friendly ORKS INFANTRY unit made a charge move this turn, that unit's melee attacks have [Lethal Hits: non-Monster/Vehicle].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Green Tide",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Green Tide"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.green-tide.enhancement.ferocious-show-off",
+      "name": "Ferocious Show-off",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.green-tide",
+      "description": "15 pts. ORKS INFANTRY model only. This model's melee attacks have: +1 A. Or: If this unit has 11+ models, +2 A.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Green Tide enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Green Tide enhancements"
         }
       ]
     },
     {
-      "id": "orks.stratagem.war-horde.unbridled-carnage",
-      "name": "Unbridled Carnage",
-      "kind": "stratagem",
-      "status": "unsupported",
+      "id": "orks.detachment.green-tide.enhancement.ardboyzupgrade",
+      "name": "'ArdboyzUPGRADE",
+      "kind": "wargear",
+      "status": "current",
       "implementationStatus": "display-only",
-      "detachmentId": "orks.detachment.war-horde",
-      "description": "1CP. Fight phase. One ORKS unit that has not been selected to fight this phase gives its melee weapons Critical Hits on unmodified Hit rolls of 5+ until the end of the phase.",
+      "detachmentId": "orks.detachment.green-tide",
+      "maximumSelections": 3,
+      "description": "25 pts. BOYZ unit only. This unit has 4+ Sv.",
       "sources": [
         {
-          "title": "Wahapedia War Horde stratagem",
+          "title": "Wahapedia Orks Green Tide enhancements",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
-          "section": "War Horde - Unbridled Carnage"
+          "capturedAt": "2026-09-25",
+          "section": "Green Tide enhancements"
         }
       ]
     },
     {
-      "id": "orks.stratagem.war-horde.ard-as-nails",
-      "name": "'Ard as Nails",
+      "id": "orks.detachment.green-tide.stratagem.unbridled-carnage",
+      "name": "UNBRIDLED CARNAGE",
       "kind": "stratagem",
       "status": "unsupported",
       "implementationStatus": "display-only",
-      "detachmentId": "orks.detachment.war-horde",
-      "description": "1CP. Your opponent's Shooting phase or the Fight phase, just after an enemy unit selects its targets. An ORKS unit selected as a target, excluding GROTS, MONSTERS and VEHICLES, subtracts 1 from wound rolls made against it until the end of the phase.",
+      "detachmentId": "orks.detachment.green-tide",
+      "description": "1CP. Green Tide Stratagem. WHEN: Fight phase, when a friendly BOYZ unit that made a charge move this turn is selected to fight. TARGET: That BOYZ unit. EFFECT: Your unit's melee attacks have +1 A.",
       "sources": [
         {
-          "title": "Wahapedia War Horde stratagem",
+          "title": "Wahapedia Orks Green Tide - UNBRIDLED CARNAGE",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
-          "section": "War Horde - 'Ard as Nails"
+          "capturedAt": "2026-09-25",
+          "section": "Green Tide - UNBRIDLED CARNAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.green-tide.stratagem.mob-mentality",
+      "name": "MOB MENTALITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.green-tide",
+      "description": "1CP. Green Tide Stratagem. WHEN: Start of the Battle-shock step of your Command phase. TARGET: One friendly ORKS INFANTRY unit of 13+ models. EFFECT: Select one visible friendly ORKS unit within 12\" of your unit. That unit's battle-shock rolls are automatically successful. 'ERE WE GO 1CP Green Tide Stratagem WHEN: Your Movement phase, when a friendly BEAST SNAGGA BOYZ/BOYZ unit is selected to move. TARGET: That BEAST SNAGGA BOYZ/BOYZ unit. EFFECT: Your unit has +2 to advance rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Green Tide - MOB MENTALITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Green Tide - MOB MENTALITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.bully-boyz",
+      "name": "Bully Boyz - Displays of Savagery",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.bully-boyz",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Friendly MEGANOBZ/NOBZ units' melee attacks have [Sustained Hits 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Bully Boyz",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Bully Boyz"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.bully-boyz.enhancement.wimp-kickazupgrade",
+      "name": "Wimp-kickazUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.bully-boyz",
+      "maximumSelections": 3,
+      "description": "15 pts. NOBZ unit only. When an enemy unit engaged with this unit is selected to make a fall-back move: That enemy unit must select the desperate escape mode. If this unit is riled up, that enemy unit has -1 to the hazard rolls made for that desperate escape.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Bully Boyz enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Bully Boyz enhancements"
         }
       ]
     },
     {
-      "id": "orks.stratagem.war-horde.mob-rule",
-      "name": "Mob Rule",
-      "kind": "stratagem",
-      "status": "unsupported",
+      "id": "orks.detachment.bully-boyz.enhancement.tellyporta-boss",
+      "name": "Tellyporta Boss",
+      "kind": "wargear",
+      "status": "current",
       "implementationStatus": "display-only",
-      "detachmentId": "orks.detachment.war-horde",
-      "description": "1CP. End of your Command phase. A MOB unit containing 10 or more models and not Below Half-strength selects a friendly Battle-shocked ORKS INFANTRY unit within 6 inches; that unit is no longer Battle-shocked.",
+      "detachmentId": "orks.detachment.bully-boyz",
+      "description": "20 pts. MEGA ARMOUR model only. This unit (excluding VEHICLE units) has Deep Strike.",
       "sources": [
         {
-          "title": "Wahapedia War Horde stratagem",
+          "title": "Wahapedia Orks Bully Boyz enhancements",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
-          "section": "War Horde - Mob Rule"
+          "capturedAt": "2026-09-25",
+          "section": "Bully Boyz enhancements"
         }
       ]
     },
     {
-      "id": "orks.stratagem.war-horde.ere-we-go",
-      "name": "Ere We Go",
+      "id": "orks.detachment.bully-boyz.stratagem.too-arrogant-to-die",
+      "name": "TOO ARROGANT TO DIE",
       "kind": "stratagem",
       "status": "unsupported",
       "implementationStatus": "display-only",
-      "detachmentId": "orks.detachment.war-horde",
-      "description": "1CP. Start of your Movement phase. One ORKS INFANTRY unit adds 2 to Advance and Charge rolls made for it until the end of the turn.",
+      "detachmentId": "orks.detachment.bully-boyz",
+      "description": "1CP. Bully Boyz Stratagem. WHEN: Fight phase, when an enemy unit targets a friendly MEGANOBZ/NOBZ unit. TARGET: That MEGANOBZ/NOBZ unit. EFFECT: When a model in your unit is destroyed, if your unit has not been selected to fight this phase, roll one D6, with +1 to that roll if your unit is riled up: On a 4+, do not remove that model from the battlefield. When your unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.",
       "sources": [
         {
-          "title": "Wahapedia War Horde stratagem",
+          "title": "Wahapedia Orks Bully Boyz - TOO ARROGANT TO DIE",
           "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-          "capturedAt": "2026-08-29",
-          "section": "War Horde - Ere We Go"
+          "capturedAt": "2026-09-25",
+          "section": "Bully Boyz - TOO ARROGANT TO DIE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.bully-boyz.stratagem.armed-to-da-teef",
+      "name": "ARMED TO DA TEEF",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.bully-boyz",
+      "description": "1CP. Bully Boyz Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly MEGANOBZ/NOBZ unit is selected to attack. TARGET: That MEGANOBZ/NOBZ unit. EFFECT: Your unit's attacks can: Re-roll hit rolls of 1. If your unit is riled up, re-roll hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Bully Boyz - ARMED TO DA TEEF",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Bully Boyz - ARMED TO DA TEEF"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.bully-boyz.stratagem.hulking-brutes",
+      "name": "HULKING BRUTES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.bully-boyz",
+      "description": "1CP. Bully Boyz Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly MEGANOBZ/NOBZ unit. TARGET: That MEGANOBZ/NOBZ unit. EFFECT: Ranged attacks that target your unit with a S greater than your unit's T have -1 to wound rolls. +1CP Or: Ranged attacks that target your unit have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Bully Boyz - HULKING BRUTES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Bully Boyz - HULKING BRUTES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.runt-swarm",
+      "name": "Runt Swarm - Sneaky Little Gitz",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.runt-swarm",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Friendly GRETCHIN units have BATTLELINE. When a friendly GRETCHIN unit is selected to make an advance/fall-back move, that move does not prevent this unit from being eligible to start an action.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Runt Swarm",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Runt Swarm"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.runt-swarm.enhancement.extra-sneakyupgrade",
+      "name": "Extra SneakyUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.runt-swarm",
+      "maximumSelections": 3,
+      "description": "10 pts. GRETCHIN unit only. This unit has -3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Runt Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Runt Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.runt-swarm.enhancement.minefield-detailupgrade",
+      "name": "Minefield DetailUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.runt-swarm",
+      "maximumSelections": 3,
+      "description": "10 pts. GRETCHIN unit only. While this unit is not embarked, this unit has Scouts 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Runt Swarm enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Runt Swarm enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.runt-swarm.stratagem.infested-war-zone",
+      "name": "INFESTED WAR ZONE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.runt-swarm",
+      "description": "2CP. Runt Swarm Stratagem. WHEN: Any phase, when an enemy unit has attacked. TARGET: One friendly GRETCHIN unit that was just destroyed. You can target that unit with this stratagem even though that unit was just destroyed. EFFECT: Add a new GRETCHIN unit to your army identical to your destroyed unit, in strategic reserves, at its starting strength, with its full wounds remaining.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Runt Swarm - INFESTED WAR ZONE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Runt Swarm - INFESTED WAR ZONE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.runt-swarm.stratagem.scarper",
+      "name": "SCARPER!",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.runt-swarm",
+      "description": "1CP. Runt Swarm Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move within 8\" of a friendly unengaged GRETCHIN unit. TARGET: That GRETCHIN unit. EFFECT: Your unit can make a normal move of: Up to D6\". Or: Up to 6\" instead if your unit is an attached unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Runt Swarm - SCARPER!",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Runt Swarm - SCARPER!"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.runt-swarm.stratagem.grot-shields",
+      "name": "GROT SHIELDS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.runt-swarm",
+      "description": "1CP. Runt Swarm Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly ORKS INFANTRY unit (excluding GRETCHIN units). TARGET: One friendly GRETCHIN unit within 3\" of that ORKS INFANTRY unit. EFFECT: When a hit roll for that enemy unit's ranged attacks that target that ORKS unit results in a hit, if a model in your GRETCHIN unit is on the battlefield, end the attack sequence for that attack and your GRETCHIN unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Runt Swarm - GROT SHIELDS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Runt Swarm - GROT SHIELDS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.shoota-boyz",
+      "name": "Shoota Boyz - Dakka! Dakka! Dakka!",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.shoota-boyz",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Friendly ORKS INFANTRY units' ranged attacks have: [Assault]. While this unit is riled up, +3\" R.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Shoota Boyz",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Shoota Boyz"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.shoota-boyz.enhancement.supa-glowy-fing",
+      "name": "Supa-glowy Fing",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.shoota-boyz",
+      "description": "25 pts. ORKS INFANTRY model only (excluding WEIRDBOY models). This model's ranged attacks have: [Anti-Infantry 4+]. [Devastating Wounds]. [SUPA-HAZARDOUS]. [SUPA-HAZARDOUS]: Each time a unit is selected to shoot, after that unit has resolved all of its attacks, make two hazard rolls for that unit for each [SUPA-HAZARDOUS] weapon you selected in the Select Weapons step.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Shoota Boyz enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Shoota Boyz enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.shoota-boyz.enhancement.targetin-squigs",
+      "name": "Targetin' Squigs",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.shoota-boyz",
+      "description": "20 pts. BIG MEK/BIGBOSS/WARBOSS model only. This unit's ranged attacks (excluding [Torrent] attacks) have +3\" R.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Shoota Boyz enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Shoota Boyz enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.shoota-boyz.stratagem.kustom-dakka",
+      "name": "KUSTOM DAKKA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.shoota-boyz",
+      "description": "1CP. Shoota Boyz Stratagem. WHEN: Your Shooting phase, when a friendly ORKS INFANTRY unit is selected to shoot. TARGET: That ORKS INFANTRY unit. EFFECT: Your unit's ranged attacks that target a unit (excluding MONSTER/VEHICLE units) have +1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Shoota Boyz - KUSTOM DAKKA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Shoota Boyz - KUSTOM DAKKA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.shoota-boyz.stratagem.glowin-dakka",
+      "name": "GLOWIN' DAKKA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.shoota-boyz",
+      "description": "1CP. Shoota Boyz Stratagem. WHEN: Your Shooting phase, when a friendly ORKS INFANTRY unit is selected to shoot. TARGET: That ORKS INFANTRY unit. EFFECT: Your unit's ranged attacks that target a unit within 9\" have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Shoota Boyz - GLOWIN' DAKKA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Shoota Boyz - GLOWIN' DAKKA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.shoota-boyz.stratagem.never-enough-dakka",
+      "name": "NEVER ENOUGH DAKKA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.shoota-boyz",
+      "description": "1CP. Shoota Boyz Stratagem. WHEN: Your Shooting phase, when a friendly ORKS INFANTRY unit is selected to shoot. TARGET: That ORKS INFANTRY unit. EFFECT: Your unit's ranged attacks have [Sustained Hits 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Shoota Boyz - NEVER ENOUGH DAKKA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Shoota Boyz - NEVER ENOUGH DAKKA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.taktikal-brigade",
+      "name": "Taktikal Brigade - Suspiciously Well Organised",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.taktikal-brigade",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly STORMBOYZ units have BATTLELINE. When a friendly BOYZ/KOMMANDOS/STORMBOYZ unit is selected to make a fall-back move, that fall-back move does not prevent that unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Taktikal Brigade",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Taktikal Brigade"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.taktikal-brigade.enhancement.kill-kommanda",
+      "name": "Kill Kommanda",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.taktikal-brigade",
+      "description": "20 pts. LEADER: KOMMANDOS BIG MEK/WARBOSS INFANTRY model only. While this model is part of an attached unit, this model has: Infiltrators. Stealth.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Taktikal Brigade enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Taktikal Brigade enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.taktikal-brigade.enhancement.throat-slittasupgrade",
+      "name": "Throat-slittasUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.taktikal-brigade",
+      "maximumSelections": 3,
+      "description": "15 pts. KOMMANDOS/STORMBOYZ unit only. This unit's melee attacks have [Lethal Hits: non-Monster/Vehicle].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Taktikal Brigade enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Taktikal Brigade enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.taktikal-brigade.stratagem.dubious-restraint",
+      "name": "DUBIOUS RESTRAINT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.taktikal-brigade",
+      "description": "1CP. Taktikal Brigade Stratagem. WHEN: Start/end of your Movement phase. TARGET: One friendly BOYZ/KOMMANDOS/STORMBOYZ unit. EFFECT: Select one objective your unit is controlling. That objective is secured.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Taktikal Brigade - DUBIOUS RESTRAINT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Taktikal Brigade - DUBIOUS RESTRAINT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.taktikal-brigade.stratagem.mind-mostly-on-the-mission",
+      "name": "MIND MOSTLY ON THE MISSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.taktikal-brigade",
+      "description": "1CP. Taktikal Brigade Stratagem. WHEN: Your Movement phase, when a friendly BOYZ/KOMMANDOS/STORMBOYZ unit is selected to make an advance/fall-back move. TARGET: That BOYZ/KOMMANDOS/STORMBOYZ unit. EFFECT: That move does not prevent your unit from being eligible to start an action.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Taktikal Brigade - MIND MOSTLY ON THE MISSION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Taktikal Brigade - MIND MOSTLY ON THE MISSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.taktikal-brigade.stratagem.while-their-backs-are-turned",
+      "name": "WHILE THEIR BACKS ARE TURNED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.taktikal-brigade",
+      "description": "1CP. Taktikal Brigade Stratagem. WHEN: End of your opponent's Movement phase. TARGET: One friendly unengaged BOYZ/KOMMANDOS/STORMBOYZ unit that was engaged at the start of the phase. EFFECT: Your unit can make a normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Taktikal Brigade - WHILE THEIR BACKS ARE TURNED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Taktikal Brigade - WHILE THEIR BACKS ARE TURNED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.wreckas",
+      "name": "Wreckas - Wreckin' and Lootin'",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wreckas",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "In your Shooting phase, when a friendly BREAKA BOYZ/FLASH GITZ/TANKBUSTAS unit is selected to shoot, if any of the following apply, that unit's attacks can re-roll hit rolls of 1: That unit is within range of an objective. The target of that attack is within range of an objective.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wreckas",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wreckas"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.wreckas.enhancement.kaptins-hat",
+      "name": "Kaptin's Hat",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wreckas",
+      "description": "25 pts. LEADER: FLASH GITZ BIG MEK/WARBOSS INFANTRY model only. When both players have deployed their armies, you can redeploy up to three friendly ORKS INFANTRY units. When doing so, you can set those units up in strategic reserves, regardless of how many units are already in strategic reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wreckas enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wreckas enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.wreckas.enhancement.supa-snazz-dakkaupgrade",
+      "name": "Supa-snazz DakkaUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wreckas",
+      "maximumSelections": 3,
+      "description": "20 pts. FLASH GITZ unit only. This unit's Snazzgun weapons have [Rapid Fire 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wreckas enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wreckas enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.wreckas.stratagem.drive-by-bustin",
+      "name": "DRIVE-BY BUSTIN'",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wreckas",
+      "description": "1CP. Wreckas Stratagem. WHEN: Your Shooting phase, when a friendly ORKS TRANSPORT unit is selected to shoot. TARGET: That ORKS TRANSPORT unit. EFFECT: Your unit's ranged attacks with weapons selected for the Firing Deck ability have +1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wreckas - DRIVE-BY BUSTIN'",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wreckas - DRIVE-BY BUSTIN'"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.wreckas.stratagem.grab-it",
+      "name": "GRAB IT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wreckas",
+      "description": "1CP. Wreckas Stratagem. WHEN: Your Shooting phase, when a friendly unengaged BREAKA BOYZ/FLASH GITZ/TANKBUSTAS unit has shot. TARGET: That BREAKA BOYZ/FLASH GITZ/TANKBUSTAS unit. EFFECT: Your unit can make a normal move of up to 6\", and must end that move within range of an objective. Your unit is not eligible to declare a charge until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wreckas - GRAB IT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wreckas - GRAB IT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.wreckas.stratagem.gun-crazy-show-offs",
+      "name": "GUN-CRAZY SHOW-OFFS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wreckas",
+      "description": "1CP. Wreckas Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit has shot. TARGET: One friendly FLASH GITZ/TANKBUSTAS unit hit by those attacks. EFFECT: Your unit shoots using normal shooting, but while doing so your unit can only target that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wreckas - GUN-CRAZY SHOW-OFFS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wreckas - GUN-CRAZY SHOW-OFFS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.da-big-hunt",
+      "name": "Da Big Hunt - Da Hunt is On",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.da-big-hunt",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Friendly BEAST SNAGGA units' attacks that target a MONSTER/VEHICLE unit have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Da Big Hunt",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Big Hunt"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.da-big-hunt.enhancement.glory-hog",
+      "name": "Glory Hog",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.da-big-hunt",
+      "description": "25 pts. BEAST SNAGGA model only. When this unit is selected to make a fall-back move, that fall-back move does not prevent this unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Da Big Hunt enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Big Hunt enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.da-big-hunt.enhancement.it-came-from-da-drops",
+      "name": "It Came from da Drops",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.da-big-hunt",
+      "description": "20 pts. BEASTBOSS ON SQUIGOSAUR model only. This model has +1 T.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Da Big Hunt enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Big Hunt enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.da-big-hunt.stratagem.where-dya-fink-youre-going",
+      "name": "WHERE D'YA FINK YOU'RE GOING?",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.da-big-hunt",
+      "description": "1CP. Da Big Hunt Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit is selected to make a fall-back move, if that enemy unit is engaged with a friendly BEAST SNAGGA unit. TARGET: That BEAST SNAGGA unit. EFFECT: When an enemy unit engaged with your unit is selected to make a fall-back move, that enemy unit must use the desperate escape mode. If that enemy unit is a MONSTER/VEHICLE unit, that enemy unit makes three additional hazard rolls for each BEAST SNAGGA unit it is engaged with, with -1 from those hazard rolls if that enemy unit is battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Da Big Hunt - WHERE D'YA FINK YOU'RE GOING?",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Big Hunt - WHERE D'YA FINK YOU'RE GOING?"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.da-big-hunt.stratagem.goaded-into-action",
+      "name": "GOADED INTO ACTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.da-big-hunt",
+      "description": "1CP. Da Big Hunt Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit has shot. TARGET: One friendly unengaged BEAST SNAGGA unit that lost a wound as a result of those attacks. EFFECT: Your unit can make a surge move of up to D6\". If your unit is riled up, it can re-roll that D6.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Da Big Hunt - GOADED INTO ACTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Big Hunt - GOADED INTO ACTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.da-big-hunt.stratagem.instinctive-hunters",
+      "name": "INSTINCTIVE HUNTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.da-big-hunt",
+      "description": "1CP. Da Big Hunt Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One friendly unengaged BEAST SNAGGA unit within 6\" of a battlefield edge. EFFECT: Place your unit in strategic reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Da Big Hunt - INSTINCTIVE HUNTERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Da Big Hunt - INSTINCTIVE HUNTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.madcap-meks",
+      "name": "Madcap Meks - Unpredictable Genius",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.madcap-meks",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "In your Shooting phase, when all of a friendly BIG MEK/MEK GUNZ/MORKANAUT/WAZBOM BLASTAJET unit's ranged attacks target a single enemy unit, roll one D6: UNPREDICTABLE GENIUS D6RESULT 1Dat's Weird: The target unit has 4+ InSv until your unit has shot. 2-3Hop Splat: Select one other enemy unit within 3\" of the target. That unit suffers D3 mortal wounds. 4Seekerz: Those attacks have +1 to hit rolls. 5Lifted: The target unit has FLY, and cannot have the benefit of cover, until your unit has shot. 6Runtified: The target unit has -1 T until your unit has shot.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Madcap Meks",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Madcap Meks"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.madcap-meks.enhancement.mekwaaagh-mastermind",
+      "name": "Mekwaaagh! Mastermind",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.madcap-meks",
+      "description": "30 pts. BIG MEK model only. This unit is riled up.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Madcap Meks enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Madcap Meks enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.madcap-meks.enhancement.temperamental-shokkaupgrade",
+      "name": "Temperamental ShokkaUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.madcap-meks",
+      "maximumSelections": 3,
+      "description": "20 pts. BIG MEK WITH SHOKK ATTACK GUN model only. In your Shooting phase, when this unit is selected to shoot, you can roll one D6: On a 1, this model's Shokk Attack Gun weapon has [Torrent], and when this unit has shot, this model is destroyed. On a 2-5, this model's Shokk Attack Gun weapon has +1 A. On a 6, this model's Shokk Attack Gun weapon has [Sustained Hits 2].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Madcap Meks enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Madcap Meks enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.madcap-meks.enhancement.enhanced-runt-mawupgrade",
+      "name": "Enhanced Runt-mawUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.madcap-meks",
+      "maximumSelections": 3,
+      "description": "10 pts. BIG MEK WITH SHOKK ATTACK GUN model only. When this unit has shot, select one enemy unit hit by those attacks. That unit is infested with Snotlings until the start of your next turn. While an enemy unit is infested with Snotlings, that unit has -1 to leadership rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Madcap Meks enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Madcap Meks enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.madcap-meks.stratagem.vindictive-artillerists",
+      "name": "VINDICTIVE ARTILLERISTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.madcap-meks",
+      "description": "1CP. Madcap Meks Stratagem. WHEN: Your Shooting phase, when a friendly MEK GUNZ unit is selected to shoot. TARGET: That MEK GUNZ unit. EFFECT: Your unit's ranged attacks have: [Lethal Hits]. Or: [Sustained Hits 1]. Or: [Hazardous], [Lethal Hits], [Sustained Hits 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Madcap Meks - VINDICTIVE ARTILLERISTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Madcap Meks - VINDICTIVE ARTILLERISTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.dread-mob",
+      "name": "Dread Mob - Try Dat Button!",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.dread-mob",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "In your Shooting phase or the Fight phase, when a friendly ORKS WALKER unit (excluding TITANIC units) is selected to attack, you can use this ability. If you do, roll either one D6 or two D6 (keep re-rolling duplicate results). This unit's attacks have the relevant rule(s): TRY DAT BUTTON! D6RESULT 1-2+1 A 3-4+2 S 5-6+1 AP If you rolled two D6, when this unit has attacked, this unit makes one hazard roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Dread Mob",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Dread Mob"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.dread-mob.enhancement.cybork-boosta",
+      "name": "Cybork Boosta",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.dread-mob",
+      "description": "10 pts. BIG MEK/MEK model only. This model has +2\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Dread Mob enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Dread Mob enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.dread-mob.enhancement.dreadherder",
+      "name": "Dreadherder",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.dread-mob",
+      "description": "20 pts. BIG MEK model only. While this model is within 3\" of a friendly ORKS WALKER unit (excluding BIG MEK units): This model has Lone Operative. In your Shooting phase, you can select one friendly ORKS WALKER unit within 3\" of this model. That unit's attacks can re-roll hit rolls of 1 until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Dread Mob enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Dread Mob enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.dread-mob.stratagem.crazed-rampage",
+      "name": "CRAZED RAMPAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.dread-mob",
+      "description": "1CP. Dread Mob Stratagem. WHEN: Fight phase, when an enemy unit targets a friendly ORKS WALKER unit (excluding TITANIC units). TARGET: That ORKS WALKER unit. EFFECT: When a model in your unit is destroyed, if your unit has not been selected to fight this phase, roll one D6, with +3 to the result if your unit has DEFF DREAD: On a 4+, do not remove that model from the battlefield. When your unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Dread Mob - CRAZED RAMPAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Dread Mob - CRAZED RAMPAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.dread-mob.stratagem.dread-power",
+      "name": "DREAD POWER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.dread-mob",
+      "description": "1CP. Dread Mob Stratagem. WHEN: Your Movement phase. TARGET: One friendly ORKS WALKER unit. EFFECT: Your unit is riled up until the start of your next turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Dread Mob - DREAD POWER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Dread Mob - DREAD POWER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.dread-mob.stratagem.stomping-juggernaut",
+      "name": "STOMPING JUGGERNAUT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.dread-mob",
+      "description": "1CP. Dread Mob Stratagem. WHEN: Your Movement/Charge phase, when a friendly ORKS WALKER unit is selected to move or declares a charge. TARGET: That ORKS WALKER unit. EFFECT: Your unit has MOBILE.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Dread Mob - STOMPING JUGGERNAUT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Dread Mob - STOMPING JUGGERNAUT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.blitz-brigade",
+      "name": "Blitz Brigade - Unstoppable Momentum",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.blitz-brigade",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly WAGON units can re-roll charge rolls. When a friendly WAGON unit is selected to make an advance move, that unit can change advance rolls to a 6.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Blitz Brigade",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Blitz Brigade"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.blitz-brigade.enhancement.targetin-gizmosupgrade",
+      "name": "Targetin' GizmosUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.blitz-brigade",
+      "maximumSelections": 3,
+      "description": "10 pts. WAGON unit only. While a BIG MEK model is embarked within this unit: This unit's ranged attacks have [Ignores Cover]. If this unit is riled up, this unit's ranged attacks have [Sustained Hits 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Blitz Brigade enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Blitz Brigade enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.blitz-brigade.enhancement.boss-boomerupgrade",
+      "name": "Boss BoomerUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.blitz-brigade",
+      "maximumSelections": 3,
+      "description": "10 pts. WAGON unit only. While a WARBOSS model is embarked within this unit, this unit has that WARBOSS model's Intimidating Motivation/Keep Huntin' ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Blitz Brigade enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Blitz Brigade enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.blitz-brigade.stratagem.keep-it-runnin",
+      "name": "KEEP IT RUNNIN'",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.blitz-brigade",
+      "description": "1CP. Blitz Brigade Stratagem. WHEN: End of the Fight phase. TARGET: One friendly unengaged ORKS INFANTRY unit that was eligible to fight this phase and is wholly within 6\" of a friendly TRANSPORT unit that INFANTRY unit is able to embark within. EFFECT: Your INFANTRY unit embarks within that TRANSPORT unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Blitz Brigade - KEEP IT RUNNIN'",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Blitz Brigade - KEEP IT RUNNIN'"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.blitz-brigade.stratagem.readied-brawlers",
+      "name": "READIED BRAWLERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.blitz-brigade",
+      "description": "1CP. Blitz Brigade Stratagem. WHEN: Your Movement phase, when a friendly WAGON unit ends a normal move. TARGET: That WAGON unit. EFFECT: Units embarked within your unit can make an assault disembark move.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Blitz Brigade - READIED BRAWLERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Blitz Brigade - READIED BRAWLERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.blitz-brigade.stratagem.impending-krunch",
+      "name": "IMPENDING KRUNCH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.blitz-brigade",
+      "description": "1CP. Blitz Brigade Stratagem. WHEN: Your Charge phase, when a friendly WAGON unit ends a charge move. TARGET: That WAGON unit. EFFECT: Each enemy unit engaged with your unit makes a battle-shock roll, with -1 to that battle-shock roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Blitz Brigade - IMPENDING KRUNCH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Blitz Brigade - IMPENDING KRUNCH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.kult-of-speed",
+      "name": "Kult of Speed - Adrenaline Junkies",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.kult-of-speed",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly WARBIKERS units have BATTLELINE. When a friendly SPEED FREEKS unit is selected to make an advance/fall-back move: That unit's ranged attacks have [Assault] until the end of the turn. That move does not prevent that unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Kult of Speed",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Kult of Speed"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.kult-of-speed.enhancement.smoky-gubbinzupgrade",
+      "name": "Smoky GubbinzUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.kult-of-speed",
+      "maximumSelections": 3,
+      "description": "10 pts. SPEED FREEKS unit only (excluding AIRCRAFT units). When an attack targets a unit that is not fully visible to the attacking model because of a model in this unit, the target has the benefit of cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Kult of Speed enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Kult of Speed enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.kult-of-speed.enhancement.competitive-streak",
+      "name": "Competitive Streak",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.kult-of-speed",
+      "description": "15 pts. DEFFKILLA WARTRIKE model only. This unit can re-roll charge rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Kult of Speed enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Kult of Speed enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.kult-of-speed.stratagem.delicious-eating-squigs",
+      "name": "DELICIOUS EATING SQUIGS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.kult-of-speed",
+      "description": "1CP. Kult of Speed Stratagem. WHEN: Your Movement phase. TARGET: One friendly RUKKATRUKK SQUIGBUGGIES unit. EFFECT: Select any number of friendly ORKS INFANTRY units within 3\" of your unit. Each selected unit heals 3 wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Kult of Speed - DELICIOUS EATING SQUIGS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Kult of Speed - DELICIOUS EATING SQUIGS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.kult-of-speed.stratagem.dakkastorm",
+      "name": "DAKKASTORM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.kult-of-speed",
+      "description": "1CP. Kult of Speed Stratagem. WHEN: Your Shooting phase, when a friendly SPEED FREEKS unit is selected to shoot. TARGET: That SPEED FREEKS unit. EFFECT: Your unit's ranged attacks have [Sustained Hits 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Kult of Speed - DAKKASTORM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Kult of Speed - DAKKASTORM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.kult-of-speed.stratagem.speediest-freeks",
+      "name": "SPEEDIEST FREEKS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.kult-of-speed",
+      "description": "1CP. Kult of Speed Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly SPEED FREEKS unit. TARGET: That SPEED FREEKS unit. EFFECT: Ranged attacks that target your unit fail on an unmodified hit roll of 1-3.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Kult of Speed - SPEEDIEST FREEKS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Kult of Speed - SPEEDIEST FREEKS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.flyboyz",
+      "name": "Flyboyz - Skyborne Loons",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.flyboyz",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly ORKS AIRCRAFT units do not count towards the combined points value of your strategic reserves units. While a friendly ORKS AIRCRAFT/DEFFKOPTAS unit is riled up, this unit's ranged attacks have +1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Flyboyz",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyboyz"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.flyboyz.enhancement.flybossupgrade",
+      "name": "FlybossUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.flyboyz",
+      "maximumSelections": 3,
+      "description": "20 pts. ORKS AIRCRAFT unit only. This unit has CHARACTER. When this unit ends an ingress move, each friendly ORKS AIRCRAFT/DEFFKOPTAS unit within 6\" of this unit is riled up until the start of your next turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Flyboyz enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyboyz enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.flyboyz.enhancement.impulsive-reconupgrade",
+      "name": "Impulsive ReconUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.flyboyz",
+      "maximumSelections": 3,
+      "description": "15 pts. ORKS AIRCRAFT unit only. In your first Movement phase, this unit can make an ingress move.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Flyboyz enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyboyz enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.flyboyz.stratagem.flyin-headbutt",
+      "name": "FLYIN' HEADBUTT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.flyboyz",
+      "description": "1CP. Flyboyz Stratagem. WHEN: Any phase, when a friendly ORKS AIRCRAFT unit is destroyed, before rolling for any Deadly Demise. TARGET: That ORKS unit. EFFECT: Your unit does not have the Deadly Demise ability. Select one enemy unit within 12\" of your unit and roll eight D6: For each 4+, that enemy unit suffers 1 mortal wound. Then remove your unit from the battlefield. LONG, UNCONTROLLED BURSTS 1CP Flyboyz Stratagem WHEN: Your Shooting phase, when a friendly ORKS AIRCRAFT/DEFFKOPTAS unit is selected to shoot. TARGET: That ORKS AIRCRAFT/DEFFKOPTAS unit. EFFECT: When your unit's ranged attacks target a FLY unit, those attacks can re-roll hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Flyboyz - FLYIN' HEADBUTT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyboyz - FLYIN' HEADBUTT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.flyboyz.stratagem.whirligig-evasion",
+      "name": "WHIRLIGIG EVASION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.flyboyz",
+      "description": "1CP. Flyboyz Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move. TARGET: One friendly unengaged DEFFKOPTAS unit within 8\" of that enemy unit. EFFECT: Your unit can make a normal move of: Up to D6\". Or: If your unit is riled up, up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Flyboyz - WHIRLIGIG EVASION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyboyz - WHIRLIGIG EVASION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses",
+      "name": "Brute Bosses - 'Ard as Nails",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "When a friendly WARBOSS model is destroyed, if this unit has not been selected to fight this phase, roll one D6, with +1 to the roll if your unit is riled up: On a 3+, do not remove this WARBOSS model from the battlefield. When this unit has fought, or at the end of the phase (whichever comes first), this WARBOSS model is removed from the battlefield.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses.enhancement.surly-as-a-squiggoth",
+      "name": "Surly as a Squiggoth",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "description": "25 pts. INFANTRY WARBOSS model only. (Once per battle, per army) At the end of a phase in which this model is destroyed, roll one D6: On a 2+, set this model back up on the battlefield as close as possible to where it was destroyed, unengaged, with 3 wounds remaining.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses.enhancement.brutal-but-kunnin",
+      "name": "Brutal But Kunnin'",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "description": "30 pts. WARBOSS model only. This model's melee attacks have +1 D.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses.enhancement.blitzboss",
+      "name": "Blitzboss",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "description": "20 pts. WARBOSS model only. A TRANSPORT unit (excluding WALKER units) this unit is embarked within has: +2\" M. 5+ InSv.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses.enhancement.proper-killy",
+      "name": "Proper Killy",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "description": "15 pts. WARBOSS model only. This model can re-roll hit rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses.enhancement.morgogs-finkin-cap",
+      "name": "Morgog's Finkin' Cap",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "description": "50 pts. WARBOSS model only. (Once per battle, per army) At the end of your opponent's Movement phase, if this unit is unengaged, this unit can make a normal move of: Up to D6\". If this unit is riled up, you can re-roll that D6.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.brute-bosses.enhancement.da-gobshot-thunderbuss",
+      "name": "Da Gobshot Thunderbuss",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.brute-bosses",
+      "description": "20 pts. WARBOSS model only. This model has the following weapon: RANGED WEAPONS RANGE A BS S AP D Da Gobshot Thunderbuss LETHAL HITS: non-MONSTER/VEHICLE RAPID FIRE 6 Da Gobshot Thunderbuss LETHAL HITS: non-MONSTER/VEHICLE RAPID FIRE 6 24\" 6 4+ 7 -2 2",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Brute Bosses enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Brute Bosses enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.wurrband",
+      "name": "Wurrband - Powers of da Waaagh!",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wurrband",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly ORKS PSYKER models' [Psychic] attacks have: +1 S. +1 S for every 5 models in this unit (or embarked within this model). Friendly ORKS PSYKER models have the following psychic abilities: Roar of Mork (psychic level 1): In your Movement phase, if this unit is not battle-shocked, you can make a psychic roll for this unit by rolling one D6. If you do: On a 1, this unit is battle-shocked. Select one enemy unit (excluding MONSTER/VEHICLE units) within 12\" of this unit. That enemy unit makes a battle-shock roll, with -1 from that battle-shock roll for every 10 models in this unit. Visions of Violence (psychic level 1): At the start of the Fight phase, if this unit is not battle-shocked, you can make a psychic roll for this unit by rolling one D6. If you do: On a 1, this unit is battle-shocked. This unit has Fights First.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wurrband",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wurrband"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "orks.detachment.wurrband.enhancement.da-krunch",
+      "name": "Da Krunch",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wurrband",
+      "description": "10 pts. ORKS PSYKER model only. This model has the following weapon. RANGED WEAPONS RANGE A BS S AP D Da Krunch BLAST 3 HAZARDOUS LETHAL HITS PSYCHIC Da Krunch BLAST 3 HAZARDOUS LETHAL HITS PSYCHIC 24\" 3 4+ 5 -1 1",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wurrband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wurrband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.wurrband.enhancement.eadbanger",
+      "name": "'Eadbanger",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wurrband",
+      "description": "15 pts. ORKS PSYKER model only. This model has the following weapon. RANGED WEAPONS RANGE A BS S AP D 'Eadbanger HAZARDOUS PRECISION PSYCHIC 'Eadbanger HAZARDOUS PRECISION PSYCHIC 24\" 2 4+ 6 -3 3",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wurrband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wurrband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "orks.detachment.wurrband.enhancement.warphead",
+      "name": "Warphead",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.wurrband",
+      "description": "25 pts. ORKS PSYKER model only. This model: Has psyker level 2. Has Deadly Demise D6. Can re-roll psychic rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Orks Wurrband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-09-25",
+          "section": "Wurrband enhancements"
         }
       ]
     }

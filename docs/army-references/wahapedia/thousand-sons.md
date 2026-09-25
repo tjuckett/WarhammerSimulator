@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/thousand-sons/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/thousand-sons/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -118,12 +118,17 @@
 | ranged | -- | Infernal Gateway - Focused Witchfire | blast indirect fire hazardous psychic | 24" | D3+6 | 2+ | 9 | -2 | 3 |
 | melee | -- | Staff of Tomorrow | psychic | Melee | 5 | 3+ | 8 | -2 | 2D3 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- Pact of Sorcery
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: Pact of Sorcery
 - One Head Looks Forward: At the end of your Command phase, if this model is on the battlefield, take a Leadership test for this model; if that test is passed, you gain 1CP.
-  One Head Looks Back (Aura): Each time your opponent targets a unit from their army with a Stratagem, if that unit is within 12" of this model, increase the cost of that use of that Stratagem by 1CP.
+- One Head Looks Back (Aura): Each time your opponent targets a unit from their army with a Stratagem, if that unit is within 12" of this model, increase the cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Kairos Fateweaver - EPIC HERO
@@ -159,12 +164,17 @@ SCINTILLATING LEGIONS
 | melee | -- | Blade of Magnus - strike | devastating wounds psychic | Melee | 7 | 2+ | 16 | -3 | 3 |
 | melee | -- | Blade of Magnus - sweep | psychic | Melee | 14 | 2+ | 8 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: Cabal of Sorcerers
 - Unearthly Power: At the start of the battle round, select one of the abilities in the Crimson King section (see left). Until the start of the next battle round, this model has that ability.
-  Lord of the Planet of the Sorcerers (Psychic): This model can attempt up to two Rituals per turn instead of one, and each time this model attempts a Ritual, add 2 to the Psychic test result.
+- Lord of the Planet of the Sorcerers (Psychic): This model can attempt up to two Rituals per turn instead of one, and each time this model attempts a Ritual, add 2 to the Psychic test result.
 
 #### Unit Composition
 - 1 Magnus the Red - EPIC HERO
@@ -199,12 +209,16 @@ THOUSAND SONS
 | ranged | -- | Transmogrifying Blast | blast psychic | 18" | D6+1 | 2+ | 6 | -1 | D3 |
 | melee | -- | Black Staff of Ahriman | psychic | Melee | 5 | 2+ | 7 | -1 | 3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Cabal of Sorcerers
 - Scryer of Fates (Psychic): If your army includes this model, after both players have deployed their armies, you can select up to three THOUSAND SONS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
-  Arch-Sorcerer of Tzeentch (Psychic): Each time this model attempts a Ritual, add 1 to the Psychic test result.
+- Arch-Sorcerer of Tzeentch (Psychic): Each time this model attempts a Ritual, add 1 to the Psychic test result.
 
 #### Unit Composition
 - 1 Ahriman - EPIC HERO
@@ -214,6 +228,7 @@ THOUSAND SONS
 - This model can be attached to the following units:
   - RUBRIC MARINES
   - TZAANGOR ENLIGHTENED
+  - TZAANGOR ENLIGHTENED WITH FATECASTER GREATBOWS
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **100 pts**
@@ -242,12 +257,19 @@ THOUSAND SONS
 | melee | -- | Force weapon | psychic | Melee | 5 | 2+ | 6 | -1 | D3 |
 | melee | -- | Prosperine khopesh | -- | Melee | 4 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model can be equipped with 1 Prosperine khopesh.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Cabal of Sorcerers
 - Arcane Shield (Psychic): While this model is leading a unit, models in that unit have a 4+ invulnerable save.
-  Rebind Rubricae (Psychic): In your Command phase, if this model is leading a unit, you can roll one D6: on a 1, that unit suffers D3 mortal wounds; on a 2-5, you can return 1 destroyed Bodyguard model to that unit; on a 6, you can return up to 2 destroyed Bodyguard models to that unit.
+- Rebind Rubricae (Psychic): In your Command phase, if this model is leading a unit, you can roll one D6: on a 1, that unit suffers D3 mortal wounds; on a 2-5, you can return 1 destroyed Bodyguard model to that unit; on a 6, you can return up to 2 destroyed Bodyguard models to that unit.
 
 #### Unit Composition
 - 1 Exalted Sorcerer
@@ -262,9 +284,9 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Incandaeum 15 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -316,12 +338,16 @@ THOUSAND SONS
 | ranged | -- | Fires of the Abyss - focused witchfire | hazardous psychic torrent | 18" | 2D6 | N/A | 6 | -2 | 1 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Cabal of Sorcerers
 - Malefic Maelstrom (Psychic): While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Glimpse of Eternity (Psychic): Once per turn, you can change the result of one Hit roll, one Wound roll or one saving throw made for this model to an unmodified 6.
+- Glimpse of Eternity (Psychic): Once per turn, you can change the result of one Hit roll, one Wound roll or one saving throw made for this model to an unmodified 6.
 
 #### Unit Composition
 - 1 Infernal Master
@@ -336,8 +362,8 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -388,12 +414,19 @@ THOUSAND SONS
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 | melee | -- | Prosperine khopesh | -- | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model can be equipped with 1 Prosperine khopesh.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Cabal of Sorcerers
 - Empyric Guidance (Psychic): While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Twisted Sorceries (Psychic): Once per battle, in your Shooting phase or the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of Psychic weapons equipped by this model by 3.
+- Twisted Sorceries (Psychic): Once per battle, in your Shooting phase or the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of Psychic weapons equipped by this model by 3.
 
 #### Unit Composition
 - 1 Sorcerer
@@ -408,8 +441,8 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -461,12 +494,20 @@ THOUSAND SONS
 | ranged | -- | Inferno combi-weapon | anti-infantry 4+ devastating wounds rapid fire 1 | 24" | 1 | 4+ | 4 | -2 | 1 |
 | melee | -- | Force weapon | psychic | Melee | 5 | 3+ | 6 | -1 | D3 |
 
+#### Wargear options
+- This model's inferno combi-bolter can be replaced with 1 inferno combi-weapon.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Cabal of Sorcerers
 - Empyric Guidance (Psychic): While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Marked by Fate (Psychic): At the start of your Shooting phase, select one enemy unit that is visible to this PSYKER model. Until the end of the phase, each time a model in this unit makes an attack that targets that enemy unit, add 1 to the Hit roll.
+- Marked by Fate (Psychic): At the start of your Shooting phase, select one enemy unit that is visible to this PSYKER model. Until the end of the phase, each time a model in this unit makes an attack that targets that enemy unit, add 1 to the Hit roll.
 
 #### Unit Composition
 - 1 Sorcerer In Terminator Armour
@@ -481,8 +522,8 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -536,13 +577,17 @@ THOUSAND SONS
 | melee | -- | Hellforged weapons - strike | devastating wounds psychic | Melee | 6 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | devastating wounds psychic | Melee | 12 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Cabal of Sorcerers
 - Servile Pawns: While this model is within 3" of one or more friendly THOUSAND SONS INFANTRY units, this model has the Lone Operative ability.
-  Spirit Snare: Each time a friendly THOUSAND SONS PSYKER model with the Cabal of Sorcerers ability is destroyed while within 9" of one or more models with this ability, select one of those models with this ability: until the end of the battle, each time the selected model attempts a Ritual, add 1 to the Psychic test result (to a maximum of +2).
-  Glamour of Tzeentch (Aura, Psychic): While a friendly THOUSAND SONS INFANTRY unit is within 6" of this model, models in that unit have the Stealth ability.
+- Spirit Snare: Each time a friendly THOUSAND SONS PSYKER model with the Cabal of Sorcerers ability is destroyed while within 9" of one or more models with this ability, select one of those models with this ability: until the end of the battle, each time the selected model attempts a Ritual, add 1 to the Psychic test result (to a maximum of +2).
+- Glamour of Tzeentch (Aura, Psychic): While a friendly THOUSAND SONS INFANTRY unit is within 6" of this model, models in that unit have the Stealth ability.
 
 #### Unit Composition
 - 1 Daemon Prince of Tzeentch
@@ -553,8 +598,8 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -592,12 +637,17 @@ THOUSAND SONS
 | melee | -- | Hellforged weapons - strike | devastating wounds psychic | Melee | 6 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | devastating wounds psychic | Melee | 12 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Cabal of Sorcerers
 - Hunter of Souls: Each time this model makes an attack that targets a CHARACTER unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1 (if that attack targets a PSYKER CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll instead). Each time this model destroys a CHARACTER unit, this model regains up to D3 lost wounds (if that CHARACTER unit was a PSYKER unit, this model regains up to 3 lost wounds instead).
-  Aetherstride (Psychic): In your Movement phase, when this model is set up on the battlefield using the Deep Strike ability, it can perform an aetherstride. If it does:
+- Aetherstride (Psychic): In your Movement phase, when this model is set up on the battlefield using the Deep Strike ability, it can perform an aetherstride. If it does:
   - It can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units.
   - Until the end of the turn, its Dark Blessing has the [SUSTAINED HITS D3] ability.
   - Until the end of the turn, it is not eligible to declare a charge.
@@ -611,8 +661,8 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -654,12 +704,22 @@ THOUSAND SONS
 | melee | -- | Baleful sword | extra attacks | Melee | 3 | 3+ | 7 | -2 | 3 |
 | melee | -- | Staff of Tzeentch | psychic | Melee | 5 | 3+ | 6 | -1 | 3 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 rod of sorcery
+  - 1 baleful sword
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+
+#### Army Rules
+- Pact of Sorcery
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike
-- FACTION: Pact of Sorcery
 - Daemon Lord of Tzeentch (Aura): While a friendly SCINTILLATING LEGIONS unit is within 6" of this model, each time a model in that unit makes a ranged attack, add 1 to the Strength characteristic of that attack.
-  Master of Magicks (Psychic): In your Shooting phase, select one of the following abilities: [IGNORES COVER]; [LETHAL HITS]; [SUSTAINED HITS D3]. Until the end of the phase, this model's Bolt of Change has that ability.
+- Master of Magicks (Psychic): In your Shooting phase, select one of the following abilities: [IGNORES COVER]; [LETHAL HITS]; [SUSTAINED HITS D3]. Until the end of the phase, this model's Bolt of Change has that ability.
 
 #### Unit Composition
 - 1 Lord of Change
@@ -702,12 +762,19 @@ SCINTILLATING LEGIONS
 | melee | -- | Force weapon | psychic | Melee | 5 | 2+ | 6 | -1 | D3 |
 | melee | -- | Prosperine khopesh | -- | Melee | 4 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model can be equipped with 1 Prosperine khopesh.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Cabal of Sorcerers
 - Illusions of Tzeentch (Psychic): While this model is leading a unit, that unit can only be selected as the target of a ranged attack if the attacking model is within 18".
-  Binding Tendrils (Psychic): In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks made with Arcane Fire. Until the start of your next turn, that unit is ensnared. While a unit is ensnared, subtract 2" from its Move characteristic and subtract 2 from Charge rolls made for it.
+- Binding Tendrils (Psychic): In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks made with Arcane Fire. Until the start of your next turn, that unit is ensnared. While a unit is ensnared, subtract 2" from its Move characteristic and subtract 2 from Charge rolls made for it.
 
 #### Unit Composition
 - 1 Exalted Sorcerer
@@ -717,15 +784,16 @@ SCINTILLATING LEGIONS
 - This model can be attached to the following units:
   - RUBRIC MARINES
   - TZAANGOR ENLIGHTENED
+  - TZAANGOR ENLIGHTENED WITH FATECASTER GREATBOWS
 
 #### Enhancements
 - Noctilith Mantle 15 pts
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Incandaeum 15 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -773,12 +841,16 @@ THOUSAND SONS
 | ranged | -- | Baleful Devolution | blast devastating wounds psychic | 18" | D6 | 3+ | 9 | 0 | 1 |
 | melee | -- | Force stave | psychic | Melee | 3 | 3+ | 5 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Cabal of Sorcerers
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Cabal of Sorcerers
 - Bestial Prophet: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll.
-  Sacrificial Blessing: While this model is leading a unit, in your Shooting phase and the Fight phase, each time that unit is selected to shoot or fight, this model can use this ability. If it does, select one Bodyguard model in that unit; that Bodyguard model is destroyed and, until the end of the phase, add D3 to the Attacks and Strength characteristics of Psychic weapons equipped by this model.
+- Sacrificial Blessing: While this model is leading a unit, in your Shooting phase and the Fight phase, each time that unit is selected to shoot or fight, this model can use this ability. If it does, select one Bodyguard model in that unit; that Bodyguard model is destroyed and, until the end of the phase, add D3 to the Attacks and Strength characteristics of Psychic weapons equipped by this model.
 
 #### Unit Composition
 - 1 Tzaangor Shaman
@@ -787,6 +859,7 @@ THOUSAND SONS
 #### Leader
 - This model can be attached to the following units:
   - TZAANGOR ENLIGHTENED
+  - TZAANGOR ENLIGHTENED WITH FATECASTER GREATBOWS
   - TZAANGOR
 
 #### Enhancements
@@ -794,8 +867,8 @@ THOUSAND SONS
 - Arcane Might 20 pts
 - Empowered Manifestation 20 pts
 - Empyric Onslaught 25 pts
-- Umbralefic Crystal 30 pts
 - Lord of Forbidden Lore 20 pts
+- Umbralefic Crystal 30 pts
 - Eldritch Vortex of E'taph 35 pts
 - Nethershriek Mind-eater 10 pts
 - Duplicitous Malediction 15 pts
@@ -845,13 +918,18 @@ THOUSAND SONS
 | melee | -- | Blue claws | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 | melee | -- | Yellow claws | -- | Melee | 2 | 5+ | 2 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+
+#### Army Rules
+- Pact of Sorcery
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators
-- FACTION: Pact of Sorcery
 - Split: Each time a BLUE HORROR model in this unit is destroyed, after the attacking unit has finished making its attacks, if this unit is not destroyed, roll one D6 for that model. On a 4+, add one BRIMSTONE HORROR model to this unit.
-  Sullen Malevolence (Aura): While an enemy unit is within 6" of this unit, if this unit contains one or more BLUE HORROR models, worsen the Leadership characteristic of models in that enemy unit by 1.
-  Exploding Horrors: Each time this unit is selected to fight, you can select one enemy unit within Engagement Range of it, then select one or more BRIMSTONE HORROR models in this unit. For each BRIMSTONE HORROR model you select, roll one D6: on a 4+, that model is destroyed and that enemy unit suffers 1 mortal wound.
+- Sullen Malevolence (Aura): While an enemy unit is within 6" of this unit, if this unit contains one or more BLUE HORROR models, worsen the Leadership characteristic of models in that enemy unit by 1.
+- Exploding Horrors: Each time this unit is selected to fight, you can select one enemy unit within Engagement Range of it, then select one or more BRIMSTONE HORROR models in this unit. For each BRIMSTONE HORROR model you select, roll one D6: on a 4+, that model is destroyed and that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
 - 10 Blue Horrors
@@ -875,7 +953,7 @@ SCINTILLATING LEGIONS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| PINK HORROR | (diameter 32mm) | 6" | 3 | 7+ | 1 | 7+ | 1 | 4+ |
+| PINK HORROR | (diameter 32mm) | 6" | 3 | 7+ | 1 | 7+ | 1 | -- |
 | BLUE HORROR/BRIMSTONE HORROR | (diameter 25mm) | 6" | 3 | 7+ | 1 | 8+ | 0 | 4+ |
 
 #### Weapons
@@ -888,13 +966,19 @@ SCINTILLATING LEGIONS
 | melee | -- | Pink claws | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Yellow claws | -- | Melee | 2 | 5+ | 2 | 0 | 1 |
 
+#### Wargear options
+- 1 Pink Horror that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Pink Horror that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Sorcery
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Sorcery
 - Split: Each time a PINK HORROR or BLUE HORROR model in this unit is destroyed, after the attacking unit has finished making its attacks, if this unit is not destroyed, roll one D6 for that model. On a 4+, if it was a PINK HORROR, add two BLUE HORROR models to this unit, and if it was a BLUE HORROR, add one BRIMSTONE HORROR model to this unit.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -925,7 +1009,7 @@ SCINTILLATING LEGIONS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Rubric Marine | (diameter 32mm) | 6" | 4 | 3+ | 2 | 7+ | 2 | 5+ |
+| Rubric Marine | (diameter 32mm) | 6" | 4 | 3+ | 2 | 7+ | 2 | -- |
 | Aspiring Sorcerer | (diameter 32mm) | 6" | 4 | 3+ | 3 | 6+ | 2 | 5+ |
 
 #### Weapons
@@ -940,12 +1024,18 @@ SCINTILLATING LEGIONS
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Force weapon | psychic | Melee | 3 | 3+ | 6 | -1 | D3 |
 
+#### Wargear options
+- The Aspiring Sorcerer's inferno bolt pistol can be replaced with 1 warpflame pistol.
+- 1 Rubric Marine's inferno boltgun can be replaced with 1 soulreaper cannon.
+- Any number of Rubric Marines can each have their inferno boltgun replaced with 1 warpflamer.
+- 1 Rubric Marine can be equipped with 1 icon of flame.
+
+#### Army Rules
+- Cabal of Sorcerers (Aspiring Sorcerer only)
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Cabal of Sorcerers (Aspiring Sorcerer only)
 - Bringers of Change: Each time a model in this unit makes a ranged attack, re-roll a Wound roll of 1. If that attack targets a unit within range of an objective marker you do not control, you can re-roll the Wound roll instead.
-
-#### Wargear Abilities
 - Icon of Flame: Ranged weapons equipped by models in the bearer's unit (excluding CHARACTERS) have the [IGNORES COVER] ability.
 
 #### Unit Composition
@@ -984,17 +1074,26 @@ THOUSAND SONS
 | ranged | -- | Inferno combi-weapon | anti-infantry 4+ devastating wounds rapid fire 1 | 24" | 1 | 4+ | 4 | -2 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 additional inferno combi-bolter
+  - 1 inferno combi-weapon
+- This model can be equipped with 1 havoc launcher or can replace 1 inferno combi-bolter with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
 - Sorcerous Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly model that disembarked from this TRANSPORT this turn makes a Psychic Attack that targets that enemy unit, add 1 to the Hit roll and add 1 to the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 12 THOUSAND SONS INFANTRY models (excluding TERMINATOR models).
 
 #### Unit Composition
 - 1 Chaos Rhino
   This model is equipped with: inferno combi-bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 THOUSAND SONS INFANTRY models (excluding TERMINATOR models).
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **80 pts**
@@ -1021,9 +1120,11 @@ THOUSAND SONS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hideous mutations | -- | Melee | D6+2 | 4+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 5+
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+
 - Regenerating Monstrosities: At the start of each player's Command phase, one model in this unit regains up to 3 lost wounds.
 
 #### Unit Composition
@@ -1057,10 +1158,14 @@ THOUSAND SONS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lamprey bite | anti-monster 4+ anti-vehicle 4+ | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Sorcery
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Sorcery
 - Slashing Dive: In your Movement phase, after this unit ends a Normal move, you can select one enemy unit it moved over during that move and roll one D6 for each model in this unit: for each 4+, that enemy unit suffers 1 mortal wound.
 
 #### Unit Composition
@@ -1093,10 +1198,14 @@ SCINTILLATING LEGIONS
 | ranged | -- | Flickering flames | ignores cover psychic torrent | 12" | D6 | N/A | 4 | -1 | 1 |
 | melee | -- | Flamer mouths | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Sorcery
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Sorcery
 - Bounding Leaps: This unit is eligible to shoot in a turn in which it Fell Back.
 
 #### Unit Composition
@@ -1122,7 +1231,7 @@ SCINTILLATING LEGIONS
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Scarab Occult Terminator | (diameter 40mm) | 5" | 5 | 2+ | 3 | 7+ | 1 | 4+ |
+| Scarab Occult Terminator | (diameter 40mm) | 5" | 5 | 2+ | 3 | 7+ | 1 | -- |
 | Scarab Occult Sorcerer | (diameter 40mm) | 5" | 5 | 2+ | 4 | 6+ | 1 | 4+ |
 
 #### Weapons
@@ -1136,10 +1245,21 @@ SCINTILLATING LEGIONS
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 | melee | -- | Prosperine khopesh | -- | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- The Scarab Occult Sorcerer's inferno combi-bolter can be replaced with 1 Prosperine khopesh.
+- For every 5 models in this unit, 1 Scarab Occult Terminator's inferno combi-bolter can be replaced with one of the following:
+  - 1 heavy warpflamer
+  - 1 soulreaper cannon
+- For every 5 models in this unit, 1 Scarab Occult Terminator can be equipped with 1 hellfyre missile rack.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Cabal of Sorcerers (Scarab Occult Sorcerer only)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Cabal of Sorcerers (Scarab Occult Sorcerer only)
 - Rites of Coalescence: While this unit contains one or more PSYKER models, each time an attack targets this unit, subtract 1 from the Wound roll.
 
 #### Unit Composition
@@ -1177,12 +1297,17 @@ THOUSAND SONS
 | melee | -- | Chainsword | -- | Melee | 3 | 4+ | 4 | 0 | 1 |
 | melee | -- | Tzaangor blades | -- | Melee | 2 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their Tzaangor blades replaced with 1 autopistol and 1 chainsword.
+- 1 Tzaangor not equipped with a herd banner can be equipped with 1 brayhorn.
+- 1 Tzaangor not equipped with a brayhorn can be equipped with 1 herd banner.
+
+#### Core Abilities
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
 - Ambushing Hunters: At the end of your opponent's turn, if this unit is more than 6" horizontally away from all enemy units, you can remove this unit from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
 - Brayhorn: You can re-roll Advance and Charge rolls made for the bearer's unit.
 - Herd Banner: While the bearer's unit is within range of one or more objective markers you control, improve the Leadership characteristic of models in the bearer's unit by 1.
 
@@ -1220,11 +1345,14 @@ THOUSAND SONS
 | melee | -- | Betentacled maw | -- | Melee | 15 | 3+ | 7 | 0 | 1 |
 | melee | -- | Mutalith claws | -- | Melee | 5 | 3+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Feel No Pain 5+
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Feel No Pain 5+
 - Mutating Vortex (Aura): At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model: on a 2-3, that unit suffers 1 mortal wound; on a 4-5, that unit suffers D3 mortal wounds; on a 6, that unit suffers D6 mortal wounds. Each enemy unit within range of this ability must then take a Battle-shock test.
-  Immaterial Flare (Aura): While a friendly THOUSAND SONS PSYKER model is within 6" of this model, each time that model Channels the Warp, add 1 to the Psychic test result. This is not cumulative with any other modifiers to the Psychic test result.
+- Immaterial Flare (Aura): While a friendly THOUSAND SONS PSYKER model is within 6" of this model, each time that model Channels the Warp, add 1 to the Psychic test result. This is not cumulative with any other modifiers to the Psychic test result.
 
 #### Unit Composition
 - 1 Mutalith Vortex Beast
@@ -1259,6 +1387,9 @@ THOUSAND SONS
 | ranged | -- | Autopistol | pistol | 12" | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Chainsword | precision | Melee | 6 | 4+ | 4 | 0 | 1 |
 | melee | -- | Divining spear | lance precision | Melee | 3 | 4+ | 5 | -1 | 2 |
+
+#### Wargear options
+- Any number of models can each have their divining spear replaced with 1 autopistol and 1 chainsword.
 
 #### Abilities
 **ABILITIES:**
@@ -1334,10 +1465,21 @@ THOUSAND SONS
 | ranged | -- | Twin inferno heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -2 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 inferno combi-bolter
+  - 1 inferno combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Assault Ramp: Each time a unit disembarks from this TRANSPORT after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 14 THOUSAND SONS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Chaos Land Raider
@@ -1345,9 +1487,6 @@ THOUSAND SONS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 THOUSAND SONS INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **220 pts**
@@ -1380,9 +1519,20 @@ THOUSAND SONS
 | ranged | -- | Predator twin lascannon | twin-linked | 48" | 1 | 3+ | 14 | -3 | D6+1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 lascannons
+  - 2 inferno heavy bolters
+- This model can be equipped with one of the following:
+  - 1 inferno combi-bolter
+  - 1 inferno combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Ensorcelled Annihilation: Each time this model makes a ranged attack that targets a MONSTER or VEHICLE unit that was hit by one or more Psychic Attacks made by a THOUSAND SONS PSYKER model from your army this phase (including the Doombolt Ritual), you can re-roll the Hit roll and you can re-roll the Damage roll.
 
 #### Unit Composition
@@ -1423,9 +1573,20 @@ THOUSAND SONS
 | ranged | -- | Predator autocannon | rapid fire 2 | 48" | 4 | 3+ | 9 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 lascannons
+  - 2 inferno heavy bolters
+- This model can be equipped with one of the following:
+  - 1 inferno combi-bolter
+  - 1 inferno combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Ensorcelled Destruction: Each time this model makes a ranged attack that targets a unit (excluding MONSTERS and VEHICLES) that was hit by one or more Psychic Attacks made by a THOUSAND SONS PSYKER model from your army this phase (including the Doombolt Ritual), improve the Strength and Armour Penetration characteristics of that attack by 1.
 
 #### Unit Composition
@@ -1464,9 +1625,17 @@ THOUSAND SONS
 | ranged | -- | Inferno combi-weapon | anti-infantry 4+ devastating wounds rapid fire 1 | 24" | 1 | 4+ | 4 | -2 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 inferno combi-bolter
+  - 1 inferno combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Siege Shield: When making ranged attacks with its demolisher cannon, this model can target enemy units within Engagement Range of it (provided no other friendly units are also within Engagement Range of that enemy unit). In addition, when making ranged attacks, this model does not suffer the penalty to its Hit rolls for being within Engagement Range of one or more enemy units.
 
 #### Unit Composition
@@ -1503,9 +1672,15 @@ THOUSAND SONS
 | ranged | -- | Hades autocannon | -- | 36" | 6 | 3+ | 8 | -2 | 2 |
 | melee | -- | Heldrake claws | anti-fly 2+ devastating wounds | Melee | 5 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's Hades autocannon can be replaced with 1 baleflamer.
+
+#### Core Abilities
+- Deadly Demise D3
+- Hover
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Hover
 - Flame-wreathed: Each time this model ends a Normal move, select one enemy unit it moved over during that move. Until the end of the turn, models in that unit cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -1550,11 +1725,25 @@ THOUSAND SONS
 | melee | -- | Shearing claws - strike | -- | Melee | 5 | 3+ | 16 | -3 | D6+1 |
 | melee | -- | Shearing claws - sweep | -- | Melee | 10 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- This model's Hades battle cannon can be replaced with 1 ectoplasma destructor.
+- This model's excruciator cannons can be replaced with 2 pyraflux magma cutters
+- This model's heavy baleflamer can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+- This model's heavy missile launcher can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+
+#### Core Abilities
+- Deadly Demise D6
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
 - Scuttling Walker: Each time this unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.
-  Destroyer of Futures (Once per phase, per unit): You can target this unit with the Counter-offensive stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Destroyer of Futures (Once per phase, per unit): You can target this unit with the Counter-offensive stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is 1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -1595,9 +1784,15 @@ THOUSAND SONS
 | melee | -- | Forgefiend claws | -- | Melee | 3 | 3+ | 6 | 0 | 1 |
 | melee | -- | Forgefiend jaws | -- | Melee | 5 | 3+ | 7 | 0 | 2 |
 
+#### Wargear options
+- This model's 2 Hades autocannons can be replaced with 2 ectoplasma cannons.
+- This model's Forgefiend jaws can be replaced with 1 ectoplasma cannon and 1 Forgefiend claws.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Blazing Salvoes: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -1645,11 +1840,28 @@ THOUSAND SONS
 | melee | -- | Helbrute hammer | -- | Melee | 5 | 4+ | 14 | -3 | D6+1 |
 | melee | -- | Power scourge | -- | Melee | 8 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's multi-melta can be replaced with one of the following:
+  - 1 Helbrute plasma cannon
+  - 1 twin autocannon
+  - 1 twin inferno heavy bolter
+  - 1 twin lascannon
+  - 1 Helbrute fist
+- This model's missile launcher can be replaced with one of the following:
+  - 1 Helbrute fist
+  - 1 Helbrute hammer
+  - 1 power scourge
+- For each Helbrute fist this model is equipped with, it can be equipped with one of the following:
+  - 1 inferno combi-bolter
+  - 1 heavy flamer
+
+#### Core Abilities
+- Deadly Demise 1
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
 - Terrifying Assault: In your Shooting phase and the Fight phase, after this model has shot or fought, select one enemy unit hit by one or more of those attacks. That unit must take a Battle-shock test, subtracting 1 from that test if it is within 9" of one or more THOUSAND SONS PSYKER units from your army.
-  Devoted to Destruction: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
+- Devoted to Destruction: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
 
 #### Unit Composition
 - 1 Helbrute
@@ -1681,9 +1893,14 @@ THOUSAND SONS
 | melee | -- | Lasher tendrils | extra attacks | Melee | 6 | 3+ | 7 | -1 | 1 |
 | melee | -- | Maulerfiend fists | -- | Melee | 6 | 3+ | 14 | -2 | D6+1 |
 
+#### Wargear options
+- This model's lasher tendrils can be replaced with 2 magma cutters.
+
+#### Core Abilities
+- Deadly Demise D3
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
 - Snarling Protector: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
@@ -1728,9 +1945,15 @@ THOUSAND SONS
 | melee | -- | Close combat weapon | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 | melee | -- | Power claw | -- | Melee | 3 | 4+ | 10 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their pyreflux meltagun replaced with 1 warpflame projector and 1 power claw.
+
+#### Core Abilities
+- Infiltrators
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Stealth
 - Prophetic Sentinels: Once per turn, when you target this unit with the Fire Overwatch/Heroic Intervention stratagem, that use is -1 CP.
 
 #### Unit Composition
@@ -1751,6 +1974,8 @@ THOUSAND SONS
 ## Detachments
 
 ### Grand Coven (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Kindred Sorcery
 - In your Command phase, you can select one of the abilities listed below to take effect until the start of your next Command phase. You can only select each of these abilities once per battle.
   Imbued Manifestation
@@ -1767,6 +1992,9 @@ THOUSAND SONS
 - EXALTED SORCERER model only. Once per battle, when selecting a Ritual for the bearer to attempt, you can select Doombolt, even if a model from your army have already attempted to manifest that Ritual this phase.
 - Umbralefic Crystal 30 pts
 - THOUSAND SONS model only. (Once per battle, per army) In your Command phase, if this unit is unengaged, you can use this ability. If you do:
+  - Place this unit in strategic reserves.
+  - This unit has Deep Strike until the start of your next Shooting phase.
+  - This unit must make an ingress move in your next Movement phase (including in your first turn).
 - Eldritch Vortex of E'taph 35 pts
 - THOUSAND SONS model only. Add 1 to the Strength and Damage characteristics of Psychic weapons equipped by the bearer.
 
@@ -1809,6 +2037,8 @@ THOUSAND SONS
   EFFECT: Until the end of the phase, add 9" to the Range characteristic of Psychic weapons equipped by models in your unit, and each time a model in your unit makes an attack with a Psychic weapon, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
 ### Changehost of Deceit (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Infernal Pacts
 - SCINTILLATING LEGIONS units from your army have the following the ability:
   Daemonic Illusions (Aura): While a friendly THOUSAND SONS PSYKER unit is within 6" of and visible to this unit, models in that unit have a 4+ invulnerable save against ranged attacks.
@@ -1870,6 +2100,8 @@ THOUSAND SONS
   EFFECT: Remove those units from the battlefield and place them into Strategic Reserves.
 
 ### Warpmeld Pact (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Warpmeld Sacrifice
 - Each time an enemy unit is selected to shoot or fight and one or more TZEENTCH MUTANT INFANTRY or TZEENTCH MUTANT MOUNTED units from your army are selected as a target of one or more of those attacks, each of those TZEENTCH MUTANT units can make a Warpmeld Sacrifice. If it does, until the end of the phase, each time an attack targets that unit, subtract 1 from the Wound roll. At the end of the phase, that TZEENTCH MUTANT unit suffers D3 mortal wounds.
   Each time a TZEENTCH MUTANT INFANTRY or TZEENTCH MUTANT MOUNTED unit from your army is selected to shoot or fight, before selecting its targets, that unit can make a Warpmeld Sacrifice. If it does, until the end of the phase, each time a model in that unit makes an attack, add 1 to the Wound roll. At the end of the phase, that TZEENTCH MUTANT unit suffers D3 mortal wounds.
@@ -1882,7 +2114,8 @@ THOUSAND SONS
 - Diamond of Distortion 20 pts
 - TZAANGOR SHAMAN model only. While the bearer is leading a unit, each time an attack targets that unit, subtract 1 from the Hit roll.
 - Bray Lord 15 pts
-- SORCERER or INFERNAL MASTER model only. The bearer has the Scouts 6" ability.
+- LEADER: TZAANGORS
+  SORCERER or INFERNAL MASTER model only. The bearer has the Scouts 6" ability.
 - Flowing Flesh 10 pts
 - TZAANGOR SHAMAN model only. The bearer has the Feel No Pain 4+ ability and a Wounds characteristic of 5.
 
@@ -1926,6 +2159,8 @@ THOUSAND SONS
   EFFECT: Your unit can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units, or anywhere on the battlefield that is more than 8" horizontally away from all enemy units if it is a MONSTER unit. In either case, until the end of the turn, it is not eligible to declare a charge.
 
 ### Rubricae Phalanx (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- All is Dust
 - Each time an attack with an unmodified Damage characteristic of 1 is allocated to a RUBRICAE model from your army, add 1 to any armour saving throw made against that attack.
 
@@ -1978,6 +2213,8 @@ THOUSAND SONS
   EFFECT: Until the end of the turn, each time an attack targets your unit, subtract 1 from the Wound roll.
 
 ### Warpforged Cabal (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Warpfire Infusion
 - Each time a THOUSAND SONS VEHICLE unit from your army is selected to shoot or fight, apply one of the following when resolving those attacks:
   - If that VEHICLE unit is within 6" of one or more friendly THOUSAND SONS PSYKER models, you can re-roll one Hit roll, one Wound roll and one Damage roll.
@@ -2033,12 +2270,15 @@ THOUSAND SONS
   EFFECT: Roll six D6: for each 5+, that enemy unit suffers 1 mortal wound. That enemy unit must then take a Battle-shock test.
 
 ### Ritual of Regeneration (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Sorcerous Invigoration
 - (Once per turn, per unit) When a friendly THOUSAND SONS PSYKER unit (excluding MONSTER units) successfully manifests a Ritual, that unit heals D3 wounds.
 
 #### Enhancements
 - Eruption of Vitality 35 pts
 - INFANTRY/MOUNTED THOUSAND SONS PSYKER model only. (Once per battle, per army) When this model is destroyed, at the end of the phase, roll one D6:
+  - On a 2+, set up this model on the battlefield, unengaged and as close as possible to where it was destroyed. This model is not part of an attached unit and its unit has a starting strength of 1. This model has 3 wounds remaining.
 - Curse of Life 20 pts
 - INFANTRY/MOUNTED THOUSAND SONS PSYKER model only. When this model heals as a result of the Sorcerous Invigoration detachment rule, you can add 3 to the number of wounds healed.
 
@@ -2064,6 +2304,8 @@ THOUSAND SONS
   EFFECT: That move does not prevent your unit from being eligible to start an action.
 
 ### Sekhetar Cohort (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Ensorcelled Animus
 - Friendly SEKHETAR ROBOTS units' attacks have [PSYCHIC].
   - Friendly THOUSAND SONS PSYKER units have the following ability:
@@ -2072,6 +2314,8 @@ THOUSAND SONS
 #### Enhancements
 - Walking Rampart 30 pts
 - SORCERER/EXALTED SORCERER model only. This model has the following abilities:
+  - Soul Bound: In your Movement phase, at the start or end of this unit's move, you can select one friendly SEKHETAR ROBOTS unit within 3" of this model. That SEKHETAR ROBOTS unit heals D3+1 wounds.
+  - Kine-shielded Guardians: While this model is within 3" of a friendly SEKHETAR ROBOTS unit, this model has Lone Operative
 - Occulus Infernum 20 pts
 - SORCERER/EXALTED SORCERER model only. In your Movement phase, at the start or end of this unit's move, you can select one friendly SEKHETAR ROBOTS unit within 6" of this unit. That unit's ranged attacks have +1 BS until the start of your next turn.
 
@@ -2096,6 +2340,8 @@ THOUSAND SONS
   EFFECT: Ranged attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.
 
 ### Servants of Change (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- All-Seeing Mutant Hordes
 - Friendly TZAANGORS units have BATTLELINE.
   - In your Shooting phase, while a friendly MUTANT unit is shooting, enemy units have +6" detection range.
@@ -2106,6 +2352,8 @@ THOUSAND SONS
 - TZAANGOR SHAMAN model only. In your Movement phase, at the start or end of this unit's move, you can select one friendly battle-shocked MUTANT unit within 6" of this model. That unit is no longer battle-shocked.
 - Thicket of Bladed BoneUPGRADE 10 pts
 - SPAWN unit only. This unit's melee attacks have:
+  - +1 AP.
+  - [CLEAVE 1].
 
 #### Stratagems
 - PRISMATIC DISPLACEMENT
@@ -2130,6 +2378,8 @@ THOUSAND SONS
   EFFECT: Your unit has MOBILE.
 
 ### Hexwarp Thrallband (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Flow of Magic
 - Certain areas of the battlefield are within your army's Flow of Magic, as follows:
   - Your deployment zone is always within your army's Flow of Magic.

@@ -1,0 +1,1853 @@
+{
+  "factionId": "leagues-of-votann",
+  "rules": [
+    {
+      "id": "leagues-of-votann.army-rule.prioritised-efficiency",
+      "name": "Prioritised Efficiency",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is LEAGUES OF VOTANN, LEAGUES OF VOTANN units from your army have one of two abilities: Hostile Acquisition or Fortify Takeover (see below). During the battle, which ability those LEAGUES OF VOTANN units have will change depending on how many Yield points (YP) you currently have: At the start of the battle, your units have Hostile Acquisition until the start of your next Command phase. At the end of your Command phase, if you have fewer than 7YP, your units have Hostile Acquisition until the start of your next Command phase. At the end of your Command phase, if you have 7YP or more, your units have Fortify Takeover until the start of your next Command phase. Hostile Acquisition Each time a model in this unit makes an attack that targets an enemy unit within range of one or more objective markers, add 1 to the Hit roll. You can re-roll Advance and Charge rolls made for this unit. Fortify Takeover Each time a model in this unit makes an attack that targets an enemy unit, if this unit is within range of one or more objective markers you control, add 1 to the Hit roll. Each time an attack targets this unit, if the Strength characteristic of that attack is greater than this unit's Toughness characteristic and this unit is not a VEHICLE, subtract 1 from the Wound roll. Yield Points At the end of each player's Command phase, you gain 1YP if you control one or more objective markers within your deployment zone, and, from the second battle round onwards, you gain 1 additional YP for each of the following conditions you satisfy: You control one or more objective markers not within your deployment zone. You control two or more objective markers not within your deployment zone. You control more objective markers than your opponent. In your turn, YP gained in this way are always gained before checking which ability LEAGUES OF VOTANN units from your army have. Whenever a rule allows you to spend YP, reduce the number of YP you have by that amount (your YP cannot go below 0), otherwise you cannot use that rule. Designer's Note: This means you can use rules that let you gain or spend YP to influence which ability your units have - Hostile Acquisition or Fortify Takeover - depending on which will be most beneficial to you. Remember that your army only changes ability at the end of your Command phase, so you will - sometimes need to plan ahead if you want your army to stay in or change ability. Example: In her third turn, Freida's units had the Hostile Acquisition ability, as she had 6YP at the end of her Command phase. In her fourth turn, at the end of her Command phase, she controls one objective marker within her deployment zone, and one objective marker not within her deployment zone, and her opponent controls two objective markers. Freida gains 2YP, so she now has 8YP, and her units now have the Fortify Takeover ability instead. During her turn, Freida uses a Stratagem that allows her to spend YP. She spends 2YP, bringing her total down to 6YP. However, units from her army still have Fortify Takeover - it will only change if, at the end of her next Command phase, she still has fewer than 7YP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Prioritised Efficiency",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Prioritised Efficiency"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband",
+      "name": "Needgaard Oathband - Martial Leverage",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Each time an enemy unit is destroyed, you gain 1YP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.enhancement.oathbound-speculator",
+      "name": "Oathbound Speculator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "30 pts. LEAGUES OF VOTANN model only. Each time a model in the bearer's unit makes an attack, re-roll a Wound roll of 1. Each time the bearer's unit is selected to shoot or fight, you can spend 3YP. If you do, until the end of the phase, each time a model in the bearer's unit makes an attack, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.enhancement.dead-reckoning",
+      "name": "Dead Reckoning",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "10 pts. LEAGUES OF VOTANN model only. At the end of the turn, if the bearer is on the battlefield and you spent no YP in that turn, you can gain 1YP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.enhancement.iron-ambassador",
+      "name": "Iron Ambassador",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "5 pts. LEAGUES OF VOTANN model equipped with an Autoch-pattern combi-bolter only. Once per battle, when the bearer's unit is selected to shoot, the bearer can use this Enhancement. If it does, spend up to 3YP and, until the end of the phase, add the number of YP you just spent to the Damage characteristic of the bearer's ranged weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.enhancement.ancestral-crest",
+      "name": "Ancestral Crest",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "15 pts. LEAGUES OF VOTANN model only. Once per turn, when you target the bearer's unit with the Command Re-roll Stratagem, the bearer can use this Enhancement. If it does, spend 1YP and reduce the CP cost of that use of that Stratagem by 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.stratagem.void-hardened",
+      "name": "VOID HARDENED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "1CP. Needgaard Oathband - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets, if units from your army have Fortify Takeover. TARGET: One LEAGUES OF VOTANN unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband - VOID HARDENED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband - VOID HARDENED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.stratagem.honour-of-the-hold",
+      "name": "HONOUR OF THE HOLD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "1CP. Needgaard Oathband - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to fight this phase. EFFECT: Each time you use this Stratagem, you can spend 3YP. Select one enemy unit within Engagement Range of your unit. Until the end of the phase, each time a model in your unit makes a melee attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. If you spent YP during this use of this Stratagem, improve the Armour Penetration characteristic of that attack by 2 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband - HONOUR OF THE HOLD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband - HONOUR OF THE HOLD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.stratagem.ordered-retreat",
+      "name": "ORDERED RETREAT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "1CP. Needgaard Oathband - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a LEAGUES OF VOTANN unit from your army Falls Back. TARGET: That LEAGUES OF VOTANN unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband - ORDERED RETREAT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband - ORDERED RETREAT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.stratagem.ancestral-sentence",
+      "name": "ANCESTRAL SENTENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "1CP. Needgaard Oathband - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to shoot this phase. EFFECT: Each time you use this Stratagem, you can spend 3YP. Until the end of the phase, ranged weapons equipped by models in your unit have the [SUSTAINED HITS 1] ability. If you spent YP during this use of this Stratagem, until the end of the phase, those weapons have the [SUSTAINED HITS 2] ability instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband - ANCESTRAL SENTENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband - ANCESTRAL SENTENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.stratagem.huntrs-mark",
+      "name": "HUNTR'S MARK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "1CP. Needgaard Oathband - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband - HUNTR'S MARK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband - HUNTR'S MARK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.needgaard-oathband.stratagem.reactive-reprisal",
+      "name": "REACTIVE REPRISAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.needgaard-oathband",
+      "description": "2CP. Needgaard Oathband - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot, if units from your army have Fortify Takeover. TARGET: One LEAGUES OF VOTANN unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Your unit can shoot as if it were your Shooting phase, can only target that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Needgaard Oathband - REACTIVE REPRISAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Needgaard Oathband - REACTIVE REPRISAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect",
+      "name": "Persecution Prospect - Assailed From Every Angle",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "LEAGUES OF VOTANN units from your army have the following ability: Guerrilla Adepts: In your Shooting phase, just after this unit is selected to shoot, this unit can use this ability. If it does, select one enemy unit (excluding MONSTERS and VEHICLES). Until the end of the phase, attacks made by models in this unit can only target that enemy unit (and only if it is an eligible target) and, after resolving those attacks, if one or more of those attacks hit that enemy unit, until the start of your next Shooting phase, that enemy unit is assailed (this simply labels that unit for the purposes of this ability and some Enhancements and Stratagems). If that unit is already assailed, until the start of your next Shooting phase, it is also pinned. While a unit is pinned, subtract 2\" from its Move characteristic and subtract 2 from Charge rolls made for it.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.enhancement.eye-for-weakness",
+      "name": "Eye for Weakness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "25 pts. LEAGUES OF VOTANN model only. Each time a model in the bearer's unit makes an attack that targets an assailed unit, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.enhancement.writ-of-acquisition",
+      "name": "Writ of Acquisition",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "10 pts. LEAGUES OF VOTANN model only. In your Shooting phase, after the bearer's unit has shot, you gain 1YP for each assailed enemy unit hit by one or more of those attacks (to a maximum of 3YP).",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.enhancement.surgical-saboteur",
+      "name": "Surgical Saboteur",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "10 pts. LEAGUES OF VOTANN model only. In your Shooting phase, after the bearer's unit has shot, select one MONSTER or VEHICLE unit hit by one or more of those attacks; until the start of your next Shooting phase, that unit is pinned.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.enhancement.nomad-strategist",
+      "name": "Nomad Strategist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "20 pts. LEAGUES OF VOTANN model only. Once per battle, at the end of your opponent's Fight phase, if the bearer is on the battlefield, it can use this Enhancement. If it does, you can spend up to 4YP. Select one HERNKYN unit from your army, and, for every 2YP you just spent, select up to one additional HERNKYN unit from your army. You can remove those units from the battlefield and place them into Strategic Reserves. You cannot select a unit that is within Engagement Range of one or more enemy units (excluding assailed units).",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.stratagem.adaptable-avarice",
+      "name": "ADAPTABLE AVARICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "1CP. Persecution Prospect - Strategic Ploy Stratagem. WHEN: Start of any phase, if units from your army have Fortify Takeover. TARGET: One LEAGUES OF VOTANN CHARACTER unit from your army. EFFECT: Each time you use this Stratagem, you can spend any number of YP. Once you have done so, if you have 6 or fewer YP, until the start of your next turn, units from your army have Hostile Acquisition instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect - ADAPTABLE AVARICE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect - ADAPTABLE AVARICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.stratagem.frontier-momentum",
+      "name": "FRONTIER MOMENTUM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "1CP. Persecution Prospect - Battle Tactic Stratagem. WHEN: Your Movement phase. TARGET: One HERNKYN unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, if your unit Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6\" to the Move characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect - FRONTIER MOMENTUM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect - FRONTIER MOMENTUM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.stratagem.exposed-flaws",
+      "name": "EXPOSED FLAWS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "1CP. Persecution Prospect - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One HERNKYN unit from your army that has not been selected to shoot this phase. EFFECT: Each time you use this Stratagem, you can spend 2YP. Until the end of the phase, each time a model in your unit makes an attack, if you spent YP during this use of this Stratagem and/or if that attack targets an assailed unit, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect - EXPOSED FLAWS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect - EXPOSED FLAWS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.stratagem.ranger-tactics",
+      "name": "RANGER TACTICS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "1CP. Persecution Prospect - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, if that attack targets an assailed unit and/or if your unit has the HERNKYN keyword, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect - RANGER TACTICS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect - RANGER TACTICS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.stratagem.claimstaker-reflex",
+      "name": "CLAIMSTAKER REFLEX",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "1CP. Persecution Prospect - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One LEAGUES OF VOTANN unit from your army (excluding ARTILLERY and VEHICLE units) that is within 8\" of that enemy unit. EFFECT: Each time you use this Stratagem, you can spend 2YP. Your unit can make a Normal move of up to D6\". If you spent YP during this use of this Stratagem, your unit can make a Normal move of up to 6\" instead. RESTRICTIONS: A unit cannot embark within a TRANSPORT as part of this move.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect - CLAIMSTAKER REFLEX",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect - CLAIMSTAKER REFLEX"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.persecution-prospect.stratagem.dispersed-formation",
+      "name": "DISPERSED FORMATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.persecution-prospect",
+      "description": "1CP. Persecution Prospect - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One LEAGUES OF VOTANN INFANTRY or LEAGUES OF VOTANN MOUNTED unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit has the Stealth ability and each time a ranged attack targets your unit, models in your unit have the Benefit of Cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Persecution Prospect - DISPERSED FORMATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Persecution Prospect - DISPERSED FORMATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift",
+      "name": "Delve Assault Shift - Fury From The Delve",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "CTHONIAN BESERKS units from your army have the Deep Strike ability. KEYWORDS CTHONIAN BESERKS units from your army gain the BATTLELINE keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.enhancement.delvwerke-navigator",
+      "name": "Delvwerke Navigator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "25 pts. LEAGUES OF VOTANN model only. In the Reinforcements step of your Movement phase, the bearer can use this Enhancement. If it does, select one friendly CTHONIAN BESERKS unit visible to the bearer and then spend any number of YP. Return one destroyed model (excluding CHARACTER models) to that unit and then, for every 2YP you just spent, return up to one additional destroyed model (excluding CHARACTER models) to that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.enhancement.multiwave-system-jammer",
+      "name": "Multiwave System Jammer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "10 pts. LEAGUES OF VOTANN model only. Once per battle, in your Movement phase, if the bearer is on the battlefield, it can use this Enhancement. If it does, select one friendly CTHONIAN unit that is in Reserves. Until the end of the phase, for the purposes of setting up that unit on the battlefield, treat the current battle round number as being one higher than it actually is.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.enhancement.quake-supervisor",
+      "name": "Quake Supervisor",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "20 pts. LEAGUES OF VOTANN model only. While the bearer is within 3\" of one or more friendly LEAGUES OF VOTANN ARTILLERY units, the bearer has the Lone Operative ability, and each time one of those ARTILLERY units makes a ranged attack that targets an enemy unit visible to the bearer, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.enhancement.piledriver",
+      "name": "Piledriver",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "15 pts. LEAGUES OF VOTANN model only. Each time the bearer's unit is selected to fight, the bearer can use this Enhancement. If it does, spend up to 2YP and, until the end of the phase, add the number of YP you just spent to the Damage characteristic of the bearer's melee weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.stratagem.cyberstimm-infusion",
+      "name": "CYBERSTIMM INFUSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "1CP. Delve Assault Shift - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One CTHONIAN BESERKS unit from your army that has not been selected to fight this phase. EFFECT: Each time you use this Stratagem, you can spend 2YP. Until the end of the phase, each time a model in your unit makes an attack, re-roll a Wound roll of 1. If you spent YP during this use of this Stratagem, you can re-roll the Wound roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift - CYBERSTIMM INFUSION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift - CYBERSTIMM INFUSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.stratagem.unstoppable-force",
+      "name": "UNSTOPPABLE FORCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "1CP. Delve Assault Shift - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time your unit Piles In or Consolidates, each model in that unit can move up to 6\" instead of up to 3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift - UNSTOPPABLE FORCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift - UNSTOPPABLE FORCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.stratagem.augmented-assault",
+      "name": "AUGMENTED ASSAULT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "1CP. Delve Assault Shift - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One CTHONIAN BESERKS unit from your army that has not been selected to move this phase. EFFECT: Each time you use this Stratagem, you can spend up to 2YP. Until the end of the turn, add X\" to the Move characteristic of models in your unit, where X is the number of YP you spent during this use of this Stratagem, and your unit is eligible to declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift - AUGMENTED ASSAULT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift - AUGMENTED ASSAULT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.stratagem.tectonic-fracture",
+      "name": "TECTONIC FRACTURE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "1CP. Delve Assault Shift - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after a CTHONIAN EARTHSHAKERS unit from your army has shot. TARGET: That CTHONIAN EARTHSHAKERS unit. EFFECT: Each time you use this Stratagem, you can spend 2YP. Select one enemy unit hit by one or more of your unit's attacks this phase. Until the start of your next Shooting phase, subtract 2 from that unit's Move characteristic and, if you spent YP during this use of this Stratagem, subtract 2 from Charge rolls made for that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift - TECTONIC FRACTURE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift - TECTONIC FRACTURE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.stratagem.weavewerke-buttress",
+      "name": "WEAVEWERKE BUTTRESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "1CP. Delve Assault Shift - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets, if units from your army have Hostile Acquisition. TARGET: One LEAGUES OF VOTANN INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift - WEAVEWERKE BUTTRESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift - WEAVEWERKE BUTTRESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.delve-assault-shift.stratagem.hidden-accessways",
+      "name": "HIDDEN ACCESSWAYS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.delve-assault-shift",
+      "description": "1CP. Delve Assault Shift - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One CTHONIAN BESERKS, HEARTHKYN WARRIORS or HERNKYN YAEGIRS unit from your army that is not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Delve Assault Shift - HIDDEN ACCESSWAYS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Delve Assault Shift - HIDDEN ACCESSWAYS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband",
+      "name": "Brandfast Oathband - Mobile Sensor Relays",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "LEAGUES OF VOTANN TRANSPORT units from your army have the following ability: Firebase Control (Aura): While a friendly LEAGUES OF VOTANN INFANTRY unit is wholly within 6\" of this TRANSPORT, ranged weapons equipped by models in that INFANTRY unit have the [sustained hits 1] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.enhancement.tactical-alchemy",
+      "name": "Tactical Alchemy",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "10 pts. KAHL model only. In your Command phase, if the bearer's unit is within range of one or more objective markers you control that are not within your deployment zone, you can spend 1YP. If you do, roll one D6: on a 4+, you gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.enhancement.trivarg-cyber-implant",
+      "name": "Trivarg Cyber Implant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "40 pts. LEAGUES OF VOTANN model only. In your Shooting phase, each time the bearer's unit is selected to shoot, if it disembarked from a TRANSPORT this turn, or if you spend 2YP, until the end of the phase, ranged weapons equipped by models in that unit have the [sustained HITS 2] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.enhancement.precursive-judgement",
+      "name": "Precursive Judgement",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "15 pts. KAHL model only. While the bearer's unit is wholly within 6\" of one or more friendly LEAGUES OF VOTANN TRANSPORT units, you can target the bearer's unit with the Fire Overwatch Stratagem for 0CP and hits are scored on unmodified Hit rolls of 5+ while resolving that Stratagem.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.enhancement.signature-restoration",
+      "name": "Signature Restoration",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "5 pts. IRON-MASTER model only. Each time a friendly LEAGUES OF VOTANN model is repaired using the bearer's Forgewrought Expertise ability, that model regains 1 additional lost wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.stratagem.secure-positions",
+      "name": "SECURE POSITIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "1CP. Brandfast Oathband - Strategic Ploy Stratagem. WHEN: End of any of your phases. TARGET: One LEAGUES OF VOTANN TRANSPORT unit from your army. EFFECT: One LEAGUES OF VOTANN unit embarked within your TRANSPORT can disembark. When doing so, models in that unit can be set up anywhere on the battlefield wholly within 6\" of your TRANSPORT. That unit cannot declare a charge in the same turn, but can otherwise act normally in the remainder of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband - SECURE POSITIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband - SECURE POSITIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.stratagem.bastion-running",
+      "name": "BASTION RUNNING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "1CP. Brandfast Oathband - Battle Tactic Stratagem. WHEN: Your Movement phase. TARGET: One HEKATON LAND FORTRESS unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, each time your unit makes a Normal or Advance move, it can move horizontally through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband - BASTION RUNNING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband - BASTION RUNNING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.stratagem.illuminated-priority",
+      "name": "ILLUMINATED PRIORITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "1CP. Brandfast Oathband - Wargear Stratagem. WHEN: Your Shooting phase, just after a LEAGUES OF VOTANN VEHICLE unit from your army has shot. TARGET: That LEAGUES OF VOTANN VEHICLE unit. EFFECT: Select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a LEAGUES OF VOTANN INFANTRY model from your army makes an attack that targets that enemy unit, re-roll a Hit roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband - ILLUMINATED PRIORITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband - ILLUMINATED PRIORITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.stratagem.inexorable-efficiency",
+      "name": "INEXORABLE EFFICIENCY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "1CP. Brandfast Oathband - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One LEAGUES OF VOTANN unit from your army. EFFECT: Until the end of the phase, your unit is eligible to shoot in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband - INEXORABLE EFFICIENCY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband - INEXORABLE EFFICIENCY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.stratagem.opportunistic-escalation",
+      "name": "OPPORTUNISTIC ESCALATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "1CP. Brandfast Oathband - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot, if units from your army have Hostile Acquisition. TARGET: One LEAGUES OF VOTANN VEHICLE unit from your army (excluding HEKATON LAND FORTRESS units) that was hit by one or more of those attacks. EFFECT: Your unit can make a Normal move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband - OPPORTUNISTIC ESCALATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband - OPPORTUNISTIC ESCALATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.brandfast-oathband.stratagem.vengeance-flare",
+      "name": "VENGEANCE FLARE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.brandfast-oathband",
+      "description": "2CP. Brandfast Oathband - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One LEAGUES OF VOTANN INFANTRY unit that was hit by one or more of those attacks. EFFECT: Each time you use this Stratagem, you can spend 2YP. Select one friendly KAPRICUS or SAGITAUR unit within 6\" of your INFANTRY unit. If you spent YP during this use of this Stratagem, you can select one friendly HEKATON LAND FORTRESS unit within 6\" of your INFANTRY unit instead. The selected unit can shoot as if it were your Shooting phase. When doing so, models in the selected unit can only target that enemy unit (and only if it is an eligible target).",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Brandfast Oathband - VENGEANCE FLARE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Brandfast Oathband - VENGEANCE FLARE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "name": "Hearthfyre Arsenal - Optimal Application",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "At the end of your Command phase, you gain 1YP for each objective marker you control that is not within your deployment zone and has one or more IRON-MASTER and/or MEMNYR STRATEGIST models from your army within range of it (to a maximum of 2YP gained from this Detachment rule per turn). In your Shooting phase, each time a BROKHYR, IRONKIN STEELJACKS or ARKANYST EVALUATOR unit from your army is selected to shoot, you can spend 1YP. If you do, until the end of the phase, each time a model in that unit makes an attack, re-roll a Hit roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.enhancement.farstrydr-node",
+      "name": "Farstrydr Node",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "20 pts. IRON-MASTER or MEMNYR STRATEGIST model only. Models in the bearer's unit have the Deep Strike ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.enhancement.calculated-tenacity",
+      "name": "Calculated Tenacity",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "15 pts. IRON-MASTER or MEMNYR STRATEGIST model only. While the bearer is leading a unit, add 1 to the Objective Control characteristic of models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.enhancement.mantle-of-elders",
+      "name": "Mantle of Elders",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "10 pts. MEMNYR STRATEGIST model only. Each time the bearer's unit is selected to shoot, if you spend YP using the Optimal Application Detachment rule when doing so, you can roll one D6: on a 2+, you gain 1YP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.enhancement.graviton-vault",
+      "name": "Graviton Vault",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "5 pts. IRON-MASTER model only. In your Shooting phase, after the bearer has shot, and in the Fight phase, after the bearer has fought, select one enemy MONSTER or VEHICLE unit hit by one or more of those attacks. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.stratagem.unwavering-accuracy",
+      "name": "UNWAVERING ACCURACY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "2CP. Hearthfyre Arsenal - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One BROKHYR THUNDERKYN unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can ignore any or all modifiers to the following: that attack's Ballistic Skill characteristic; the Hit roll; the Wound roll; that attack's Armour Penetration characteristic.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal - UNWAVERING ACCURACY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal - UNWAVERING ACCURACY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.stratagem.first-concern",
+      "name": "FIRST CONCERN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "1CP. Hearthfyre Arsenal - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after a BROKHYR, IRONKIN STEELJACKS or ARKANYST EVALUATOR unit from your army has shot. TARGET: That BROKHYR, IRONKIN STEELJACKS or ARKANYST EVALUATOR unit. EFFECT: If your unit Remained Stationary in your Movement phase this turn, it can make a Normal move.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal - FIRST CONCERN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal - FIRST CONCERN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.stratagem.delayed-fire-rounds",
+      "name": "DELAYED-FIRE ROUNDS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "1CP. Hearthfyre Arsenal - Wargear Stratagem. WHEN: Your Shooting phase, just after a BROKHYR, IRONKIN STEELJACKS or ARKANYST EVALUATOR unit from your army has shot. TARGET: That BROKHYR, IRONKIN STEELJACKS or ARKANYST EVALUATOR unit. EFFECT: Select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next Shooting phase, each time that enemy unit makes a Normal, Advance or Fall Back move, roll one D6 for each model in that unit: for each 1, that unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal - DELAYED-FIRE ROUNDS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal - DELAYED-FIRE ROUNDS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.stratagem.wall-of-steel",
+      "name": "WALL OF STEEL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "1CP. Hearthfyre Arsenal - Battle Tactic Stratagem. WHEN: Your Charge phase, just after an IRONKIN STEELJACKS unit from your army ends a Charge move. TARGET: That IRONKIN STEELJACKS unit. EFFECT: Each time you use this Stratagem, you can spend 2YP. Select one enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of your unit and roll one D6 for each model in your unit, rolling two additional D6 if you spent YP during this use of this Stratagem: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal - WALL OF STEEL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal - WALL OF STEEL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.stratagem.preventative-purge",
+      "name": "PREVENTATIVE PURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "1CP. Hearthfyre Arsenal - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Fall Back move. TARGET: One BROKHYR THUNDERKYN or IRONKIN STEELJACKS unit from your army. EFFECT: Your unit can shoot as if it were your Shooting phase. When doing so, models in your unit can only target that enemy unit (and only if it is an eligible target) and each time a model in your unit makes an attack, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal - PREVENTATIVE PURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal - PREVENTATIVE PURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthfyre-arsenal.stratagem.cogitated-need",
+      "name": "COGITATED NEED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthfyre-arsenal",
+      "description": "1CP. Hearthfyre Arsenal - Strategic Ploy Stratagem. WHEN: End of your opponent's Movement phase. TARGET: One IRONKIN STEELJACKS unit from your army. EFFECT: Your unit can make a Normal move. When doing so, your unit must end that move as close as possible to the closest objective marker.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthfyre Arsenal - COGITATED NEED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthfyre Arsenal - COGITATED NEED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband",
+      "name": "Hearthband - Methodical Annihilation",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Each time a LEAGUES OF VOTANN model from your army makes an attack with a weapon that targets the closest eligible target or a target that is within Engagement Range of that model's unit: Re-roll a Wound roll of 1. If your unit is a KAHL, EINHYR HEARTHGUARD or UTHAR THE DESTINED unit, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.enhancement.bastion-shield",
+      "name": "Bastion Shield",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "25 pts. LEAGUES OF VOTANN model only. Each time a ranged attack targets the bearer's unit, if the attacking model is within 12\" of the bearer's unit, worsen the Armour Penetration characteristic of that attack by 1. If you spend 1YP, until the end of the phase, if the attacking model is within 18\" of the bearer's unit, worsen the Armour Penetration characteristic of that attack by 1 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.enhancement.quake-multigenerator",
+      "name": "Quake Multigenerator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "15 pts. KAHL model only. In your Shooting phase, after the bearer has shot, select one enemy unit (excluding TITANIC units) hit by one or more of those attacks. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.enhancement.ironskein",
+      "name": "Ironskein",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "10 pts. LEAGUES OF VOTANN model only. Add 2 to the bearer's Wounds characteristic.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.enhancement.high-kahl",
+      "name": "High Kahl",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "30 pts. KAHL model only. Each time a model in the bearer's unit is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.stratagem.brekkeknots",
+      "name": "BREKKEKNOTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "1CP. Hearthband - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One KAHL, UTHAR THE DESTINED or EINHYR HEARTHGUARD unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband - BREKKEKNOTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband - BREKKEKNOTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.stratagem.sure-of-purpose",
+      "name": "SURE OF PURPOSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "1CP. Hearthband - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in or Consolidation move, it can move up to 6\" instead of up to 3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband - SURE OF PURPOSE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband - SURE OF PURPOSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.stratagem.superior-craftsmanship",
+      "name": "SUPERIOR CRAFTSMANSHIP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "2CP. Hearthband - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One LEAGUES OF VOTANN unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband - SUPERIOR CRAFTSMANSHIP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband - SUPERIOR CRAFTSMANSHIP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.stratagem.unyielding-aggression",
+      "name": "UNYIELDING AGGRESSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "1CP. Hearthband - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a LEAGUES OF VOTANN INFANTRY unit from your army Falls Back. TARGET: That LEAGUES OF VOTANN INFANTRY unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband - UNYIELDING AGGRESSION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband - UNYIELDING AGGRESSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.stratagem.materialisation-matrices",
+      "name": "MATERIALISATION MATRICES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "1CP. Hearthband - Strategic Ploy Stratagem. WHEN: The Reinforcements step of your Movement phase. TARGET: One LEAGUES OF VOTANN unit from your army that is in Reserves and has the Deep Strike ability. EFFECT: Until the end of the phase, when your unit is set up on the battlefield using the Deep Strike ability, it can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy units. RESTRICTIONS: Until the end of the turn, your unit is not eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband - MATERIALISATION MATRICES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband - MATERIALISATION MATRICES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthband.stratagem.fury-of-the-hearth",
+      "name": "FURY OF THE HEARTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthband",
+      "description": "1CP. Hearthband - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One EINHYR HEARTHGUARD unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, improve the Strength characteristic of ranged weapons equipped by models in your unit by 1. If you spend 1YP, until the end of the phase, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthband - FURY OF THE HEARTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthband - FURY OF THE HEARTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband",
+      "name": "Mercenary Oathband - Ruthless Reinvestment",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Your LEAGUES OF VOTANN units do not have the Hostile Acquisition or Fortify Takeover abilities except as described in this rule. At the start of the battle, your LEAGUES OF VOTANN units have the Hostile Acquisition ability. At the end of your Command phase, you can spend 3YP. If you do, LEAGUES OF VOTANN units from your army lose the Hostile Acquisition ability and gain the Fortify Takeover ability, or vice versa.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.enhancement.mercenary-prospector",
+      "name": "Mercenary Prospector",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "20 pts. KAHL model only. Each time an enemy unit is destroyed by the bearer's unit, gain 2YP.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.enhancement.metaphysical-brokerage",
+      "name": "Metaphysical Brokerage",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "20 pts. MEMNYR STRATEGIST model only. At the end of your turn, if the bearer is on the battlefield and you gained fewer than 3YP this turn, you gain an amount of YP equal to the difference.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.enhancement.etacarn-sb9-targeting-implant",
+      "name": "Etacarn SB9 Targeting Implant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "15 pts. LEAGUES OF VOTANN model only. Each time a model in the bearer's unit makes an attack, re-roll a Hit roll of 1. Each time the bearer's unit is selected to shoot or fight, you can spend 3YP. If you do, until the end of the phase, each time a model in the bearer's unit makes an attack, that attack has the [SUSTAINED HITS 1] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.enhancement.asset-manipulator",
+      "name": "Asset Manipulator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "25 pts. LEAGUES OF VOTANN model only. At the start of the Command phase, you can spend 3YP. If you do, until the end of the turn, while an enemy unit is within 3\" of the bearer, subtract 1 from the Objective Control characteristic of models in that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.stratagem.auxiliary-contract",
+      "name": "AUXILIARY CONTRACT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "1CP. Mercenary Oathband - Strategic Ploy Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One LEAGUES OF VOTANN INFANTRY or LEAGUES OF VOTANN MOUNTED unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, weapons equipped by models in your unit have the [PRECISION] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband - AUXILIARY CONTRACT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband - AUXILIARY CONTRACT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.stratagem.optimal-expenditure",
+      "name": "OPTIMAL EXPENDITURE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "1CP. Mercenary Oathband - Wargear Stratagem. WHEN: The Fight phase. TARGET: One LEAGUES OF VOTANN INFANTRY unit from your army that has not been selected to fight this phase. EFFECT: Each time you use this Stratagem, you can spend 3YP. Until the end of the phase, each time a model in your unit makes an attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1. If you spent YP during this usage of this Stratagem, you can re-roll a Hit roll of 1 and re-roll the Wound roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband - OPTIMAL EXPENDITURE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband - OPTIMAL EXPENDITURE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.stratagem.grand-artifice",
+      "name": "GRAND ARTIFICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "1CP. Mercenary Oathband - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a LEAGUES OF VOTANN unit from your army Falls Back. TARGET: That LEAGUES OF VOTANN unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband - GRAND ARTIFICE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband - GRAND ARTIFICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.stratagem.privateer-arsenal",
+      "name": "PRIVATEER ARSENAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "1CP. Mercenary Oathband - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One LEAGUES OF VOTANN INFANTRY unit from your army that has not been selected to shoot this phase. EFFECT: Each time you use this Stratagem, you can spend 3YP. Until the end of the phase, each time a model in your unit makes an attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1. If you spent YP during this usage of this Stratagem, you can re-roll the Hit roll and re-roll a Wound roll of 1 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband - PRIVATEER ARSENAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband - PRIVATEER ARSENAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.stratagem.new-horizons",
+      "name": "NEW HORIZONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "1CP. Mercenary Oathband - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One LEAGUES OF VOTANN INFANTRY unit from your army that is not within Engagement range of one or more enemy units and one friendly TRANSPORT it is able to embark within. EFFECT: If your LEAGUES OF VOTANN unit is wholly within 6\" of that TRANSPORT, it can embark within it.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband - NEW HORIZONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband - NEW HORIZONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.mercenary-oathband.stratagem.mobile-exploitation",
+      "name": "MOBILE EXPLOITATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.mercenary-oathband",
+      "description": "1CP. Mercenary Oathband - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One HERNKYN unit from your army that is not within Engagement Range of one or more enemy units. Alternatively, you can spend 2YP and target up to two HERNKYN units from your army that are not within Engagement Range of one or more enemy units instead. EFFECT: Remove your units from the battlefield and place them into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Mercenary Oathband - MOBILE EXPLOITATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercenary Oathband - MOBILE EXPLOITATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.armoured-trailblazers",
+      "name": "Armoured Trailblazers - Sagitaur Spearhead",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.armoured-trailblazers",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly SAGITAUR units have Scouts 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Armoured Trailblazers",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Trailblazers"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.armoured-trailblazers.enhancement.saturation-roundsupgrade",
+      "name": "Saturation RoundsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.armoured-trailblazers",
+      "maximumSelections": 3,
+      "description": "15 pts. SAGITAUR unit only. This unit's ranged attacks have [IGNORES COVER].",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Armoured Trailblazers enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Trailblazers enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.armoured-trailblazers.enhancement.optimised-attack-linesupgrade",
+      "name": "Optimised Attack LinesUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.armoured-trailblazers",
+      "maximumSelections": 3,
+      "description": "15 pts. SAGITAUR unit only. This unit has MOBILE.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Armoured Trailblazers enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Trailblazers enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.armoured-trailblazers.stratagem.coordinated-crossfire",
+      "name": "COORDINATED CROSSFIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.armoured-trailblazers",
+      "description": "1CP. Armoured Trailblazers Stratagem. WHEN: Start of your Shooting phase. TARGET: Up to two friendly SAGITAUR units. EFFECT: Select one enemy unit. Your units' ranged attacks that target that enemy unit can: Re-roll hit rolls of 1. Re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Armoured Trailblazers - COORDINATED CROSSFIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Trailblazers - COORDINATED CROSSFIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.armoured-trailblazers.stratagem.outflanking-armour",
+      "name": "OUTFLANKING ARMOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.armoured-trailblazers",
+      "description": "1CP. Armoured Trailblazers Stratagem. WHEN: End of your opponent's Movement phase, from the second battle round onwards. TARGET: Up to two friendly SAGITAUR units in strategic reserves. EFFECT: Your units each make an ingress move.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Armoured Trailblazers - OUTFLANKING ARMOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Trailblazers - OUTFLANKING ARMOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.armoured-trailblazers.stratagem.built-to-last",
+      "name": "BUILT TO LAST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.armoured-trailblazers",
+      "description": "1CP. Armoured Trailblazers Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly SAGITAUR unit. TARGET: That SAGITAUR unit. EFFECT: Ranged attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Armoured Trailblazers - BUILT TO LAST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Trailblazers - BUILT TO LAST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.farseekers",
+      "name": "Farseekers - Eye of the Hunt",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.farseekers",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly HERNKYN units' ranged attacks that target a unit within 12\" have +1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Farseekers",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Farseekers"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.farseekers.enhancement.pan-spectral-lockonsupgrade",
+      "name": "Pan-Spectral LockonsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.farseekers",
+      "maximumSelections": 3,
+      "description": "10 pts. PIONEERS unit only. In your Shooting phase, you can select one visible enemy unit within 12\" of this unit. That enemy unit is spotted: While a unit is spotted, that unit has +3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Farseekers enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Farseekers enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.farseekers.enhancement.shroudwerke-talismansupgrade",
+      "name": "Shroudwerke TalismansUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.farseekers",
+      "maximumSelections": 3,
+      "description": "15 pts. YAEGIRS unit only. This unit has -3\" detection range",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Farseekers enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Farseekers enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.farseekers.stratagem.scornful-analysis",
+      "name": "SCORNFUL ANALYSIS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.farseekers",
+      "description": "1CP. Farseekers Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly HERNKYN unit. EFFECT: Select one visible enemy unit within 12\" of your unit. Friendly LEAGUES OF VOTANN units' attacks that target that enemy unit have [IGNORES COVER].",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Farseekers - SCORNFUL ANALYSIS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Farseekers - SCORNFUL ANALYSIS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.farseekers.stratagem.no-shot-wasted",
+      "name": "NO SHOT WASTED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.farseekers",
+      "description": "1CP. Farseekers Stratagem. WHEN: Your Shooting phase, when a friendly HERNKYN unit is selected to shoot. TARGET: That HERNKYN unit. EFFECT: Your unit's ranged attacks have [LETHAL HITS].",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Farseekers - NO SHOT WASTED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Farseekers - NO SHOT WASTED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.farseekers.stratagem.economy-of-motion",
+      "name": "ECONOMY OF MOTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.farseekers",
+      "description": "1CP. Farseekers Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move within 8\" of a friendly unengaged PIONEERS unit. TARGET: That PIONEERS unit. EFFECT: Your unit can make a normal move of up to D3+3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Farseekers - ECONOMY OF MOTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Farseekers - ECONOMY OF MOTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthguard-covenant",
+      "name": "Hearthguard Covenant - Avatars of the Ancestors",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthguard-covenant",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Friendly KAHL/EINHYR CHAMPION/EINHYR HEARTHGUARD/UTHAR THE DESTINED units' ranged attacks that target a unit within 9\" can re-roll wound rolls of 1. This detachment has the HEARTHGUARD tag and cannot be taken with another HEARTHGUARD detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthguard Covenant",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthguard Covenant"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthguard-covenant.enhancement.high-kahl",
+      "name": "High Kahl",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthguard-covenant",
+      "description": "30 pts. KAHL model only. In the Fight phase, when a model in this unit is destroyed, if this unit has not been selected to fight this phase, roll one D6: on a 4+, do not remove that model from the battlefield; after this unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthguard Covenant enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthguard Covenant enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthguard-covenant.enhancement.ironskein",
+      "name": "Ironskein",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthguard-covenant",
+      "description": "10 pts. KAHL model only. This model has +2 W.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthguard Covenant enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthguard Covenant enhancements"
+        }
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthguard-covenant.stratagem.brekkeknots",
+      "name": "BREKKEKNOTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthguard-covenant",
+      "description": "1CP. Hearthguard Covenant Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly EINHYR HEARTHGUARD unit. TARGET: That EINHYR HEARTHGUARD unit. EFFECT: Your unit has 4+ InSv.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthguard Covenant - BREKKEKNOTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthguard Covenant - BREKKEKNOTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthguard-covenant.stratagem.fury-of-the-hearth",
+      "name": "FURY OF THE HEARTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthguard-covenant",
+      "description": "1CP. Hearthguard Covenant Stratagem. WHEN: Your Shooting phase, when a friendly EINHYR HEARTHGUARD unit is selected to shoot. TARGET: That EINHYR HEARTHGUARD unit. EFFECT: Your unit's ranged attacks have: +1 S. If you spend 1 YP, [SUSTAINED HITS 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthguard Covenant - FURY OF THE HEARTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthguard Covenant - FURY OF THE HEARTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "leagues-of-votann.detachment.hearthguard-covenant.stratagem.materialisation-matrices",
+      "name": "MATERIALISATION MATRICES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "leagues-of-votann.detachment.hearthguard-covenant",
+      "description": "1CP. Hearthguard Covenant Stratagem. WHEN: Your Movement phase, when a friendly EINHYR HEARTHGUARD unit with Deep Strike is selected to make an ingress move. TARGET: That EINHYR HEARTHGUARD unit. EFFECT: Your unit can be set up anywhere on the battlefield that is more than 6\" horizontally from all enemy units, even if that is within your opponent's deployment zone. Your unit is not eligible to declare a charge until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Leagues of Votann Hearthguard Covenant - MATERIALISATION MATRICES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/",
+          "capturedAt": "2026-09-25",
+          "section": "Hearthguard Covenant - MATERIALISATION MATRICES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

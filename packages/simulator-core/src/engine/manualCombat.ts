@@ -1,6 +1,6 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
-import { type BattleState, type BattleUnit, type LogEntry, type PendingFightOnDeath, type Position, type ShootingWeaponResult, type Side } from '../types/battle';
+import { type BattleState, type BattleUnit, type CombatRerollSelection, type LogEntry, type PendingFightOnDeath, type Position, type ShootingWeaponResult, type Side } from '../types/battle';
 import type { UnitProfile, WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type {
@@ -15,7 +15,7 @@ import { modelWoundsForUnit } from './baseSizes';
 
 export type CombatAttackContext = Record<string, any>;
 
-export function applyFeelNoPain(unit: BattleUnit, damage: number, state: BattleState, context: Record<string, any>): { damage: number; logs: LogEntry[] } {
+export function applyFeelNoPain(unit: BattleUnit, damage: number, state: BattleState, context: Record<string, any>): { damage: number; logs: LogEntry[]; target?: number; rolls?: number[]; ignored?: number } {
   const target = context.attachedUnitComponents(state, unit)
     .flatMap((component: BattleUnit) => context.feelNoPainTargets(component)
       .filter((rule: any) => component.id === unit.id || rule.sharesWithAttachedUnit)
@@ -23,10 +23,15 @@ export function applyFeelNoPain(unit: BattleUnit, damage: number, state: BattleS
     .filter((value: number | null): value is number => value !== null)
     .sort((a: number, b: number) => a - b)[0] ?? null;
   if (!target || damage <= 0) return { damage, logs: [] };
-  const rolls = context.rollMultiple(damage);
+  const rolls = context.forcedFeelNoPainRolls?.length
+    ? [...context.forcedFeelNoPainRolls]
+    : context.rollMultiple(damage);
   const outcome = context.resolveFeelNoPainOutcome(damage, target, rolls);
   return {
     damage: outcome.damage,
+    target,
+    rolls,
+    ignored: outcome.ignored,
     logs: [context.log(state, unit.side, unit.profile.name,
       `     Feel No Pain (${target}+): [${rolls.join(', ')}] -> ${outcome.ignored} ignored, ${outcome.damage} damage remains`, 'roll')],
   };
@@ -130,22 +135,78 @@ export function allocatePlayDamageToModel(
   if (!['shooting', 'fight'].includes(state.phase) || !pendingUnit || !allocation || !pendingUnit.modelPositions[modelIndex]) return state;
   if (allocation.targetModelIndex !== undefined && allocation.targetModelIndex !== modelIndex) return state;
   if (pendingUnit.woundedModelIndex !== undefined && pendingUnit.woundedModelIndex !== modelIndex) return state;
+  const beforeUnit = clone(pendingUnit);
+  const beforeLogLength = state.log.length;
+  const beforeEventLength = state.events?.length ?? 0;
+  const beforePendingDeadlyDemiseLength = state.pendingDeadlyDemises?.length ?? 0;
+  const beforePendingFightOnDeathLength = state.pendingFightOnDeath?.length ?? 0;
+  const beforeMissionEvents = state.missionEvents ? clone(state.missionEvents) : undefined;
   const next = clone(state);
   const unit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit?.pendingDamageAllocations?.length || !unit.modelPositions[modelIndex]) return state;
   const damage = unit.pendingDamageAllocations.shift();
   if (!unit.pendingDamageAllocations.length) unit.pendingDamageAllocations = undefined;
-  const feelNoPain = applyFeelNoPain(unit, damage.damage, next);
+  const feelNoPain = applyFeelNoPain(unit, damage.damage, next, context);
+  let feelNoPainGroupIndex: number | undefined;
+  let feelNoPainWeaponResult: ShootingWeaponResult | undefined;
+  const recordFeelNoPainResult = () => {
+    if (feelNoPain.target === undefined || !feelNoPain.rolls?.length) return;
+    const weaponResults = next.lastShootingResolution?.weapons.filter(result =>
+      !damage.source || result.weaponName === damage.source,
+    ) ?? [];
+    // Prefer the current component after a bodyguard/Leader transfer. If the
+    // merged UI result remapped the weapon index, the weapon name still gives
+    // us the original typed combat result to append the FNP group to.
+    const weaponResult = weaponResults.find(result => result.targetUnitId === unit.id)
+      ?? weaponResults.find(result => damage.combatResult?.weaponIndex === result.weaponIndex)
+      ?? weaponResults[0];
+    if (!weaponResult) return;
+    feelNoPainWeaponResult = weaponResult;
+    weaponResult.groups.push({
+      kind: 'feel-no-pain',
+      rolls: [...feelNoPain.rolls],
+      target: feelNoPain.target,
+      successes: feelNoPain.ignored ?? 0,
+    });
+    feelNoPainGroupIndex = weaponResult.groups.length - 1;
+  };
+  const captureFeelNoPainReview = () => {
+    if (feelNoPain.target === undefined || !feelNoPain.rolls?.length) return;
+    const pendingCombat = next.pendingCombatResolution;
+    next.pendingFeelNoPainReroll = {
+      kind: pendingCombat?.kind ?? (next.phase === 'fight' ? 'fight' : 'shooting'),
+      attackerUnitId: pendingCombat?.attackerUnitId ?? damage.sourceUnitId ?? '',
+      weaponIndex: damage.combatResult?.weaponIndex ?? feelNoPainWeaponResult?.weaponIndex ?? -1,
+      weaponName: feelNoPainWeaponResult?.weaponName ?? damage.source,
+      targetUnitId: unit.id,
+      resultTargetUnitId: feelNoPainWeaponResult?.targetUnitId,
+      groupIndex: feelNoPainGroupIndex ?? -1,
+      modelIndex,
+      target: feelNoPain.target,
+      rolls: [...feelNoPain.rolls],
+      ignored: feelNoPain.ignored ?? 0,
+      beforeUnit,
+      logLength: beforeLogLength,
+      eventLength: beforeEventLength,
+      pendingDeadlyDemiseLength: beforePendingDeadlyDemiseLength,
+      pendingFightOnDeathLength: beforePendingFightOnDeathLength,
+      missionEvents: beforeMissionEvents,
+    };
+  };
   const appliedDamage = feelNoPain.damage;
   if (appliedDamage <= 0) {
+    recordFeelNoPainResult();
     recordBattleEvent(next, { type: BATTLE_EVENT_TYPE.DamageApplied, side: state.activeArmy, source: damage.sourceUnitId, data: {
       targetUnitId: unit.id, damage: 0, killedModels: 0, remainingModels: unit.remainingModels,
       woundsOnCurrentModel: unit.woundsOnLeadModel, noCarryOver: damage.noCarryOver ?? false, source: damage.source ?? 'attack',
+      feelNoPainTarget: feelNoPain.target, feelNoPainRolls: feelNoPain.rolls, feelNoPainIgnored: feelNoPain.ignored,
     }});
     next.log = [...next.log, ...feelNoPain.logs, log(next, state.activeArmy, unit.profile.name,
       `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1}; no damage gets through.`, 'damage')];
+    captureFeelNoPainReview();
     return next;
   }
+  recordFeelNoPainResult();
   const currentWounds = unit.woundedModelIndex === modelIndex
     ? unit.woundsOnLeadModel
     : modelWoundsForUnit(unit, modelIndex);
@@ -164,28 +225,29 @@ export function allocatePlayDamageToModel(
     unit.woundsOnLeadModel = unit.remainingModels > 0 ? modelWoundsForUnit(unit, 0) : 0;
     if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
       // A bodyguard and its attached Leaders are one rules unit for normal
-      // attacks. Once the final bodyguard is destroyed, packets still waiting
-      // to be allocated belong to the surviving Leader, not to a destroyed
-      // component that no longer has a selectable model. Do not do this for
-      // a destroyed Leader: Precision/Epic Challenge packets deliberately
-      // allocated to that Leader must not spill back into the bodyguard.
+      // attacks. Keep ordinary packets moving to a surviving component when
+      // their current component is destroyed. Precision/Epic Challenge
+      // packets deliberately allocated to that model do not spill over.
       const remainingAllocations = unit.pendingDamageAllocations ?? [];
       markUnitDestroyed(unit);
       unit.remainingModels = 0;
       unit.modelPositions = [];
       unit.modelRotations = [];
       unit.pendingDamageAllocations = undefined;
-      const survivingLeader = !unit.attachedToUnitId && remainingAllocations.length
-        ? next.units.find((candidate: BattleUnit) => candidate.side === unit.side
-          && candidate.attachedToUnitId === unit.id
+      const attachedUnitId = unit.attachedToUnitId ?? unit.id;
+      const transferableAllocations = remainingAllocations.filter(allocation => allocation.targetModelIndex === undefined);
+      const survivingComponent = transferableAllocations.length
+        ? next.units.find((candidate: BattleUnit) => candidate.id !== unit.id
+          && candidate.side === unit.side
+          && (candidate.id === attachedUnitId || candidate.attachedToUnitId === attachedUnitId)
           && !candidate.destroyed
           && !candidate.embarkedInUnitId
           && candidate.remainingModels > 0)
         : undefined;
-      if (survivingLeader) {
-        survivingLeader.pendingDamageAllocations = [
-          ...remainingAllocations.map(allocation => ({ ...allocation, targetUnitId: survivingLeader.id })),
-          ...(survivingLeader.pendingDamageAllocations ?? []),
+      if (survivingComponent) {
+        survivingComponent.pendingDamageAllocations = [
+          ...transferableAllocations.map(allocation => ({ ...allocation, targetUnitId: survivingComponent.id })),
+          ...(survivingComponent.pendingDamageAllocations ?? []),
         ];
       }
       recordDestroyedUnitMissionEvent(next, unit, destroyedBySide, {
@@ -209,9 +271,97 @@ export function allocatePlayDamageToModel(
   recordBattleEvent(next, { type: BATTLE_EVENT_TYPE.DamageApplied, side: state.activeArmy, source: damage.sourceUnitId, data: {
     targetUnitId: unit.id, damage: appliedDamage, killedModels: allocationOutcome.killedModels, remainingModels: unit.remainingModels,
     woundsOnCurrentModel: unit.woundsOnLeadModel, noCarryOver: damage.noCarryOver ?? false, source: damage.source ?? 'attack',
+    feelNoPainTarget: feelNoPain.target, feelNoPainRolls: feelNoPain.rolls, feelNoPainIgnored: feelNoPain.ignored,
   }});
   if (next.pendingDeadlyDemises?.length) next.log = [...next.log, ...resolvePendingDeadlyDemisesInPlace(next)];
+  captureFeelNoPainReview();
   return next;
+}
+
+/** Rewinds and reapplies the latest non-lethal FNP allocation with one new die. */
+export function rerollPlayFeelNoPainAllocation(
+  state: BattleState,
+  selection: CombatRerollSelection,
+  originalRoll: number,
+  reroll: number,
+  context: ManualDamageAllocationContext,
+): BattleState {
+  const review = state.pendingFeelNoPainReroll;
+  if (!review
+    || selection.groupKind !== 'feel-no-pain'
+    || review.kind !== selection.kind
+    || review.attackerUnitId !== selection.attackerUnitId
+    || review.targetUnitId !== selection.targetUnitId
+    || review.groupIndex !== selection.groupIndex
+    || review.modelIndex < 0) return state;
+  const weaponResult = state.lastShootingResolution?.weapons.find(result =>
+    result.groups[selection.groupIndex]?.kind === 'feel-no-pain'
+      && (!review.weaponName || result.weaponName === review.weaponName)
+      && (result.weaponIndex === selection.weaponIndex
+        || result.targetUnitId === selection.targetUnitId
+        || result.targetUnitId === review.resultTargetUnitId),
+  );
+  const group = weaponResult?.groups[selection.groupIndex];
+  const currentUnit = state.units.find(unit => unit.id === review.targetUnitId && unit.side === review.beforeUnit.side);
+  // A lethal allocation can trigger transport, Fight-on-Death, and attached
+  // unit transitions. Keep those outcomes immutable rather than attempting a
+  // partial rollback; non-lethal packets are the safe reroll boundary.
+  if (!weaponResult || !group || group.kind !== 'feel-no-pain'
+    || group.rolls[selection.rollIndex] !== originalRoll
+    || !currentUnit
+    || currentUnit.destroyed
+    || currentUnit.remainingModels !== review.beforeUnit.remainingModels) return state;
+
+  const next = context.clone(state);
+  next.log = next.log.slice(0, review.logLength);
+  if (next.events) next.events = next.events.slice(0, review.eventLength);
+  if (next.pendingDeadlyDemises) next.pendingDeadlyDemises = next.pendingDeadlyDemises.slice(0, review.pendingDeadlyDemiseLength);
+  if (next.pendingFightOnDeath) next.pendingFightOnDeath = next.pendingFightOnDeath.slice(0, review.pendingFightOnDeathLength);
+  next.missionEvents = review.missionEvents ? context.clone(review.missionEvents) : undefined;
+  const unitIndex = next.units.findIndex(unit => unit.id === review.targetUnitId && unit.side === review.beforeUnit.side);
+  if (unitIndex < 0) return state;
+  next.units[unitIndex] = context.clone(review.beforeUnit);
+  const nextWeaponResult = next.lastShootingResolution?.weapons.find(result =>
+    result.groups[selection.groupIndex]?.kind === 'feel-no-pain'
+      && (!review.weaponName || result.weaponName === review.weaponName)
+      && (result.weaponIndex === selection.weaponIndex
+        || result.targetUnitId === selection.targetUnitId
+        || result.targetUnitId === review.resultTargetUnitId),
+  );
+  if (!nextWeaponResult || !nextWeaponResult.groups[selection.groupIndex]) return state;
+  const replacementRolls = [...nextWeaponResult.groups[selection.groupIndex].rolls];
+  replacementRolls[selection.rollIndex] = reroll;
+  nextWeaponResult.groups.splice(selection.groupIndex, 1);
+  next.pendingFeelNoPainReroll = undefined;
+
+  const reapplied = allocatePlayDamageToModel(next, review.targetUnitId, review.beforeUnit.side, review.modelIndex, {
+    ...context,
+    forcedFeelNoPainRolls: replacementRolls,
+  });
+  const reappliedWeaponResult = reapplied.lastShootingResolution?.weapons.find(result =>
+    (!review.weaponName || result.weaponName === review.weaponName)
+      && (result.weaponIndex === selection.weaponIndex
+        || result.targetUnitId === selection.targetUnitId
+        || result.targetUnitId === review.resultTargetUnitId),
+  );
+  const reappliedGroup = reappliedWeaponResult?.groups
+    .slice()
+    .reverse()
+    .find(candidate => candidate.kind === 'feel-no-pain');
+  if (reappliedGroup) reappliedGroup.rerolledRollIndices = [selection.rollIndex];
+  reapplied.pendingCommandReroll = undefined;
+  const rerollSide = state.pendingCommandReroll?.side ?? state.activeArmy;
+  reapplied.log = [...reapplied.log, {
+    id: `command-reroll-${reapplied.log.length + 1}`,
+    battleRound: reapplied.battleRound ?? 1,
+    turn: reapplied.turn,
+    phase: reapplied.phase,
+    side: rerollSide,
+    unitName: reapplied.armies?.[rerollSide]?.name ?? `Player ${rerollSide + 1}`,
+    message: `Command Re-roll feel-no-pain roll: [${originalRoll}] -> [${reroll}].`,
+    type: 'roll',
+  }];
+  return reapplied;
 }
 
 export type PlayShootingWeaponOption = {
@@ -319,8 +469,12 @@ function shootingCoverRules(
     && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
   const usesSmokescreen = context.unitHasActiveStratagem(state, defender, 'smokescreen', 'shooting')
     || context.targetIsScreenedBySmoke(state, attacker, defender);
+  const targetComponents = context.attachedUnitComponents(state, defender);
+  const usesStealthCover = rules.metadata.edition === '11e'
+    && targetComponents.length > 0
+    && targetComponents.every(component => context.unitHasRule(component.profile, 'Stealth'));
   return {
-    alwaysHasCover: usesIndirectFireCover || usesSmokescreen,
+    alwaysHasCover: usesIndirectFireCover || usesSmokescreen || usesStealthCover,
     usesIndirectFirePenalty,
     usesIndirectFireCover,
     usesSmokescreen,
@@ -401,7 +555,7 @@ function calculateCombatHit(
       if (shootingRules.usesIndirectFirePenalty) {
         addModifier('Indirect Fire', 1);
       }
-      if (context.attachedUnitHasRule(state, defender, 'Stealth')) {
+      if (rules.metadata.edition !== '11e' && context.attachedUnitHasRule(state, defender, 'Stealth')) {
         addModifier('Stealth', 1);
       }
       if (rules.metadata.edition === '11e' && hasCover && !context.weaponHasKeyword(weapon, 'Ignores Cover')) {
@@ -623,7 +777,7 @@ export function resolveShootingWeaponIntoTarget(
   weapon: WeaponProfile,
   weaponIndex: number,
   rules: RulesEdition,
-  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[] } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[]; interactiveStage?: boolean } = {},
   context: ShootingResolutionContext,
 ): LogEntry[] {
   const coverRules = shootingCoverRules(state, unit, target, weapon, rules, context);
@@ -654,7 +808,7 @@ export function resolveShootingWeaponIntoTarget(
   const logs = [...modelCoverGroups.entries()].flatMap(([hasCover, modelIndexes]) => {
     return context.resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, hasCover,
       0, '',
-      { ...options, modelIndexes, result });
+      { ...options, modelIndexes, result, interactiveStage: options.interactiveStage && modelCoverGroups.size === 1 });
   });
   result.hits = result.groups.filter(group => group.kind === 'hit').reduce((total, group) => total + (group.successes ?? 0), 0);
   result.wounds = result.groups.filter(group => group.kind === 'wound').reduce((total, group) => total + (group.successes ?? 0), 0);
@@ -691,9 +845,10 @@ export function playShootingWeaponModelCount(unit: BattleUnit, weaponIndex: numb
 
 export interface ManualShootingResolutionContext extends ManualShootingSelectionContext {
   clone(state: BattleState): BattleState;
+  attachedUnitComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
   aliveWeaponModelIndexes(unit: BattleUnit, weaponIndex: number): number[];
   participatingWeaponModelIndexes(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number[];
-  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; modelIndexes?: number[] }): LogEntry[];
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; modelIndexes?: number[]; interactiveStage?: boolean }): LogEntry[];
   shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   updateAttachedShootingActivation(state: BattleState, unit: BattleUnit, rules: RulesEdition): void;
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot'): LogEntry;
@@ -706,9 +861,10 @@ export interface AttachedShootingContext extends ManualShootingSelectionContext 
 
 export interface PlayShootingExecutionContext extends ManualShootingSelectionContext {
   clone(state: BattleState): BattleState;
+  attachedUnitComponents?(state: BattleState, unit: BattleUnit): BattleUnit[];
   clearFiringDeckWeapons(unit: BattleUnit): void;
   resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[];
-  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean }): LogEntry[];
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; interactiveStage?: boolean }): LogEntry[];
   shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   updateAttachedShootingActivation(state: BattleState, unit: BattleUnit, rules: RulesEdition, targetUnitId?: string): void;
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot' | 'info'): LogEntry;
@@ -719,7 +875,7 @@ export interface OverwatchContext extends ManualShootingSelectionContext {
   unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
   snapShootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
   shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
-  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; snapShooting?: boolean }): LogEntry[];
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; snapShooting?: boolean; interactiveStage?: boolean }): LogEntry[];
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot'): LogEntry;
 }
 
@@ -883,6 +1039,7 @@ export function resolveCombatAttacks(
 ): LogEntry[] {
   const { dist, battleUnitToAttachedUnitDistance, activeEpicChallengeModelIndex, participatingWeaponModelIndexes, modelWeaponCopyCount, unitHasRule, attachedUnitIsFormed, attachedUnitHasRule, attachedUnitComponents, leadingAttackModifiers, leadingRerolls, leadingWeaponKeywords, unitGrantedWeaponKeywords, auraAbilitiesInRange, attachedUnitRemainingModels, attackingModelToAttachedUnitDistance, weaponHasKeyword, weaponKeywordValue, log, attachedUnitToughness, rollExpression, hasAnyModelLOS, modelBaseRadius, attackingModelHasPlungingFire, targetVisibleToFriendlyUnit, rollMultiple, d6, processWoundsAgainstDefender, attachedInvulnerableSave, rangedSaveModifier, resolveSaveOutcome, applyDamage, objectiveIndexesWithinRange, recordBattleEvent, BATTLE_EVENT_TYPE } = context;
   const logs: LogEntry[] = [];
+  const continuation = options.continuation;
   const rangeDistance = weapon.isMelee
     ? dist(attacker.position, defender.position)
     : battleUnitToAttachedUnitDistance(state, attacker, defender);
@@ -919,7 +1076,7 @@ export function resolveCombatAttacks(
   });
   const weaponModelCount = attackModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
-  if (options.result) options.result.modelCount = (options.result.modelCount ?? 0) + participatingModelIndexes.length;
+  if (options.result && !continuation) options.result.modelCount = (options.result.modelCount ?? 0) + participatingModelIndexes.length;
   const waaaghActive = rules.metadata.edition === '11e'
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && unitHasRule(attacker.profile, 'Waaagh!');
@@ -973,12 +1130,14 @@ export function resolveCombatAttacks(
   }, context);
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
-  for (let i = 0; i < weaponModelCount; i++) {
-    perModelRolls.push(rollExpression(weapon.attacks).total + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.attacks : 0));
+  if (!continuation) {
+    for (let i = 0; i < weaponModelCount; i++) {
+      perModelRolls.push(rollExpression(weapon.attacks).total + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.attacks : 0));
+    }
   }
   let perModelAttackCounts = [...perModelRolls];
-  let numAttacks = options.attackCountOverride ?? perModelAttackCounts.reduce((a, b) => a + b, 0);
-  if (options.attackCountOverride === undefined) {
+  let numAttacks = continuation?.attackCount ?? options.attackCountOverride ?? perModelAttackCounts.reduce((a, b) => a + b, 0);
+  if (!continuation && options.attackCountOverride === undefined) {
     if (rules.metadata.edition === '11e' && !weapon.isMelee) {
       perModelAttackCounts = perModelAttackCounts.map((attacks, index) => rules.modifyAttackCount(
         attacks,
@@ -1006,22 +1165,22 @@ export function resolveCombatAttacks(
   if (numAttacks <= 0) return logs;
 
   logs.push(log(state, attacker.side, attacker.profile.name,
-    `  ${weapon.isMelee ? 'âš”ï¸' : 'ðŸ”«'} ${weapon.name} â€” ${weaponModelCount} model(s) Ã— ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
+    `  ${weapon.isMelee ? '\u2694\uFE0F' : '\uD83D\uDD2B'} ${weapon.name} \u2014 ${weaponModelCount} model(s) \u00D7 ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
     weapon.isMelee ? 'fight' : 'shoot',
   ));
-  if (options.result) options.result.attackCount = (options.result.attackCount ?? 0) + numAttacks;
+  if (options.result && !continuation) options.result.attackCount = (options.result.attackCount ?? 0) + numAttacks;
   const effectiveStrength = weapon.strength + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.strength : 0);
-  logs.push(log(state, attacker.side, attacker.profile.name,
+  if (!continuation) logs.push(log(state, attacker.side, attacker.profile.name,
     `[combat-stats] skill=${weapon.skill} s=${effectiveStrength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
     'info',
   ));
-  if (options.attackCountOverride !== undefined) {
+  if (!continuation && options.attackCountOverride !== undefined) {
     logs.push(log(state, attacker.side, attacker.profile.name,
       `     Split ${weapon.isMelee ? 'melee' : 'ranged'} attacks: ${options.attackCountOverride} attack(s) declared against ${defender.profile.name}`,
       'info',
     ));
   }
-  if (isVariableAttacks) {
+  if (isVariableAttacks && !continuation) {
     logs.push(log(state, attacker.side, attacker.profile.name,
       `     Attack rolls (${weapon.attacks}): [${perModelRolls.join(', ')}] = ${numAttacks} attacks`,
       'roll',
@@ -1029,6 +1188,11 @@ export function resolveCombatAttacks(
   }
 
   // â”€â”€ Hit rolls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  let hitResult = continuation
+    ? { hits: continuation.hits, rolls: [] as number[], mortalsFromCrits: continuation.totalMortals, logNote: 'resumed' }
+    : { hits: numAttacks, rolls: [] as number[], mortalsFromCrits: 0, logNote: 'Torrent - auto-hits' };
+  let lethalAutoWounds = continuation?.lethalAutoWounds ?? 0;
+  if (!continuation) {
   const isTorrent = weaponHasKeyword(weapon, 'Torrent');
   if (options.snapShooting && !isTorrent) {
     logs.push(log(state, attacker.side, attacker.profile.name, '     Snap Shooting: unmodified 6s to hit; hit rolls cannot be re-rolled', 'info'));
@@ -1036,13 +1200,15 @@ export function resolveCombatAttacks(
     const hitModifierSummary = normalHitCalculation.modifiers.map(formatHitModifierForLog).join('; ');
     if (hitModifierSummary) logs.push(log(state, attacker.side, attacker.profile.name, `     ${hitModifierSummary}`, 'info'));
   }
-  let hitResult = { hits: numAttacks, rolls: [] as number[], mortalsFromCrits: 0, logNote: 'Torrent - auto-hits' };
-  let lethalAutoWounds = 0;
   if (isTorrent) {
     logs.push(log(state, attacker.side, attacker.profile.name,
       `     Torrent: ${numAttacks} auto-hit(s)`,
       'roll',
     ));
+    // Keep auto-hits in the typed result as a hit-stage group.  Without this
+    // group the interactive cursor has no visible hit stage and can be
+    // cleared before the deferred wound/save continuation is acknowledged.
+    options.result?.groups.push({ kind: 'hit', rolls: [], successes: numAttacks, autoSuccesses: numAttacks });
   } else {
     const plungingAttackCount = options.snapShooting || weapon.isMelee
       ? 0
@@ -1083,20 +1249,57 @@ export function resolveCombatAttacks(
       ? hitRolls.filter(roll => roll === 6).length
       : 0;
     for (const pool of results) {
-      options.result?.groups.push({ kind: 'hit', rolls: [...pool.rolls], target: pool.target, successes: pool.result.hits });
+      options.result?.groups.push({ kind: 'hit', rolls: [...pool.rolls], target: pool.target, successes: pool.result.hits, bonusHits: pool.result.bonusHits });
       const noteHit = pool.result.logNote ? ` [${pool.result.logNote}]` : '';
       const plungingNote = pool.plunging ? '; Plunging Fire improves BS by 1' : '';
       logs.push(log(state, attacker.side, attacker.profile.name,
-        `     Hit rolls (${pool.target}+${plungingNote}): [${pool.rolls.join(', ')}] â†’ ${pool.result.hits} hits${noteHit}`,
+        `     Hit rolls (${pool.target}+${plungingNote}): [${pool.rolls.join(', ')}] \u2192 ${pool.result.hits} hits${noteHit}`,
         'roll',
       ));
     }
 
   }
 
+  }
+
   // Mortal wounds from critical hits (e.g. Deadly Demise)
-  let totalMortals = hitResult.mortalsFromCrits;
-  let devastatingWounds = 0;
+  let totalMortals = continuation?.totalMortals ?? hitResult.mortalsFromCrits;
+  let devastatingWounds = continuation?.devastatingWounds ?? 0;
+
+  // Interactive play can acknowledge the hit pool before the wound/save
+  // stages are resolved. Keep the continuation inputs typed on BattleState.
+  if (options.interactiveStage && !options.resumeFrom && options.result) {
+    const hitRolls = options.result.groups
+      .filter(group => group.kind === 'hit')
+      .flatMap(group => group.rolls);
+    state.pendingCombatResolution = {
+      kind: weapon.isMelee ? 'fight' : 'shooting',
+      attackerUnitId: attacker.id,
+      attackerSide: attacker.side,
+      targetUnitId: defender.id,
+      weaponIndex,
+      stage: 'hits',
+      rolls: hitRolls,
+      target: options.result.groups.find(group => group.kind === 'hit')?.target,
+      rollIds: hitRolls.map((_roll, index) => `${weapon.isMelee ? 'fight' : 'shooting'}:${attacker.id}:hits:${index}`),
+      continuation: {
+        hasCover,
+        hitModifier,
+        hitModifierNote,
+        attackCount: numAttacks,
+        hits: hitResult.hits,
+        lethalAutoWounds,
+        totalMortals,
+        devastatingWounds,
+        weaponKeywords: [...bannerWeapon.keywords],
+        modelIndexes: [...participatingModelIndexes],
+        selectedTargetCount: options.selectedTargetCount,
+        snapShooting: options.snapShooting,
+        deferCasualties: options.deferCasualties,
+      },
+    };
+    return logs;
+  }
 
   if (hitResult.hits === 0 && totalMortals === 0) return logs;
 
@@ -1108,7 +1311,8 @@ export function resolveCombatAttacks(
     && attachedUnitComponents(state, attacker).some(component => component.charged);
   const prophetWoundBonus = prophetActive ? 1 : 0;
   const wt = Math.max(2, rules.woundTarget(effectiveStrength, targetToughness) - (lanceApplies ? 1 : 0) - prophetWoundBonus - leadingModifiers.wound);
-  let woundCount = 0;
+  let woundCount = continuation?.wounds ?? 0;
+  if (!continuation || options.resumeFrom === 'wounds') {
   if (lanceApplies) {
     logs.push(log(state, attacker.side, attacker.profile.name, '     Lance: +1 to wound rolls after a charge move', 'info'));
   }
@@ -1129,7 +1333,7 @@ export function resolveCombatAttacks(
     const woundResult = processWoundsAgainstDefender(woundRolls, wt, weapon, defender, rules, state);
     const noteWound = woundResult.logNote ? ` [${woundResult.logNote}]` : '';
     logs.push(log(state, attacker.side, attacker.profile.name,
-      `     Wound rolls (S${effectiveStrength} vs T${targetToughness}, ${wt}+): [${woundRolls.join(', ')}] â†’ ${woundResult.wounds} wounds${noteWound}`,
+      `     Wound rolls (S${effectiveStrength} vs T${targetToughness}, ${wt}+): [${woundRolls.join(', ')}] \u2192 ${woundResult.wounds} wounds${noteWound}`,
       'roll',
     ));
     options.result?.groups.push({ kind: 'wound', rolls: [...woundRolls], target: wt, successes: woundResult.wounds });
@@ -1153,8 +1357,25 @@ export function resolveCombatAttacks(
   }
 
   // â”€â”€ Save rolls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  let unsaved = 0;
-  if (woundCount > 0) {
+  }
+
+  if (options.resumeFrom === 'wounds') {
+    const pending = state.pendingCombatResolution;
+    if (pending?.continuation && options.result) {
+      const woundRolls = options.result.groups.filter(group => group.kind === 'wound').flatMap(group => group.rolls);
+      pending.stage = 'wounds';
+      pending.rolls = woundRolls;
+      pending.target = wt;
+      pending.rollIds = woundRolls.map((_roll, index) => `${pending.kind}:${pending.attackerUnitId}:wounds:${index}`);
+      pending.continuation.wounds = woundCount;
+      pending.continuation.totalMortals = totalMortals;
+      pending.continuation.devastatingWounds = devastatingWounds;
+    }
+    return logs;
+  }
+
+  let unsaved = continuation?.unsaved ?? 0;
+  if (woundCount > 0 && (!continuation || options.resumeFrom === 'saves')) {
     const coverBonus = hasCover && !weaponHasKeyword(weapon, 'Ignores Cover')
       ? rules.metadata.edition === '11e' ? 0 : rules.coverSaveBonus(defender)
       : 0;
@@ -1188,13 +1409,29 @@ export function resolveCombatAttacks(
       unsaved = outcome.unsaved;
       options.result?.groups.push({ kind: 'save', rolls: [...saveRolls], target: effectiveSave, successes: outcome.saved });
       logs.push(log(state, defender.side, defender.profile.name,
-        `     Save rolls (${effectiveSave}+${coverNote}): [${saveRolls.join(', ')}] â†’ ${saved} saved, ${unsaved} failed`,
+        `     Save rolls (${effectiveSave}+${coverNote}): [${saveRolls.join(', ')}] \u2192 ${saved} saved, ${unsaved} failed`,
         'roll',
       ));
     }
   }
 
   // â”€â”€ Damage application â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  if (options.resumeFrom === 'saves') {
+    const pending = state.pendingCombatResolution;
+    if (pending?.continuation && options.result) {
+      const saveRolls = options.result.groups.filter(group => group.kind === 'save').flatMap(group => group.rolls);
+      pending.stage = 'saves';
+      pending.rolls = saveRolls;
+      pending.target = options.result.groups.find(group => group.kind === 'save')?.target;
+      pending.rollIds = saveRolls.map((_roll, index) => `${pending.kind}:${pending.attackerUnitId}:saves:${index}`);
+      pending.continuation.unsaved = unsaved;
+      pending.continuation.wounds = woundCount;
+      pending.continuation.totalMortals = totalMortals;
+      pending.continuation.devastatingWounds = devastatingWounds;
+    }
+    return logs;
+  }
+
   const meltaBonus = weaponHasKeyword(weapon, 'Melta') && rangeDistance <= weapon.range / 2
       ? weaponKeywordValue(weapon, 'Melta')
       : 0;
@@ -1213,6 +1450,7 @@ export function resolveCombatAttacks(
       if (effectiveRemaining <= 0 || defender.destroyed) break;
       const dmgResult = rollExpression(weapon.damage);
       const damage = Math.max(1, dmgResult.total + meltaBonus);
+      const groupIndex = options.result?.groups.length;
       options.result?.groups.push({ kind: 'damage', rolls: [...dmgResult.rolls], successes: damage });
       if (isVariableDamage) {
         logs.push(log(state, attacker.side, attacker.profile.name,
@@ -1226,6 +1464,7 @@ export function resolveCombatAttacks(
         source: weapon.name,
         sourceUnitId: attacker.id,
         sourceObjectiveIndexesWithinRange: objectiveIndexesWithinRange(state, attacker, rules),
+        ...(groupIndex !== undefined ? { combatResult: { weaponIndex, groupIndex } } : {}),
       }));
     }
   }
@@ -1241,6 +1480,7 @@ export function resolveCombatAttacks(
       if (effectiveRemaining <= 0 || defender.destroyed) break;
       const dmgResult = rollExpression(weapon.damage);
       const damage = Math.max(1, dmgResult.total + meltaBonus);
+      const groupIndex = options.result?.groups.length;
       options.result?.groups.push({ kind: 'damage', rolls: [...dmgResult.rolls], successes: damage });
       if (isVariableDamage) {
         logs.push(log(state, attacker.side, attacker.profile.name,
@@ -1254,6 +1494,7 @@ export function resolveCombatAttacks(
         source: weapon.name,
         sourceUnitId: attacker.id,
         sourceObjectiveIndexesWithinRange: objectiveIndexesWithinRange(state, attacker, rules),
+        ...(groupIndex !== undefined ? { combatResult: { weaponIndex, groupIndex } } : {}),
       }));
     }
   }

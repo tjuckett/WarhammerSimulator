@@ -1,0 +1,68 @@
+{
+  "id": "chaos-knights",
+  "name": "Chaos Knights",
+  "edition": "11e",
+  "unitRefs": [
+    "chaos-knights.cultist-firebrand",
+    "chaos-knights.dark-commune",
+    "chaos-knights.traitor-enforcer",
+    "chaos-knights.knight-abominant",
+    "chaos-knights.knight-desecrator",
+    "chaos-knights.knight-despoiler",
+    "chaos-knights.knight-rampager",
+    "chaos-knights.knight-ruinator",
+    "chaos-knights.knight-tyrant",
+    "chaos-knights.chaos-cerastus-knight-acheron",
+    "chaos-knights.chaos-cerastus-knight-atrapos",
+    "chaos-knights.chaos-cerastus-knight-castigator",
+    "chaos-knights.chaos-cerastus-knight-lancer",
+    "chaos-knights.chaos-questoris-knight-magaera",
+    "chaos-knights.chaos-questoris-knight-styrix",
+    "chaos-knights.cultist-mob",
+    "chaos-knights.accursed-cultists",
+    "chaos-knights.fellgor-beastmen",
+    "chaos-knights.traitor-guardsmen-squad",
+    "chaos-knights.chaos-acastus-knight-asterius",
+    "chaos-knights.chaos-acastus-knight-porphyrion",
+    "chaos-knights.war-dog-brigand",
+    "chaos-knights.war-dog-executioner",
+    "chaos-knights.war-dog-huntsman",
+    "chaos-knights.war-dog-karnivore",
+    "chaos-knights.war-dog-stalker",
+    "chaos-knights.war-dog-moirax"
+  ],
+  "ruleRefs": [
+    "chaos-knights.army-rule.dreadblades",
+    "chaos-knights.army-rule.super-heavy-walker"
+  ],
+  "detachmentRefs": [
+    "chaos-knights.detachment.traitoris-lance",
+    "chaos-knights.detachment.infernal-lance",
+    "chaos-knights.detachment.lords-of-dread",
+    "chaos-knights.detachment.houndpack-lance",
+    "chaos-knights.detachment.helhunt-lance",
+    "chaos-knights.detachment.bastions-of-tyranny",
+    "chaos-knights.detachment.hunting-warpack",
+    "chaos-knights.detachment.iconoclast-fiefdom"
+  ],
+  "factionKeywords": [
+    "chaos-knights",
+    "Chaos Knights"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Chaos Knights faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 27,
+    "normalizedEntryCount": 27,
+    "excludedLegendCount": 10,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

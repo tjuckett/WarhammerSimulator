@@ -1,0 +1,79 @@
+{
+  "id": "drukhari",
+  "name": "Drukhari",
+  "edition": "11e",
+  "unitRefs": [
+    "drukhari.drazhar",
+    "drukhari.lady-malys",
+    "drukhari.lelith-hesperax",
+    "drukhari.kharseth",
+    "drukhari.prince-yriel",
+    "drukhari.solitaire",
+    "drukhari.archon",
+    "drukhari.haemonculus",
+    "drukhari.succubus",
+    "drukhari.death-jester",
+    "drukhari.shadowseer",
+    "drukhari.troupe-master",
+    "drukhari.kabalite-warriors",
+    "drukhari.wracks",
+    "drukhari.wyches",
+    "drukhari.corsair-voidreavers",
+    "drukhari.raider",
+    "drukhari.venom",
+    "drukhari.starweaver",
+    "drukhari.razorwing-jetfighter",
+    "drukhari.voidraven-bomber",
+    "drukhari.hand-of-the-archon",
+    "drukhari.incubi",
+    "drukhari.mandrakes",
+    "drukhari.scourges-with-heavy-weapons",
+    "drukhari.scourges-with-shardcarbines",
+    "drukhari.corsair-skyreavers",
+    "drukhari.corsair-voidscarred",
+    "drukhari.troupe",
+    "drukhari.cronos",
+    "drukhari.talos",
+    "drukhari.hellions",
+    "drukhari.reavers",
+    "drukhari.skyweavers",
+    "drukhari.ravager",
+    "drukhari.starfangs",
+    "drukhari.voidweaver"
+  ],
+  "ruleRefs": [
+    "drukhari.army-rule.power-from-pain",
+    "drukhari.army-rule.corsairs-and-travelling-players"
+  ],
+  "detachmentRefs": [
+    "drukhari.detachment.realspace-raiders",
+    "drukhari.detachment.skysplinter-assault",
+    "drukhari.detachment.spectacle-of-spite",
+    "drukhari.detachment.covenite-coterie",
+    "drukhari.detachment.kabalite-cartel",
+    "drukhari.detachment.reapers-wager",
+    "drukhari.detachment.exhibition-of-slaughter",
+    "drukhari.detachment.kabalite-agonysts",
+    "drukhari.detachment.tools-of-torment"
+  ],
+  "factionKeywords": [
+    "drukhari",
+    "Drukhari"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Drukhari faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/drukhari/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 37,
+    "normalizedEntryCount": 37,
+    "excludedLegendCount": 9,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

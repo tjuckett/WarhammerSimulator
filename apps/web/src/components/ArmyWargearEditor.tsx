@@ -16,14 +16,34 @@ type ModelChoiceGroup = {
   modelIndexes: number[];
 };
 
+function knownWeaponNamesForChoice(unit: UnitProfile, choice: WargearChoice): string[] {
+  return (choice.weaponNames ?? []).filter(name => unit.weapons.some(weapon =>
+    weapon.name.trim().toLowerCase() === name.trim().toLowerCase(),
+  ));
+}
+
 function weaponIndexesForChoice(unit: UnitProfile, choice: WargearChoice): number[] {
-  return (choice.weaponNames ?? [])
+  return knownWeaponNamesForChoice(unit, choice)
     // Named weapons can have both ranged and melee profiles. Selecting the
     // weapon must retain every matching profile, not just its first entry.
     .flatMap(name => unit.weapons
       .map((weapon, weaponIndex) => weapon.name.trim().toLowerCase() === name.trim().toLowerCase() ? weaponIndex : -1)
       .filter(weaponIndex => weaponIndex >= 0))
     .sort((left, right) => left - right);
+}
+
+function containsWeaponCopies(loadout: number[], expected: number[]): boolean {
+  const remaining = [...loadout];
+  return expected.every(weaponIndex => {
+    const position = remaining.indexOf(weaponIndex);
+    if (position < 0) return false;
+    remaining.splice(position, 1);
+    return true;
+  });
+}
+
+function choiceWeaponNameCount(unit: UnitProfile, choice: WargearChoice): number {
+  return knownWeaponNamesForChoice(unit, choice).length;
 }
 
 function stripSelectedUpgradeWeapons(unit: UnitProfile, loadout: number[]): number[] {
@@ -45,15 +65,15 @@ function loadoutMatches(unit: UnitProfile, modelIndex: number, choice: WargearCh
   const expected = weaponIndexesForChoice(unit, choice);
   const current = [...modelWeaponLoadout(unit, modelIndex)];
   if (choice.selectionMode === 'replacement-slot') {
-    return expected.length === (choice.weaponNames?.length ?? 0)
+    return expected.length === choiceWeaponNameCount(unit, choice)
       && expected.length > 0
-      && expected.every(weaponIndex => current.includes(weaponIndex));
+      && containsWeaponCopies(current, expected);
   }
   if (modelIndex === 0) {
     current.splice(0, current.length, ...stripSelectedUpgradeWeapons(unit, current));
   }
   current.sort((left, right) => left - right);
-  return expected.length === (choice.weaponNames?.length ?? 0)
+  return expected.length === choiceWeaponNameCount(unit, choice)
     && expected.length === current.length
     && expected.every((weaponIndex, index) => weaponIndex === current[index]);
 }
@@ -103,18 +123,17 @@ function defaultChoiceForModel(unit: UnitProfile, modelIndex: number, choices: W
   if (unit.modelWeaponLoadouts?.[modelIndex] !== undefined) return undefined;
   const eligibleChoices = choices.filter(choice =>
     choice.eligibleModelIndexes?.includes(modelIndex)
-    && weaponIndexesForChoice(unit, choice).length === (choice.weaponNames?.length ?? 0),
+    && weaponIndexesForChoice(unit, choice).length === choiceWeaponNameCount(unit, choice),
   );
   return eligibleChoices.find(choice => choice.isDefault) ?? eligibleChoices[0];
 }
 
 function selectedChoiceForModel(unit: UnitProfile, modelIndex: number, choices: WargearChoice[]): WargearChoice | undefined {
-  const explicitSlotChoice = choices.find(choice =>
-    choice.selectionMode === 'replacement-slot'
-    && unit.modelWargearChoices?.[modelIndex]?.includes(choice.id),
-  );
-  if (explicitSlotChoice) return explicitSlotChoice;
-  const selected = choices.find(choice => loadoutMatches(unit, modelIndex, choice));
+  const explicitChoice = choices.find(choice => unit.modelWargearChoices?.[modelIndex]?.includes(choice.id));
+  if (explicitChoice) return explicitChoice;
+  const selected = choices
+    .filter(choice => loadoutMatches(unit, modelIndex, choice))
+    .sort((left, right) => weaponIndexesForChoice(unit, right).length - weaponIndexesForChoice(unit, left).length)[0];
   return selected ?? defaultChoiceForModel(unit, modelIndex, choices);
 }
 
@@ -243,7 +262,7 @@ function updateLoadoutCount(
     let nextModelOffset = 0;
     for (const choice of group.choices) {
       const weaponIndexes = weaponIndexesForChoice(unit, choice);
-      if (weaponIndexes.length !== (choice.weaponNames?.length ?? 0)) continue;
+      if (weaponIndexes.length !== choiceWeaponNameCount(unit, choice)) continue;
       const count = counts.get(choice.id) ?? 0;
       for (let index = 0; index < count && nextModelOffset < nextActiveModelIndexes.length; index += 1) {
         const modelIndex = nextActiveModelIndexes[nextModelOffset];
@@ -266,10 +285,14 @@ function updateLoadoutCount(
     let nextModelOffset = 0;
     for (const choice of group.choices) {
       const weaponIndexes = weaponIndexesForChoice(unit, choice);
-      if (weaponIndexes.length !== (choice.weaponNames?.length ?? 0)) continue;
+      if (weaponIndexes.length !== choiceWeaponNameCount(unit, choice)) continue;
       const count = counts.get(choice.id) ?? 0;
       for (let index = 0; index < count && nextModelOffset < nextActiveModelIndexes.length; index += 1) {
-        loadouts[nextActiveModelIndexes[nextModelOffset]] = [...weaponIndexes];
+        const modelIndex = nextActiveModelIndexes[nextModelOffset];
+        loadouts[modelIndex] = [...weaponIndexes];
+        modelWargearChoices[modelIndex] = modelWargearChoices[modelIndex]
+          .filter(choiceId => !group.choices.some(groupChoice => groupChoice.id === choiceId));
+        modelWargearChoices[modelIndex].push(choice.id);
         nextModelOffset += 1;
       }
     }
@@ -278,7 +301,7 @@ function updateLoadoutCount(
   if (nextActiveModelIndexes.includes(0) && !replacementSlotGroup) {
     const selectedModelChoice = group.choices.find(choice => (counts.get(choice.id) ?? 0) > 0);
     const baseLoadout = selectedModelChoice
-      && weaponIndexesForChoice(unit, selectedModelChoice).length === (selectedModelChoice.weaponNames?.length ?? 0)
+      && weaponIndexesForChoice(unit, selectedModelChoice).length === choiceWeaponNameCount(unit, selectedModelChoice)
       ? weaponIndexesForChoice(unit, selectedModelChoice)
       : undefined;
     loadouts[0] = composeModelZeroLoadout(unit, loadouts[0] ?? [], baseLoadout);
@@ -305,13 +328,13 @@ function updateUnitUpgradeCount(unit: UnitProfile, choice: WargearChoice, reques
 
   let modelWeaponLoadouts = unit.modelWeaponLoadouts;
   const indexes = weaponIndexesForChoice(unit, choice);
-  if (indexes.length === (choice.weaponNames?.length ?? 0) && indexes.length > 0 && currentCount !== nextCount) {
+  if (indexes.length === choiceWeaponNameCount(unit, choice) && indexes.length > 0 && currentCount !== nextCount) {
     const loadouts = resizeModelWeaponLoadouts(unit, unit.baseModelCount);
     const nextUnit = { ...unit, selectedWargear: selected };
     const modelChoices = (unit.wargearChoices ?? []).filter(candidate => candidate.kind === 'model-loadout');
     const currentModelChoice = modelChoices.find(candidate => candidate.eligibleModelIndexes?.includes(0) && loadoutMatches(unit, 0, candidate));
     const baseLoadout = currentModelChoice
-      && weaponIndexesForChoice(unit, currentModelChoice).length === (currentModelChoice.weaponNames?.length ?? 0)
+      && weaponIndexesForChoice(unit, currentModelChoice).length === choiceWeaponNameCount(unit, currentModelChoice)
       ? weaponIndexesForChoice(unit, currentModelChoice)
       : undefined;
     loadouts[0] = composeModelZeroLoadout(nextUnit, loadouts[0] ?? [], baseLoadout);
@@ -334,6 +357,55 @@ function choiceText(choice: WargearChoice): string {
   return (parts.length > 1 ? parts.slice(1).join(':') : parts[0]).trim();
 }
 
+function modelProfileNameAt(unit: UnitProfile, modelIndex: number): string | undefined {
+  let offset = 0;
+  for (const [profileIndex, profile] of (unit.modelProfiles ?? []).entries()) {
+    const count = profileIndex === (unit.modelProfiles?.length ?? 0) - 1
+      ? Math.max(profile.count, unit.baseModelCount - offset)
+      : profile.count;
+    if (modelIndex < offset + count) return profile.name;
+    offset += count;
+  }
+  return undefined;
+}
+
+function uniqueText(values: string[]): string[] {
+  return [...new Set(values.map(value => value.trim()).filter(Boolean))];
+}
+
+function shortEquipmentText(value: string): string {
+  return value
+    .replace(/^one of the following:\s*/i, '')
+    .replace(/(^|;|\s+and\s+)(?:up to\s+)?\d+\s+/gi, '$1')
+    .split(';')
+    .map(option => option.trim())
+    .filter(Boolean)
+    .join(' / ');
+}
+
+function wargearGroupEquipmentLabel(group: ModelChoiceGroup): string {
+  const description = group.choices.find(choice => choice.description)?.description;
+  if (description) {
+    const replacement = description.match(/(?:their|its)\s+(.+?)\s+replaced with\s+(.+?)(?:\.|$)/i);
+    if (replacement) {
+      return `${shortEquipmentText(replacement[1])} → ${shortEquipmentText(replacement[2])}`;
+    }
+    const equipped = description.match(/equipped with\s+(.+?)(?:\.|$)/i);
+    if (equipped) return shortEquipmentText(equipped[1]);
+  }
+
+  const nonDefault = group.choices.filter(choice => !choice.isDefault);
+  return uniqueText(nonDefault.flatMap(choice => [choiceText(choice)]))
+    .join(' / ')
+    || (group.choices[0] ? choiceText(group.choices[0]) : 'Wargear');
+}
+
+function wargearGroupTitle(unit: UnitProfile, group: ModelChoiceGroup, assigned: number, capacity: number): string {
+  const roles = uniqueText(group.modelIndexes.map(modelIndex => modelProfileNameAt(unit, modelIndex) ?? 'Model'));
+  const role = roles.length === 1 ? roles[0] : roles.join(' / ');
+  return `${role} Wargear: ${wargearGroupEquipmentLabel(group)} (${assigned}/${capacity})`;
+}
+
 function weaponsForChoice(unit: UnitProfile, choice: WargearChoice): WeaponProfile[] {
   return (choice.weaponNames ?? []).flatMap(name => {
     const normalizedName = name.trim().toLowerCase();
@@ -342,7 +414,8 @@ function weaponsForChoice(unit: UnitProfile, choice: WargearChoice): WeaponProfi
   });
 }
 
-function choiceWeaponStats(unit: UnitProfile, choice: WargearChoice): React.ReactNode {
+function ChoiceWeaponStats({ unit, choice }: { unit: UnitProfile; choice: WargearChoice }) {
+  const [expanded, setExpanded] = React.useState(false);
   const weapons = weaponsForChoice(unit, choice);
   if (!weapons.length) return null;
   const orderedWeapons = [...weapons].sort((left, right) => {
@@ -352,7 +425,19 @@ function choiceWeaponStats(unit: UnitProfile, choice: WargearChoice): React.Reac
   });
   return (
     <div style={{ display: 'grid', gap: 2, color: uiTokens.color.text.subdued, fontSize: 11, lineHeight: 1.3, minWidth: 0 }}>
-      <ChoiceWeaponTable weapons={orderedWeapons} />
+      <button
+        type="button"
+        onClick={event => {
+          event.preventDefault();
+          event.stopPropagation();
+          setExpanded(open => !open);
+        }}
+        style={statsToggleStyle}
+        aria-expanded={expanded}
+      >
+        {expanded ? 'Hide stats' : 'Show stats'}
+      </button>
+      {expanded && <ChoiceWeaponTable weapons={orderedWeapons} />}
     </div>
   );
 }
@@ -419,6 +504,11 @@ function limitText(choice: WargearChoice, modelCount: number): string {
   return `max ${limit}`;
 }
 
+function unitUpgradeUsesNumberInput(choice: WargearChoice, modelCount: number): boolean {
+  const limit = selectionLimit(choice, modelCount);
+  return limit !== undefined && limit > 1;
+}
+
 export function ArmyWargearEditor({ unit, color, onChange }: Props) {
   const [expanded, setExpanded] = React.useState(false);
   const choices = unit.wargearChoices ?? [];
@@ -450,83 +540,89 @@ export function ArmyWargearEditor({ unit, color, onChange }: Props) {
             const capacity = activeModelIndexes(group, unit.baseModelCount).length;
             const remaining = Math.max(0, capacity - assigned);
             return (
-              <div key={group.key} style={{ display: 'grid', gap: 4 }}>
-                <div style={sectionTitleStyle}>{group.label} ({assigned}/{capacity})</div>
-                {group.choices.map(choice => {
-                  const count = displayedChoiceCount(unit, group, choice);
-                  const isDefault = isGroupDefaultChoice(group, choice);
-                  return (
-                    <label key={choice.id} style={modelRowStyle}>
-                      <div style={{ display: 'grid', gap: 2, minWidth: 0 }}>
-                        <span style={choiceTitleStyle}>
-                          {choiceText(choice)}
-                          {isDefault && <span style={defaultBadgeStyle}>Default</span>}
+              <div key={group.key} style={wargearGroupStyle}>
+                <div style={sectionTitleStyle}>{wargearGroupTitle(unit, group, assigned, capacity)}</div>
+                <div style={{ display: 'grid', gap: 4 }}>
+                  {group.choices.map(choice => {
+                    const count = displayedChoiceCount(unit, group, choice);
+                    const isDefault = isGroupDefaultChoice(group, choice);
+                    return (
+                      <label key={choice.id} style={modelRowStyle}>
+                        <div style={{ display: 'grid', gap: 2, minWidth: 0 }}>
+                          <span style={choiceTitleStyle}>
+                            {choiceText(choice)}
+                            {isDefault && <span style={defaultBadgeStyle}>Default</span>}
+                          </span>
+                          <ChoiceWeaponStats unit={unit} choice={choice} />
+                        </div>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                          {isDefault ? (
+                            <span style={defaultCountStyle} aria-label="Default loadout count">{count}</span>
+                          ) : (
+                            <input
+                              type="number"
+                              min={0}
+                              value={count}
+                              onChange={event => onChange(updateLoadoutCount(unit, group, choice, Number(event.target.value)))}
+                              style={numberInputStyle(color)}
+                            />
+                          )}
+                          <span style={limitStyle}>{limitText(choice, unit.baseModelCount)}</span>
                         </span>
-                        {choiceWeaponStats(unit, choice)}
-                      </div>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        {isDefault ? (
-                          <span style={defaultCountStyle} aria-label="Default loadout count">{count}</span>
-                        ) : (
-                          <input
-                            type="number"
-                            min={0}
-                            value={count}
-                            onChange={event => onChange(updateLoadoutCount(unit, group, choice, Number(event.target.value)))}
-                            style={numberInputStyle(color)}
-                          />
-                        )}
-                        <span style={limitStyle}>{limitText(choice, unit.baseModelCount)}</span>
-                      </span>
-                    </label>
-                  );
-                })}
+                      </label>
+                    );
+                  })}
+                </div>
                 {remaining > 0 && <div style={warningStyle}>{remaining} model{remaining === 1 ? '' : 's'} still need a loadout.</div>}
               </div>
             );
           })}
           {unitChoices.length > 0 && (
-            <div style={{ display: 'grid', gap: 4 }}>
+            <div style={wargearGroupStyle}>
               <div style={sectionTitleStyle}>Unit upgrades</div>
-              {unitChoices.map(choice => {
-                const count = selectedUpgradeCount(unit, choice);
-                const limit = selectionLimit(choice, unit.baseModelCount);
-                const countInput = limit !== undefined && limit > 1;
-                const blockedByGroup = limit !== undefined
-                  && upgradeCountInLimitGroup(unit, choice, unitChoices) >= limit
-                  && count === 0;
-                return (
-                  <label key={choice.id} style={upgradeRowStyle}>
-                    <div style={upgradeControlStyle}>
-                      {countInput ? (
-                        <input
-                          type="number"
-                          min={0}
-                          value={count}
-                          onChange={event => onChange(updateUnitUpgradeCount(unit, choice, Number(event.target.value)))}
-                          style={numberInputStyle(color)}
-                        />
-                      ) : (
-                        <input
-                          type="checkbox"
-                          checked={count > 0}
-                          disabled={blockedByGroup}
-                          onChange={() => onChange(toggleUnitUpgrade(unit, choice))}
-                          style={{ width: 18, height: 18, margin: 0, accentColor: color }}
-                        />
-                      )}
-                    </div>
-                    <div style={{ display: 'grid', gap: 2, minWidth: 0 }}>
-                      <span style={choiceTitleStyle}>
-                        {choiceText(choice)}
-                        {choice.isDefault && <span style={defaultBadgeStyle}>Default</span>}
-                      </span>
-                      {choiceWeaponStats(unit, choice)}
-                    </div>
-                    {limit !== undefined && <span style={limitStyle}>max {limit}</span>}
-                  </label>
-                );
-              })}
+              <div style={{ display: 'grid', gap: 4 }}>
+                {[...unitChoices]
+                  .sort((left, right) => Number(unitUpgradeUsesNumberInput(right, unit.baseModelCount)) - Number(unitUpgradeUsesNumberInput(left, unit.baseModelCount)))
+                  .map(choice => {
+                  const count = selectedUpgradeCount(unit, choice);
+                  const limit = selectionLimit(choice, unit.baseModelCount);
+                  const countInput = unitUpgradeUsesNumberInput(choice, unit.baseModelCount);
+                  const blockedByGroup = limit !== undefined
+                    && upgradeCountInLimitGroup(unit, choice, unitChoices) >= limit
+                    && count === 0;
+                  return (
+                    <label key={choice.id} style={upgradeRowStyle}>
+                      <div style={upgradeControlStyle}>
+                        {countInput ? (
+                          <input
+                            type="number"
+                            min={0}
+                            value={count}
+                            onChange={event => onChange(updateUnitUpgradeCount(unit, choice, Number(event.target.value)))}
+                            style={numberInputStyle(color)}
+                          />
+                        ) : (
+                          <input
+                            type="checkbox"
+                            checked={count > 0}
+                            disabled={blockedByGroup}
+                            onChange={() => onChange(toggleUnitUpgrade(unit, choice))}
+                            style={{ width: 18, height: 18, margin: 0, accentColor: color }}
+                          />
+                        )}
+                      </div>
+                      <div style={{ display: 'grid', gap: 2, minWidth: 0 }}>
+                        <span style={choiceTitleStyle}>
+                          {choiceText(choice)}
+                          {choice.isDefault && <span style={defaultBadgeStyle}>Default</span>}
+                        </span>
+                        <ChoiceWeaponStats unit={unit} choice={choice} />
+                      </div>
+                      {limit !== undefined && <span style={limitStyle}>max {limit}</span>}
+                    </label>
+                  );
+                  })}
+              </div>
             </div>
           )}
           <div style={{ color: uiTokens.color.text.faint, fontSize: 12, lineHeight: 1.45 }}>
@@ -545,6 +641,15 @@ const sectionTitleStyle: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
+const wargearGroupStyle: React.CSSProperties = {
+  display: 'grid',
+  gap: 6,
+  padding: 8,
+  border: '1px solid #2f2f43',
+  borderRadius: 4,
+  background: '#11111b',
+};
+
 const choiceTitleStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
@@ -554,6 +659,18 @@ const choiceTitleStyle: React.CSSProperties = {
   fontSize: 14,
   fontWeight: 800,
   lineHeight: 1.35,
+};
+
+const statsToggleStyle: React.CSSProperties = {
+  justifySelf: 'start',
+  padding: 0,
+  border: 0,
+  background: 'transparent',
+  color: uiTokens.color.text.subdued,
+  cursor: 'pointer',
+  font: 'inherit',
+  fontSize: 11,
+  textDecoration: 'underline',
 };
 
 const modelRowStyle: React.CSSProperties = {

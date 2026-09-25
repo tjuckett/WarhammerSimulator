@@ -1,0 +1,5204 @@
+{
+  "factionId": "world-eaters",
+  "units": [
+    {
+      "id": "world-eaters.kh-rn-the-betrayer",
+      "name": "Kharn The Betrayer",
+      "externalIds": {
+        "wahapedia": "Kh-rn-The-Betrayer"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 115
+        }
+      ],
+      "profile": {
+        "name": "Kharn The Betrayer",
+        "move": 8,
+        "toughness": 4,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 5,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "EPIC HERO",
+          "GRENADES",
+          "CHAOS",
+          "KHORNE",
+          "KHARN THE BETRAYER"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Gorechild",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Legendary Killer",
+          "description": "While this model is leading a unit, each time a model in that unit makes a melee attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "The Betrayer",
+          "description": "At the end of your Charge phase, if this unit is on the battlefield, is unengaged, and contains a bodyguard model, this unit makes a leadership roll: If that leadership roll is failed, one bodyguard model in this unit is destroyed.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Berzerker Frenzy",
+          "description": "The first time this model is destroyed, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with 3 wounds remaining.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following unit: KHORNE BERZERKERS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "KHORNE BERZERKERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Kharn The Betrayer datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Kh-rn-The-Betrayer",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "world-eaters.khorne-berzerkers"
+      ]
+    },
+    {
+      "id": "world-eaters.angron",
+      "name": "Angron",
+      "externalIds": {
+        "wahapedia": "Angron"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 330
+        }
+      ],
+      "profile": {
+        "name": "Angron",
+        "move": 14,
+        "toughness": 11,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 16,
+        "leadership": 5,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "FLY",
+          "EPIC HERO",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "PRIMARCH",
+          "ANGRON"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Samni'arius and Spinegrinder - strike",
+            "profileGroup": "Samni'arius and Spinegrinder",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Samni'arius and Spinegrinder - sweep",
+            "profileGroup": "Samni'arius and Spinegrinder",
+            "range": 0,
+            "attacks": "16",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Reborn in Blood",
+          "description": "At the start of the battle round, when you make a Blessings of Khorne roll, if this model is destroyed, you can use a triple 6 from that roll to use this ability instead of activating any Blessings of Khorne at the start of that battle round. If you do, this model is no longer destroyed and in the Reinforcements step of your next Movement phase, it is set up anywhere on the battlefield using its Deep Strike ability, with 8 wounds remaining.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Wrathful Presence",
+          "description": "At the start of the battle round, select one Wrathful Presence ability. Until the start of the next battle round, this model has that ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Angron datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Angron",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.skarbrand",
+      "name": "Skarbrand",
+      "externalIds": {
+        "wahapedia": "Skarbrand"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 315
+        }
+      ],
+      "profile": {
+        "name": "Skarbrand",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 20,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "EPIC HERO",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "SUMMONED",
+          "SKARBRAND"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Bellow of endless fury",
+            "range": 12,
+            "attacks": "2D6",
+            "skill": 6,
+            "strength": 8,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Slaughter and Carnage - strike",
+            "profileGroup": "Slaughter and Carnage",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 16,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Slaughter and Carnage - sweep",
+            "profileGroup": "Slaughter and Carnage",
+            "range": 0,
+            "attacks": "16",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 7,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Rage Embodied (Aura)",
+          "description": "While a friendly BLOOD LEGIONS unit is within 6\" of this model, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Murderlust",
+          "description": "This unit is eligible to declare a charge in a turn in which it Advanced.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-7 Wounds Remaining While this model has 1-7 wounds remaining, add 2 to the Attacks characteristic of this model's melee weapons.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Skarbrand datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Skarbrand",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.lord-invocatus",
+      "name": "Lord Invocatus",
+      "externalIds": {
+        "wahapedia": "Lord-Invocatus"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 100
+        }
+      ],
+      "profile": {
+        "name": "Lord Invocatus",
+        "move": 10,
+        "toughness": 6,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 8,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "CHARACTER",
+          "EPIC HERO",
+          "CHAOS",
+          "KHORNE",
+          "LORD INVOCATUS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Coward's Bane",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Bladed horn",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Extra Attacks",
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Fire Riders",
+          "description": "While this model is leading a unit, models in that unit have the Deep Strike ability and each time a model in that unit makes a Normal, Advance, Fall Back or Charge move, it can move horizontally through models and terrain features. When making a Normal, Advance or Fall Back move, models in that unit can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them and any Desperate Escape test is automatically passed.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Bloody Stampede",
+          "description": "Each time this model's unit ends a Charge move, select one enemy unit within Engagement Range of this model, then roll one D6: on a 2-3, that enemy unit suffers 1 mortal wound; on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: EIGHTBOUND EXALTED EIGHTBOUND KHORNE BERZERKERS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "EIGHTBOUND",
+        "EXALTED EIGHTBOUND",
+        "KHORNE BERZERKERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Lord Invocatus datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Lord-Invocatus",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "world-eaters.eightbound",
+        "world-eaters.exalted-eightbound",
+        "world-eaters.khorne-berzerkers"
+      ]
+    },
+    {
+      "id": "world-eaters.master-of-executions",
+      "name": "Master of Executions",
+      "externalIds": {
+        "wahapedia": "Master-of-Executions"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 60
+        }
+      ],
+      "profile": {
+        "name": "Master of Executions",
+        "move": 8,
+        "toughness": 4,
+        "save": 3,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "CHAOS",
+          "KHORNE",
+          "MASTER OF EXECUTIONS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Axe of dismemberment",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds",
+              "Precision"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Forwards, for Blood!",
+          "description": "While this model is leading a unit, you can re-roll Advance rolls made for that unit and each time that unit makes a Blood Surge move, you can re-roll the D6 used to determine how far models in that unit move.",
+          "category": "datasheet"
+        },
+        {
+          "name": "A Worthy Skull",
+          "description": "Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's unit destroys a CHARACTER model, you gain 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following unit: KHORNE BERZERKERS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "KHORNE BERZERKERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Master of Executions datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Master-of-Executions",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "world-eaters.khorne-berzerkers"
+      ]
+    },
+    {
+      "id": "world-eaters.slaughterbound",
+      "name": "Slaughterbound",
+      "externalIds": {
+        "wahapedia": "Slaughterbound"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 100
+        }
+      ],
+      "profile": {
+        "name": "Slaughterbound",
+        "move": 10,
+        "toughness": 6,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 6,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "POSSESSED",
+          "SLAUGHTERBOUND"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Lacerator and daemonic claw",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Rage Eternal",
+          "description": "While this model is leading a unit, in your Command phase, you can return one destroyed Bodyguard model to that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Possessed Lord",
+          "description": "Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: EIGHTBOUND EXALTED EIGHTBOUND",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "EIGHTBOUND",
+        "EXALTED EIGHTBOUND"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Slaughterbound datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Slaughterbound",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "world-eaters.eightbound",
+        "world-eaters.exalted-eightbound"
+      ]
+    },
+    {
+      "id": "world-eaters.bloodthirster",
+      "name": "Bloodthirster",
+      "externalIds": {
+        "wahapedia": "Bloodthirster"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 320,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 335,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's great axe of Khorne can be replaced with 1 axe of Khorne and one of the following:; 1 bloodflail; 1 lash of Khorne"
+      ],
+      "profile": {
+        "name": "Bloodthirster",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 18,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "FLY",
+          "CHAOS",
+          "DAEMON",
+          "KHORNE",
+          "SUMMONED",
+          "BLOODTHIRSTER"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Bloodflail",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 16,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hellfire breath",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lash of Khorne",
+            "range": 12,
+            "attacks": "9",
+            "skill": 2,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Axe of Khorne - strike",
+            "profileGroup": "Axe of Khorne",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 14,
+            "ap": -4,
+            "damage": "D3+1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Axe of Khorne - sweep",
+            "profileGroup": "Axe of Khorne",
+            "range": 0,
+            "attacks": "16",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Great axe of Khorne - strike",
+            "profileGroup": "Great axe of Khorne",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 16,
+            "ap": -4,
+            "damage": "D6+2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Great axe of Khorne - sweep",
+            "profileGroup": "Great axe of Khorne",
+            "range": 0,
+            "attacks": "14",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Daemon Lord of Khorne (Aura)",
+          "description": "While a friendly BLOOD LEGIONS unit is within 6\" of this model, each time a model in that unit makes a melee attack, add 1 to the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Relentless Carnage",
+          "description": "At the end of the Fight phase, you can select one enemy unit within Engagement Range of this model and roll eight D6: for each 4+, that enemy unit suffers 1 mortal wound.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Bloodthirster datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Bloodthirster",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.daemon-prince-of-khorne",
+      "name": "Daemon Prince of Khorne",
+      "externalIds": {
+        "wahapedia": "Daemon-Prince-of-Khorne"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 200
+        }
+      ],
+      "profile": {
+        "name": "Daemon Prince of Khorne",
+        "move": 10,
+        "toughness": 10,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "DAEMON PRINCE"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Infernal cannon",
+            "range": 24,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hellforged weapons - strike",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hellforged weapons - sweep",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "16",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Lord of Murder",
+          "description": "While this model is within 3\" of one or more friendly WORLD EATERS INFANTRY units, this model has the Lone Operative ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Devastating Assault",
+          "description": "Each time this model makes a Charge move, until the end of the turn, its melee weapons have the [DEVASTATING WOUNDS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Direct the Slaughter",
+          "description": "Once per battle round, one model from your army with this ability can use it when a friendly WORLD EATERS unit within 12\" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Daemon Prince of Khorne datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Daemon-Prince-of-Khorne",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.daemon-prince-of-khorne-with-wings",
+      "name": "Daemon Prince of Khorne with Wings",
+      "externalIds": {
+        "wahapedia": "Daemon-Prince-of-Khorne-with-Wings"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 170
+        }
+      ],
+      "profile": {
+        "name": "Daemon Prince of Khorne with Wings",
+        "move": 14,
+        "toughness": 9,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "FLY",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "DAEMON PRINCE"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Infernal cannon",
+            "range": 24,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hellforged weapons - strike",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hellforged weapons - sweep",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "16",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Bloodied Terror",
+          "description": "At the start of the Fight phase, each enemy unit within Engagement Range of this model must take a Battle-shock test, subtracting 1 from that test if that enemy unit is Below Half-strength.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Swooping Predator",
+          "description": "Each time this model ends a Normal or Advance move, you can select one enemy unit that it moved over during that move and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Daemon Prince of Khorne with Wings datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Daemon-Prince-of-Khorne-with-Wings",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.lord-on-juggernaut",
+      "name": "Lord on Juggernaut",
+      "externalIds": {
+        "wahapedia": "Lord-on-Juggernaut"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 95
+        }
+      ],
+      "profile": {
+        "name": "Lord on Juggernaut",
+        "move": 10,
+        "toughness": 6,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 7,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "CHARACTER",
+          "CHAOS",
+          "KHORNE",
+          "LORD ON JUGGERNAUT"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Exalted chainblade",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Bladed horn",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Extra Attacks",
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Aggressive Advance",
+          "description": "While this model is leading a unit, models in that unit have a Move characteristic of 10\" and each time a model in that unit makes a Normal, Advance, Fall Back or Charge move, it can move horizontally through terrain features.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Crush All Who Stand Before Us",
+          "description": "Each time this model's unit is selected to fight, you can use this ability. When determining which models in this unit are eligible to fight, any models in it that are within 3\" of one or more enemy models are eligible to fight. When resolving those attacks, such models can target one of those enemy units that is within 3\" of them and within Engagement Range of their unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: EIGHTBOUND EXALTED EIGHTBOUND KHORNE BERZERKERS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "EIGHTBOUND",
+        "EXALTED EIGHTBOUND",
+        "KHORNE BERZERKERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Lord on Juggernaut datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Lord-on-Juggernaut",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "world-eaters.eightbound",
+        "world-eaters.exalted-eightbound",
+        "world-eaters.khorne-berzerkers"
+      ]
+    },
+    {
+      "id": "world-eaters.bloodletters",
+      "name": "Bloodletters",
+      "aliases": [
+        "Bloodletters (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Bloodletters"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 90
+        }
+      ],
+      "wargearOptions": [
+        "1 Bloodletter that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.",
+        "1 Bloodletter that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon."
+      ],
+      "profile": {
+        "name": "Bloodletters",
+        "move": 8,
+        "toughness": 4,
+        "save": 7,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "CHAOS",
+          "DAEMON",
+          "KHORNE",
+          "SUMMONED",
+          "BLOODLETTERS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Hellblade",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Bane of Cowards",
+          "description": "Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is also Battle-shocked, subtract 1 from each of those Desperate Escape tests.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daemonic Icon",
+          "description": "Models in the bearer's unit have a Leadership characteristic of 6+.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Instrument of Chaos",
+          "description": "Add 1 to Charge rolls made for the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Bloodletters datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Bloodletters",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.khorne-berzerkers",
+      "name": "Khorne Berzerkers",
+      "aliases": [
+        "Khorne Berzerkers (x10)",
+        "Khorne Berzerkers (x20)"
+      ],
+      "externalIds": {
+        "wahapedia": "Khorne-Berzerkers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10,
+        "maximum": 20,
+        "step": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 160
+        },
+        {
+          "modelCount": 20,
+          "points": 320
+        }
+      ],
+      "wargearOptions": [
+        "The Khorne Berzerker Champion's bolt pistol can be replaced with 1 plasma pistol.",
+        "For every 5 models in this unit, 1 Khorne Berzerker's bolt pistol can be replaced with 1 plasma pistol.",
+        "For every 5 models in this unit, 1 Khorne Berzerker's chainblade can be replaced with 1 Khornate eviscerator.",
+        "1 model can be equipped with 1 icon of Khorne."
+      ],
+      "profile": {
+        "name": "Khorne Berzerkers",
+        "move": 8,
+        "toughness": 4,
+        "save": 3,
+        "wounds": 2,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "GRENADES",
+          "CHAOS",
+          "KHORNE",
+          "BERZERKERS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainblade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Khornate eviscerator",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Blood Surge",
+          "description": "In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6+2\".",
+          "category": "datasheet"
+        },
+        {
+          "name": "Icon of Khorne",
+          "description": "If the bearer's unit contains one or more Icons of Khorne, each time the bearer's unit destroys an enemy unit, you gain 1 Bloodshed point. Each time you make a Blessings of Khorne roll, roll one additional D6 for each Bloodshed point you have, after which, all your Bloodshed points are lost.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Khorne Berzerkers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Khorne-Berzerkers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.chaos-rhino",
+      "name": "Chaos Rhino",
+      "externalIds": {
+        "wahapedia": "Chaos-Rhino"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Dedicated Transports",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 85,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; 1 additional combi-bolter; 1 combi-weapon",
+        "This model can be equipped with 1 havoc launcher or can replace 1 combi-bolter with 1 havoc launcher."
+      ],
+      "profile": {
+        "name": "Chaos Rhino",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "FRAME",
+          "DEDICATED TRANSPORT",
+          "SMOKE",
+          "CHAOS",
+          "KHORNE",
+          "RHINO"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Firing Deck 2",
+            "description": "Core ability: Firing Deck 2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            3
+          ]
+        ],
+        "transportCapacity": 12
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Meet Any Challenge",
+          "description": "In your opponent's Movement phase, each time an enemy unit is set up or ends a Normal, Advance or Fall Back move within 8\" of this model, any units embarked within it can disembark.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 12 WORLD EATERS INFANTRY models. It cannot transport POSSESSED or TERMINATOR models.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Rhino datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Chaos-Rhino",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.chaos-spawn",
+      "name": "Chaos Spawn",
+      "aliases": [
+        "Chaos Spawn (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Chaos-Spawn"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Beast",
+      "modelCount": {
+        "minimum": 2
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 95
+        }
+      ],
+      "profile": {
+        "name": "Chaos Spawn",
+        "move": 10,
+        "toughness": 5,
+        "save": 4,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          },
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "BEAST",
+          "CHAOS",
+          "KHORNE",
+          "SPAWN"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Hideous mutations",
+            "range": 0,
+            "attacks": "D6+4",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 8\"",
+            "description": "Core ability: Scouts 8\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "To Slake its Rage",
+          "description": "This unit is eligible to declare a charge in a turn in which it Advanced.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Spawn datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Chaos-Spawn",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.flesh-hounds",
+      "name": "Flesh Hounds",
+      "aliases": [
+        "Flesh Hounds (x5)",
+        "Flesh Hounds (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Flesh-Hounds"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Beast",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 75
+        },
+        {
+          "modelCount": 10,
+          "points": 150
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Flesh Hounds",
+        "move": 12,
+        "toughness": 4,
+        "save": 7,
+        "invulnSave": 5,
+        "wounds": 2,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          }
+        ],
+        "keywords": [
+          "BEAST",
+          "CHAOS",
+          "DAEMON",
+          "KHORNE",
+          "SUMMONED",
+          "FLESH HOUNDS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Burning roar",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Gore-drenched fangs",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Hunters from the Warp",
+          "description": "At the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Collar of Khorne",
+          "description": "The bearer has the Feel No Pain 3+ ability against Psychic Attacks.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Flesh Hounds datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Flesh-Hounds",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.chaos-terminators",
+      "name": "Chaos Terminators",
+      "aliases": [
+        "Chaos Terminators (x5)",
+        "Chaos Terminators (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Chaos-Terminators"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 165,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 330,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 175,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 340,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "For every 5 models in this unit, 1 Chaos Terminator's combi-bolter can be replaced with one of the following:; 1 heavy flamer; 1 reaper autocannon",
+        "Any number of models can each have their combi-bolter replaced with 1 combi-weapon.",
+        "For every 5 models in this unit, 1 model's combi-bolter and accursed weapon can be replaced with 1 paired accursed weapons.",
+        "For every 5 models in this unit, up to 3 models can each have their accursed weapon replaced with 1 power fist.",
+        "For every 5 models in this unit, 1 model's accursed weapon can be replaced with 1 chainfist."
+      ],
+      "profile": {
+        "name": "Chaos Terminators",
+        "move": 7,
+        "toughness": 5,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHAOS",
+          "KHORNE",
+          "TERMINATOR",
+          "TERMINATOR SQUAD"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper autocannon",
+            "range": 36,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 7,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Sustained Hits 1",
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Accursed weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Chainfist",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Anti-vehicle 3+"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Paired accursed weapons",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Power fist",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Bloody Fury",
+          "description": "This unit's ranged attacks that target the closest eligible target can re-roll hit rolls. When this unit declares a charge, you can use this part of this ability. If you do: This unit can re-roll that charge roll. This unit must end that charge move engaged with the closest charge target.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Terminators datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Chaos-Terminators",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.eightbound",
+      "name": "Eightbound",
+      "aliases": [
+        "Eightbound (x3)",
+        "Eightbound (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Eightbound"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 125,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 255,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 140,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 270,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Eightbound",
+        "move": 10,
+        "toughness": 6,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "POSSESSED",
+          "EIGHTBOUND"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Chainblades",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Beacons of Rage (Aura)",
+          "description": "While a friendly WORLD EATERS unit is within 6\" of this unit, each time a model in that unit makes a melee attack that targets a unit (excluding MONSTERS and VEHICLES), add 1 to the Hit roll. If that attack targets a unit (excluding MONSTERS and VEHICLES) that is Below Half-strength, add 1 to the Wound roll as well.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Eightbound datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Eightbound",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.exalted-eightbound",
+      "name": "Exalted Eightbound",
+      "aliases": [
+        "Exalted Eightbound (x3)",
+        "Exalted Eightbound (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Exalted-Eightbound"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 130,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 265,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 145,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 280,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Exalted Eightbound",
+        "move": 10,
+        "toughness": 6,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "POSSESSED",
+          "EXALTED EIGHTBOUND"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Chainblades",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Anti-monster 3+",
+              "Anti-vehicle 3+"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Rend and Tear",
+          "description": "Each time a model in this unit makes a melee attack that targets a MONSTER or VEHICLE unit, until the end of the phase, improve the Damage characteristic of that attack by 1.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Exalted Eightbound datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Exalted-Eightbound",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.goremongers",
+      "name": "Goremongers",
+      "aliases": [
+        "Goremongers (x8)"
+      ],
+      "externalIds": {
+        "wahapedia": "Goremongers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 8
+      },
+      "points": [
+        {
+          "modelCount": 8,
+          "points": 75
+        }
+      ],
+      "wargearOptions": [
+        "1 Goremonger's chainblade can be replaced with 1 autopistol.",
+        "1 Goremonger's chainblade can be replaced with 1 blood harpoon."
+      ],
+      "profile": {
+        "name": "Goremongers",
+        "move": 9,
+        "toughness": 4,
+        "save": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 8,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHAOS",
+          "KHORNE",
+          "GOREMONGERS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Autopistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blood harpoon",
+            "range": 18,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainblade",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Infiltrators",
+            "description": "Core ability: Infiltrators.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Loping Speed",
+          "description": "In your opponent's Movement phase, if an enemy unit ends a move within 8\" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6\".",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Goremongers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Goremongers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.jakhals",
+      "name": "Jakhals",
+      "aliases": [
+        "Jakhals (x10)",
+        "Jakhals (x20)"
+      ],
+      "externalIds": {
+        "wahapedia": "Jakhals"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 10,
+        "maximum": 20,
+        "step": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 65
+        },
+        {
+          "modelCount": 20,
+          "points": 130
+        }
+      ],
+      "wargearOptions": [
+        "For every 10 models in this unit, 1 Jakhal's chainblades can be replaced with 1 mauler chainblade.",
+        "Any number of Dishonoured models can each have their paired manglers replaced with 1 skullsmasher and mangler.",
+        "For every 10 models in this unit, 1 Jakhal can be equipped with 1 icon of Khorne."
+      ],
+      "profile": {
+        "name": "Jakhals",
+        "move": 7,
+        "toughness": 4,
+        "save": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHAOS",
+          "KHORNE",
+          "JAKHALS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Autopistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainblades",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Paired manglers",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Mauler chainblade",
+            "range": 0,
+            "attacks": "3",
+            "skill": 5,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Skullsmasher and mangler",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": []
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Objective Ravaged",
+          "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Icon of Khorne",
+          "description": "If the bearer's unit contains one or more Icons of Khorne, each time the bearer's unit destroys an enemy unit, you gain 1 Bloodshed point. Each time you make a Blessings of Khorne roll, roll one additional D6 for each Bloodshed point you have, after which, all your Bloodshed points are lost.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Jakhals datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Jakhals",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.bloodcrushers",
+      "name": "Bloodcrushers",
+      "aliases": [
+        "Bloodcrushers (x3)",
+        "Bloodcrushers (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Bloodcrushers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 95,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 190,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 115,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 210,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "1 Bloodcrusher that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.",
+        "1 Bloodcrusher that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon."
+      ],
+      "profile": {
+        "name": "Bloodcrushers",
+        "move": 10,
+        "toughness": 7,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52
+          },
+          {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52
+          },
+          {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "CHAOS",
+          "DAEMON",
+          "KHORNE",
+          "SUMMONED",
+          "BLOODCRUSHERS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Hellblade",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Bladed horn",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Extra Attacks",
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Brass Stampede",
+          "description": "Each time this unit ends a Charge move, select one enemy unit within Engagement Range of this unit and roll one D6 for each model in this unit: for each 4+, that enemy unit suffers D3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daemonic Icon",
+          "description": "Models in the bearer's unit have a Leadership characteristic of 6+.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Instrument of Chaos",
+          "description": "Add 1 to Charge rolls made for the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Bloodcrushers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Bloodcrushers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.khorne-lord-of-skulls",
+      "name": "Khorne Lord of Skulls",
+      "externalIds": {
+        "wahapedia": "Khorne-Lord-of-Skulls"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 505,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 535,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's gorestorm cannon can be replaced with one of the following:; 1 daemongore cannon; 1 ichor cannon",
+        "This model's Hades gatling cannon can be replaced with 1 skullhurler."
+      ],
+      "profile": {
+        "name": "Khorne Lord of Skulls",
+        "move": 12,
+        "toughness": 13,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 24,
+        "leadership": 6,
+        "oc": 8,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FRAME",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "LORD OF SKULLS"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Daemongore cannon",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 14,
+            "ap": -4,
+            "damage": "D6+2",
+            "keywords": [
+              "Rapid Fire 3",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Gorestorm cannon",
+            "range": 24,
+            "attacks": "D6+3",
+            "skill": 4,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 3",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades gatling cannon",
+            "range": 48,
+            "attacks": "12",
+            "skill": 4,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Rapid Fire 6"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ichor cannon",
+            "range": 48,
+            "attacks": "2D6",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 4",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Skullhurler",
+            "range": 60,
+            "attacks": "2D6",
+            "skill": 4,
+            "strength": 14,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Great cleaver of Khorne - strike",
+            "profileGroup": "Great cleaver of Khorne",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Great cleaver of Khorne - sweep",
+            "profileGroup": "Great cleaver of Khorne",
+            "range": 0,
+            "attacks": "18",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 8,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Idol of Blessed Blood",
+          "description": "At the start of the battle round, if this model is on the battlefield, when you make a Blessings of Khorne roll, roll one additional D6.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Super-heavy War Engine",
+          "description": "Each time this model makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4\" or less in height. When doing so it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them. It can also move through sections of terrain features that are more than 4\" in height, but if it does, after it has moved, roll one D6: on a roll of 1, this model is Battle-shocked.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-8 Wounds Remaining While this model has 1-8 wounds remaining, subtract 4 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Khorne Lord of Skulls datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Khorne-Lord-of-Skulls",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.chaos-land-raider",
+      "name": "Chaos Land Raider",
+      "externalIds": {
+        "wahapedia": "Chaos-Land-Raider"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Transport",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 220,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 240,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; 1 combi-bolter; 1 combi-weapon",
+        "This model can be equipped with 1 havoc launcher."
+      ],
+      "profile": {
+        "name": "Chaos Land Raider",
+        "move": 10,
+        "toughness": 12,
+        "save": 2,
+        "wounds": 16,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "FRAME",
+          "SMOKE",
+          "CHAOS",
+          "KHORNE",
+          "LAND RAIDER"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Soulshatter lascannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Rapid Fire 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "9",
+            "skill": 3,
+            "strength": 8,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            4,
+            5
+          ]
+        ],
+        "transportCapacity": 14,
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Assault Ramp",
+          "description": "Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 14 WORLD EATERS INFANTRY models. Each POSSESSED and TERMINATOR model takes up the space of 2 models.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Land Raider datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Chaos-Land-Raider",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.chaos-predator-annihilator",
+      "name": "Chaos Predator Annihilator",
+      "externalIds": {
+        "wahapedia": "Chaos-Predator-Annihilator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 130,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 140,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; 2 heavy bolters; 2 lascannons",
+        "This model can be equipped with 1 havoc launcher.",
+        "This model can be equipped with one of the following:; 1 combi-bolter; 1 combi-weapon"
+      ],
+      "profile": {
+        "name": "Chaos Predator Annihilator",
+        "move": 10,
+        "toughness": 10,
+        "save": 3,
+        "wounds": 11,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FRAME",
+          "SMOKE",
+          "CHAOS",
+          "KHORNE",
+          "PREDATOR ANNIHILATOR"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Predator twin lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Rapid Fire 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Blood-hungry Annihilator",
+          "description": "Each time this model makes a ranged attack that targets the closest eligible MONSTER or VEHICLE target within 18\", you can re-roll the Wound roll and you can re-roll the Damage roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Predator Annihilator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Chaos-Predator-Annihilator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.chaos-predator-destructor",
+      "name": "Chaos Predator Destructor",
+      "externalIds": {
+        "wahapedia": "Chaos-Predator-Destructor"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 130,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 140,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; 2 heavy bolters; 2 lascannons",
+        "This model can be equipped with 1 havoc launcher.",
+        "This model can be equipped with one of the following:; 1 combi-bolter; 1 combi-weapon"
+      ],
+      "profile": {
+        "name": "Chaos Predator Destructor",
+        "move": 10,
+        "toughness": 10,
+        "save": 3,
+        "wounds": 11,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FRAME",
+          "SMOKE",
+          "CHAOS",
+          "KHORNE",
+          "PREDATOR DESTRUCTOR"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Predator autocannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 6"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Punishing Suppression",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks (excluding MONSTERS and VEHICLES). Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Predator Destructor datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Chaos-Predator-Destructor",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.heldrake",
+      "name": "Heldrake",
+      "externalIds": {
+        "wahapedia": "Heldrake"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 175
+        }
+      ],
+      "wargearOptions": [
+        "This model's Hades autocannon can be replaced with 1 baleflamer."
+      ],
+      "profile": {
+        "name": "Heldrake",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 12,
+        "leadership": 6,
+        "oc": 0,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FLY",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "HELDRAKE"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Baleflamer",
+            "range": 12,
+            "attacks": "D6+3",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades autocannon",
+            "range": 36,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heldrake claws",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Hover",
+            "description": "Core ability: Hover.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Airborne Predator",
+          "description": "Each time this model makes an attack that targets a unit that can FLY, add 1 to the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Heldrake datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Heldrake",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.defiler",
+      "name": "Defiler",
+      "externalIds": {
+        "wahapedia": "Defiler"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 270,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 310,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's Hades battle cannon can be replaced with 1 ectoplasma destructor.",
+        "This model's excruciator cannons can be replaced with 2 magma cutters.",
+        "This model's heavy baleflamer can be replaced with one of the following:; 1 Hades lascannon; 1 heavy reaper autocannon; 1 electroscourge (a model cannot be equipped with more than one electroscourge)",
+        "This model's heavy missile launcher can be replaced with one of the following:; 1 Hades lascannon; 1 heavy reaper autocannon; 1 electroscourge (a model cannot be equipped with more than one electroscourge)"
+      ],
+      "profile": {
+        "name": "Defiler",
+        "move": 14,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 18,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 160
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "DEFILER"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Ectoplasma destructor",
+            "range": 36,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 2",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Excruciator cannon",
+            "range": 36,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy baleflamer",
+            "range": 12,
+            "attacks": "D6+3",
+            "skill": 6,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades battle cannon",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 4,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 3",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades lascannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy missile launcher - krak",
+            "profileGroup": "Heavy missile launcher",
+            "range": 48,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 10,
+            "ap": -2,
+            "damage": "D6+1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy missile launcher - frag",
+            "profileGroup": "Heavy missile launcher",
+            "range": 48,
+            "attacks": "2D6",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy reaper autocannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds",
+              "Sustained Hits 1",
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Magma cutters",
+            "range": 12,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Rapid Fire 1",
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Electroscourge",
+            "range": 0,
+            "attacks": "7",
+            "skill": 3,
+            "strength": 12,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2",
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Shearing claws - strike",
+            "profileGroup": "Shearing claws",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 16,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Shearing claws - sweep",
+            "profileGroup": "Shearing claws",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3,
+            5,
+            6,
+            2,
+            10,
+            11
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Scuttling Walker",
+          "description": "Each time this unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Unleash Wrath",
+          "description": "At the end of your opponent's Movement phase, you can select one enemy unit that was set up on the battlefield within 12\" of this model; this model can then either: Shoot at that unit, but only if it is an eligible target. Declare a charge. This unit must end that charge move engaged with the enemy unit you selected (note that even if this charge is successful, this unit does not receive any Charge bonus this turn).",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Defiler datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Defiler",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.forgefiend",
+      "name": "Forgefiend",
+      "externalIds": {
+        "wahapedia": "Forgefiend"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 140,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 155,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 Hades autocannons can be replaced with 2 ectoplasma cannons.",
+        "This model's Forgefiend jaws can be replaced with 1 ectoplasma cannon and 1 Forgefiend claws."
+      ],
+      "profile": {
+        "name": "Forgefiend",
+        "move": 10,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 12,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "FORGEFIEND"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Ectoplasma cannon",
+            "range": 36,
+            "attacks": "D3",
+            "skill": 4,
+            "strength": 10,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 1",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades autocannon",
+            "range": 36,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Forgefiend claws",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Forgefiend jaws",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Furious Onslaught",
+          "description": "Each time this model makes a ranged attack that targets the closest eligible target within 18\", you can re-roll the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Forgefiend datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Forgefiend",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.helbrute",
+      "name": "Helbrute",
+      "externalIds": {
+        "wahapedia": "Helbrute"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 120
+        }
+      ],
+      "wargearOptions": [
+        "This model's multi-melta can be replaced with one of the following:; 1 plasma cannon; 1 twin autocannon; 1 twin heavy bolter; 1 twin lascannon; 1 Helbrute fist",
+        "This model's missile launcher can be replaced with one of the following:; 1 Helbrute fist; 1 Helbrute hammer; 1 power scourge",
+        "For each Helbrute fist this model is equipped with, it can be equipped with one of the following:; 1 combi-bolter; 1 heavy flamer"
+      ],
+      "profile": {
+        "name": "Helbrute",
+        "move": 9,
+        "toughness": 9,
+        "save": 2,
+        "wounds": 8,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "KHORNE",
+          "HELBRUTE"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma cannon",
+            "range": 36,
+            "attacks": "D3",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Missile launcher - frag",
+            "profileGroup": "Missile launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Missile launcher - krak",
+            "profileGroup": "Missile launcher",
+            "range": 48,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 9,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Multi-melta",
+            "range": 18,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Rapid Fire 1",
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin autocannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Rapid Fire 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Rapid Fire 1",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Helbrute fist",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 12,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Helbrute hammer",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power scourge",
+            "range": 0,
+            "attacks": "10",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3,
+            4,
+            5,
+            9
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "Devoted to Destruction",
+          "description": "If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Frenzy",
+          "description": "(Once per turn, per unit) In the Fight phase, when an enemy unit targets this unit, after that unit has resolved its attacks, you can use this ability. If you do, this unit is eligible to fight (even if it has already fought this phase) and must be selected to fight next.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Helbrute datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Helbrute",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "world-eaters.maulerfiend",
+      "name": "Maulerfiend",
+      "externalIds": {
+        "wahapedia": "Maulerfiend"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 140,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's lasher tendrils can be replaced with 2 magma cutters."
+      ],
+      "profile": {
+        "name": "Maulerfiend",
+        "move": 12,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 12,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "KHORNE",
+          "DAEMON",
+          "MAULERFIEND"
+        ],
+        "factionKeywords": [
+          "world-eaters",
+          "World Eaters"
+        ],
+        "weapons": [
+          {
+            "name": "Magma cutter",
+            "range": 6,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Rapid Fire 1",
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lasher tendrils",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Maulerfiend fists",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 14,
+            "ap": -2,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "world-eaters.army-rule.pact-of-blood",
+        "world-eaters.army-rule.blessings-of-khorne"
+      ],
+      "rawRules": [
+        {
+          "name": "The Scent of Blood",
+          "description": "In the Charge phase, when this unit declares a charge: If an enemy unit below starting strength is within 9\" of this unit, this unit has +1 to charge rolls. Or: If an enemy unit below half strength is within 9\" of this unit, this unit has +2 to charge rolls.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Savage Exaltation",
+          "description": "Each time this model makes a melee attack that targets an enemy unit that is below its Starting Strength, add 1 to the Hit roll and, if that attack targets an enemy unit that is Below Half-strength, add 1 to the Wound roll as well.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Maulerfiend datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/world-eaters/Maulerfiend",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

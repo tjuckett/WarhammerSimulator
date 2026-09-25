@@ -1,0 +1,1868 @@
+{
+  "factionId": "emperor-s-children",
+  "rules": [
+    {
+      "id": "emperor-s-children.army-rule.thrill-seekers",
+      "name": "Thrill Seekers",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is EMPEROR'S CHILDREN, this unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back, but when doing so: It cannot target a unit it was within Engagement Range of at the start of the turn. It cannot target a unit that was the target of another units charge or attack this phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Thrill Seekers",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Thrill Seekers"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.army-rule.pact-of-excess",
+      "name": "Pact of Excess",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "When mustering your army, unless specifically stated otherwise, you cannot select LEGIONS OF EXCESS as your Army Faction.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Pact of Excess",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Pact of Excess"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host",
+      "name": "Mercurial Host - Quicksilver Grace",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "You can re-roll Advance rolls made for EMPEROR'S CHILDREN units from your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.enhancement.steeped-in-suffering",
+      "name": "Steeped in Suffering",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "20 pts. EMPEROR'S CHILDREN model only. Each time a model in the bearer's unit makes an attack that targets an enemy unit below its Starting Strength, add 1 to the Hit roll. If that target is also Below Half-strength, add 1 to the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.enhancement.intoxicating-musk",
+      "name": "Intoxicating Musk",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "20 pts. EMPEROR'S CHILDREN model only. Each time a melee attack targets the bearer's unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of that unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.enhancement.tactical-perfection",
+      "name": "Tactical Perfection",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. After both players have deployed their armies, select up to two EMPEROR'S CHILDREN units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.enhancement.loathsome-dexterity",
+      "name": "Loathsome Dexterity",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "10 pts. EMPEROR'S CHILDREN model only. Each time a model in the bearer's unit makes a Normal, Advance or Fall Back move, it can move through enemy models. When doing so, it can move within Engagement Range of such models but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.stratagem.violent-excess",
+      "name": "VIOLENT EXCESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "1CP. Mercurial Host - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [SUSTAINED HITS 1] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host - VIOLENT EXCESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host - VIOLENT EXCESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.stratagem.combat-stimms",
+      "name": "COMBAT STIMMS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "2CP. Mercurial Host - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host - COMBAT STIMMS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host - COMBAT STIMMS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.stratagem.honour-the-prince",
+      "name": "HONOUR THE PRINCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "1CP. Mercurial Host - Battle Tactic Stratagem. WHEN: Your Movement phase. TARGET: One EMPEROR'S CHILDREN INFANTRY unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, if your unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6\" to the Move characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host - HONOUR THE PRINCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host - HONOUR THE PRINCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.stratagem.dark-vigour",
+      "name": "DARK VIGOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "1CP. Mercurial Host - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One EMPEROR'S CHILDREN unit from your army (excluding BEASTS and VEHICLES) that is within 8\" of the enemy unit that just ended that move. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host - DARK VIGOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host - DARK VIGOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.stratagem.capricious-reactions",
+      "name": "CAPRICIOUS REACTIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "1CP. Mercurial Host - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host - CAPRICIOUS REACTIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host - CAPRICIOUS REACTIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.mercurial-host.stratagem.cruel-raiders",
+      "name": "CRUEL RAIDERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.mercurial-host",
+      "description": "1CP. Mercurial Host - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army that is wholly within 9\" of one or more battlefield edges and not within 3\" horizontally of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Mercurial Host - CRUEL RAIDERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Mercurial Host - CRUEL RAIDERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen",
+      "name": "Peerless Bladesmen - Exquisite Swordsmanship",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Each time an EMPEROR'S CHILDREN unit from your army is selected to fight, if it made a Charge move this turn, select one of the abilities below. While resolving those attacks, melee weapons equipped by models in that unit have that ability: [LETHAL HITS] [SUSTAINED HITS 1]",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.enhancement.faultless-opportunist",
+      "name": "Faultless Opportunist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do: That use is -1 CP. That use does not prevent any uses of that stratagem on other units this phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.enhancement.blinding-speed",
+      "name": "Blinding Speed",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "25 pts. EMPEROR'S CHILDREN model only. Once per battle, at the start of the Fight phase, the bearer can use this Enhancement. If it does, until the end of the phase, models in the bearer's unit have the Fights First ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.enhancement.distortion",
+      "name": "Distortion",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "25 pts. EMPEROR'S CHILDREN model only. Add 1 to the Attacks and Damage characteristics of melee weapons equipped by the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.enhancement.rise-to-the-challenge",
+      "name": "Rise to the Challenge",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "30 pts. EMPEROR'S CHILDREN INFANTRY model only. Once per battle, at the end of the Fight phase, if the bearer is within Engagement Range of three or more enemy models, it can use this Enhancement. If it does, the bearer can fight one additional time. When doing so, you can select one ability using the Exquisite Swordsmanship Detachment rule to apply to those attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.stratagem.deft-parry",
+      "name": "DEFT PARRY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "1CP. Peerless Bladesmen - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen - DEFT PARRY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen - DEFT PARRY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.stratagem.death-ecstasy",
+      "name": "DEATH ECSTASY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "2CP. Peerless Bladesmen - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen - DEATH ECSTASY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen - DEATH ECSTASY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.stratagem.incessant-violence",
+      "name": "INCESSANT VIOLENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "1CP. Peerless Bladesmen - Battle Tactic Stratagem. WHEN: Fight phase, just before an EMPEROR'S CHILDREN unit from your army Consolidates. TARGET: That EMPEROR'S CHILDREN unit. EFFECT: Until the end of the phase, each time a model in your unit makes a Consolidation move, it can move up to 6\" instead of up to 3\", provided your unit ends that Consolidation move within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen - INCESSANT VIOLENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen - INCESSANT VIOLENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.stratagem.cruel-bladesman",
+      "name": "CRUEL BLADESMAN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "1CP. Peerless Bladesmen - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army that made a Charge move this turn and has not been selected to fight this phase. EFFECT: Until the end of the phase, improve the Armour Penetration characteristic of melee weapons equipped by models in your unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen - CRUEL BLADESMAN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen - CRUEL BLADESMAN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.stratagem.terrifying-spectacle",
+      "name": "TERRIFYING SPECTACLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "1CP. Peerless Bladesmen - Strategic Ploy Stratagem. WHEN: Your opponent's Command phase. TARGET: One EMPEROR'S CHILDREN unit from your army that made a Charge move in the previous turn and destroyed one or more enemy units in the previous Fight phase. EFFECT: Each enemy unit within 6\" of your unit must take a Battle-shock test, subtracting 1 from that test if they are Below Half-strength. Enemy units affected by this Stratagem do not need to take any other Battle-shock tests in the same phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen - TERRIFYING SPECTACLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen - TERRIFYING SPECTACLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.peerless-bladesmen.stratagem.cut-down-the-weak",
+      "name": "CUT DOWN THE WEAK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.peerless-bladesmen",
+      "description": "2CP. Peerless Bladesmen - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit Falls Back. TARGET: One EMPEROR'S CHILDREN unit from your army (you can only select a VEHICLE if it is a WALKER) that is within 6\" of that enemy unit and would be eligible to declare a charge against that enemy unit if it were your Charge phase. EFFECT: Your unit can declare a charge. When doing so, you must select that enemy unit as a target of that charge, and your unit does not receive a Charge bonus this turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Peerless Bladesmen - CUT DOWN THE WEAK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Peerless Bladesmen - CUT DOWN THE WEAK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration",
+      "name": "Rapid Evisceration - Mechanised Murder",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Each time an EMPEROR'S CHILDREN model from your army makes an attack, if it is a TRANSPORT model or disembarked from a TRANSPORT this turn, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.enhancement.sublime-prescience",
+      "name": "Sublime Prescience",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "25 pts. EMPEROR'S CHILDREN INFANTRY model only. Once per turn, in your Movement phase, the bearer can use this Enhancement. If it does, select one friendly EMPEROR'S CHILDREN TRANSPORT that is in Strategic Reserves. Until the end of the phase, for the purposes of setting up that TRANSPORT on the battlefield, treat the current battle round number as being one higher than it actually is.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.enhancement.spearhead-striker",
+      "name": "Spearhead Striker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "20 pts. EMPEROR'S CHILDREN INFANTRY model only. Each time the bearer disembarks from a TRANSPORT, until the end of the turn, you can re-roll Charge rolls made for the bearer's unit and enemy units cannot use the Fire Overwatch Stratagem to shoot at the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.enhancement.accomplished-tactician",
+      "name": "Accomplished Tactician",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "35 pts. EMPEROR'S CHILDREN INFANTRY model only. Once per turn, in your opponent's Shooting phase, just after an enemy unit has shot, you can select one friendly EMPEROR'S CHILDREN unit within 9\" of the bearer that was hit by one or more of those attacks, then select one friendly TRANSPORT that unit is wholly within 6\" of and is able to embark within. That EMPEROR'S CHILDREN unit can embark within that Transport.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.enhancement.heretek-adept",
+      "name": "Heretek Adept",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "35 pts. EMPEROR'S CHILDREN INFANTRY model only. Once per battle round, when a saving throw is failed for a friendly EMPEROR'S CHILDREN VEHICLE model within 6\" of the bearer, you can change the Damage characteristic of that attack to 0.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.stratagem.onto-the-next",
+      "name": "ONTO THE NEXT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "1CP. Rapid Evisceration - Strategic Ploy Stratagem. WHEN: End of the Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army that destroyed an enemy unit this phase, and one friendly TRANSPORT it is able to embark within. EFFECT: If your EMPEROR'S CHILDREN unit is wholly within 6\" of that TRANSPORT, it can embark within it. Your unit can embark within that TRANSPORT in a turn it disembarked from a TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration - ONTO THE NEXT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration - ONTO THE NEXT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.stratagem.advance-and-claim",
+      "name": "ADVANCE AND CLAIM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "1CP. Rapid Evisceration - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One EMPEROR'S CHILDREN TRANSPORT from your army that has one or more TORMENTORS units embarked within it (excluding Battle-shocked units). EFFECT: Select one objective marker you control that your TRANSPORT is within range of. That objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration - ADVANCE AND CLAIM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration - ADVANCE AND CLAIM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.stratagem.dynamic-breakthrough",
+      "name": "DYNAMIC BREAKTHROUGH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "1CP. Rapid Evisceration - Epic Deed Stratagem. WHEN: Your Movement phase. TARGET: One EMPEROR'S CHILDREN VEHICLE unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a move, it can move through enemy models (excluding MONSTERS and VEHICLES). When doing so, it can move within Engagement Range of such models but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration - DYNAMIC BREAKTHROUGH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration - DYNAMIC BREAKTHROUGH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.stratagem.ceaseless-onslaught",
+      "name": "CEASELESS ONSLAUGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "1CP. Rapid Evisceration - Strategic Ploy Stratagem. WHEN: Your Charge phase. TARGET: One EMPEROR'S CHILDREN unit from your army that disembarked from a TRANSPORT that made a Normal move this turn. EFFECT: Your EMPEROR'S CHILDREN unit is treated as having made an assault disembark move (Core Rules, 18.06) for that disembarkation.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration - CEASELESS ONSLAUGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration - CEASELESS ONSLAUGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.stratagem.reactive-disembarkation",
+      "name": "REACTIVE DISEMBARKATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "1CP. Rapid Evisceration - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN TRANSPORT from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: One EMPEROR'S CHILDREN unit embarked within your TRANSPORT can disembark. When doing so, models in that unit can be set up anywhere on the battlefield wholly within 6\" of that TRANSPORT and not within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration - REACTIVE DISEMBARKATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration - REACTIVE DISEMBARKATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.rapid-evisceration.stratagem.outflanking-strike",
+      "name": "OUTFLANKING STRIKE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.rapid-evisceration",
+      "description": "1CP. Rapid Evisceration - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One EMPEROR'S CHILDREN TRANSPORT from your army, or up to two EMPEROR'S CHILDREN DEDICATED TRANSPORTS from your army. EFFECT: For each of those TRANSPORTS wholly within 9\" of one or more battlefield edges, remove it from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Rapid Evisceration - OUTFLANKING STRIKE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Rapid Evisceration - OUTFLANKING STRIKE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess",
+      "name": "Carnival of Excess - Daemonic Empowerment",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "While an EMPEROR'S CHILDREN unit from your army is within 6\" of one or more friendly LEGIONS OF EXCESS units, it is Empowered. While a LEGIONS OF EXCESS unit from your army is within 6\" of one or more friendly EMPEROR'S CHILDREN units, it is Empowered. While a unit from your army is Empowered, weapons equipped by models in that unit have the [sustained hits 1] ability. If such a weapon already has that ability, each time an attack is made with that weapon, an unmodified Hit roll of 5+ scores a Critical Hit. LEGIONS OF EXCESS You can include LEGIONS OF EXCESS units in your army, even though they do not have the EMPEROR'S CHILDREN Faction keyword. The combined points cost of such units you can include in your army is: Incursion: Up to 500 pts Strike Force: Up to 1000 pts Onslaught: Up to 1500 pts No LEGIONS OF EXCESS models from your army can be your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.enhancement.empyric-suffusion",
+      "name": "Empyric Suffusion",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. When you target this unit with the Heroic Intervention stratagem, that use is -1 CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.enhancement.dark-blessings",
+      "name": "Dark Blessings",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "10 pts. EMPEROR'S CHILDREN INFANTRY model only. Once per battle, just after an enemy unit has selected its targets, the bearer can use this Enhancement. If it does, until the end of the phase, the bearer has a 3+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.enhancement.possessed-blade",
+      "name": "Possessed Blade",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "35 pts. EMPEROR'S CHILDREN model only. At the start of the battle, select one melee weapon equipped by the bearer; add 1 to the Attacks characteristic of that weapon. In addition, each time the bearer is selected to fight, it can use this Enhancement. If it does, while resolving those attacks, add 1 to the Damage characteristic of that weapon and that weapon has the [devastating wounds] and [hazardous] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.enhancement.warp-walker",
+      "name": "Warp Walker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "35 pts. EMPEROR'S CHILDREN or KEEPER OF SECRETS model only. Each time the bearer's unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6\" to the Move characteristic of models in that unit. Each time a model in the bearer's unit makes a Normal, Advance or Fall Back move, it can move through enemy models. When doing so, it can move within Engagement Range of such models but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.stratagem.sustained-by-agony",
+      "name": "SUSTAINED BY AGONY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "1CP. Carnival of Excess - Battle Tactic Stratagem. WHEN: Fight phase, just after an EMPEROR'S CHILDREN unit from your army destroys an enemy unit. TARGET: That EMPEROR'S CHILDREN unit. EFFECT: Select one friendly LEGIONS OF EXCESS unit within 6\" of your unit. One model in that LEGIONS OF EXCESS unit recovers up to 3 lost wounds or, if it is a DAEMONETTES unit, return upto D3+3 destroyed models to it instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess - SUSTAINED BY AGONY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess - SUSTAINED BY AGONY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.stratagem.ecstatic-slaughter",
+      "name": "ECSTATIC SLAUGHTER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "1CP. Carnival of Excess - Strategic Ploy Stratagem. WHEN: Fight phase, just after a LEGIONS OF EXCESS unit from your army destroys an enemy unit. TARGET: That LEGIONS OF EXCESS unit and one friendly EMPEROR'S CHILDREN unit within 6\" of it that is not within Engagement Range of one or more enemy units. EFFECT: Your EMPEROR'S CHILDREN unit can declare a charge. If it does so and it has already been selected to fight this phase, it cannot fight again this phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess - ECSTATIC SLAUGHTER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess - ECSTATIC SLAUGHTER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.stratagem.violent-crescendo",
+      "name": "VIOLENT CRESCENDO",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "2CP. Carnival of Excess - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One SLAANESH BEASTS, SLAANESH INFANTRY or SLAANESH MOUNTED unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in or Consolidation move, it can move up to 6\" instead of up to 3\". When doing so, it does not need to end that move closer to the closest enemy model, provided it ends that move as close as possible to the closest enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess - VIOLENT CRESCENDO",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess - VIOLENT CRESCENDO"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.stratagem.sycophantic-surge",
+      "name": "SYCOPHANTIC SURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "1CP. Carnival of Excess - Battle Tactic Stratagem. WHEN: Your Charge phase. TARGET: One LEGIONS OF EXCESS unit from your army. EFFECT: Until the end of the phase, your unit is eligible to declare a charge in a turn in which it Advanced or Fell Back, provided at least one of the targets of that charge is within Engagement Range of one or more EMPEROR'S CHILDREN units from your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess - SYCOPHANTIC SURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess - SYCOPHANTIC SURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.stratagem.uncanny-reactions",
+      "name": "UNCANNY REACTIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "1CP. Carnival of Excess - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One SLAANESH unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess - UNCANNY REACTIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess - UNCANNY REACTIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.carnival-of-excess.stratagem.dark-apparitions",
+      "name": "DARK APPARITIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.carnival-of-excess",
+      "description": "2CP. Carnival of Excess - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One DAEMONETTES unit from your army that is not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves. If it arrives back on the battlefield in the Reinforcements step of your next Movement phase using the Deep Strike ability, it can be set up anywhere that is more than 6\" horizontally away from all enemy units (instead of more than 8\"), provided it is also set up wholly within 8\" of one or more friendly EMPEROR'S CHILDREN units.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Carnival of Excess - DARK APPARITIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Carnival of Excess - DARK APPARITIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "name": "Coterie of the Conceited - Pledges to the Dark Prince",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "At the start of the battle round, if your WARLORD is on the battlefield, you must pledge a number to Slaanesh representing how many enemy units will be destroyed this battle round. At the end of the battle round, if the number of enemy units destroyed this battle round is greater than or equal to your pledge, you gain a number of Pact points equal to your pledge. Otherwise, you do not gain any Pact points this battle round and your WARLORD model suffers D3 mortal wounds. EMPEROR'S CHILDREN units from your army gain a bonus depending on how many Pact points you have gained during the battle, as shown below (these are all cumulative). PACT POINTSBONUS 1+Each time a model in this unit makes an attack, re-roll a Hit roll of 1. 3+Each time a model in this unit makes an attack, re-roll a Wound roll of 1. 5+Melee weapons equipped by models in this unit have the [LETHAL HITS] and [SUSTAINED HITS 1] abilities. 7+Each time a model in this unit makes an attack, a Critical Hit is scored on an unmodified Hit roll of 5+.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.enhancement.pledge-of-eternal-servitude",
+      "name": "Pledge of Eternal Servitude",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "25 pts. EMPEROR'S CHILDREN model only. The first time the bearer is destroyed, take a Leadership test for the bearer at the end of the phase. If that test is passed, set the bearer back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with D6 wounds remaining (up to its Wounds characteristic).",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.enhancement.pledge-of-dark-glory",
+      "name": "Pledge of Dark Glory",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "25 pts. EMPEROR'S CHILDREN model only. While the bearer is leading a unit, improve the Leadership and Objective Control characteristics of models in that unit by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.enhancement.pledge-of-mortal-pain",
+      "name": "Pledge of Mortal Pain",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. At the start of your Shooting phase, select one enemy unit within 12\" of and visible to the bearer. That unit must take a Leadership test, subtracting 2 from the result if it is Battle-shocked: if failed, that enemy unit suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.enhancement.pledge-of-unholy-fortune",
+      "name": "Pledge of Unholy Fortune",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "30 pts. EMPEROR'S CHILDREN model only. Once per turn, just after making a Hit roll, a Wound roll or a saving throw for a model in the bearer's unit, if the bearer is not Battle-shocked, it can use this Enhancement. If it does, treat the result as an unmodified roll of 6 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.stratagem.protection-of-the-dark-prince",
+      "name": "PROTECTION OF THE DARK PRINCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "1CP. Coterie of the Conceited - Strategic Ploy Stratagem. WHEN: Any phase, just after a mortal wound or attack is allocated to a model in an EMPEROR'S CHILDREN unit from your army. TARGET: That EMPEROR'S CHILDREN unit. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 6+ ability, and the Feel No Pain 4+ ability against mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited - PROTECTION OF THE DARK PRINCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited - PROTECTION OF THE DARK PRINCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.stratagem.unshakeable-opponents",
+      "name": "UNSHAKEABLE OPPONENTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "1CP. Coterie of the Conceited - Epic Deed Stratagem. WHEN: Command phase. TARGET: One EMPEROR'S CHILDREN unit from your army. EFFECT: Until the end of the turn, each time a model in your unit makes an attack, you can ignore any or all modifiers to the following: that attack's Ballistic Skill or Weapon Skill characteristic; the Hit roll; the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited - UNSHAKEABLE OPPONENTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited - UNSHAKEABLE OPPONENTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.stratagem.embrace-the-pain",
+      "name": "EMBRACE THE PAIN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "1CP. Coterie of the Conceited - Strategic Ploy Stratagem. WHEN: Start of the Fight phase. TARGET: One EMPEROR'S CHILDREN INFANTRY unit from your army. EFFECT: Until the end of the phase, each time an enemy model within Engagement Range of your unit selects targets, it must select your unit as the target of its attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited - EMBRACE THE PAIN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited - EMBRACE THE PAIN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.stratagem.martial-perfection",
+      "name": "MARTIAL PERFECTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "1CP. Coterie of the Conceited - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited - MARTIAL PERFECTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited - MARTIAL PERFECTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.stratagem.unbound-arrogance",
+      "name": "UNBOUND ARROGANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "1CP. Coterie of the Conceited - Epic Deed Stratagem. WHEN: Your Shooting phase or the Fight phase, just after an EMPEROR'S CHILDREN unit from your army destroys an enemy unit. TARGET: That EMPEROR'S CHILDREN unit. EFFECT: Increase your pledge to Slaanesh by 1. RESTRICTIONS: You can only use this Stratagem once per battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited - UNBOUND ARROGANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited - UNBOUND ARROGANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.coterie-of-the-conceited.stratagem.armour-of-abhorrence",
+      "name": "ARMOUR OF ABHORRENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.coterie-of-the-conceited",
+      "description": "1CP. Coterie of the Conceited - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets a model in your unit, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Coterie of the Conceited - ARMOUR OF ABHORRENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Coterie of the Conceited - ARMOUR OF ABHORRENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen",
+      "name": "Slaanesh's Chosen - Internal Rivalries",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "EMPEROR'S CHILDREN CHARACTER units from your army can ignore any or all modifiers to their Move characteristic and any or all modifiers to Advance and Charge rolls made for them. At the start of the battle, your WARLORD's unit is your army's Favoured Champions. The first time in each player's turn that an EMPEROR'S CHILDREN CHARACTER unit from your army destroys an enemy unit, after resolving all of its attacks, that CHARACTER unit becomes your army's new Favoured Champions, replacing the old one. Each time a model in your army's Favoured Champions unit makes an attack, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.enhancement.eager-to-prove",
+      "name": "Eager to Prove",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. You can re-roll Charge rolls made for the bearer's unit. While the bearer's unit is your army's Favoured Champions, add 2\" to the Move characteristic of models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.enhancement.repulsed-by-weakness",
+      "name": "Repulsed by Weakness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "25 pts. EMPEROR'S CHILDREN model only. Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of the bearer's unit Falls Back, models in that enemy unit must take Desperate Escape tests. When doing so, if the bearer's unit is your army's Favoured Champions, subtract 1 from each of those Desperate Escape tests.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.enhancement.proud-and-vainglorious",
+      "name": "Proud and Vainglorious",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "20 pts. EMPEROR'S CHILDREN model only. You can re-roll Battle-shock and Leadership tests taken for the bearer's unit. While the bearer's unit is your army's Favoured Champions, add 1 to the Objective Control characteristic of models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.enhancement.slayer-of-champions",
+      "name": "Slayer of Champions",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. The bearer's melee weapons have the [PRECISION] ability, and each time the bearer makes a melee attack that targets a CHARACTER unit, improve the Strength and Armour Penetration characteristics of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.stratagem.devoted-duellists",
+      "name": "DEVOTED DUELLISTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "1CP. Slaanesh's Chosen - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One or more EMPEROR'S CHILDREN CHARACTER units from your army that have not been selected to fight this phase. EFFECT: Select one enemy unit. Until the end of the phase, melee weapons equipped by models in those CHARACTER units have the [SUSTAINED HITS 1] ability while targeting that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen - DEVOTED DUELLISTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen - DEVOTED DUELLISTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.stratagem.beautiful-death",
+      "name": "BEAUTIFUL DEATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "1CP. Slaanesh's Chosen - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN CHARACTER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 to the result if your unit is your army's Favoured Champions. On a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen - BEAUTIFUL DEATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen - BEAUTIFUL DEATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.stratagem.heightened-jealousy",
+      "name": "HEIGHTENED JEALOUSY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "1CP. Slaanesh's Chosen - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase, just after an EMPEROR'S CHILDREN CHARACTER unit becomes your army's Favoured Champions, or just after your army's Favoured Champions unit destroys an enemy unit. TARGET: Your army's Favoured Champions unit. EFFECT: Until the end of the phase, each time a model in an EMPEROR'S CHILDREN CHARACTER unit from your army that is not your army's Favoured Champions makes an attack, add 1 to the Strength characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen - HEIGHTENED JEALOUSY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen - HEIGHTENED JEALOUSY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.stratagem.diabolic-majesty",
+      "name": "DIABOLIC MAJESTY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "1CP. Slaanesh's Chosen - Epic Deed Stratagem. WHEN: Your Shooting phase or the Fight phase, just after an EMPEROR'S CHILDREN CHARACTER unit becomes your army's Favoured Champions. TARGET: That EMPEROR'S CHILDREN unit. EFFECT: Each enemy unit within 6\" of your unit must take a Battle-shock test, subtracting 1 from the result. RESTRICTIONS: You can only use this Stratagem once per battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen - DIABOLIC MAJESTY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen - DIABOLIC MAJESTY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.stratagem.refusal-to-be-outdone",
+      "name": "REFUSAL TO BE OUTDONE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "1CP. Slaanesh's Chosen - Battle Tactic Stratagem. WHEN: Your Charge phase, when a friendly EMPEROR'S CHILDREN CHARACTER unit within 12\" of an engaged enemy unit declares a charge. TARGET: That EMPEROR'S CHILDREN CHARACTER unit. EFFECT: Your unit can re-roll charge rolls. Your unit must end that charge move engaged with one or more of those enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen - REFUSAL TO BE OUTDONE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen - REFUSAL TO BE OUTDONE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.slaaneshs-chosen.stratagem.vengeful-surge",
+      "name": "VENGEFUL SURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.slaaneshs-chosen",
+      "description": "1CP. Slaanesh's Chosen - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One EMPEROR'S CHILDREN CHARACTER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Your unit can make a surge move of up to D6\". If your unit is not your army's Favoured Champions, you can re-roll the dice to determine the distance of that surge move.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Slaanesh's Chosen - VENGEFUL SURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Slaanesh's Chosen - VENGEFUL SURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician",
+      "name": "Court of the Phoenician - Sensational Performance",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "EMPEROR'S CHILDREN units from your army have the following ability: Sensational Performance: Each time this unit is selected to fight, if this unit made a Charge move this turn, it can use this ability. If it does, until the end of the phase: This unit cannot target a unit it was within Engagement Range of at the start of the turn. This unit cannot target a unit that was the target of another unit's attack this phase. Improve the Strength and Armour Penetration characteristics of this unit's melee weapons by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.enhancement.tears-of-the-phoenix",
+      "name": "Tears of the Phoenix",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "25 pts. EMPEROR'S CHILDREN model only. Each time a model in the bearer's unit makes a melee attack, you can ignore any or all modifiers to that attack's Weapon Skill characteristic and any or all modifiers to the Hit roll and Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.enhancement.exalted-patron",
+      "name": "Exalted Patron",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "15 pts. LEADER: FLAWLESS BLADES LORD EXULTANT model only. Add 1\" to the Move characteristic of the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.enhancement.soulstain-made-manifest",
+      "name": "Soulstain Made Manifest",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "15 pts. EMPEROR'S CHILDREN model only. At the start of the Fight phase, you can select one enemy unit within Engagement Range of the bearer; that unit must take a Battle-shock test, subtracting 1 from the result.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.enhancement.spiritsliver",
+      "name": "Spiritsliver",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "20 pts. EMPEROR'S CHILDREN DAEMON PRINCE model only. Add 1 to the Strength and Attacks characteristics of the bearer's melee weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.stratagem.contemptuous-disregard",
+      "name": "CONTEMPTUOUS DISREGARD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "1CP. Court of the Phoenician Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army. EFFECT: Until the end of the phase, each time an attack targets your unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician - CONTEMPTUOUS DISREGARD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician - CONTEMPTUOUS DISREGARD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.stratagem.prideful-superiority",
+      "name": "PRIDEFUL SUPERIORITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "2CP. Court of the Phoenician Stratagem. WHEN: Fight phase. TARGET: One EMPEROR'S CHILDREN unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician - PRIDEFUL SUPERIORITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician - PRIDEFUL SUPERIORITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.stratagem.sinuous-breach",
+      "name": "SINUOUS BREACH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "1CP. Court of the Phoenician Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One EMPEROR'S CHILDREN DAEMON unit from your army that has not been selected to move or charge this phase. EFFECT: Until the end of the phase, each time your unit makes a Normal, Advance or Charge move, it can move horizontally through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician - SINUOUS BREACH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician - SINUOUS BREACH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.stratagem.close-quarters-excruciation",
+      "name": "CLOSE-QUARTERS EXCRUCIATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "1CP. Court of the Phoenician Stratagem. WHEN: Your Shooting phase. TARGET: One EMPEROR'S CHILDREN unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time an EMPEROR'S CHILDREN model in your unit makes an attack that targets an eligible unit within 12\", improve the Strength and Armour Penetration characteristics of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician - CLOSE-QUARTERS EXCRUCIATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician - CLOSE-QUARTERS EXCRUCIATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.stratagem.euphoric-inspiration",
+      "name": "EUPHORIC INSPIRATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "1CP. Court of the Phoenician Stratagem. WHEN: Your Charge phase. TARGET: One EMPEROR'S CHILDREN DAEMON unit from your army. EFFECT: Until the end of the phase, you can re-roll Charge rolls for friendly EMPEROR'S CHILDREN units within 6\" of your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician - EUPHORIC INSPIRATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician - EUPHORIC INSPIRATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.court-of-the-phoenician.stratagem.catalytic-stimulus",
+      "name": "CATALYTIC STIMULUS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.court-of-the-phoenician",
+      "description": "1CP. Court of the Phoenician Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One EMPEROR'S CHILDREN unit from your army that lost one or more wounds as a result of those attacks. EFFECT: Your unit can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Court of the Phoenician - CATALYTIC STIMULUS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Court of the Phoenician - CATALYTIC STIMULUS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.elegant-brutes",
+      "name": "Elegant Brutes - Eager to Kill",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.elegant-brutes",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "When a friendly EMPEROR'S CHILDREN TERMINATOR unit is set up, that unit has +1 to charge rolls until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Elegant Brutes",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Elegant Brutes"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.elegant-brutes.enhancement.cacophonic-accompaniment",
+      "name": "Cacophonic Accompaniment",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.elegant-brutes",
+      "description": "20 pts. LORD KAKOPHONIST model only. This model has Deep Strike. This unit's ranged attacks have [IGNORES COVER]",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Elegant Brutes enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Elegant Brutes enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.elegant-brutes.enhancement.frenzied-ferocityupgrade",
+      "name": "Frenzied FerocityUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.elegant-brutes",
+      "maximumSelections": 3,
+      "description": "15 pts. EMPEROR'S CHILDREN TERMINATOR SQUAD unit only. This unit's attacks have [SUSTAINED HITS 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Elegant Brutes enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Elegant Brutes enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.elegant-brutes.stratagem.delight-in-agony",
+      "name": "DELIGHT IN AGONY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.elegant-brutes",
+      "description": "1CP. Elegant Brutes Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly EMPEROR'S CHILDREN TERMINATOR unit. TARGET: That EMPEROR'S CHILDREN TERMINATOR unit. EFFECT: Attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Elegant Brutes - DELIGHT IN AGONY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Elegant Brutes - DELIGHT IN AGONY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.elegant-brutes.stratagem.psychedelic-soulflame",
+      "name": "PSYCHEDELIC SOULFLAME",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.elegant-brutes",
+      "description": "1CP. Elegant Brutes Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly EMPEROR'S CHILDREN TERMINATOR unit is selected to attack. TARGET: That EMPEROR'S CHILDREN TERMINATOR unit EFFECT: Your unit's attacks have +2 S.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Elegant Brutes - PSYCHEDELIC SOULFLAME",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Elegant Brutes - PSYCHEDELIC SOULFLAME"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.elegant-brutes.stratagem.warp-plunge",
+      "name": "WARP PLUNGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.elegant-brutes",
+      "description": "1CP. Elegant Brutes Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One friendly unengaged EMPEROR'S CHILDREN TERMINATOR unit. EFFECT: Place your unit in strategic reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Elegant Brutes - WARP PLUNGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Elegant Brutes - WARP PLUNGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.frenzied-host",
+      "name": "Frenzied Host - Frantic Focus",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.frenzied-host",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "When a friendly EMPEROR'S CHILDREN BATTLELINE unit is selected to make an advance/fall-back move, that unit's attacks have +1 S until the end of the turn. This detachment has the HOST tag and cannot be taken with another HOST detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Frenzied Host",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Frenzied Host"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.frenzied-host.enhancement.euphoric-crown",
+      "name": "Euphoric Crown",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.frenzied-host",
+      "description": "20 pts. LORD EXULTANT model only. This model's melee attacks have +1 S.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Frenzied Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Frenzied Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.frenzied-host.enhancement.howling-plate",
+      "name": "Howling Plate",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.frenzied-host",
+      "description": "20 pts. LORD EXULTANT model only. This unit's ranged attacks have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Frenzied Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Frenzied Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.frenzied-host.stratagem.possessive-mania",
+      "name": "POSSESSIVE MANIA",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.frenzied-host",
+      "description": "1CP. Frenzied Host Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly EMPEROR'S CHILDREN BATTLELINE unit within range of an objective. TARGET: That EMPEROR'S CHILDREN BATTLELINE unit. EFFECT: Attacks that target your unit have -1 AP until that enemy unit has attacked.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Frenzied Host - POSSESSIVE MANIA",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Frenzied Host - POSSESSIVE MANIA"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.frenzied-host.stratagem.agonised-cacophony",
+      "name": "AGONISED CACOPHONY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.frenzied-host",
+      "description": "1CP. Frenzied Host Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly EMPEROR'S CHILDREN BATTLELINE unit. EFFECT: Select one visible enemy unit within 12\" of your unit. That enemy unit has +6\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Frenzied Host - AGONISED CACOPHONY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Frenzied Host - AGONISED CACOPHONY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.frenzied-host.stratagem.absolute-sensory-overload",
+      "name": "ABSOLUTE SENSORY OVERLOAD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.frenzied-host",
+      "description": "1CP. Frenzied Host Stratagem. WHEN: Your Shooting phase, when a friendly EMPEROR'S CHILDREN BATTLELINE unit is selected to shoot. TARGET: That EMPEROR'S CHILDREN BATTLELINE unit. EFFECT: Those ranged attacks do not prevent your unit from being hidden.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Frenzied Host - ABSOLUTE SENSORY OVERLOAD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Frenzied Host - ABSOLUTE SENSORY OVERLOAD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "name": "Spectacle of Slaughter - Entitled to Victory",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly FLAWLESS BLADES units have Fights First",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Spectacle of Slaughter",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Slaughter"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.spectacle-of-slaughter.enhancement.eager-patronsupgrade",
+      "name": "Eager PatronsUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "maximumSelections": 3,
+      "description": "20 pts. FLAWLESS BLADES unit only. This unit has +2\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Spectacle of Slaughter enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Slaughter enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.spectacle-of-slaughter.enhancement.beguiling-grotesquerieupgrade",
+      "name": "Beguiling GrotesquerieUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "maximumSelections": 3,
+      "description": "15 pts. FLAWLESS BLADES unit only. Enemy units cannot target this unit with snap shooting attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Spectacle of Slaughter enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Slaughter enhancements"
+        }
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.spectacle-of-slaughter.stratagem.honour-is-for-fools",
+      "name": "HONOUR IS FOR FOOLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "description": "1CP. Spectacle of Slaughter Stratagem. WHEN: Fight phase, when a friendly FLAWLESS BLADES unit is selected to fight. TARGET: That FLAWLESS BLADES unit. EFFECT: Your unit's melee attacks have [PRECISION].",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Spectacle of Slaughter - HONOUR IS FOR FOOLS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Slaughter - HONOUR IS FOR FOOLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.spectacle-of-slaughter.stratagem.single-minded-strike",
+      "name": "SINGLE-MINDED STRIKE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "description": "1CP. Spectacle of Slaughter Stratagem. WHEN: Your Charge phase, when a friendly FLAWLESS BLADES unit starts a charge move. TARGET: That FLAWLESS BLADES unit. EFFECT: Your unit can move through models (excluding MONSTER/VEHICLE models).",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Spectacle of Slaughter - SINGLE-MINDED STRIKE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Slaughter - SINGLE-MINDED STRIKE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "emperor-s-children.detachment.spectacle-of-slaughter.stratagem.intoxicated-by-triumph",
+      "name": "INTOXICATED BY TRIUMPH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "emperor-s-children.detachment.spectacle-of-slaughter",
+      "description": "1CP. Spectacle of Slaughter Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit that was engaged with a friendly FLAWLESS BLADES unit ends a fall-back move, if that FLAWLESS BLADES unit is unengaged. TARGET: That FLAWLESS BLADES unit. EFFECT: Your unit can make a normal move of up to D3+3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Emperor's Children Spectacle of Slaughter - INTOXICATED BY TRIUMPH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/",
+          "capturedAt": "2026-09-25",
+          "section": "Spectacle of Slaughter - INTOXICATED BY TRIUMPH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

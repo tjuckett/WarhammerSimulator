@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/tyranids/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/tyranids/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -79,12 +79,19 @@
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lictor claws and talons | precision | Melee | 6 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Fights First
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Infiltrators, Lone Operative, Stealth
-- FACTION: Synapse
 - Feeder Tendrils: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
-  Fear of the Unseen (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1. In addition, in the Battle-shock step of your opponent's Command phase, if such an enemy unit is below its Starting Strength, it must take a Battle-shock test.
+- Fear of the Unseen (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1. In addition, in the Battle-shock step of your opponent's Command phase, if such an enemy unit is below its Starting Strength, it must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Deathleaper - EPIC HERO
@@ -121,12 +128,17 @@ TYRANIDS
 | melee | -- | Old One Eye's claws and talons - strike | -- | Melee | 6 | 3+ | 14 | -3 | D6+1 |
 | melee | -- | Old One Eye's claws and talons - sweep | -- | Melee | 12 | 3+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader
-- FACTION: Synapse
 - Alpha Leader: While this model is leading a unit, each time a model in that unit makes an attack, you can re-roll the Hit roll.
-  Unstoppable Monster: At the start of each player's Command phase, this model regains up to D3 lost wounds.
+- Unstoppable Monster: At the start of each player's Command phase, this model regains up to D3 lost wounds.
 
 #### Unit Composition
 - 1 Old One Eye - EPIC HERO
@@ -161,12 +173,19 @@ TYRANIDS
 | melee | -- | Gaping maw | extra attacks devastating wounds precision | Melee | 1 | 2+ | 5 | - | D3+2 |
 | melee | -- | Scything talons | -- | Melee | 12 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- None.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Swallow Whole: Each time an attack with this model's gaping maw targets an INFANTRY, MOUNTED or BEASTS unit, each successful unmodified Wound roll is a Critical Wound. Each time an INFANTRY, MOUNTED or BEASTS model is destroyed as a result of an attack made by this model's gaping maw, this model regains up to D3+2 lost wounds.
-  Subterranean Hunter: At the end of the Fight phase, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
+- Subterranean Hunter: At the end of the Fight phase, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
 - 1 The Red Terror - EPIC HERO
@@ -197,14 +216,20 @@ TYRANIDS
 | ranged | -- | Synaptic pulse | psychic torrent | 18" | D6+3 | N/A | 5 | -1 | 2 |
 | melee | -- | Bone sabres | twin-linked | Melee | 8 | 2+ | 9 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Leader
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Leader
-- FACTION: Shadow in the Warp, Synapse
 - Hive Commander: At the start of your Command phase, if this model is on the battlefield, you gain 1CP.
-  Malign Presence (Aura): If this model is your WARLORD, each time your opponent targets a unit from their army with a Stratagem, if that unit is within 12" of this model, increase the cost of that use of that Stratagem by 1CP.
+- Malign Presence (Aura): If this model is your WARLORD, each time your opponent targets a unit from their army with a Stratagem, if that unit is within 12" of this model, increase the cost of that use of that Stratagem by 1CP.
   Designer's Note: This ability takes precedence over the Lord of Deceit ability presented in the Balance Dataslate June 2024.
-  Domination of the Hive Mind (Aura): While a friendly TYRANIDS unit is within 9" of this model, that unit is within your army's Synapse Range.
+- Domination of the Hive Mind (Aura): While a friendly TYRANIDS unit is within 9" of this model, that unit is within your army's Synapse Range.
 
 #### Unit Composition
 - 1 Swarmlord - EPIC HERO
@@ -238,12 +263,18 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Broodlord claws and talons | devastating wounds twin-linked | Melee | 5 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+- Scouts 8"
+
+#### Army Rules
+- Synapse
+- Shadow in the Warp
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 8"
-- FACTION: Synapse, Shadow in the Warp
 - Vicious Insight: While this model is leading a unit, weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability.
-  Hypnotic Gaze (Psychic): At the start of the Fight phase, select one enemy unit within Engagement Range of this model. Until the end of the phase, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
+- Hypnotic Gaze (Psychic): At the start of the Fight phase, select one enemy unit within Engagement Range of this model. Until the end of the phase, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
 - 1 Broodlord
@@ -307,12 +338,18 @@ TYRANIDS
 | melee | -- | Prime claws and talons | anti-monster 5+ anti-vehicle 5+ twin-linked | Melee | 6 | 3+ | 5 | -2 | 2 |
 | melee | -- | Ravener heavy claws and talons | anti-monster 5+ anti-vehicle 5+ twin-linked | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Shadow In The Warp (Ravener Prime only)
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Shadow In The Warp (Ravener Prime only), Synapse
 - Alpha Invader: Weapons equipped by models in this unit have the [SUSTAINED HITS 1] ability.
-  Hypersensory Array: Once per battle round, you can target this unit with the Rapid Ingress/Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Hypersensory Array: Once per battle round, you can target this unit with the Rapid Ingress/Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -377,12 +414,18 @@ TYRANIDS
 | melee | -- | Barbed ovipositor | anti-infantry 3+ extra attacks | Melee | 1 | 2+ | 3 | -2 | 3 |
 | melee | -- | Clawed limbs | -- | Melee | 6 | 2+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Lone Operative, Stealth
-- FACTION: Synapse
 - Parasitic Infection: Each time an INFANTRY model is destroyed by an attack made with this model's barbed ovipositor, after this model has finished making its attacks, you can add one new Ripper Swarms unit to your army consisting of D3 models and set it up within 3" of this model. If you do, that RIPPER SWARMS unit can be set up within Engagement Range of the destroyed model's unit (but not within Engagement Range of any other enemy units).
-  It Itches!: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. That enemy unit must take a Battle-shock test.
+- It Itches!: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. That enemy unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Parasite of Mortrex
@@ -438,12 +481,20 @@ TYRANIDS
 | melee | -- | Lash whip | extra attacks | Melee | 8 | 2+ | 4 | -2 | 1 |
 | melee | -- | Scything talons | -- | Melee | 6 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Shadow in the Warp, Synapse
 - Alpha Warrior: Weapons equipped by models in this model's unit have the [SUSTAINED HITS 1] ability.
-  Aggressive Leader-beast: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed by those attacks, this unit can make a surge move of up to D6".
+- Aggressive Leader-beast: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed by those attacks, this unit can make a surge move of up to D6".
 
 #### Unit Composition
 - 1 Tyranid Prime with Lash Whip
@@ -504,12 +555,21 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Prime talons | -- | Melee | 6 | 2+ | 6 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Shadow in the Warp, Synapse
 - Alpha Warrior: While this model is leading a unit, weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Death Blow: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
+- Death Blow: If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making its attacks, and is then removed from play.
 
 #### Unit Composition
 - 1 Winged Tyranid Prime
@@ -578,12 +638,27 @@ TYRANIDS
 | melee | -- | Monstrous bonesword and lash whip | twin-linked | Melee | 6 | 2+ | 9 | -2 | 3 |
 | melee | -- | Monstrous scything talons | extra attacks | Melee | 4 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- This model's monstrous bonesword and lash whip can be replaced with one of the following:
+  - 1 heavy venom cannon
+  - 1 stranglethorn cannon
+  - 1 monstrous scything talons
+- This model's monstrous scything talons can be replaced with one of the following:
+  - 1 heavy venom cannon*
+  - 1 stranglethorn cannon*
+
+#### Core Abilities
+- Deadly Demise D3
+- Leader
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Leader
-- FACTION: Shadow in the Warp, Synapse
 - Will of the Hive Mind: Once per battle round, one model from your army with this ability can use it when a friendly TYRANIDS unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
-  Onslaught (Aura, Psychic): While a friendly TYRANIDS unit is within 6" of this model, ranged weapons equipped by models in that unit have the [ASSAULT] and [LETHAL HITS] abilities.
+- Onslaught (Aura, Psychic): While a friendly TYRANIDS unit is within 6" of this model, ranged weapons equipped by models in that unit have the [ASSAULT] and [LETHAL HITS] abilities.
 
 #### Unit Composition
 - 1 Hive Tyrant
@@ -645,13 +720,21 @@ TYRANIDS
 | ranged | -- | Psychic scream | ignores cover psychic torrent | 18" | 2D6 | N/A | 5 | -1 | 2 |
 | melee | -- | Neurotyrant claws and lashes | -- | Melee | 6 | 3+ | 5 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Synapse
+- Shadow in the Warp
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Synapse, Shadow in the Warp
 - Node Lash (Psychic): While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll. If the target is Battle-shocked, add 1 to the Wound roll as well.
-  Psychic Terror (Psychic): If one or more models from your army with this ability are on the battlefield when you unleash the Shadow in the Warp, subtract 1 from the Battle-shock test each enemy unit on the battlefield must take as a result.
-  Neuroloids: In your Command phase, you can select up to two friendly TYRANIDS units within 18" of this model's unit. Until the start of your next Command phase, the selected units are always considered to be within Synapse Range of your army.
+- Psychic Terror (Psychic): If one or more models from your army with this ability are on the battlefield when you unleash the Shadow in the Warp, subtract 1 from the Battle-shock test each enemy unit on the battlefield must take as a result.
+- Neuroloids: In your Command phase, you can select up to two friendly TYRANIDS units within 18" of this model's unit. Until the start of your next Command phase, the selected units are always considered to be within Synapse Range of your army.
   Designer's Note: Place a Neuroloid token next to each selected unit to remind you.
 
 #### Unit Composition
@@ -718,12 +801,20 @@ TYRANIDS
 | melee | -- | Massive scything talons - strike | -- | Melee | 4 | 3+ | 9 | -2 | D6 |
 | melee | -- | Massive scything talons - sweep | -- | Melee | 8 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's massive scything talons can be replaced with 1 massive crushing claws.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Shadow in the Warp, Synapse
 - Spawn Termagants: In your Command phase, you can select one friendly TERMAGANTS unit within 6" of this model and return up to D3+3 destroyed models to that unit. A TERMAGANTS unit cannot be selected for this ability more than once per phase.
-  Brood Progenitor (Aura, Psychic): While a friendly TERMAGANTS unit is within 6" of this model, ranged weapons equipped by models in that unit have the [LETHAL HITS] ability.
+- Brood Progenitor (Aura, Psychic): While a friendly TERMAGANTS unit is within 6" of this model, ranged weapons equipped by models in that unit have the [LETHAL HITS] ability.
 
 #### Unit Composition
 - 1 Tervigon
@@ -787,12 +878,24 @@ TYRANIDS
 | melee | -- | Monstrous scything talons | extra attacks | Melee | 4 | 2+ | 7 | -2 | 2 |
 | melee | -- | Tyrant talons | -- | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- This model's monstrous bonesword and lash whip can be replaced with one of the following:
+  - 1 heavy venom cannon
+  - 1 stranglethorn cannon
+  - 1 monstrous scything talons
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Shadow in the Warp, Synapse
 - Will of the Hive Mind: Once per battle round, one model from your army with this ability can use it when a friendly TYRANIDS unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
-  Paroxysm (Psychic): At the start of the Fight phase, you can select one enemy unit within 12" of and visible to this model and roll one D6: on a 1, this PSYKER suffers D3 mortal wounds; on a 2+, until the end of the phase, subtract 1 from the Attacks characteristic of weapons equipped by models in that unit.
+- Paroxysm (Psychic): At the start of the Fight phase, you can select one enemy unit within 12" of and visible to this model and roll one D6: on a 1, this PSYKER suffers D3 mortal wounds; on a 2+, until the end of the phase, subtract 1 from the Attacks characteristic of weapons equipped by models in that unit.
 
 #### Unit Composition
 - 1 Winged Hive Tyrant
@@ -852,10 +955,14 @@ TYRANIDS
 | ranged | -- | Fleshborer | assault | 18" | 1 | 4+ | 5 | 0 | 1 |
 | melee | -- | Blinding venom | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Winged Swarm: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of any enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
@@ -887,9 +994,11 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hormagaunt talons | -- | Melee | 3 | 4+ | 3 | -1 | 1 |
 
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Synapse
 - Bounding Leap: This unit is eligible to declare a charge in a turn in which it Advanced.
 
 #### Unit Composition
@@ -927,9 +1036,18 @@ TYRANIDS
 | ranged | -- | Termagant spinefists | assault pistol twin-linked | 12" | 2 | 4+ | 3 | 0 | 1 |
 | melee | -- | Chitinous claws and teeth | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their fleshborer replaced with 1 Termagant devourer.
+- All models in this unit can each have their fleshborer replaced with 1 Termagant spinefists.
+- For every 10 models in this unit, 1 model's ranged weapon can be replaced with 1 shardlauncher
+- For every 10 models in this unit, 1 model's ranged weapon can be replaced with 1 spike rifle.
+- For every 10 models in this unit, 1 model's ranged weapon can be replaced with 1 strangleweb
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Synapse
 - Skulking Horrors: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
 
 #### Unit Composition
@@ -962,18 +1080,23 @@ TYRANIDS
 | ranged | -- | Tyrannocyte bio-weapons | -- | 24" | 5 | 4+ | 5 | -1 | 2 |
 | melee | -- | Flensing whips | -- | Melee | 6 | 4+ | 7 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Synapse
 - Aerial Seeding: This model must start the battle in Reserves, but neither it nor any units embarked within it are counted towards any limits placed on the maximum number of Reserves units you can start the battle with. This model can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. Any units embarked within this model must immediately disembark after it has been set up on the battlefield, and they must be set up more than 8" away from all enemy models. After this model has been set up on the battlefield, no units can embark within it.
+
+#### Transport
+- This model has a transport capacity of 20 TYRANIDS INFANTRY models, or 1 TYRANIDS MONSTER model with a Wounds characteristic of 12 or less. Each INFANTRY model with a Wounds characteristic of more than 1 takes up the space of 3 models.
 
 #### Unit Composition
 - 1 Tyrannocyte
   This model is equipped with: Tyrannocyte bio-weapons; flensing whips.
-
-#### Transport
-- This model has a transport capacity of 20 TYRANIDS INFANTRY models, or 1 TYRANIDS MONSTER model with a Wounds characteristic of 12 or less. Each INFANTRY model with a Wounds characteristic of more than 1 takes up the space of 3 models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **80 pts**
@@ -1000,12 +1123,16 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Bio-minefield: Enemy units cannot start or end an Advance move within 6" of this unit.
-  Floating Death: Each time this unit or an enemy unit ends a move, for each model in this unit that is within 3" of one or more enemy units, select one of those enemy units. That model in this unit is destroyed, then roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D6 mortal wounds.
+- Floating Death: Each time this unit or an enemy unit ends a move, for each model in this unit that is within 3" of one or more enemy units, select one of those enemy units. That model in this unit is destroyed, then roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D6 mortal wounds.
 
 #### Unit Composition
 - 1-2 Mucolid Spores
@@ -1036,12 +1163,16 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Bio-minefield: Enemy units cannot start or end an Advance move within 6" of this unit.
-  Floating Death: Each time this unit or an enemy unit ends a move, for each model in this unit that is within 3" of one or more enemy units, select one of those enemy units. That model in this unit is destroyed, then roll one D6: on a 2-5, that enemy unit suffers 1 mortal wound; on a 6, that enemy unit suffers D3 mortal wounds.
+- Floating Death: Each time this unit or an enemy unit ends a move, for each model in this unit that is within 3" of one or more enemy units, select one of those enemy units. That model in this unit is destroyed, then roll one D6: on a 2-5, that enemy unit suffers 1 mortal wound; on a 6, that enemy unit suffers D3 mortal wounds.
 
 #### Unit Composition
 - 3-6 Spore Mines
@@ -1073,9 +1204,11 @@ TYRANIDS
 | ranged | -- | Barblauncher | blast heavy | 24" | D6 | 4+ | 5 | 0 | 1 |
 | melee | -- | Chitinous claws and teeth | -- | Melee | 1 | 4+ | 4 | 0 | 1 |
 
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Synapse
 - Disruption Bombardment: In your Shooting phase, after this unit has shot, select one enemy INFANTRY unit hit by one or more of those attacks. Until the end of your opponent's next turn, that enemy unit is disrupted. While a unit is disrupted, subtract 2 from its Move characteristic and subtract 2 from Advance and Charge rolls made for it.
 
 #### Unit Composition
@@ -1108,10 +1241,14 @@ TYRANIDS
 | ranged | -- | Spore Mine launcher | blast devastating wounds heavy indirect fire | 48" | D3 | 4+ | 6 | -1 | 2 |
 | melee | -- | Chitin-barbed limbs | -- | Melee | 2 | 4+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Synapse
 - Seed Spore Mines: Once per turn, in your Shooting phase, when selected to shoot, one unit with this ability can use it instead of making any attacks with its ranged weapons. If it does, you can add one new SPORE MINES unit to your army and set it up anywhere on the battlefield that is wholly within 48" of this unit and more than 8" horizontally away from all enemy units. That SPORE MINES unit contains 1 model for each model in this unit.
 
 #### Unit Composition
@@ -1144,10 +1281,14 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Genestealer claws and talons | -- | Melee | 4 | 2+ | 4 | -2 | 1 |
 
+#### Core Abilities
+- Scouts 8"
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 8"
-- FACTION: Synapse
 - Vanguard Predator: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target is within range of one or more objective markers, re-roll a Wound roll of 1 as well.
 
 #### Unit Composition
@@ -1183,9 +1324,14 @@ TYRANIDS
 | ranged | -- | Shockcannon | anti-vehicle 2+ | 24" | 2 | 3+ | 7 | -1 | 3 |
 | melee | -- | Chitinous claws and teeth | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their shockcannon replaced with 1 impaler cannon.
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Synapse
 - Defensive Stance: Each time you target this unit with the Fire Overwatch Stratagem, while resolving that Stratagem, hits are scored on unmodified Hit rolls of 5+, or unmodified Hit rolls of 4+ instead if this unit is within range of an objective marker.
 
 #### Unit Composition
@@ -1219,12 +1365,19 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lictor claws and talons | precision | Melee | 6 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Fights First
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Infiltrators, Lone Operative, Stealth
-- FACTION: Synapse
 - Feeder Tendrils: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
-  Pheromone Trail: Once per battle round, you can target one model with this ability with the Rapid Ingress Stratagem for 0CP.
+- Pheromone Trail: Once per battle round, you can target one model with this ability with the Rapid Ingress Stratagem for 0CP.
 
 #### Unit Composition
 - 1 Lictor
@@ -1257,9 +1410,11 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Chitinous claws and teeth | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Synapse
 - Neurocytes: While this unit is within Synapse Range of a friendly TYRANIDS unit (excluding NEUROGAUNT units), it has the SYNAPSE keyword.
 
 #### Unit Composition
@@ -1293,13 +1448,20 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Piercing claws and talons | precision | Melee | 6 | 2+ | 6 | -2 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Lone Operative, Stealth
-- FACTION: Shadow in the Warp, Synapse
 - Feeder Tendrils: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
-  Neural Disruption: In your Command phase, select one enemy unit within 12" of this model. That unit must take a Battle-shock test.
-  Psychological Saboteur (Aura): While an enemy unit is within 12" of this model, if that unit is Battle-shocked:
+- Neural Disruption: In your Command phase, select one enemy unit within 12" of this model. That unit must take a Battle-shock test.
+- Psychological Saboteur (Aura): While an enemy unit is within 12" of this model, if that unit is Battle-shocked:
   - Each time a model in that unit makes an attack, subtract 1 from the Hit roll.
   - Each time a friendly TYRANIDS model makes an attack that targets that unit, add 1 to the Wound roll.
 
@@ -1336,10 +1498,14 @@ TYRANIDS
 | ranged | -- | Flamespurt | ignores cover torrent twin-linked | 12" | D6+1 | N/A | 6 | -1 | 1 |
 | melee | -- | Chitin-barbed limbs | -- | Melee | 2 | 4+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Synapse
 - Burning Spray: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -1375,10 +1541,17 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Ravener claws and talons | twin-linked | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Death From Below: At the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
@@ -1410,9 +1583,12 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Tyranid Warrior claws and talons | twin-linked | Melee | 6 | 3+ | 5 | -2 | 1 |
 
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Shadow in the Warp, Synapse
 - Adaptive Instincts (Once per turn, per unit): In the Fight phase, when this unit is selected to fight or when an enemy unit targets this unit, you can select one of the following:
   - This unit's melee attacks have +1 S.
   - Or: This unit has +1 T.
@@ -1452,9 +1628,19 @@ TYRANIDS
 | ranged | -- | Venom cannon | blast | 36" | D3 | 4+ | 9 | -2 | 2 |
 | melee | -- | Tyranid Warrior claws and talons | -- | Melee | 5 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their devourer replaced with one of the following:
+  - 1 deathspitter
+  - 1 spinefists
+- For every 3 models in this unit, 1 model's devourer can be replaced with 1 barbed strangler.
+- For every 3 models in this unit, 1 model's devourer can be replaced with 1 venom cannon.
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Shadow in the Warp, Synapse
 - Adaptable Predators: This unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
 
 #### Unit Composition
@@ -1489,9 +1675,16 @@ TYRANIDS
 | melee | -- | Crushing claws and rending claws | twin-linked | Melee | 2 | 4+ | 8 | -2 | 2 |
 | melee | -- | Scything talons and rending claws | -- | Melee | 5 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each have their scything talons and rending claws replaced with one of the following:
+  - 1 bone cleaver, lash whip and rending claws
+  - 1 crushing claws and rending claws
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Synapse
 - Guardian Organism: While a CHARACTER model is leading this unit, that CHARACTER has the Feel No Pain 5+ ability.
 
 #### Unit Composition
@@ -1523,10 +1716,14 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Toxic lashes | anti-infantry 2+ | Melee | 5 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Stealth
-- FACTION: Synapse
 - Foul Spores (Aura): Friendly TYRANIDS units within 6" of this unit have Stealth.
 
 #### Unit Composition
@@ -1558,10 +1755,16 @@ TYRANIDS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Leaper's talons | -- | Melee | 6 | 3+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Fights First
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Infiltrators, Stealth
-- FACTION: Synapse
 - Pouncing Leap: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
@@ -1601,11 +1804,14 @@ TYRANIDS
 | ranged | -- | Warp Blast - focused witchfire | lethal hits psychic | 24" | 1 | 3+ | 12 | -3 | D6+1 |
 | melee | -- | Chitinous claws and teeth | -- | Melee | 2 | 5+ | 3 | 0 | 1 |
 
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Shadow in the Warp, Synapse
 - Spirit Leech (Aura, Psychic): While an enemy unit is within 6" of this unit, if this unit contains a Neurothrope, each time that enemy unit fails a Battle-shock test, it suffers D3 mortal wounds and one model in this unit regains up to D3 lost wounds.
-  Warp Field (Aura, Psychic): While a friendly TYRANIDS unit is within 6" of this unit, models in that unit have a 6+ invulnerable save.
+- Warp Field (Aura, Psychic): While a friendly TYRANIDS unit is within 6" of this unit, models in that unit have a 6+ invulnerable save.
 
 #### Unit Composition
 - 1 Neurothrope
@@ -1646,10 +1852,28 @@ TYRANIDS
 | melee | -- | Carnifex scything talons | -- | Melee | 6 | 4+ | 9 | -2 | 3 |
 | melee | -- | Chitinous claws and teeth | -- | Melee | 4 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their Carnifex extra scything talons replaced with one of the following:
+  - 1 deathspitters with slimer maggots
+  - 1 devourers with brainleech worms
+  - 1 heavy venom cannon
+  - 1 stranglethorn cannon
+  - 1 Carnifex crushing claws
+- Any number of models can each have their Carnifex scything talons replaced with one of the following:
+  - 1 deathspitters with slimer maggots
+  - 1 devourers with brainleech worms
+  - 1 Carnifex crushing claws
+- Any number of models can each be equipped with 1 bio-plasma.
+- Any number of models can each be equipped with 1 spine banks.
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Synapse
 - Blistering Assault: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit lost a wound as a result of those attacks, this unit can make a surge move of up to D6+2".
 
 #### Unit Composition
@@ -1682,10 +1906,14 @@ TYRANIDS
 | ranged | -- | Bio-plasmic cannon | blast heavy | 36" | D6+3 | 3+ | 9 | -3 | 3 |
 | melee | -- | Powerful limbs | -- | Melee | 3 | 3+ | 7 | 0 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Synapse
 - Symbiotic Targeting: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly TYRANIDS model makes an attack that targets that unit, re-roll a Hit roll of 1.
 
 #### Unit Composition
@@ -1723,10 +1951,18 @@ TYRANIDS
 | ranged | -- | Twin stranglethorn cannon | blast twin-linked | 36" | D6+1 | 2+ | 7 | -1 | 2 |
 | melee | -- | Scything wings | -- | Melee | 4 | 4+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's twin stranglethorn cannon can be replaced with 1 twin heavy venom cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Hover
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Hover
-- FACTION: Synapse
 - Spore Mine Cysts: At the end of your opponent's Fight phase, you can do one of the following:
   - Select one visible enemy unit (excluding Lone Operative units) within 24" of this unit and roll six D6 for that unit: for each 3+, that unit suffers 1 mortal wound.
   - Add a new SPORE MINES unit containing D3 models to your army and set it up anywhere on the battlefield that is within 6" of this model and more than 8" horizontally away from all enemy units. You cannot select this option for more than one model per turn.
@@ -1764,10 +2000,14 @@ TYRANIDS
 | melee | -- | Ravenous maw | -- | Melee | 14 | 3+ | 7 | -1 | 2 |
 | melee | -- | Shovelling claws | extra attacks | Melee | 4 | 3+ | 14 | -2 | D6+1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Synapse
 - Grisly Spectacle: Each time this model is selected to fight, after resolving its attacks, if one or more enemy units were destroyed by those attacks, each enemy unit within 6" of this model must take a Battle-shock test.
 
 #### Unit Composition
@@ -1806,10 +2046,14 @@ TYRANIDS
 | melee | -- | Scything wings | -- | Melee | 4 | 4+ | 7 | -1 | 2 |
 | melee | -- | Thorax spur | anti-fly 2+ extra attacks | Melee | 1 | 3+ | 10 | -3 | D6 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Synapse
 - Airborne Predator: Each time this model makes a ranged attack that targets a unit that can FLY, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -1845,10 +2089,15 @@ TYRANIDS
 | melee | -- | Massive scything talons - strike | -- | Melee | 3 | 3+ | 9 | -2 | D6+1 |
 | melee | -- | Massive scything talons - sweep | -- | Melee | 6 | 3+ | 7 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Shadow in the Warp, Synapse
 - Encephalic Diffusion (Aura, Psychic): While an enemy unit is within 6" of this model, each time a model in that unit makes an attack, subtract 1 from the Hit roll, and, if that enemy unit is Below Half-strength, subtract 1 from the Wound roll as well.
 
 #### Unit Composition
@@ -1884,10 +2133,14 @@ TYRANIDS
 | melee | -- | Distensible jaw | anti-infantry 4+ devastating wounds extra attacks | Melee | 1 | 3+ | 5 | 0 | 3 |
 | melee | -- | Mawloc scything talons | -- | Melee | 16 | 3+ | 8 | -2 | 1 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Terror From The Deep: Each time this model is set up on the battlefield using the Deep Strike ability, roll one D6 for each enemy unit within 12" of this model: on a 2-4, that unit suffers D3 mortal wounds; on a 5+, that unit suffers 3 mortal wounds and must take a Battle-shock test.
 
 #### Unit Composition
@@ -1923,14 +2176,19 @@ TYRANIDS
 | melee | -- | Monstrous scything talons | -- | Melee | 6 | 2+ | 9 | -2 | 3 |
 | melee | -- | Toxinjector harpoon | extra attacks | Melee | 4 | 2+ | 12 | -3 | D6+1 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Shadow in the Warp, Synapse
 - Singular Purpose: At the start of the first battle round, select one of the following:
   - Select one enemy unit. Until the end of the battle, each time this model makes an attack that targets that unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
   - Select one objective marker. Until the end of the battle, while this model is within range of that objective marker, it has the Feel No Pain 5+ ability and an Objective Control characteristic of 15.
-  Harpoon Barbs: Once per turn, when an enemy unit within Engagement Range of this model is selected to Fall Back, roll one D6: on a 2+, that unit suffers D6 mortal wounds.
+- Harpoon Barbs: Once per turn, when an enemy unit within Engagement Range of this model is selected to Fall Back, roll one D6: on a 2+, that unit suffers D6 mortal wounds.
 
 #### Unit Composition
 - 1 Norn Assimilator
@@ -1971,14 +2229,19 @@ TYRANIDS
 | melee | -- | Monstrous scything talons | -- | Melee | 6 | 2+ | 9 | -2 | 3 |
 | melee | -- | Monstrous rending claws | extra attacks | Melee | 4 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Shadow in the Warp
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Shadow in the Warp, Synapse
 - Singular Purpose: At the start of the first battle round, select one of the following:
   - Select one enemy unit. Until the end of the battle, each time this model makes an attack that targets that unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
   - Select one objective marker. Until the end of the battle, while this model is within range of that objective marker, it has the Feel No Pain 5+ ability and an Objective Control characteristic of 15.
-  Unnatural Resilience: This model has the Feel No Pain 4+ ability against mortal wounds.
+- Unnatural Resilience: This model has the Feel No Pain 4+ ability against mortal wounds.
 
 #### Unit Composition
 - 1 Norn Emissary
@@ -2016,12 +2279,17 @@ TYRANIDS
 | ranged | -- | Psychoclastic torrent | ignores cover torrent | 12" | D6 | N/A | 6 | -1 | 1 |
 | melee | -- | Talons and betentacled maw | anti-psyker 4+ devastating wounds | Melee | 6 | 3+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Synapse
 - Bio-stimulus: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly TYRANIDS unit makes a melee attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.
-  Feeding Frenzy: Each time this model makes a melee attack that targets a unit that is below its Starting Strength, add 1 to the Hit roll. If that target is also Below Half-strength, add 1 to the Wound roll as well.
+- Feeding Frenzy: Each time this model makes a melee attack that targets a unit that is below its Starting Strength, add 1 to the Hit roll. If that target is also Below Half-strength, add 1 to the Wound roll as well.
 
 #### Unit Composition
 - 1 Psychophage
@@ -2052,10 +2320,14 @@ TYRANIDS
 | ranged | -- | Bio-plasmic scream | assault blast | 18" | D6+3 | 4+ | 8 | -2 | 1 |
 | melee | -- | Screamer-killer talons | -- | Melee | 10 | 3+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Synapse
 - Death Scream: In your Shooting phase, after this model has shot, select one unit hit by one or more of those attacks. That unit must take a Battle-shock test, subtracting 1 from that test.
 
 #### Unit Composition
@@ -2088,12 +2360,16 @@ TYRANIDS
 | ranged | -- | Sporocyst bio-weapons | -- | 24" | 10 | 4+ | 5 | -1 | 2 |
 | melee | -- | Flensing whips | -- | Melee | 6 | 4+ | 7 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Synapse
 - Seed Mucolids: Once per turn, in your Shooting phase, when selected to shoot, one unit with this ability can use it instead of making any attacks with its ranged weapons. If it does, you can add one new MUCOLID SPORES unit containing 1 model to your army and set it up anywhere on the battlefield that is wholly within 18" of this model and more than 8" horizontally away from all enemy units.
-  Hive Defences: You can target this model with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this turn. This model can only be targeted with that Stratagem once per turn.
+- Hive Defences: You can target this model with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this turn. This model can only be targeted with that Stratagem once per turn.
 
 #### Unit Composition
 - 1 Sporocyst
@@ -2124,12 +2400,16 @@ TYRANIDS
 | ranged | -- | Massive toxic lashes | anti-infantry 2+ | 9" | 2D6 | 3+ | 6 | -1 | 2 |
 | melee | -- | Massive toxic lashes | anti-infantry 2+ | Melee | 12 | 3+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Synapse
 - Grasping Tendrils: Each time an enemy unit (excluding TITANIC units) within Engagement Range of one or more units from your army with this ability is selected to Fall Back, you can roll one D6: on a 3+, that enemy unit must Remain Stationary instead.
-  Hypertoxic Miasma (Aura): At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model: on a 2-3, that unit suffers 1 mortal wound; on a 4-5, that unit suffers D3 mortal wounds; on a 6, that unit suffers D6 mortal wounds.
+- Hypertoxic Miasma (Aura): At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model: on a 2-3, that unit suffers 1 mortal wound; on a 4-5, that unit suffers D3 mortal wounds; on a 6, that unit suffers D6 mortal wounds.
 
 #### Unit Composition
 - 1 Toxicrene
@@ -2160,10 +2440,14 @@ TYRANIDS
 | ranged | -- | Bio-electric pulse | sustained hits 2 | 12" | 6 | 3+ | 5 | 0 | 1 |
 | melee | -- | Trygon scything talons | -- | Melee | 12 | 3+ | 9 | -2 | 3 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Subterranean Tunnels: In your Movement phase, when this model is set up on the battlefield using the Deep Strike ability, it can use a subterranean tunnel. If it does, this model can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units, but until the end of the turn, it is not eligible to declare a charge.
 
 #### Unit Composition
@@ -2204,10 +2488,19 @@ TYRANIDS
 | ranged | -- | Stinger salvoes | -- | 24" | 8 | 3+ | 5 | 0 | 1 |
 | melee | -- | Powerful limbs | -- | Melee | 4 | 3+ | 8 | 0 | 2 |
 
+#### Wargear options
+- This model's fleshborer hive can be replaced with one of the following:
+  - 1 acid spray
+  - 1 rupture cannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Synapse
 - Resilient Organism: Once per battle, when an attack is allocated to this model, you can change the Damage characteristic of that attack to 0.
 
 #### Unit Composition
@@ -2245,11 +2538,22 @@ TYRANIDS
 | ranged | -- | Dire bio-cannon | blast | 48" | D6+6 | 3+ | 10 | -3 | 3 |
 | melee | -- | Gargantuan scything talons | -- | Melee | 6 | 3+ | 14 | -2 | D6 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 2D6
+- Hover
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6, Hover
-- FACTION: Synapse
 - Frenzied Metabolism: Each time this model is selected to shoot, you can use this ability. If you do, until the end of the phase, each time this model makes an attack, add 1 to the Wound roll. After resolving those attacks, roll one D6: on a 2+, this model suffers D3 mortal wounds.
+
+#### Transport
+- This model has a transport capacity of 20 Gargoyles models and 1 Winged Tyranid Prime model.
 
 #### Unit Composition
 - 1 Harridan
@@ -2257,9 +2561,6 @@ TYRANIDS
 
 #### Damaged: 1-10 Wounds Remaining
 - While this model has 1-10 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 20 Gargoyles models and 1 Winged Tyranid Prime model.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **610 pts**
@@ -2289,12 +2590,22 @@ TYRANIDS
 | melee | -- | Lashwhip pods | extra attacks | Melee | 10 | 3+ | 5 | -1 | 1 |
 | melee | -- | Titanic scything talons | -- | Melee | 8 | 3+ | 20 | -2 | D6+1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Synapse
 - Apex-beast: Each time this model makes an attack that targets a unit that is Battle-shocked, add 1 to the Hit roll.
-  Stalking Forward: Each time this model makes a Normal, Advance or Fall Back move, it can move over models (excluding TITANIC models) and terrain features that are 4" or less in height as if they were not there.
+- Stalking Forward: Each time this model makes a Normal, Advance or Fall Back move, it can move over models (excluding TITANIC models) and terrain features that are 4" or less in height as if they were not there.
+
+#### Transport
+- This model has a transport capacity of 20 TYRANIDS INFANTRY models. Each model with a Wounds characteristic of more than 1 takes up the space of 3 models. This model cannot transport models that can Fly.
 
 #### Unit Composition
 - 1 Hierophant
@@ -2302,9 +2613,6 @@ TYRANIDS
 
 #### Damaged: 1-10 Wounds Remaining
 - While this model has 1-10 wounds remaining, subtract 6 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 20 TYRANIDS INFANTRY models. Each model with a Wounds characteristic of more than 1 takes up the space of 3 models. This model cannot transport models that can Fly.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **810 pts**
@@ -2332,10 +2640,17 @@ TYRANIDS
 | ranged | -- | Spinemaws | pistol | 6" | 4 | 5+ | 3 | 0 | 1 |
 | melee | -- | Chitinous claws and teeth | sustained hits 1 | Melee | 6 | 5+ | 2 | 0 | 1 |
 
+#### Wargear options
+- All models in this unit can each be equipped with 1 spinemaws.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Synapse
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Synapse
 - Chitinous Horrors (Aura): While an enemy unit is within Engagement Range of this unit, halve the Objective Control characteristic of models in that enemy unit.
 
 #### Unit Composition
@@ -2355,6 +2670,8 @@ TYRANIDS
 ## Detachments
 
 ### Invasion Fleet (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Hyper-adaptations
 - At the start of the first battle round, select one of the following Hyper-adaptations to be active for TYRANIDS units from your army until the end of the battle:
   Swarming Instincts
@@ -2414,6 +2731,8 @@ TYRANIDS
   EFFECT: You can return up to D3+3 destroyed models to each of the selected units.
 
 ### Crusher Stampede (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Enraged Behemoths
 - Each time a TYRANIDS MONSTER model from your army makes an attack, add 1 to the Hit roll if that model's unit is below its Starting Strength, and add 1 to the Wound roll as well if that model's unit is Below Half-strength. In addition, while a TYRANIDS MONSTER unit from your army (excluding Battle-shocked units) is at its Starting Strength, add 2 to the Objective Control characteristic of models in that unit.
 
@@ -2468,6 +2787,8 @@ TYRANIDS
   EFFECT: Select one enemy unit within Engagement Range of your model and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.
 
 ### Unending Swarm (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Insurmountable Odds
 - In your opponent's Shooting phase, when an enemy unit has shot, if a model from a friendly ENDLESS MULTITUDE unit was destroyed as a result of those attacks, that friendly unit can make a surge move of up to D6".
 
@@ -2521,6 +2842,8 @@ TYRANIDS
   EFFECT: Until the end of the phase, your unit is treated as containing fewer than five models for the purpose of the [BLAST] ability.
 
 ### Assimilation Swarm (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Feed the Swarm
 - In your Command phase, each HARVESTER unit from your army can Regenerate one friendly TYRANIDS unit that is within 6" of it. A unit can only be regenerated once per phase. Each time a unit regenerates, do one of the following:
   - One model in that unit regains up to D3+1 lost wounds.
@@ -2575,6 +2898,8 @@ TYRANIDS
   EFFECT: Your unit immediately Regenerates (See Feed the Swarm). When doing so, if your unit is a HARVESTER unit and you choose for one model to regain up to D3 lost wounds, that model regains up to 3 lost wounds instead.
 
 ### Vanguard Onslaught (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Questing Tendrils
 - TYRANIDS units with this ability are eligible to charge in a turn in which they Fell Back. VANGUARD INVADER units with this ability are eligible to charge in a turn in which they Advanced.
 #### Detachment rule -- Vanguard Prime
@@ -2631,6 +2956,8 @@ TYRANIDS
   RESTRICTIONS: The targeted units must be more than 3" away from all enemy units.
 
 ### Synaptic Nexus (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Synaptic Imperatives
 - At the start of the battle round, you can select one of the Synaptic Imperatives shown below. Until the end of the battle round, that Synaptic Imperative is active for your army and while a TYRANIDS unit from your army is within Synapse Range of your army, it will benefit from it. Each Synaptic Imperative can only be selected once per battle.
   - Synaptic Augmentation: While this unit is within Synapse Range of your army, models in this unit have a 5+ invulnerable save.
@@ -2686,6 +3013,8 @@ TYRANIDS
   EFFECT: Your unit is eligible to shoot and declare a charge this turn.
 
 ### Subterranean Assault (3 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Surprise Assault
 - Each time a TYRANIDS model from your army makes an attack, re-roll a Hit roll of 1.
   Each time a BURROWER unit from your army is set up on the battlefield from Reserves, place a circular 40mm Tunnel Marker anywhere on the battlefield within 1" of that unit and more than 3" horizontally away from all enemy units.
@@ -2745,6 +3074,8 @@ TYRANIDS
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Ambush Predators (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Mindhunger
 - Friendly DEATHLEAPER/LICTOR/NEUROLICTOR units have Deep Strike.
   - Friendly LICTOR/NEUROLICTOR units' attacks that target a CHARACTER unit can re-roll hit rolls of 1.
@@ -2776,6 +3107,8 @@ TYRANIDS
   EFFECT: Place your unit in strategic reserves.
 
 ### Talons of the Norn Queen (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Higher Imperatives
 - Friendly NORN EMISSARY/NORN ASSIMILATOR units have the following ability:
   Protean Purpose: (Once per battle, per unit) In your Command phase, you can use this ability. If you do, this unit can make a selection for its Singular Purpose ability (this replaces the previous selection).
@@ -2808,6 +3141,8 @@ TYRANIDS
   - While a unit is tethered, that unit has -2" M.
 
 ### Warrior Bioform Onslaught (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Leader-beasts
 - Friendly TYRANID WARRIORS WITH RANGED BIO-WEAPONS/TYRANID WARRIORS WITH MELEE BIO-WEAPONS units have:
   - TYRANID WARRIORS.
@@ -2817,6 +3152,8 @@ TYRANIDS
 #### Enhancements
 - Elevated Might 30 pts
 - WINGED TYRANID PRIME/TYRANID PRIME WITH LASH WHIP model only. This model's melee attacks:
+  - Can re-roll wound rolls.
+  - Have +1 AP.
 - Ocular Adaptation 20 pts
 - WINGED TYRANID PRIME/TYRANID PRIME WITH LASH WHIP model only. This unit's melee attacks have +1 to hit rolls.
 

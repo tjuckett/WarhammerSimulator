@@ -39,20 +39,20 @@ const orkUnits: UnitProfile[] = [
   {
     rosterId: 'orks.warboss-in-mega-armour-default',
     name: 'Warboss in Mega Armour',
-    move: 5, toughness: 6, save: 2, invulnSave: 5, wounds: 7, leadership: 6, oc: 1,
+    move: 5, toughness: 7, save: 2, invulnSave: 5, wounds: 7, leadership: 6, oc: 1,
     baseModelCount: 1,
     modelBases: roundBases(1, 50),
     keywords: ['Infantry', 'Character', 'Mega Armour', 'Warboss', 'Warboss in Mega Armour'],
     factionKeywords: ['Orks'],
     weapons: [
-      { name: 'Big shoota', range: 36, attacks: '3', skill: 4, strength: 5, ap: 0, damage: '1', keywords: ['Rapid Fire 2'], isMelee: false },
-      { name: "'Uge choppa", range: 0, attacks: '4', skill: 2, strength: 12, ap: -2, damage: '2', keywords: [], isMelee: true },
+      { name: 'Big shoota', range: 36, attacks: '3', skill: 4, strength: 5, ap: 0, damage: '1', keywords: ['Rapid Fire 2', 'Lethal Hits: non-MONSTER/VEHICLE'], isMelee: false },
+      { name: "'Uge choppa", range: 0, attacks: '5', skill: 2, strength: 12, ap: -2, damage: '3', keywords: ['Cleave 2'], isMelee: true },
     ],
     abilities: [
       rule('Leader', 'This model can be attached to a unit of Meganobz.'),
       waaaghRule(),
-      rule('Might is Right', 'While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll.'),
-      rule('Dead Brutal', "While the Waaagh! is active for your army, this model's 'uge choppa has a Damage characteristic of 3."),
+      rule('Krushin\' Impetus', 'When this unit ends a charge move, you can select one enemy unit engaged with this unit. If you do, roll one D6 for each model in this unit engaged with that enemy unit: for each 3+, that enemy unit suffers 1 mortal wound.'),
+      rule('Intimidating Motivation (Once per battle round, per army)', 'In your Movement phase, at the start or end of this unit\'s move, you can select one friendly ORKS unit within 6" of this unit. That unit is no longer battle-shocked and is riled up until the start of your next turn.'),
     ],
   },
   {

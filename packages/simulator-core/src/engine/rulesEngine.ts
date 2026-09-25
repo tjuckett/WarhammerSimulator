@@ -14,6 +14,7 @@ export interface HitResult {
   hits: number;
   rolls: number[];
   mortalsFromCrits: number;
+  bonusHits: number;
   logNote: string;
 }
 
@@ -171,11 +172,13 @@ export const rules40K10th: RulesEdition = {
         hits: rolls.length,
         rolls,
         mortalsFromCrits: 0,
+        bonusHits: 0,
         logNote: 'Torrent — auto-hits',
       };
     }
 
     let hits = 0;
+    let bonusHits = 0;
     let mortalsFromCrits = 0;
     const notes: string[] = [];
 
@@ -190,12 +193,13 @@ export const rules40K10th: RulesEdition = {
         hits++;
         if (r >= criticalHitThreshold && sustainedVal > 0) {
           hits += sustainedVal;
+          bonusHits += sustainedVal;
           notes.push(`crit→+${sustainedVal} (Sustained Hits)`);
         }
       }
     }
 
-    return { hits, rolls, mortalsFromCrits, logNote: notes.join('; ') };
+    return { hits, rolls, mortalsFromCrits, bonusHits, logNote: notes.join('; ') };
   },
 
   processWounds(rolls: number[], wt: number, weapon: WeaponProfile): WoundResult {

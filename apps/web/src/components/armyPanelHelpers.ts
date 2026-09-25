@@ -26,7 +26,26 @@ export function deploymentLabel(unit: UnitProfile, army: ImportedArmy): string {
 }
 
 export function isLeaderUnit(unit: UnitProfile): boolean {
-  return hasUnitKeyword(unit, 'character');
+  return !!unit.leaderTargetNames?.length
+    || !!unit.leaderTargetRefs?.length
+    || hasUnitKeyword(unit, 'character')
+    || /\bcharacter\b|\bepic hero\b/i.test(unit.catalogRole ?? '');
+}
+
+function normalizedLeaderTargetName(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+export function leaderCanAttachTo(leader: UnitProfile, target: UnitProfile): boolean {
+  const targetNames = leader.leaderTargetNames ?? [];
+  const targetRefs = leader.leaderTargetRefs ?? [];
+  if (targetNames.length || targetRefs.length) {
+    const targetName = normalizedLeaderTargetName(target.name);
+    const targetRosterId = target.rosterId ?? '';
+    return targetNames.some(name => normalizedLeaderTargetName(name) === targetName)
+      || targetRefs.some(ref => targetRosterId === ref || targetRosterId.startsWith(`${ref}-`));
+  }
+  return !isLeaderUnit(target);
 }
 
 export function generateRosterId(): string {
@@ -77,10 +96,24 @@ export function normalizeArmyForEditing(army: ImportedArmy): ImportedArmy {
     if (isTransportUnit(unit) && unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport) {
       nextUnit = { ...nextUnit, deployment: undefined };
     }
-    if (nextUnit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport && !nextUnit.deployment.transportUnitId && nextUnit.deployment.transportName) {
-      const transport = unitsWithIds.find(candidate => candidate.name === nextUnit.deployment?.transportName);
-      if (transport?.rosterId) {
-        nextUnit = { ...nextUnit, deployment: { ...nextUnit.deployment, transportUnitId: transport.rosterId } };
+    if (nextUnit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport) {
+      if (nextUnit.deployment.transportUnitId) {
+        nextUnit = {
+          ...nextUnit,
+          deployment: { ...nextUnit.deployment, transportName: undefined },
+        };
+      } else if (nextUnit.deployment.transportName) {
+        const transport = unitsWithIds.find(candidate => candidate.name === nextUnit.deployment?.transportName);
+        if (transport?.rosterId) {
+          nextUnit = {
+            ...nextUnit,
+            deployment: {
+              ...nextUnit.deployment,
+              transportUnitId: transport.rosterId,
+              transportName: undefined,
+            },
+          };
+        }
       }
     }
     if (!isLeaderUnit(nextUnit) && nextUnit.leaderAttachment) {

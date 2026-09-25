@@ -1,21 +1,22 @@
 import React from 'react';
-import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
+import type { ImportedArmy, UnitProfile, WargearChoice } from '@warhammer-simulator/core/types/army';
+import type { RuleDefinition } from '@warhammer-simulator/core/types/catalog';
 import { UNIT_DEPLOYMENT_MODE, type UnitDeploymentMode } from '@warhammer-simulator/core/types/army';
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { canDeployOutsideDeploymentZone, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
+import { rulePoints } from '@warhammer-simulator/core/engine/catalog';
+import { applyUnitLoadoutOption, selectedUnitLoadoutOption, unitLoadoutOptions } from '@warhammer-simulator/core/engine/unitLoadouts';
 import { uiTokens } from '../theme/uiTokens';
 import { ArmyWargearEditor } from './ArmyWargearEditor';
 import { UnitList } from './ArmyUnitList';
-import { attachmentGroupModelCount, buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, isTransportUnit, maximizeFreeScalableUnitUpgrades, resizeModelWeaponLoadouts, splitPlanForUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey, unitUpgradeSelectionLimit } from './armyPanelHelpers';
+import { attachmentGroupModelCount, buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, isTransportUnit, leaderCanAttachTo, maximizeFreeScalableUnitUpgrades, resizeModelWeaponLoadouts, splitPlanForUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey, unitUpgradeSelectionLimit } from './armyPanelHelpers';
 
-function modelCountOptions(unit: UnitProfile): number[] {
+function hasEditableModelCount(unit: UnitProfile): boolean {
   const range = unit.modelCountRange;
-  if (!range?.maximum || range.maximum < (range.minimum ?? 1)) return [];
+  if (!range) return true;
   const minimum = Math.max(1, range.minimum ?? 1);
-  const step = Math.max(1, range.step ?? 1);
-  const options: number[] = [];
-  for (let count = minimum; count <= range.maximum; count += step) options.push(count);
-  return options;
+  if (range.maximum !== undefined) return range.maximum > minimum;
+  return unit.baseModelCount !== minimum || minimum !== 1;
 }
 
 function resizeModelWargearChoices(unit: UnitProfile, modelCount: number): string[][] | undefined {
@@ -60,7 +61,9 @@ export function StaticUnitList({
   color,
   editable,
   showDeploymentControls = true,
+  showUnitSizeControls = true,
   unitPoints,
+  enhancementOptionsForUnit,
   selectedUnitIndex = null,
   onInspectUnit,
   onChangeUnit,
@@ -71,7 +74,9 @@ export function StaticUnitList({
   color: string;
   editable: boolean;
   showDeploymentControls?: boolean;
+  showUnitSizeControls?: boolean;
   unitPoints?: (unit: UnitProfile, unitIndex: number) => number | undefined;
+  enhancementOptionsForUnit?: (unit: UnitProfile) => RuleDefinition[];
   selectedUnitIndex?: number | null;
   onInspectUnit?: (unitIndex: number) => void;
   onChangeUnit: (unitIndex: number, unit: UnitProfile) => void;
@@ -82,6 +87,13 @@ export function StaticUnitList({
   const leaderManifest = buildLeaderManifest(army);
   const [expandedUnitId, setExpandedUnitId] = React.useState<string | null>(null);
   const displayUnits = groupedUnitDisplayItems(army);
+  const enhancementAssignments = new Map<string, number[]>();
+  army.units.forEach((unit, index) => {
+    if (!unit.selectedEnhancementId) return;
+    const assignments = enhancementAssignments.get(unit.selectedEnhancementId) ?? [];
+    assignments.push(index);
+    enhancementAssignments.set(unit.selectedEnhancementId, assignments);
+  });
 
   return (
     <>
@@ -105,7 +117,14 @@ export function StaticUnitList({
         const canSplitUnit = !!splitPlan && u.baseModelCount === splitPlan.totalModels;
         const selected = selectedUnitIndex === i;
         const points = unitPoints?.(u, i);
-        const modelSizes = modelCountOptions(u);
+        const enhancementOptions = enhancementOptionsForUnit?.(u) ?? [];
+        const wargearSummary = selectedWargearSummary(u);
+        const selectedEnhancement = u.selectedEnhancementId
+          ? enhancementOptions.find(option => option.id === u.selectedEnhancementId)
+          : undefined;
+        const modelSizes = unitLoadoutOptions(u);
+        const selectedModelSize = selectedUnitLoadoutOption(u, modelSizes);
+        const showUnitSizeControl = showUnitSizeControls && (modelSizes.length > 1 || hasEditableModelCount(u));
 
         return (
         <div
@@ -169,6 +188,12 @@ export function StaticUnitList({
               leaderEntry={ownLeaderEntry}
               leaderManifest={leaderManifest}
             />
+            {(wargearSummary.length > 0 || selectedEnhancement) && (
+              <div style={wargearSummaryStyle}>
+                {wargearSummary.length > 0 && <div>Wargear: {wargearSummary.join(', ')}</div>}
+                {selectedEnhancement && <div>Enhancement: {enhancementLabel(selectedEnhancement)}</div>}
+              </div>
+            )}
           </button>
 
           {expanded && (
@@ -216,38 +241,31 @@ export function StaticUnitList({
               </button>
             )}
           </div>
-          {editable && (
+          {editable && (showUnitSizeControl || showTransportCapacity || showDeploymentControls) && (
             <div style={{
               display: 'grid',
               gridTemplateColumns: `repeat(${1 + (showTransportCapacity ? 1 : 0) + (showDeploymentControls ? 1 : 0)}, minmax(0, 1fr))`,
               gap: 4,
               marginTop: 4,
             }}>
-              {modelSizes.length > 0 ? (
+              {showUnitSizeControl && (modelSizes.length > 0 ? (
                 <div style={{ color: '#777', fontSize: 13 }}>
                   <div>Unit size</div>
                   <div role="group" aria-label="Unit size" style={unitSizeButtonsStyle}>
                     {modelSizes.map(size => {
-                      const selectedSize = u.baseModelCount === size;
+                      const selectedSize = selectedModelSize?.id === size.id;
                       return (
                         <button
-                          key={size}
+                          key={size.id}
                           type="button"
                           aria-pressed={selectedSize}
-                          aria-label={`${size} models`}
+                          aria-label={size.label}
                           onClick={() => {
-                            const baseModelCount = size;
-                            onChangeUnit(i, {
-                              ...u,
-                              baseModelCount,
-                              modelWeaponLoadouts: resizeModelWeaponLoadouts(u, baseModelCount),
-                              modelWargearChoices: resizeModelWargearChoices(u, baseModelCount),
-                              selectedWargear: resizeSelectedWargear(u, baseModelCount),
-                            });
+                            onChangeUnit(i, applyUnitLoadoutOption(u, size));
                           }}
                           style={unitSizeButtonStyle(color, selectedSize)}
                         >
-                          {size}
+                          {size.label}
                         </button>
                       );
                     })}
@@ -281,7 +299,7 @@ export function StaticUnitList({
                     style={numberInputStyle}
                   />
                 </label>
-              )}
+              ))}
               {showTransportCapacity && (
                 <label style={{ color: '#777', fontSize: 13 }}>
                   Capacity
@@ -315,7 +333,9 @@ export function StaticUnitList({
                           : {
                             mode,
                             transportUnitId: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportUnitId : undefined,
-                            transportName: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportName : undefined,
+                            transportName: mode === UNIT_DEPLOYMENT_MODE.Transport && !u.deployment?.transportUnitId
+                              ? u.deployment?.transportName
+                              : undefined,
                           },
                       });
                     }}
@@ -370,7 +390,7 @@ export function StaticUnitList({
               >
                 <option value="">No attachment</option>
                 {leaderManifest
-                  .filter(entry => entry.index !== i && !isLeaderUnit(entry.unit))
+                  .filter(entry => entry.index !== i && leaderCanAttachTo(u, entry.unit))
                   .map(entry => (
                     <option key={entry.id} value={entry.id}>
                       {entry.unit.name}
@@ -384,6 +404,46 @@ export function StaticUnitList({
               Leaders: {ownLeaderEntry.leaders.map(leader => leader.name).join(', ')}
             </div>
           ) : null}
+          {editable && enhancementOptions.length > 0 && (
+            <label style={{ display: 'block', color: '#777', fontSize: 13, marginTop: 4 }}>
+              Enhancement
+              <select
+                value={u.selectedEnhancementId ?? ''}
+                onChange={event => onChangeUnit(i, {
+                  ...u,
+                  selectedEnhancementId: event.target.value || undefined,
+                })}
+                style={selectInputStyle(color)}
+              >
+                <option value="">No enhancement</option>
+                {enhancementOptions.map(option => (
+                  (() => {
+                    const assignments = enhancementAssignments.get(option.id) ?? [];
+                    const maximumSelections = Math.max(1, option.maximumSelections ?? 1);
+                    const atSelectionLimit = assignments.length >= maximumSelections && !assignments.includes(i);
+                    const firstAssignedIndex = assignments.find(index => index !== i);
+                    return (
+                    <option
+                      key={option.id}
+                      value={option.id}
+                      disabled={atSelectionLimit}
+                      title={atSelectionLimit
+                        ? `Already selected by ${army.units[firstAssignedIndex ?? assignments[0]]?.name ?? 'another unit'}`
+                        : option.description}
+                    >
+                    {enhancementLabel(option)}
+                    </option>
+                    );
+                  })()
+                ))}
+              </select>
+              {selectedEnhancement?.description && (
+                <div style={{ color: uiTokens.color.text.secondary, fontSize: 12, lineHeight: 1.35, marginTop: 2, whiteSpace: 'pre-wrap' }}>
+                  <strong>{enhancementLabel(selectedEnhancement)}:</strong> {selectedEnhancement.description}
+                </div>
+              )}
+            </label>
+          )}
           {editable && u.weapons.length > 0 && (
             <ArmyWargearEditor unit={u} color={color} onChange={nextUnit => onChangeUnit(i, nextUnit)} />
           )}
@@ -399,7 +459,6 @@ export function StaticUnitList({
                     deployment: {
                       mode: UNIT_DEPLOYMENT_MODE.Transport,
                       transportUnitId: target?.id,
-                      transportName: target?.unit.name,
                     },
                   });
                 }}
@@ -456,6 +515,55 @@ export function StaticUnitList({
       })}
     </>
   );
+}
+
+function enhancementLabel(enhancement: RuleDefinition): string {
+  const name = enhancement.name.replace(/\s*upgrade$/i, '').trim();
+  const points = rulePoints(enhancement);
+  return points === undefined ? name : `${name} (${points} pts)`;
+}
+
+function shortWargearSummaryLabel(choice: WargearChoice): string {
+  const description = choice.description;
+  if (description) {
+    const replacement = description.match(/(?:their|its)\s+(.+?)\s+replaced with\s+(.+?)(?:\.|$)/i);
+    if (replacement) {
+      return `${replacement[1].trim()} → ${replacement[2]
+        .replace(/^one of the following:\s*/i, '')
+        .replace(/(^|;|\s+and\s+)(?:up to\s+)?(?:one|\d+)\s+/gi, '$1')
+        .split(';')
+        .map(option => option.trim())
+        .filter(Boolean)
+        .join(' / ')}`;
+    }
+    const equipped = description.match(/equipped with\s+(.+?)(?:\.|$)/i);
+    if (equipped) {
+      return equipped[1]
+        .replace(/^one of the following:\s*/i, '')
+        .replace(/(^|;|\s+and\s+)(?:up to\s+)?(?:one|\d+)\s+/gi, '$1')
+        .split(';')
+        .map(option => option.trim())
+        .filter(Boolean)
+        .join(' / ');
+    }
+  }
+  const parts = choice.label.split(':');
+  return (parts.length > 1 ? parts.slice(1).join(':') : parts[0]).trim();
+}
+
+function selectedWargearSummary(unit: UnitProfile): string[] {
+  const choices = unit.wargearChoices ?? [];
+  if (!choices.length) return [];
+  const counts = new Map<string, number>();
+  for (const modelChoices of unit.modelWargearChoices ?? []) {
+    for (const choiceId of modelChoices) counts.set(choiceId, (counts.get(choiceId) ?? 0) + 1);
+  }
+  for (const choiceId of unit.selectedWargear ?? []) {
+    counts.set(choiceId, (counts.get(choiceId) ?? 0) + 1);
+  }
+  return choices
+    .filter(choice => (choice.kind === 'unit-upgrade' || !choice.isDefault) && (counts.get(choice.id) ?? 0) > 0)
+    .map(choice => `${shortWargearSummaryLabel(choice)} ×${counts.get(choice.id)}`);
 }
 
 
@@ -527,6 +635,13 @@ const numberInputStyle: React.CSSProperties = {
   font: 'inherit',
   fontSize: 14,
   padding: '4px 6px',
+};
+
+const wargearSummaryStyle: React.CSSProperties = {
+  marginTop: 3,
+  color: uiTokens.color.text.subdued,
+  fontSize: 12,
+  lineHeight: 1.35,
 };
 
 const unitSizeButtonsStyle: React.CSSProperties = {

@@ -77,11 +77,23 @@ export function createPlayModelSelection({
         event.type === 'damage-applied' && event.data.targetUnitId === part.unitId,
       );
       if (outcomeEvent) {
+        const feelNoPainRolls = outcomeEvent.data.feelNoPainRolls;
+        const feelNoPainTarget = Number(outcomeEvent.data.feelNoPainTarget);
+        const feelNoPainIgnored = Number(outcomeEvent.data.feelNoPainIgnored);
         setDamageAllocationOutcome({
           targetUnitId: part.unitId,
           modelIndex,
           damage: Number(outcomeEvent.data.damage ?? 0),
           killedModels: Number(outcomeEvent.data.killedModels ?? 0),
+          ...(Array.isArray(feelNoPainRolls) && Number.isFinite(feelNoPainTarget) && Number.isFinite(feelNoPainIgnored)
+            ? {
+              feelNoPain: {
+                target: feelNoPainTarget,
+                rolls: feelNoPainRolls.filter((roll): roll is number => typeof roll === 'number'),
+                ignored: feelNoPainIgnored,
+              },
+            }
+            : {}),
         });
       }
       pushPlayUndo(playUndoEntry(prev), next, {
@@ -102,6 +114,15 @@ export function createPlayModelSelection({
         );
         if (anotherPending) {
           setDamageAllocationTargetId(anotherPending.id);
+          setPlayModelSelection(normalizePlaySelectionForState(next, {
+            side: anotherPending.side,
+            parts: [{
+              unitId: anotherPending.id,
+              side: anotherPending.side,
+              modelIndices: anotherPending.modelPositions.map((_, index) => index),
+            }],
+          }));
+          setInspectedSelection({ kind: 'battle', side: anotherPending.side, unitId: anotherPending.id });
           setTargetErrorMsg('Select a model to allocate the next pending damage');
           commitBattleState(next);
           return;

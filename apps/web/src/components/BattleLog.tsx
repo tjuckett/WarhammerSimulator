@@ -29,6 +29,26 @@ const FILTER_LABELS: Record<Filter, string> = {
   rolls:  'Rolls',
 };
 
+const MAX_RENDERED_ENTRIES = 500;
+
+// Older browser saves contain a handful of log strings that were decoded as
+// Windows-1252 instead of UTF-8. Repair those display-only strings while the
+// corrected core produces clean messages for new entries.
+const LOG_ENCODING_REPAIRS: Array<[string, string]> = [
+  ['\u00F0\u0178\u201D\u00AB', '🔫'],
+  ['\u00E2\u20AC\u201D', '—'],
+  ['\u00C3\u2014', '×'],
+  ['\u00E2\u2020\u2019', '→'],
+  ['\u00E2\u0161\u201D\u00EF\u00B8\u008F', '⚔️'],
+  ['\u00F0\u0178\u2019\u20AC', '💀'],
+  ['\u00E2\u0161\u00A0\u00EF\u00B8\u008F', '⚠️'],
+  ['\u00F0\u0178\u00A9\u00B8', '🩸'],
+];
+
+function displayLogMessage(message: string): string {
+  return LOG_ENCODING_REPAIRS.reduce((current, [broken, repaired]) => current.replaceAll(broken, repaired), message);
+}
+
 function matchesFilter(entry: LogEntry, f: Filter): boolean {
   if (f === 'all') return true;
   if (f === 'phase') return entry.type === 'phase';
@@ -47,6 +67,7 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
   }, [entries, paused]);
 
   const visible = entries.filter(e => matchesFilter(e, filter));
+  const renderedEntries = visible.slice(-MAX_RENDERED_ENTRIES);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
@@ -98,7 +119,12 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
         {visible.length === 0 && (
           <div style={{ color: uiTokens.color.text.dim, textAlign: 'center', marginTop: 20 }}>No entries yet</div>
         )}
-        {visible.map((entry, index) => {
+        {visible.length > renderedEntries.length && (
+          <div style={{ color: uiTokens.color.text.dim, textAlign: 'center', padding: '4px 0' }}>
+            Showing the latest {renderedEntries.length} matching entries.
+          </div>
+        )}
+        {renderedEntries.map((entry, index) => {
           const isPhase = entry.type === 'phase';
           const sideColor = entry.side === 0 ? army0Color : army1Color;
           const typeColor = TYPE_COLORS[entry.type] ?? '#ccc';
@@ -115,7 +141,7 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
                 wordBreak: 'break-word',
               }}
             >
-              {entry.message}
+              {displayLogMessage(entry.message)}
             </div>
           );
         })}

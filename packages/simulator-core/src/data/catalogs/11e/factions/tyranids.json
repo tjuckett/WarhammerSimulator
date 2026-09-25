@@ -1,0 +1,95 @@
+{
+  "id": "tyranids",
+  "name": "Tyranids",
+  "edition": "11e",
+  "unitRefs": [
+    "tyranids.deathleaper",
+    "tyranids.old-one-eye",
+    "tyranids.the-red-terror",
+    "tyranids.the-swarmlord",
+    "tyranids.broodlord",
+    "tyranids.hyperadapted-raveners",
+    "tyranids.parasite-of-mortrex",
+    "tyranids.tyranid-prime-with-lash-whip",
+    "tyranids.winged-tyranid-prime",
+    "tyranids.hive-tyrant",
+    "tyranids.neurotyrant",
+    "tyranids.tervigon",
+    "tyranids.winged-hive-tyrant",
+    "tyranids.gargoyles",
+    "tyranids.hormagaunts",
+    "tyranids.termagants",
+    "tyranids.tyrannocyte",
+    "tyranids.mucolid-spores",
+    "tyranids.spore-mines",
+    "tyranids.barbgaunts",
+    "tyranids.biovores",
+    "tyranids.genestealers",
+    "tyranids.hive-guard",
+    "tyranids.lictor",
+    "tyranids.neurogaunts",
+    "tyranids.neurolictor",
+    "tyranids.pyrovores",
+    "tyranids.raveners",
+    "tyranids.tyranid-warriors-with-melee-bio-weapons",
+    "tyranids.tyranid-warriors-with-ranged-bio-weapons",
+    "tyranids.tyrant-guard",
+    "tyranids.venomthropes",
+    "tyranids.von-ryan-s-leapers",
+    "tyranids.zoanthropes",
+    "tyranids.carnifexes",
+    "tyranids.exocrine",
+    "tyranids.harpy",
+    "tyranids.haruspex",
+    "tyranids.hive-crone",
+    "tyranids.maleceptor",
+    "tyranids.mawloc",
+    "tyranids.norn-assimilator",
+    "tyranids.norn-emissary",
+    "tyranids.psychophage",
+    "tyranids.screamer-killer",
+    "tyranids.sporocyst",
+    "tyranids.toxicrene",
+    "tyranids.trygon",
+    "tyranids.tyrannofex",
+    "tyranids.harridan",
+    "tyranids.hierophant",
+    "tyranids.ripper-swarms"
+  ],
+  "ruleRefs": [
+    "tyranids.army-rule.synapse",
+    "tyranids.army-rule.shadow-in-the-warp"
+  ],
+  "detachmentRefs": [
+    "tyranids.detachment.invasion-fleet",
+    "tyranids.detachment.crusher-stampede",
+    "tyranids.detachment.unending-swarm",
+    "tyranids.detachment.assimilation-swarm",
+    "tyranids.detachment.vanguard-onslaught",
+    "tyranids.detachment.synaptic-nexus",
+    "tyranids.detachment.subterranean-assault",
+    "tyranids.detachment.ambush-predators",
+    "tyranids.detachment.talons-of-the-norn-queen",
+    "tyranids.detachment.warrior-bioform-onslaught"
+  ],
+  "factionKeywords": [
+    "tyranids",
+    "Tyranids"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Tyranids faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/tyranids/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 52,
+    "normalizedEntryCount": 52,
+    "excludedLegendCount": 5,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

@@ -1,0 +1,1195 @@
+{
+  "factionId": "t-au-empire",
+  "rules": [
+    {
+      "id": "t-au-empire.army-rule.for-the-greater-good",
+      "name": "For the Greater Good",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is T'AU EMPIRE, at the start of your Shooting phase you can select units from your army with this ability to become Observer units. During your Shooting phase, for each Observer unit from your army that has not been selected to shoot this phase and is eligible to shoot (excluding FORTIFICATION and Battle-shocked units) select one enemy unit that is visible to be marked as their Spotted unit until the end of the phase. Each enemy unit can only be marked as a Spotted unit once per phase. Units from your army with the For the Greater Good ability (excluding Observer units) are Guided units while targeting one or more Spotted units. Until the end of the phase, each time a model from your army in a Guided unit makes an attack that targets a Spotted unit, improve the Ballistic Skill characteristic of that attack by 1 and, if the Spotted unit was marked by an Observer unit that has the MARKERLIGHT keyword, that attack has the [IGNORES COVER] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire For the Greater Good",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "For the Greater Good"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon",
+      "name": "Kauyon - Patient Hunter",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "During the third, fourth and fifth battle rounds, ranged weapons equipped by T'AU EMPIRE models from your army have the [SUSTAINED HITS 1] ability. During the third, fourth and fifth battle rounds, while a unit is a Guided unit (see For the Greater Good), each time a ranged attack is made by a model in that unit that targets a Spotted unit, you can ignore any or all modifiers to that attack's Ballistic skill characteristics and/or all modifiers to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.enhancement.exemplar-of-the-kauyon",
+      "name": "Exemplar of the Kauyon",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "20 pts. T'AU EMPIRE model only (excluding KROOT SHAPER models). While the bearer is leading a unit, the Patient Hunter Detachment rule applies to that unit from the second battle round onwards instead of from the third.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.enhancement.precision-of-the-patient-hunter",
+      "name": "Precision of the Patient Hunter",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "15 pts. T'AU EMPIRE model only. Each time the bearer makes a ranged attack, add 1 to the Hit roll. From the third battle round onwards, add 1 to the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.enhancement.solid-image-projection-unit",
+      "name": "Solid-image Projection Unit",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "20 pts. T'AU EMPIRE model only. After both players have deployed their armies, select up to three T'AU EMPIRE units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.enhancement.through-unity-devastation",
+      "name": "Through Unity, Devastation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "30 pts. T'AU EMPIRE model only (excluding KROOT SHAPER models). While the bearer is leading a unit, each time that unit is an Observer unit, until the end of the phase, ranged weapons equipped by models in a Guided unit have the [LETHAL HITS] ability while targeting their Spotted unit.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.stratagem.a-tempting-trap",
+      "name": "A TEMPTING TRAP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "1CP. Kauyon - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE unit from your army that has not been selected to shoot this phase. The first time you use this Stratagem, you must also select one objective marker that is not in your opponent's deployment zone; until the end of the battle, this becomes your Trap objective marker. EFFECT: Until the end of the phase, each time a model in your unit makes a ranged attack that targets an enemy unit within range of your Trap objective marker, add 1 to the Wound roll. RESTRICTIONS: You cannot use this Stratagem during the first or second battle rounds.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon - A TEMPTING TRAP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon - A TEMPTING TRAP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.stratagem.point-blank-ambush",
+      "name": "POINT-BLANK AMBUSH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "1CP. Kauyon - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a ranged attack that targets an enemy unit within 9\", improve the Armour Penetration characteristic of that attack by 1. RESTRICTIONS: You cannot use this Stratagem during the first or second battle rounds.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon - POINT-BLANK AMBUSH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon - POINT-BLANK AMBUSH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.stratagem.coordinate-to-engage",
+      "name": "COORDINATE TO ENGAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "1CP. Kauyon - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE unit from your army that has just been selected as an Observer unit (see For the Greater Good). EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets their Spotted unit, improve the Ballistic Skill characteristic of that attack by 1 and, if your unit has the MARKERLIGHT keyword, that attack has the [IGNORES COVER] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon - COORDINATE TO ENGAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon - COORDINATE TO ENGAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.stratagem.combat-embarkation",
+      "name": "COMBAT EMBARKATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "1CP. Kauyon - Wargear Stratagem. WHEN: Your opponent's Charge phase, just after an enemy unit has declared a charge. TARGET: One T'AU EMPIRE INFANTRY unit from your army that was selected as one of the targets of that charge, and one friendly TRANSPORT. EFFECT: Your unit can embark within that TRANSPORT. If it does, your opponent can select new targets for that charge. RESTRICTIONS: Every model in your T'AU EMPIRE INFANTRY unit must be within 3\" of that TRANSPORT and there must be sufficient transport capacity to embark the entire unit.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon - COMBAT EMBARKATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon - COMBAT EMBARKATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.stratagem.photon-grenades",
+      "name": "PHOTON GRENADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "1CP. Kauyon - Wargear Stratagem. WHEN: Your opponent's charge phase, just after an enemy unit has selected its charge target. TARGET: One T'AU EMPIRE GRENADES unit from your army that was selected as one of the targets of that charge. EFFECT: That enemy unit must immediately take a Battle-shock test, and until the end of the phase, subtract 2 from Charge rolls made for that enemy unit. RESTRICTION: You cannot target a unit that is within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon - PHOTON GRENADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon - PHOTON GRENADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kauyon.stratagem.wall-of-mirrors",
+      "name": "WALL OF MIRRORS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kauyon",
+      "description": "1CP. Kauyon - Battle Tactic Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One STEALTH, GHOSTKEEL or COMMANDER SHADOWSUN unit from your army. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves. RESTRICTIONS: You cannot target a unit that is within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kauyon - WALL OF MIRRORS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kauyon - WALL OF MIRRORS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka",
+      "name": "Mont'ka - Killing Blow",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "During the first, second and third battle rounds, ranged weapons equipped by T'AU EMPIRE models from your army have the [ASSAULT] ability. During the first, second and third battle rounds, while a unit is a Guided unit, its ranged weapons have the [LETHAL HITS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.enhancement.coordinated-exploitation",
+      "name": "Coordinated Exploitation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "30 pts. T'AU EMPIRE model only (excluding KROOT SHAPER models). While the bearer is leading a unit, each time that unit is an Observer unit, until the end of the phase, ranged weapons equipped by models in a Guided unit have the [SUSTAINED HITS 1] ability while targeting their Spotted unit.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.enhancement.exemplar-of-the-montka",
+      "name": "Exemplar of the Mont'ka",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "10 pts. T'AU EMPIRE model only (excluding KROOT SHAPER models). While the bearer is leading a unit, the Killing Blow Detachment rule applies to that unit during the fourth battle round as well.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.enhancement.strategic-conqueror",
+      "name": "Strategic Conqueror",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "15 pts. T'AU EMPIRE model only. At the start of the first battle round, before the first turn begins, select one objective marker on the battlefield. While a friendly T'AU EMPIRE model is within range of that objective marker and the bearer is on the battlefield, add 1 to that friendly model's Objective Control characteristic.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.enhancement.strike-swiftly",
+      "name": "Strike Swiftly",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "45 pts. T'AU EMPIRE model only. In the Resolve Pre-battle Abilities step, you can select up to two friendly T'AU EMPIRE units within 6\" of this model that do not have the Scouts ability. Until the end of the battle, all models in the selected units have the Scouts 6\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.stratagem.pinpoint-counter-offensive",
+      "name": "PINPOINT COUNTER-OFFENSIVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "1CP. Mont'ka - Battle Tactic Stratagem. WHEN: Any phase. TARGET: One T'AU EMPIRE unit (excluding KROOT units) from your army that was just destroyed. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Until the end of the battle, each time a T'AU EMPIRE unit (excluding KROOT units) from your army makes an attack that targets the enemy unit that just destroyed your unit, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka - PINPOINT COUNTER-OFFENSIVE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka - PINPOINT COUNTER-OFFENSIVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.stratagem.aggressive-mobility",
+      "name": "AGGRESSIVE MOBILITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "1CP. Mont'ka - Battle Tactic Stratagem. WHEN: Your Movement phase. TARGET: One T'AU EMPIRE unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, if your unit Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6\" to the Move characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka - AGGRESSIVE MOBILITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka - AGGRESSIVE MOBILITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.stratagem.focused-fire",
+      "name": "FOCUSED FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "1CP. Mont'ka - Battle Tactic Stratagem. WHEN: Start of your Shooting phase. TARGET: Two T'AU EMPIRE units from your army that have not been selected to shoot this phase, and one enemy unit. EFFECT: Until the end of the phase, each time a model in either of your units makes an attack, it can only target that enemy unit (and only if it is an eligible target for that attack), and when resolving that attack, improve the Armour Penetration characteristic by 1. RESTRICTIONS: You cannot use this Stratagem during the fourth or fifth battle rounds.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka - FOCUSED FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka - FOCUSED FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.stratagem.combat-debarkation",
+      "name": "COMBAT DEBARKATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "1CP. Mont'ka - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE INFANTRY unit from your army that disembarked from a TRANSPORT this turn. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets the closest enemy unit, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka - COMBAT DEBARKATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka - COMBAT DEBARKATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.stratagem.pulse-onslaught",
+      "name": "PULSE ONSLAUGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "2CP. Mont'ka - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE INFANTRY unit (excluding KROOT units) from your army that has just shot, and one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. EFFECT: Until the end of your opponent's next turn, that enemy unit is shaken. While a unit is shaken, subtract 2 from its Move characteristic and subtract 2 from Advance and Charge rolls made for it.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka - PULSE ONSLAUGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka - PULSE ONSLAUGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.montka.stratagem.counterfire-defence-systems",
+      "name": "COUNTERFIRE DEFENCE SYSTEMS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.montka",
+      "description": "2CP. Mont'ka - Wargear Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One T'AU EMPIRE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Mont'ka - COUNTERFIRE DEFENCE SYSTEMS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Mont'ka - COUNTERFIRE DEFENCE SYSTEMS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre",
+      "name": "Retaliation Cadre - Bonded Heroes",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Each time a T'AU EMPIRE BATTLESUIT model from your army makes a ranged attack that targets a unit within 12\", improve the Strength characteristic of that attack by 1. If that attack targets a unit within 8\", improve the Armour Penetration characteristic of that attack by 1 as well.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.enhancement.internal-grenade-racks",
+      "name": "Internal Grenade Racks",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "20 pts. T'AU EMPIRE BATTLESUIT model only. The bearer has the GRENADES keyword, and each time the bearer ends a Normal move, you can select one enemy unit that it moved over during that move. If you do, roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.enhancement.prototype-weapon-system",
+      "name": "Prototype Weapon System",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "15 pts. T'AU EMPIRE BATTLESUIT model only. Each time the bearer is selected to shoot, select either the [LETHAL HITS] or [SUSTAINED HITS 1] ability. Until those attacks are resolved, ranged weapons equipped by the bearer have the selected ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.enhancement.puretide-engram-neurochip",
+      "name": "Puretide Engram Neurochip",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "15 pts. T'AU EMPIRE BATTLESUIT model only. Each time you target the bearer's unit with a Stratagem, roll one D6: on a 4+, you gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.enhancement.starflare-ignition-system",
+      "name": "Starflare Ignition System",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "20 pts. T'AU EMPIRE BATTLESUIT model only. At the end of your opponent's turn, if the bearer's unit is not within Engagement Range of one or more enemy units, you can remove that unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.stratagem.fail-safe-detonator",
+      "name": "FAIL-SAFE DETONATOR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "2CP. Retaliation Cadre - Epic Deed Stratagem. WHEN: Any phase, just after a T'AU EMPIRE BATTLESUIT model from your army is destroyed. TARGET: That destroyed model's unit. You can use this Stratagem on that unit even if that unit was just destroyed. EFFECT: Before removing your model from play, if it has the Deadly Demise ability, do not roll for that ability; instead, you can choose whether the result of that roll is a 1 or a 6. If your model does not have the Deadly Demise ability, roll one D6 for each unit within 6\" of it: on a 4+, that unit suffers D3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre - FAIL-SAFE DETONATOR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre - FAIL-SAFE DETONATOR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.stratagem.stimm-injectors",
+      "name": "STIMM INJECTORS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "1CP. Retaliation Cadre - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One T'AU EMPIRE BATTLESUIT unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 6+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre - STIMM INJECTORS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre - STIMM INJECTORS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.stratagem.the-shortened-blade",
+      "name": "THE SHORTENED BLADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "2CP. Retaliation Cadre - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One T'AU EMPIRE BATTLESUIT unit from your army that is arriving using the Deep Strike ability this phase. EFFECT: Your unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy models. RESTRICTIONS: A unit targeted with this Stratagem is not eligible to declare a charge in the same turn.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre - THE SHORTENED BLADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre - THE SHORTENED BLADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.stratagem.the-arrokon-protocol",
+      "name": "THE ARRO'KON PROTOCOL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "1CP. Retaliation Cadre - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE BATTLESUIT unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit that contains 6 or more models, that attack has the [SUSTAINED HITS 1] ability. If that attack targets an enemy unit that contains 11 or more models, it has the [SUSTAINED HITS 2] ability instead.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre - THE ARRO'KON PROTOCOL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre - THE ARRO'KON PROTOCOL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.stratagem.the-torchstar-gambit",
+      "name": "THE TORCHSTAR GAMBIT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "1CP. Retaliation Cadre - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One T'AU EMPIRE BATTLESUIT unit from your army that can FLY whose attacks have been resolved this phase. EFFECT: If your unit is not within Engagement Range of one or more enemy units, it can make a Normal move. If it does, your unit cannot declare a charge this turn",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre - THE TORCHSTAR GAMBIT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre - THE TORCHSTAR GAMBIT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.retaliation-cadre.stratagem.grav-inhibitor-field",
+      "name": "GRAV-INHIBITOR FIELD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.retaliation-cadre",
+      "description": "1CP. Retaliation Cadre - Strategic Ploy Stratagem. WHEN: Your opponent's Charge phase, just after an enemy unit has declared a charge. TARGET: One T'AU EMPIRE BATTLESUIT unit from your army that was selected as a target of that charge. EFFECT: That enemy unit must immediately take a Battle-shock test and you must roll one D6 for each model in that enemy unit: for each 6, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Retaliation Cadre - GRAV-INHIBITOR FIELD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Retaliation Cadre - GRAV-INHIBITOR FIELD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack",
+      "name": "Kroot Hunting Pack - Hunter's Instincts",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time a KROOT model from your army makes an attack, add 1 to the Hit roll if the target of that attack is below its Starting Strength, and add 1 to the Wound roll as well if the target of that attack is Below Half-strength.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.enhancement.borthrod-gland",
+      "name": "Borthrod Gland",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "15 pts. Kroot Flesh Shaper only. While the bearer is leading a unit, each time a model in that unit makes a melee attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.enhancement.kroothawk-flock",
+      "name": "Kroothawk Flock",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "10 pts. KROOT model only. Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability, and enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12\" horizontally of the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.enhancement.nomadic-hunter",
+      "name": "Nomadic Hunter",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "20 pts. KROOT TRAIL SHAPER model only. While the bearer is leading a unit, add 3\" to the Move characteristic of models in that unit and ranged weapons equipped by models in that unit have the [ASSAULT] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.enhancement.root-carved-weapons",
+      "name": "Root-carved Weapons",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "10 pts. Kroot War Shaper model only. All weapons equipped by the bearer have the [PRECISION] and [DEVASTATING WOUNDS] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.stratagem.join-the-hunt",
+      "name": "JOIN THE HUNT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "2CP. Kroot Hunting Pack - Battle Tactic Stratagem. WHEN: Any phase. TARGET: One KROOT INFANTRY or KROOT HOUNDS unit from your army that was just destroyed. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Add a new unit to your army identical to your destroyed unit, in Strategic Reserves, at its Starting Strength. RESTRICTIONS: This Stratagem cannot be used to return destroyed CHARACTER units to Attached units. You can only use this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack - JOIN THE HUNT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack - JOIN THE HUNT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.stratagem.a-trap-well-laid",
+      "name": "A TRAP WELL LAID",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "1CP. Kroot Hunting Pack - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One KROOT unit from your army that has not been selected to shoot or fight this phase. EFFECT: After your unit has resolved its attacks this phase, select one enemy unit that was hit by one or more of those attacks. Until the end of the phase, each time a KROOT model from your army makes an attack that targets that enemy unit, unless the attacking unit is Battle-shocked, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack - A TRAP WELL LAID",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack - A TRAP WELL LAID"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.stratagem.emp-grenades",
+      "name": "EMP GRENADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "1CP. Kroot Hunting Pack - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy VEHICLE unit is selected to shoot or fight. TARGET: One KROOT GRENADES unit from your army within 8\" of that enemy VEHICLE unit. EFFECT: Until the end of the phase, worsen the Weapon Skill and Ballistic Skill characteristics of that enemy VEHICLE unit's weapons by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack - EMP GRENADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack - EMP GRENADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.stratagem.the-grisly-feast",
+      "name": "THE GRISLY FEAST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "1CP. Kroot Hunting Pack - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One KROOT unit from your army that destroyed one or more enemy units this phase. EFFECT: In your opponent's next Command phase, each enemy unit within 6\" of your unit must take a Battle-shock test. If the unit taking that test is Below Half-strength, subtract 1 from that test. Enemy units affected by this Stratagem do not need to take any other Battle-shock tests in the same phase.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack - THE GRISLY FEAST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack - THE GRISLY FEAST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.stratagem.guerrilla-warriors",
+      "name": "GUERRILLA WARRIORS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "1CP. Kroot Hunting Pack - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a KROOT unit from your army Falls Back. TARGET: That KROOT unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack - GUERRILLA WARRIORS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack - GUERRILLA WARRIORS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.kroot-hunting-pack.stratagem.hidden-hunters",
+      "name": "HIDDEN HUNTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.kroot-hunting-pack",
+      "description": "1CP. Kroot Hunting Pack - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One KROOT unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Kroot Hunting Pack - HIDDEN HUNTERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Kroot Hunting Pack - HIDDEN HUNTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "name": "Advanced Acquisition Cadre - Expert Fieldcraft",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "In your Shooting phase, when a friendly PATHFINDER TEAM/STEALTH BATTLESUITS unit is selected to shoot, those ranged attacks do not prevent your unit from being hidden.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Advanced Acquisition Cadre",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Advanced Acquisition Cadre"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.advanced-acquisition-cadre.enhancement.negation-emittersupgrade",
+      "name": "Negation EmittersUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "maximumSelections": 3,
+      "description": "15 pts. STEALTH BATTLESUITS unit only. This unit has -3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Advanced Acquisition Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Advanced Acquisition Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.advanced-acquisition-cadre.enhancement.unmasking-suiteupgrade",
+      "name": "Unmasking SuiteUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "maximumSelections": 3,
+      "description": "15 pts. GHOSTKEEL BATTLESUIT/PATHFINDER TEAM/STEALTH BATTLESUITS unit only. When this unit is selected to shoot, you can select one enemy unit within 24\" of this unit. That enemy unit has +9\" detection range until this unit has shot.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Advanced Acquisition Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Advanced Acquisition Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.advanced-acquisition-cadre.stratagem.marker-beacon",
+      "name": "MARKER BEACON",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "description": "1CP. Advanced Acquisition Cadre Stratagem. WHEN: End of your Movement phase. TARGET: One friendly PATHFINDER TEAM/STEALTH BATTLESUITS unit. EFFECT: Select one objective your unit is controlling. That objective is secured.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Advanced Acquisition Cadre - MARKER BEACON",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Advanced Acquisition Cadre - MARKER BEACON"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.advanced-acquisition-cadre.stratagem.microdrone-support",
+      "name": "MICRODRONE SUPPORT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "description": "1CP. Advanced Acquisition Cadre Stratagem. WHEN: Your Shooting phase, when a friendly PATHFINDER TEAM/ STEALTH BATTLESUITS unit starts an action. TARGET: That PATHFINDER TEAM/STEALTH BATTLESUITS unit. EFFECT: That action does not prevent your unit from being eligible to shoot.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Advanced Acquisition Cadre - MICRODRONE SUPPORT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Advanced Acquisition Cadre - MICRODRONE SUPPORT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.advanced-acquisition-cadre.stratagem.autoreactive-camouflage",
+      "name": "AUTOREACTIVE CAMOUFLAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.advanced-acquisition-cadre",
+      "description": "1CP. Advanced Acquisition Cadre Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly PATHFINDER TEAM/ STEALTH BATTLESUITS unit, if that friendly unit is hidden. TARGET: That PATHFINDER TEAM/STEALTH BATTLESUITS unit. EFFECT: Your unit has +1 Sv.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Advanced Acquisition Cadre - AUTOREACTIVE CAMOUFLAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Advanced Acquisition Cadre - AUTOREACTIVE CAMOUFLAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.auxiliary-cadre",
+      "name": "Auxiliary Cadre - Integrated Command Structure",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.auxiliary-cadre",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Friendly KROOT/VESPID STINGWINGS units have the following ability: Harnessed Alien Instincts: In your Shooting phase, this unit can select one visible enemy unit within 12\". That enemy unit is prey-marked: While a unit is prey-marked, that unit has +3\" detection range Friendly GHOSTKEEL BATTLESUIT/STEALTH BATTLESUITS units have the following ability: Localised Stealth Projectors (Aura): When a friendly KROOT/VESPID STINGWINGS unit within 6\" of this unit has shot, those attacks do not prevent that unit from being hidden. This detachment has the AUXILIARIES tag and cannot be taken with another AUXILIARIES detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Auxiliary Cadre",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Auxiliary Cadre"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.auxiliary-cadre.enhancement.student-of-kauyon",
+      "name": "Student of Kauyon",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.auxiliary-cadre",
+      "description": "20 pts. KROOT SHAPER model only. In the Declare Battle Formations step, you can select up to three friendly KROOT CARNIVORES/FARSTALKERS units. Those units have Deep Strike.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Auxiliary Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Auxiliary Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.auxiliary-cadre.enhancement.admired-leader",
+      "name": "Admired Leader",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.auxiliary-cadre",
+      "description": "20 pts. T'AU EMPIRE model only (excluding KROOT models). In your Command phase, you can select one KROOT/VESPID STINGWINGS unit within 12\" of this model. If you do, that unit has +1 Ld and OC until the start of your next Command phase.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Auxiliary Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Auxiliary Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.auxiliary-cadre.stratagem.experimental-modifications",
+      "name": "EXPERIMENTAL MODIFICATIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.auxiliary-cadre",
+      "description": "1CP. Auxiliary Cadre Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly KROOT/VESPID STINGWINGS unit is selected to attack. TARGET: That KROOT/VESPID STINGWINGS unit. EFFECT: Your unit's attacks have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Auxiliary Cadre - EXPERIMENTAL MODIFICATIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Auxiliary Cadre - EXPERIMENTAL MODIFICATIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.auxiliary-cadre.stratagem.alien-expertise",
+      "name": "ALIEN EXPERTISE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.auxiliary-cadre",
+      "description": "1CP. Auxiliary Cadre Stratagem. WHEN: Your Movement phase, when a friendly KROOT/VESPID STINGWINGS unit is selected to make an advance move. TARGET: That KROOT/VESPID STINGWINGS unit. EFFECT: That move does not prevent your unit from being eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Auxiliary Cadre - ALIEN EXPERTISE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Auxiliary Cadre - ALIEN EXPERTISE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.auxiliary-cadre.stratagem.guided-fire",
+      "name": "GUIDED FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.auxiliary-cadre",
+      "description": "1CP. Auxiliary Cadre Stratagem. WHEN: Your Shooting phase, when a friendly T'AU EMPIRE unit (excluding KROOT/VESPID STINGWINGS units) is selected to shoot. TARGET: That T'AU EMPIRE unit. EFFECT: Your unit's ranged attacks that target a unit within 9\" of a friendly KROOT/VESPID STINGWINGS unit have [LETHAL HITS].",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Auxiliary Cadre - GUIDED FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Auxiliary Cadre - GUIDED FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.experimental-prototype-cadre",
+      "name": "Experimental Prototype Cadre - Superior Craftsmanship",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.experimental-prototype-cadre",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Friendly BATTLESUIT CHARACTER units' ranged attacks have +6\" R. This detachment has the BATTLESUIT tag and cannot be taken with another BATTLESUIT detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Experimental Prototype Cadre",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Experimental Prototype Cadre"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.experimental-prototype-cadre.enhancement.thermoneutronic-projector",
+      "name": "Thermoneutronic Projector",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.experimental-prototype-cadre",
+      "description": "15 pts. BATTLESUIT model only. In the Declare Battle Formations step, select one of this model's T'au Flamer weapons. That weapon's attacks have: +2 S +1 AP and D.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Experimental Prototype Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Experimental Prototype Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.experimental-prototype-cadre.enhancement.plasma-accelerator-rifle",
+      "name": "Plasma Accelerator Rifle",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.experimental-prototype-cadre",
+      "description": "20 pts. BATTLESUIT model only. In the Declare Battle Formations step, select one of this model's Plasma Rifle weapons. That weapon's attacks have: +2 S +1 A, AP and D.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Experimental Prototype Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Experimental Prototype Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.experimental-prototype-cadre.enhancement.supernova-launcher",
+      "name": "Supernova Launcher",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.experimental-prototype-cadre",
+      "description": "15 pts. BATTLESUIT model only. In the Declare Battle Formations step, select one of this model's Airbursting Fragmentation Projector weapons. That weapon's attacks have: +3 S +1 AP and D.",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Experimental Prototype Cadre enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Experimental Prototype Cadre enhancements"
+        }
+      ]
+    },
+    {
+      "id": "t-au-empire.detachment.experimental-prototype-cadre.stratagem.experimental-ammunition",
+      "name": "EXPERIMENTAL AMMUNITION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "t-au-empire.detachment.experimental-prototype-cadre",
+      "description": "1CP. Experimental Prototype Cadre Stratagem. WHEN: Your Shooting phase, when a friendly BATTLESUIT CHARACTER unit is selected to shoot. TARGET: That BATTLESUIT CHARACTER unit. EFFECT: Your unit's ranged attacks have: +1 S. OR: +1 S, AP and [HAZARDOUS].",
+      "sources": [
+        {
+          "title": "Wahapedia T'au Empire Experimental Prototype Cadre - EXPERIMENTAL AMMUNITION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/t-au-empire/",
+          "capturedAt": "2026-09-25",
+          "section": "Experimental Prototype Cadre - EXPERIMENTAL AMMUNITION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

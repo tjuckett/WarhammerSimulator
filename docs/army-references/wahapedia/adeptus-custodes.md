@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -82,12 +82,16 @@
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Somnus | anti-psyker 5+ devastating wounds | Melee | 4 | 2+ | 6 | -3 | 3 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader, Scouts 6"
 - Tactical Perception: While this model is leading a unit, models in that unit have the Fights First ability.
-  Tenacious Spirit: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.
-  Daughter of the Abyss: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
+- Tenacious Spirit: While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.
+- Daughter of the Abyss: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
 
 #### Unit Composition
 - 1 Aleya - EPIC HERO
@@ -124,12 +128,18 @@ ADEPTUS CUSTODES
 | ranged | -- | Eagle's Scream | assault | 24" | 2 | 2+ | 5 | -2 | 3 |
 | melee | -- | Watcher's Axe | -- | Melee | 6 | 2+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+, Leader
-- FACTION: Martial Ka'tah
 - Captain-General: While this model is leading a unit, each time a model in this unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic skill or Weapon skill characteristics and/or all modifiers to the Hit roll
-  Moment Shackle: Once per battle, at the start of the Fight phase, you can select one of the following to take effect until the end of the phase:
+- Moment Shackle: Once per battle, at the start of the Fight phase, you can select one of the following to take effect until the end of the phase:
   - This model's Watcher's Axe melee weapon has an Attacks characteristic of 12.
   - This model has a 2+ invulnerable save.
 
@@ -140,6 +150,7 @@ ADEPTUS CUSTODES
 #### Leader
 - This model can be attached to the following units:
   - CUSTODIAN GUARD
+  - CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS
   - CUSTODIAN WARDENS
   - SAGITTARUM CUSTODIANS
 
@@ -171,12 +182,18 @@ ADEPTUS CUSTODES
 | ranged | -- | Gnosis | assault | 24" | 3 | 2+ | 4 | -1 | 2 |
 | melee | -- | Gnosis | -- | Melee | 7 | 2+ | 8 | -3 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 6+
+- Leader
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 6+, Leader
-- FACTION: Martial Ka'tah
 - Golden Laurels: While this model is leading a unit, each time a melee attack targets that unit, worsen the Armour Penetration characteristic of that attack by 1.
-  Hero of Lion's Gate: Once per battle, after making a Hit roll, Wound roll or saving throw for this model, you can change the result of that roll to an unmodified 6.
+- Hero of Lion's Gate: Once per battle, after making a Hit roll, Wound roll or saving throw for this model, you can change the result of that roll to an unmodified 6.
 
 #### Unit Composition
 - 1 Valerian - EPIC HERO
@@ -185,6 +202,7 @@ ADEPTUS CUSTODES
 #### Leader
 - This model can be attached to the following units:
   - CUSTODIAN GUARD
+  - CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS
   - CUSTODIAN WARDENS
   - SAGITTARUM CUSTODIANS
 
@@ -214,12 +232,17 @@ ADEPTUS CUSTODES
 | melee | -- | Vaultswords - Hurricanus | sustained hits 1 | Melee | 9 | 2+ | 5 | -1 | 1 |
 | melee | -- | Vaultswords - Victus | devastating wounds | Melee | 5 | 2+ | 6 | -3 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Martial Ka'tah
 - Swift Onslaught: While this model is leading a unit, you can re-roll Charge rolls made for that unit
-  Martial Inspiration: Once per battle, in your Charge phase, this model's unit is eligible to declare a charge in a turn which it Advanced.
+- Martial Inspiration: Once per battle, in your Charge phase, this model's unit is eligible to declare a charge in a turn which it Advanced.
 
 #### Unit Composition
 - 1 Blade Champion
@@ -228,6 +251,7 @@ ADEPTUS CUSTODES
 #### Leader
 - This model can be attached to the following units:
   - CUSTODIAN GUARD
+  - CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS
   - CUSTODIAN WARDENS
   - SAGITTARUM CUSTODIANS
 
@@ -278,12 +302,20 @@ ADEPTUS CUSTODES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 2+ | 3 | 0 | 1 |
 | melee | -- | Executioner greatblade | anti-psyker 5+ devastating wounds | Melee | 3 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's executioner greatblade can be replaced with one of the following:
+  - 1 master-crafted boltgun and 1 close combat weapon
+  - 1 Witchseeker flamer and 1 close combat weapon
+
+#### Core Abilities
+- Leader
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 6"
 - Seeker's Instincts: While this model is leading a unit, add 2" to the Move characteristic of models in that unit and add 2 to Advance and Charge rolls made for that unit.
-  Daughter of the Abyss: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
-  Corner the Quarry: Each time an enemy unit (excluding MONSTERS and VEHICLES) that is within Engagement Range of this model's unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
+- Daughter of the Abyss: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
+- Corner the Quarry: Each time an enemy unit (excluding MONSTERS and VEHICLES) that is within Engagement Range of this model's unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
 
 #### Unit Composition
 - 1 Knight-Centura
@@ -349,14 +381,24 @@ ADEPTUS CUSTODES
 | melee | -- | Pyrithite spear | -- | Melee | 7 | 2+ | 7 | -2 | 2 |
 | melee | -- | Sentinel blade | -- | Melee | 7 | 2+ | 6 | -2 | 1 |
 
+#### Wargear options
+- This model's guardian spear can be replaced with one of the following:
+  - 1 castellan axe
+  - 1 sentinel blade
+  - 1 sentinel blade and 1 praesidium shield
+  - 1 pyrithite spear and 1 praesidium shield
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Martial Ka'tah
 - Master of the Stances: Once per battle, when this models unit is selected to fight, it can use this ability. if it does until that fight is resolved, both Ka'tah Stances are active for that unit, instead of only one.
-  Strategic Mastery: Once per battle round, you can select one model from your army with this ability. That model's unit can be targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-
-#### Wargear Abilities
+- Strategic Mastery: Once per battle round, you can select one model from your army with this ability. That model's unit can be targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 - Praesidium shield: Add 1 to the bearer's Wounds characteristic.
 
 #### Unit Composition
@@ -366,6 +408,7 @@ ADEPTUS CUSTODES
 #### Leader
 - This model can be attached to the following units:
   - CUSTODIAN GUARD
+  - CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS
   - CUSTODIAN WARDENS
   - SAGITTARUM CUSTODIANS
 
@@ -420,12 +463,20 @@ ADEPTUS CUSTODES
 | melee | -- | Castellan axe | -- | Melee | 6 | 2+ | 9 | -1 | 3 |
 | melee | -- | Guardian spear | -- | Melee | 7 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- This model's guardian spear can be replaced with 1 castellan axe.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Martial Ka'tah
 - Auramite and Adamantine: Once per battle, at the start of any phase, this model can use this ability If it does, until the end of the phase, each time an attack is allocated to this model, change the Damage characteristic of that attack to 1.
-  Strategic Mastery: Once per battle round, you can select one model from your army with this ability and target that model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
+- Strategic Mastery: Once per battle round, you can select one model from your army with this ability and target that model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Shield-Captain in Allarus Terminator Armour
@@ -487,12 +538,19 @@ ADEPTUS CUSTODES
 | ranged | -- | Salvo launcher | twin-linked | 24" | 1 | 2+ | 10 | -3 | D6+1 |
 | melee | -- | Interceptor lance | lance | Melee | 6 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- This model's salvo launcher can be replaced with 1 Vertus hurricane bolter.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Martial Ka'tah
 - Sweeping Advance: Once per battle, at the end of the Fight phase, if this model's unit has fought this phase, if it is within Engagement Range of one or more enemy units, it can make a Fall Back move or, if it is not within Engagement Range of one or more enemy units, it can make a Normal move
-  Strategic Mastery: Once per battle round, you can select one model from your army with this ability and target that model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
+- Strategic Mastery: Once per battle round, you can select one model from your army with this ability and target that model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Shield-Captain on Dawneagle Jetbike
@@ -551,14 +609,22 @@ ADEPTUS CUSTODES
 | melee | -- | Misericordia | -- | Melee | 5 | 2+ | 5 | -2 | 1 |
 | melee | -- | Sentinel blade | -- | Melee | 5 | 2+ | 6 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their guardian spear replaced with 1 sentinel blade and 1 praesidium shield.
+- 1 model's guardian spear can be replaced with one of the following:
+  - 1 vexilla and 1 misericordia
+  - 1 vexilla, 1 misericordia and 1 praesidium shield
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Stand Vigil: Each time a model in this unit makes an attack, re-roll a Wound roll of 1. While this unit is within range of an objective marker you control, you can re-roll the Wound roll instead.
-  Sentinel Storm: Once per battle, in your Shooting phase, after this unit has shot, it can shoot again.
-
-#### Wargear Abilities
+- Sentinel Storm: Once per battle, in your Shooting phase, after this unit has shot, it can shoot again.
 - Praesidium Shield: Add 1 to the bearer's Wounds characteristic.
 - Vexilla: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 
@@ -598,18 +664,24 @@ ADEPTUS CUSTODES
 | ranged | -- | Storm bolter | rapid fire 2 | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
 - Daughters of the Abyss: This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
-  Self Repair: At the start of your Command phase, this model regains 1 lost wound.
+- Self Repair: At the start of your Command phase, this model regains 1 lost wound.
+
+#### Transport
+- This model has a transport capacity of 12 ANATHEMA PSYKANA INFANTRY models.
 
 #### Unit Composition
 - 1 Anathema Psykana Rhino
   This model is equipped with: storm bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 ANATHEMA PSYKANA INFANTRY models.
 
 #### Enhancements
 - Honoured Fallen (Aura) 15 pts
@@ -645,10 +717,17 @@ ADEPTUS CUSTODES
 | ranged | -- | Arachnus magna-blaze cannon | -- | 48" | 3 | 2+ | 18 | -4 | D6+6 |
 | melee | -- | Armoured hull | -- | Melee | 9 | 4+ | 9 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Martial Ka'tah
 - Infernus Firebombs: At the end of your Movement phase, select one visible enemy unit (excluding AIRCRAFT/Lone Operative units) within 24" of this unit:
   - That enemy unit cannot have the benefit of cover until the end of your next Shooting phase.
   - Roll one D6 for each model in that enemy unit: for each 6, that enemy unit suffers 1 mortal wound.
@@ -690,14 +769,20 @@ ADEPTUS CUSTODES
 | melee | -- | Guardian spear | -- | Melee | 5 | 2+ | 7 | -2 | 2 |
 | melee | -- | Misericordia | -- | Melee | 5 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their guardian spear replaced with 1 castellan axe.
+- 1 model's guardian spear can be replaced with 1 vexilla and 1 misericordia.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Slayers of Tyrants: Each time a model in this unit makes an attack that targets a CHARACTER, MONSTER or VEHICLE unit, you can re-roll the Wound roll.
-  From Golden Light: Once per battle, at the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
+- From Golden Light: Once per battle, at the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 - Vexilla: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 
 #### Unit Composition
@@ -743,14 +828,20 @@ ADEPTUS CUSTODES
 | melee | -- | Castellan axe | -- | Melee | 4 | 2+ | 9 | -1 | 3 |
 | melee | -- | Guardian spear | -- | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their guardian spear replaced with 1 castellan axe.
+- 1 model can be equipped with 1 vexilla.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Resolute Will: While a CHARACTER is leading this unit, each time an attack targets this unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of this unit, subtract 1 from the Wound roll.
-  Living Fortress: Once per battle, at the start of any phase, this unit can use this ability. If it does, until the end of the phase, models in this unit have the Feel No Pain 4+ ability.
-
-#### Wargear Abilities
+- Living Fortress: Once per battle, at the start of any phase, this unit can use this ability. If it does, until the end of the phase, models in this unit have the Feel No Pain 4+ ability.
 - Vexilla: Add 1 to the Objective Control characteristic of models in the bearer's unit.
 
 #### Unit Composition
@@ -791,7 +882,7 @@ ADEPTUS CUSTODES
 #### Abilities
 **ABILITIES:**
 - Daughters of the Abyss: Models in this unit have the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
-  Purity of Execution: Each time a model in this unit makes a ranged attack that targets a PSYKER unit, that attack has the [PRECISION] and [DEVASTATING WOUNDS] abilities.
+- Purity of Execution: Each time a model in this unit makes a ranged attack that targets a PSYKER unit, that attack has the [PRECISION] and [DEVASTATING WOUNDS] abilities.
 
 #### Unit Composition
 - 1 Prosecutor Sister Superior
@@ -833,7 +924,7 @@ ADEPTUS CUSTODES
 #### Abilities
 **ABILITIES:**
 - Daughters of the Abyss: Models in this unit have the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
-  Deft Parry: Each time a melee attack targets this unit, subtract 1 from the Hit roll.
+- Deft Parry: Each time a melee attack targets this unit, subtract 1 from the Hit roll.
 
 #### Unit Composition
 - 1 Vigilator Sister Superior
@@ -873,11 +964,16 @@ ADEPTUS CUSTODES
 | ranged | -- | Witchseeker flamer | ignores cover torrent | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Scouts 6"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
 - Daughters of the Abyss: Models in this unit have the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.
-  Sanctified Flames: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test.
+- Sanctified Flames: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Witchseeker Sister Superior
@@ -920,12 +1016,22 @@ ADEPTUS CUSTODES
 | melee | -- | Solerite power gauntlet | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Solerite power talon | -- | Melee | 7 | 2+ | 7 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their lastrum storm bolter replaced with one of the following:
+  - 1 infernus firepike
+  - 1 twin adrathic destructor
+- Any number of models can each have their solerite power gauntlet replaced with 1 solerite power talon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Heavy Assault Infantry: Each time a model in this unit makes a ranged attack that targets the closest eligible target, re-roll a Wound roll of 1.
-  From Golden Light: Once per battle, at the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
+- From Golden Light: Once per battle, at the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
 - 3-6 Aquilon Custodians
@@ -967,12 +1073,19 @@ ADEPTUS CUSTODES
 | melee | -- | Adrasite spear | -- | Melee | 5 | 2+ | 7 | -2 | 2 |
 | melee | -- | Pyrithite spear | -- | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their adrasite spear replaced with 1 pyrithite spear.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Stand Vigil: Each time a model in this unit makes an attack, re-roll a Wound roll of 1. While this unit is within range of an objective marker you control, you can re-roll the Wound roll instead.
-  No Foe Shall Stand: Once per battle, at the start of your Shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [LETHAL HITS] and [IGNORES COVER] abilities.
+- No Foe Shall Stand: Once per battle, at the start of your Shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [LETHAL HITS] and [IGNORES COVER] abilities.
 
 #### Unit Composition
 - 5 Custodian Guard with Adrasite and Pyrithite Spears
@@ -1010,12 +1123,19 @@ ADEPTUS CUSTODES
 | ranged | -- | Adrastus bolt caliver | sustained hits 1 | 36" | 3 | 2+ | 5 | -1 | 2 |
 | melee | -- | Misericordia | -- | Melee | 4 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Saturation Volleys: In your Shooting phase, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this unit is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
-  Disintegration Beams: Once per battle, at the start of your Shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.
+- Disintegration Beams: Once per battle, at the start of your Shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 5 Sagittarum Custodians
@@ -1054,14 +1174,19 @@ ADEPTUS CUSTODES
 | melee | -- | Tarsis buckler | -- | Melee | 5 | 2+ | 5 | -2 | 1 |
 | melee | -- | Venatari lance | lance | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their Venatari lance replaced with 1 kinetic destroyer and 1 tarsus buckler.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Martial Ka'tah
 - Strike from the Skies: This unit is eligible to shoot and declare a charge in a turn in which it Fell Back.
-  Swooping Dive: Once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
-
-#### Wargear Abilities
+- Swooping Dive: Once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
 - Tarsis Buckler: The bearer has a Wounds characteristic of 4.
 
 #### Unit Composition
@@ -1104,11 +1229,16 @@ ADEPTUS CUSTODES
 | ranged | -- | Vertus hurricane bolter | rapid fire 3 twin-linked | 18" | 3 | 2+ | 4 | -1 | 2 |
 | melee | -- | Interceptor lance | lance | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their salvo launcher replaced with 1 Vertus hurricane bolter.
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Martial Ka'tah
 - Turbo-boost: Each time this unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6" to the Move characteristic of models in this unit.
-  Quicksilver Execution: Once per battle, after this unit ends a Normal Move or Advance move, you can select one enemy unit (excluding MONSTER and VEHICLE units) that it moved over during that move, then roll one D6 for each model in this unit: for each 2+, that enemy unit suffers 2 mortal wounds.
+- Quicksilver Execution: Once per battle, after this unit ends a Normal Move or Advance move, you can select one enemy unit (excluding MONSTER and VEHICLE units) that it moved over during that move, then roll one D6 for each model in this unit: for each 2+, that enemy unit suffers 2 mortal wounds.
 
 #### Unit Composition
 - 2-3 Vertus Praetors
@@ -1147,11 +1277,18 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin las-pulsar | twin-linked | 24" | 2 | 2+ | 9 | -1 | 2 |
 | melee | -- | Interceptor lance | lance | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their lastrum bolt cannon replaced with one of the following:
+  - 1 adrathic devastator
+  - 1 twin las-pulsar
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Martial Ka'tah
 - Turbo-boost: Each time this unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6" to the Move characteristic of models in this unit.
-  Implacable Vanguard: Once per battle, in your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
+- Implacable Vanguard: Once per battle, in your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
 - 3-6 Agamatus Custodians
@@ -1192,11 +1329,22 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 2+ | 5 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hunter-killer missile.
+- This model can be equipped with 1 storm bolter.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Martial Ka'tah
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 6 ADEPTUS CUSTODES INFANTRY models.
 
 #### Unit Composition
 - 1 Venerable Land Raider
@@ -1204,9 +1352,6 @@ ADEPTUS CUSTODES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 6 ADEPTUS CUSTODES INFANTRY models.
 
 #### Enhancements
 - Honoured Fallen (Aura) 15 pts
@@ -1240,11 +1385,21 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin lastrum bolt cannon | sustained hits 1 | 36" | 3 | 2+ | 6 | -1 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Martial Ka'tah
 - Fire Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 8 ADEPTUS CUSTODES INFANTRY models.
 
 #### Unit Composition
 - 1 Coronus Grav-carrier
@@ -1252,9 +1407,6 @@ ADEPTUS CUSTODES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 8 ADEPTUS CUSTODES INFANTRY models.
 
 #### Enhancements
 - Honoured Fallen (Aura) 15 pts
@@ -1289,11 +1441,22 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin lastrum bolt cannon | sustained hits 1 | 36" | 3 | 2+ | 6 | -1 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 9 | 4+ | 9 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6
+- Hover
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Hover
-- FACTION: Martial Ka'tah
 - Assault Dropship: If a unit disembarks from this TRANSPORT before it moves, until the end of the turn, that unit is eligible to charge in a turn in which it Advanced.
+
+#### Transport
+- This model has a transport capacity of 12 ADEPTUS CUSTODES INFANTRY models. This model can also transport 1 VENERABLE CONTEMPTOR DREADNOUGHT, 1 CONTEMPTOR-ACHILLUS DREADNOUGHT or 1 CONTEMPTOR GALATUS-DREADNOUGHT; while doing so, its transport capacity is reduced to 6 ADEPTUS CUSTODES INFANTRY models.
 
 #### Unit Composition
 - 1 Orion Assault Dropship
@@ -1301,9 +1464,6 @@ ADEPTUS CUSTODES
 
 #### Damaged: 1-7 Wounds Remaining
 - While this model has 1-7 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 ADEPTUS CUSTODES INFANTRY models. This model can also transport 1 VENERABLE CONTEMPTOR DREADNOUGHT, 1 CONTEMPTOR-ACHILLUS DREADNOUGHT or 1 CONTEMPTOR GALATUS-DREADNOUGHT; while doing so, its transport capacity is reduced to 6 ADEPTUS CUSTODES INFANTRY models.
 
 #### Enhancements
 - Honoured Fallen (Aura) 15 pts
@@ -1338,10 +1498,17 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin lastrum bolt cannon | sustained hits 1 | 36" | 3 | 2+ | 6 | -1 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 4 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's twin iliastus accelerator cannon can be replaced with 1 twin arachnus heavy blaze cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Martial Ka'tah
 - Advanced Firepower: Each time this model makes an attack with its twin iliastus accelerator cannon that targets an enemy unit (excluding MONSTERS and VEHICLES), that attack has the [LETHAL HITS] ability. Each time this model makes an attack with its twin arachnus heavy blaze cannon that targets an enemy MONSTER or VEHICLE unit, that attack has the [LETHAL HITS] ability.
 
 #### Unit Composition
@@ -1383,10 +1550,17 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin arachnus blaze cannon | devastating wounds twin-linked | 24" | 8 | 2+ | 5 | -1 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Martial Ka'tah
 - Merciless Hunter: In your Shooting phase, each time this model makes an attack that targets an enemy unit that is Below Half-strength, add 1 to the Wound roll.
 
 #### Unit Composition
@@ -1425,10 +1599,17 @@ ADEPTUS CUSTODES
 | ranged | -- | Multi-melta | melta 2 | 18" | 2 | 2+ | 9 | -4 | D6 |
 | melee | -- | Contemptor combat weapon | -- | Melee | 5 | 2+ | 12 | -2 | 3 |
 
+#### Wargear options
+- This model's multi-melta can be replaced with 1 Kheres-pattern assault cannon.
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Martial Ka'tah
 - Unyielding Ancient: The first time this model is destroyed, remove it from play without resolving its Deadly Demise ability. Then, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with D6 wounds remaining.
 
 #### Unit Composition
@@ -1471,10 +1652,22 @@ ADEPTUS CUSTODES
 | ranged | -- | Twin adrathic destructor | twin-linked | 18" | 1 | 2+ | 6 | -2 | 3 |
 | melee | -- | Achillus dreadspear | lance | Melee | 5 | 2+ | 12 | -2 | D6+1 |
 
+#### Wargear options
+- This model's 2 lastrum storm bolters can be replaced with one of the following:
+  - 2 infernus incinerators
+  - 2 twin adrathic destructors
+  - 1 lastrum storm bolter and 1 infernus incinerator
+  - 1 lastrum storm bolter and 1 twin adrathic destructor
+  - 1 infernus incinerator and 1 twin adrathic destructor
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Martial Ka'tah
 - Dread Foe: Each time this model is selected to fight, you can select one enemy unit within Engagement Range of it and roll one D6, adding 2 to the result if this model made a Charge move this turn: on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6+, that enemy unit suffers 3 mortal wounds.
 
 #### Unit Composition
@@ -1514,10 +1707,17 @@ ADEPTUS CUSTODES
 | ranged | -- | Galatus warblade | ignores cover torrent twin-linked | 12" | D6 | N/A | 6 | -1 | 1 |
 | melee | -- | Galatus warblade | -- | Melee | 8 | 2+ | 8 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Martial Ka'tah
 - Galatus Shield: Each time a melee attack targets this model, subtract 1 from the Wound roll.
 
 #### Unit Composition
@@ -1561,12 +1761,24 @@ ADEPTUS CUSTODES
 | melee | -- | Armoured feet | -- | Melee | 5 | 2+ | 7 | 0 | 1 |
 | melee | -- | Telemon caestus | -- | Melee | 5 | 2+ | 12 | -2 | 3 |
 
+#### Wargear options
+- This model's 2 iliastus accelerator culverins can be replaced with one of the following:
+  - 2 arachnus storm cannons
+  - 2 Telemon caestus and 2 twin plasma projectors
+  - 1 iliastus accelerator culverin and 1 arachnus storm cannon
+  - 1 iliastus accelerator culverin, 1 Telemon caestus and 1 twin plasma projector
+  - 1 arachnus storm cannon, 1 Telemon caestus and 1 twin plasma projector
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Martial Ka'tah
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Martial Ka'tah
 - Guardian Eternal: Each time an attack is allocated to this model, subtract 1 from the Damage characteristic of that attack.
-  Devoted to Destruction: If this model is equipped with 2 Telemon caestus weapons in addition to its armoured feet weapon, add 2 to the Attacks characteristic of those Telemon caestus weapons.
+- Devoted to Destruction: If this model is equipped with 2 Telemon caestus weapons in addition to its armoured feet weapon, add 2 to the Attacks characteristic of those Telemon caestus weapons.
 
 #### Unit Composition
 - 1 Telemon Heavy Dreadnought
@@ -1594,6 +1806,8 @@ ADEPTUS CUSTODES
 ## Detachments
 
 ### Talons Of The Emperor (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Revered Companions
 - ANATHEMA PSYKANA units from your army gain the following the ability:
   Null Aegis (Aura): While an ADEPTUS CUSTODES unit is within 6" of this unit, models in that unit have the Feel No Pain 5+ ability against Psychic Attacks and mortal wounds.
@@ -1653,6 +1867,8 @@ ADEPTUS CUSTODES
   EFFECT: Until the end of the phase, any attack that targets your ANATHEMA PSYKANA unit must instead target your other ADEPTUS CUSTODES unit (unless it is not an eligible target).
 
 ### Shield Host (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Martial Mastery
 - At the start of the battle round, you can select one of the bullet points below. If you do, until the start of the next battle round, that bullet point's effects apply.
   - Each time an ADEPTUS CUSTODES model from your army with the Martial Ka'tah ability makes a melee attack, a successful unmodified Hit roll of 5+ scores a Critical Hit.
@@ -1707,6 +1923,8 @@ ADEPTUS CUSTODES
   EFFECT: Select either the [LETHAL HITS] or [SUSTAINED HITS 1] ability. Until the end of the phase ranged weapons equipped by models in your unit have the selected ability.
 
 ### Null Maiden Vigil (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Creeping Dread (Aura)
 - In the Battle-shock step of your opponent's Command phase, if an enemy unit that is either a PSYKER unit or below its Starting Strength is within 12" of one or more ANATHEMA PSYKANA models from your army, that enemy unit must take a Battle-shock test. If that unit is Below Half-strength, it must subtract 1 from its Battle-shock test this phase instead.
   Designer's Note: This means that all enemy PSYKER units within range of this Aura ability and all enemy units within range of this Aura ability that have lost one or more models must take a Battle-shock test in your opponents Command phase, not just those that are Below Half-strength.
@@ -1762,6 +1980,8 @@ ADEPTUS CUSTODES
   EFFECT: Until the end of the phase, your unit has the Stealth ability, and Battle-shocked and PSYKER models can only select your unit as a target of a ranged attack if they are within 12".
 
 ### Auric Champions (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Assemblage of Might
 - At the start of your Command phase, select one unit from your opponent's army. Until the start of your next Command phase, each time a model in an ADEPTUS CUSTODES CHARACTER unit from your army makes an attack that targets that enemy unit, add 1 to the Wound roll.
 
@@ -1815,6 +2035,8 @@ ADEPTUS CUSTODES
   EFFECT: Select one friendly unit (excluding Battle-shocked and Attached units) within 2" horizontally and 5" vertically of your model that it could lead (as described in the Leader section of its datasheet). Your model attaches to that unit as a Leader. Change that unit's Starting Strength accordingly.
 
 ### Solar Spearhead (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Auric Armour
 - While an ADEPTUS CUSTODES VEHICLE unit from your army is at Starting Strength, unless that unit is an AIRCRAFT or it is Battle-shocked, add 2 to the Objective Control characteristic of models in that unit.
   - While an ADEPTUS CUSTODES VEHICLE unit from your army is below Starting Strength, each time a model in that unit makes an attack, re-roll a Hit roll of 1.
@@ -1874,6 +2096,8 @@ ADEPTUS CUSTODES
   EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability, and until the end of the phase, each time a model in your unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic Skill characteristic and/or any or all modifiers to the Hit roll.
 
 ### Lions of the Emperor (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Against All Odds
 - Each time a model in an ADEPTUS CUSTODES unit from your army (excluding VEHICLES) makes an attack, if there are no other friendly units within 6" of that unit, add 1 to the Hit roll and add 1 to the Wound roll.
 
@@ -1927,6 +2151,8 @@ ADEPTUS CUSTODES
   EFFECT: Your unit can make a Normal move of up to D6".
 
 ### Might of the Moritoi (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- March of the Honoured Dead
 - Friendly ADEPTUS CUSTODES WALKER units:
   - Have +2" M.
@@ -1936,6 +2162,8 @@ ADEPTUS CUSTODES
 #### Enhancements
 - Interred ExpertiseUPGRADE 25 pts
 - ADEPTUS CUSTODES WALKER unit only. This unit's attacks can:
+  - Re-roll hit rolls of 1.
+  - Re-roll wound rolls of 1.
 - Auramite SarcophagusUPGRADE 15 pts
 - ADEPTUS CUSTODES WALKER unit only. When you target this unit with the Crushing Impact stratagem, that use is -1 CP.
 
@@ -1962,6 +2190,8 @@ ADEPTUS CUSTODES
   - Iliastus Accelerator Culverin weapons have [RAPID FIRE 2].
 
 ### Silent Hunters (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Skin-Crawling Disorientation
 - When a friendly ANATHEMA PSYKANA unit is selected to make an advance move, that advance move does not prevent that unit from being eligible to start an action.
   - Friendly ANATHEMA PSYKANA units have the following ability:
@@ -1973,6 +2203,8 @@ ADEPTUS CUSTODES
 - ANATHEMA PSYKANA model only. When both players have deployed their armies, you can redeploy up to three friendly ANATHEMA PSYKANA INFANTRY units. When doing so, you can set those units up in strategic reserves, regardless of how many units are already in strategic reserves.
 - Psyk-Out GrenadesUPGRADE 10 pts
 - ANATHEMA PSYKANA unit only.
+  - This unit has EXPLOSIVES.
+  - When you target this unit with the Explosives stratagem, if you select an enemy PSYKER unit, you can re-roll rolls to determine whether that enemy unit suffers a mortal wound.
 
 #### Stratagems
 - DEATHSONG SCYTHES
@@ -1999,6 +2231,8 @@ ADEPTUS CUSTODES
   EFFECT: Your unit's [TORRENT] ranged attacks have [BLAST 1].
 
 ### Tharanatoi Hammerblow (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- The Hammer Falls
 - If a friendly ADEPTUS CUSTODES TERMINATOR unit made an ingress move this turn, that unit can re-roll charge rolls.
   This detachment has the LIONS tag and cannot be taken with another LIONS detachment.

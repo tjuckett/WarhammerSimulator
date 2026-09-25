@@ -1,0 +1,1642 @@
+{
+  "factionId": "death-guard",
+  "rules": [
+    {
+      "id": "death-guard.army-rule.pact-of-decay",
+      "name": "Pact of Decay",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "When mustering your army, unless specifically stated otherwise, you cannot select PLAGUE LEGIONS as your Army Faction.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Pact of Decay",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Pact of Decay"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium",
+      "name": "Virulent Vectorium - Worldblight",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "At the end of your Command phase, if a friendly DEATH GUARD unit is controlling an objective, that objective is secured. Until you lose control of that objective, while an enemy unit is within range of that objective, that enemy unit is Afflicted.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.enhancement.daemon-weapon-of-nurgle",
+      "name": "Daemon Weapon of Nurgle",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "10 pts. DEATH GUARD model only. Each time the bearer makes a melee attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.enhancement.furnace-of-plagues",
+      "name": "Furnace of Plagues",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "25 pts. DEATH GUARD model only. Add 1 to the Strength and Attacks characteristics of the bearers melee weapons, and the bearer's melee weapons have the [DEVASTATING WOUNDS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.enhancement.arch-contaminator",
+      "name": "Arch Contaminator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "25 pts. DEATH GUARD model only. While the bearer's unit is within range of an objective marker you control, each time a model in the bearer's unit makes an attack, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.enhancement.revolting-regeneration",
+      "name": "Revolting Regeneration",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "30 pts. DEATH GUARD model only. The bearer has the Feel No Pain 5+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.stratagem.putrid-detonation",
+      "name": "PUTRID DETONATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "1CP. Virulent Vectorium - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One DEATH GUARD VEHICLE or DEATH GUARD MONSTER model from your army with the Deadly Demise ability that was just destroyed. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Do not roll one D6 to determine whether mortal wounds are inflicted by your model's Deadly Demise ability. Instead, mortal wounds are automatically inflicted. In addition, any enemy units that suffer mortal wounds as a result of this Stratagem are Afflicted until the start of your next turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium - PUTRID DETONATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium - PUTRID DETONATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.stratagem.disgustingly-resilient",
+      "name": "DISGUSTINGLY RESILIENT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "2CP. Virulent Vectorium - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DEATH GUARD unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium - DISGUSTINGLY RESILIENT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium - DISGUSTINGLY RESILIENT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.stratagem.plaguesurge",
+      "name": "PLAGUESURGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "2CP. Virulent Vectorium - Epic Deed Stratagem. WHEN: Your Command phase. TARGET: Your DEATH GUARD WARLORD that is on the battlefield. EFFECT: Until the start of your next Command phase, add 3\" to the Contagion Range of models from your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium - PLAGUESURGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium - PLAGUESURGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.stratagem.leechspore-eruption",
+      "name": "LEECHSPORE ERUPTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "1CP. Virulent Vectorium - Epic Deed Stratagem. WHEN: Your Command phase. TARGET: One DEATH GUARD model your army that has lost one or more wounds. EFFECT: Select one enemy unit within 3\" of your model. Roll a number of D6 equal to the number of wounds your model has lost: for each 5+, that enemy unit suffers one mortal wound (to a maximum of 6 mortal wounds) and your model regains 1 lost wound (to a maximum of 6 lost wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium - LEECHSPORE ERUPTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium - LEECHSPORE ERUPTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.stratagem.overwhelming-generosity",
+      "name": "OVERWHELMING GENEROSITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "1CP. Virulent Vectorium - Wargear Stratagem. WHEN: Start of your Shooting phase. TARGET: One DEATH GUARD CHARACTER unit from your army. EFFECT: Select one enemy unit visible to your unit. Until the end of the phase, each time a DEATH GUARD unit from your army selects that enemy unit as the target of any ranged attacks, you can re-roll the dice to determine how many attacks a weapon equipped by a model in that unit makes.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium - OVERWHELMING GENEROSITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium - OVERWHELMING GENEROSITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.virulent-vectorium.stratagem.creeping-blight",
+      "name": "CREEPING BLIGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.virulent-vectorium",
+      "description": "1CP. Virulent Vectorium - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One DEATH GUARD INFANTRY unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a ranged attack that targets an Afflicted unit, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Virulent Vectorium - CREEPING BLIGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Virulent Vectorium - CREEPING BLIGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer",
+      "name": "Mortarion's Hammer - Miasmic Bombardment",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "At the start of the battle round, select a number of enemy units more than 12\" away from every model from your army that is on the battlefield. Until the end of the battle round, those enemy units are Afflicted. The maximum number of units you can select in this way depends on the battle size, as shown below. BATTLE SIZEUNITS Incursion1 Strike Force2 Onslaught3",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.enhancement.eye-of-affliction",
+      "name": "Eye of Affliction",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "20 pts. DEATH GUARD model only. Ranged weapons equipped by models in the bearer's unit have the [ignores cover] ability while targeting an Afflicted enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.enhancement.bilemaw-blight",
+      "name": "Bilemaw Blight",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "10 pts. MALIGNANT PLAGUECASTER only. At the start of your Shooting phase, until the end of the phase, add 12\" to the Range characteristics of the bearer's Plague Wind weapon.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.enhancement.shriekworm-familiar",
+      "name": "Shriekworm Familiar",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "15 pts. DEATH GUARD model only. Once per battle round, you can target the bearer's unit with the Fire Overwatch Stratagem for 0CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.enhancement.tendrilous-emissions",
+      "name": "Tendrilous Emissions",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "30 pts. LORD OF VIRULENCE only. While the bearer is within 3\" of one or more friendly DEATH GUARD VEHICLE units, the bearer has the Lone Operative ability, and each time one of those VEHICLE units makes a ranged attack that targets an enemy unit visible to the bearer, re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.stratagem.blighted-land",
+      "name": "BLIGHTED LAND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "2CP. Mortarion's Hammer - Strategic Ploy Stratagem. WHEN: End of your Movement phase. TARGET: One DEATH GUARD VEHICLE unit from your army. EFFECT: Select one terrain feature within 24\" of and visible to your unit. Until the start of your next turn, enemy units are Afflicted while they are within 3\" of that terrain feature.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer - BLIGHTED LAND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer - BLIGHTED LAND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.stratagem.relentless-grind",
+      "name": "RELENTLESS GRIND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "1CP. Mortarion's Hammer - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One DEATH GUARD VEHICLE unit from your army that has not been selected to move or charge this phase. EFFECT: Until the end of the phase, each time your unit makes a Normal, Advance or Charge move, it can move horizontally through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer - RELENTLESS GRIND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer - RELENTLESS GRIND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.stratagem.drawn-to-despair",
+      "name": "DRAWN TO DESPAIR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "1CP. Mortarion's Hammer - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One DEATH GUARD unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a visible enemy unit (excluding AIRCRAFT) within your opponent's deployment zone, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer - DRAWN TO DESPAIR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer - DRAWN TO DESPAIR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.stratagem.font-of-filth",
+      "name": "FONT OF FILTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "1CP. Mortarion's Hammer - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One DEATH GUARD VEHICLE unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [ASSAULT] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer - FONT OF FILTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer - FONT OF FILTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.stratagem.eyestinger-storm",
+      "name": "EYESTINGER STORM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "1CP. Mortarion's Hammer - Strategic Ploy Stratagem. WHEN: Your opponent's Command phase. TARGET: One DEATH GUARD VEHICLE unit from your army. EFFECT: Select one objective marker visible to one or more models in your unit. Each Afflicted enemy unit within range of that objective marker must take a Battle-shock test. Enemy units affected by this Stratagem do not need to take any other Battle-shock tests in the same phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer - EYESTINGER STORM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer - EYESTINGER STORM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.mortarions-hammer.stratagem.stinking-mire",
+      "name": "STINKING MIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.mortarions-hammer",
+      "description": "1CP. Mortarion's Hammer - Strategic Ploy Stratagem. WHEN: Start of your opponent's Charge phase. TARGET: One friendly unengaged DEATH GUARD VEHICLE unit. EFFECT: Select one visible enemy unit within 12\" of your unit. When that enemy unit declares a charge, that enemy unit has -1 to charge rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Mortarion's Hammer - STINKING MIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Mortarion's Hammer - STINKING MIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion",
+      "name": "Champions of Contagion - Manifold Maladies",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "At the start of the battle round, you can select one of the Plagues listed in Nurgle's Gift. Until the end of the battle, that is your chosen Plague instead of any previously chosen Plague.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.enhancement.final-ingredient",
+      "name": "Final Ingredient",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "20 pts. BIOLOGUS PUTRIFIER only. Once per battle, after the bearers unit has fought, if one or more CHARACTER models were destroyed as a result of those attacks, select one Plague. Until the end of the battle, while an enemy unit is Afflicted, that unit has the effect of the selected Plague in addition to any other.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.enhancement.visions-of-virulence",
+      "name": "Visions of Virulence",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "15 pts. MALIGNANT PLAGUECASTER only. While an enemy unit is enfeebled by the bearer's Pestilent Fallout ability, that unit is also Afflicted.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.enhancement.needle-of-nurgle",
+      "name": "Needle of Nurgle",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "25 pts. PLAGUE SURGEON only. Each time the bearer uses its Tainted Narthecium ability, you can return up to D3 destroyed models to the bearer's unit (instead of 1).",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.enhancement.cornucophagus",
+      "name": "Cornucophagus",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "35 pts. LORD OF POXES only. In the Declare Battle Formations step select one Plague. Until the end of the battle, while an enemy unit is within Contagion Range of the bearer, that enemy unit has the effect of that Plague in addition to any other.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.stratagem.blessings-of-filth",
+      "name": "BLESSINGS OF FILTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "1CP. Champions of Contagion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One DEATH GUARD Attached unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion - BLESSINGS OF FILTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion - BLESSINGS OF FILTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.stratagem.malignance-magnified",
+      "name": "MALIGNANCE MAGNIFIED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "2CP. Champions of Contagion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One DEATH GUARD Attached unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a unit that is below its Starting Strength, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion - MALIGNANCE MAGNIFIED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion - MALIGNANCE MAGNIFIED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.stratagem.grotesque-fortitude",
+      "name": "GROTESQUE FORTITUDE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "1CP. Champions of Contagion - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DEATH GUARD Attached unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, add 2 to the Toughness characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion - GROTESQUE FORTITUDE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion - GROTESQUE FORTITUDE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.stratagem.rabid-infusion",
+      "name": "RABID INFUSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "1CP. Champions of Contagion - Strategic Ploy Stratagem. WHEN: Start of the Fight phase. TARGET: One DEATH GUARD unit from your army that includes two CHARACTER models. EFFECT: Until the end of the phase, your unit has the Fights First ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion - RABID INFUSION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion - RABID INFUSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.stratagem.mobile-vector",
+      "name": "MOBILE VECTOR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "1CP. Champions of Contagion - Strategic Ploy Stratagem. WHEN: Your Movement phase, before the Reinforcements step. TARGET: One DEATH GUARD CHARACTER unit from your army that is not leading a unit. EFFECT: Select one other friendly DEATH GUARD unit (excluding Battle-shocked units and Attached units that already have two Leader units or one of your CHARACTER units leading it] within 2\" horizontally and 5\" vertically of your unit that your unit can lead (as described in the Leader section of its datasheet]. Your unit attaches to that unit as a Leader. Change that unit's Starting Strength accordingly.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion - MOBILE VECTOR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion - MOBILE VECTOR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.champions-of-contagion.stratagem.deaths-heads",
+      "name": "DEATH'S HEADS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.champions-of-contagion",
+      "description": "1CP. Champions of Contagion - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One BIOLOGUS PUTRIFIER unit from your army that is not within Engagement Range of one or more enemy units and has not been selected to shoot this phase. EFFECT: Select one enemy unit (excluding VEHICLES) that is within 8\" of and visible to your unit. Until the start of your next turn, that unit has the effect of all Plagues (see Nurgle's Gift).",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Champions of Contagion - DEATH'S HEADS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Champions of Contagion - DEATH'S HEADS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners",
+      "name": "Tallyband Summoners - Reverberant Rancidity",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "While a PLAGUE LEGIONS unit from your army is within 7\" of one or more DEATH GUARD units from your army, that PLAGUE LEGIONS unit has the Nurgle's Gift ability. While a DEATH GUARD unit from your army is within 7\" of one or more PLAGUE LEGIONS units from your army, add 3\" to that DEATH GUARD units Contagion Range. PLAGUE LEGIONS You can include PLAGUE LEGIONS units in your army, even though they do not have the DEATH GUARD Faction keyword. The combined points cost of such units you can include in your army is: Incursion: Up to 500 pts Strike Force: Up to 1000 pts Onslaught: Up to 1500 pts No PLAGUE LEGIONS models from your army can be your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.enhancement.beckoning-blight",
+      "name": "Beckoning Blight",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "20 pts. DEATH GUARD model only. Each time a PLAGUE LEGIONS unit from your army is set up on the battlefield using the Deep Strike ability, if it is set up wholly within 12\" of the bearer, it can be set up anywhere that is more than 6\" horizontally away from all enemy models, instead of more than 8\".",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.enhancement.fell-harvester",
+      "name": "Fell Harvester",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "10 pts. DEATH GUARD model only. Add 2 to the Attacks characteristic of the bearer's melee weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.enhancement.entropic-knell",
+      "name": "Entropic Knell",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "15 pts. GREAT UNCLEAN ONE only. In the Battle-shock step of your opponent's Command phase, each enemy unit within 6\" of the bearer that is below its Starting Strength must take a Battle-shock test, subtracting 1 from that test.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.enhancement.tome-of-bounteous-blessings",
+      "name": "Tome of Bounteous Blessings",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "20 pts. MALIGNANT PLAGUECASTER only. Each time a PLAGUE LEGIONS unit within 12\" of the bearer takes a Battle-shock test, add 1 to that test and, if that test is passed, one model in that unit regains up to D3 lost wounds (if that unit is a BATTLELINE unit and that test is passed, up to D3 destroyed models can be returned to that unit instead).",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.stratagem.persistent-pests",
+      "name": "PERSISTENT PESTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "1CP. Tallyband Summoners - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One NURGLINGS unit from your army that was just destroyed. You can target that unit with this Stratagem even though it was just destroyed. EFFECT: Add a new unit to your army identical to your destroyed unit, in Strategic Reserves, at its Starting Strength and with its full wounds remaining. RESTRICTIONS: You can only use this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners - PERSISTENT PESTS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners - PERSISTENT PESTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.stratagem.clutching-corruption",
+      "name": "CLUTCHING CORRUPTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "1CP. Tallyband Summoners - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One DEATH GUARD unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit that is within Engagement Range of one or more PLAGUE LEGIONS units from your army, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners - CLUTCHING CORRUPTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners - CLUTCHING CORRUPTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.stratagem.all-is-rot",
+      "name": "ALL IS ROT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "1CP. Tallyband Summoners - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One PLAGUE LEGIONS unit from your army that is within Engagement Range of one or more enemy units. EFFECT: Until the end of the phase, enemy units are not considered to be within Engagement Range of your unit for the purposes of selecting targets of ranged weapons. Until the end of the phase, each time an enemy model loses a wound, while that model's unit is within Engagement Range of your unit, roll one D6: on a 5+, your unit suffers 1 mortal wound after the attacking unit has finished making its attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners - ALL IS ROT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners - ALL IS ROT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.stratagem.fleshy-avalanche",
+      "name": "FLESHY AVALANCHE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "1CP. Tallyband Summoners - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One PLAGUE LEGIONS MONSTER unit from your army that has not been selected to move or charge this phase. EFFECT: Until the end of the phase, each time your unit makes a Normal, Advance or Charge move, it can move horizontally through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners - FLESHY AVALANCHE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners - FLESHY AVALANCHE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.stratagem.avatars-of-decay",
+      "name": "AVATARS OF DECAY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "1CP. Tallyband Summoners - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One PLAGUE LEGIONS unit from your army. EFFECT: Until the end of the phase, while an enemy unit is within 6\" of your unit, that enemy unit is Afflicted.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners - AVATARS OF DECAY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners - AVATARS OF DECAY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.tallyband-summoners.stratagem.mireslick",
+      "name": "MIRESLICK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.tallyband-summoners",
+      "description": "1CP. Tallyband Summoners - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit (excluding MONSTERS and VEHICLES) is selected to Fall Back. TARGET: One PLAGUE LEGIONS unit from your army that is within Engagement Range of that enemy unit. EFFECT: Until the end of the phase, while an enemy unit is within Engagement Range of your unit, each time that unit is selected to Fall Back, it must take a Leadership test. If that test is failed, that unit must Remain Stationary this phase instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Tallyband Summoners - MIRESLICK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Tallyband Summoners - MIRESLICK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium",
+      "name": "Shamblerot Vectorium - Numberless Horde",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "In your Command phase in each of the following battle rounds, depending on your chosen battle size, add a new POXWALKERS unit with a Starting Strength of 10 to your army, in Strategic Reserves. BATTLE SIZEBATTLE ROUNDS Incursion2,3 Strike Force2, 3, 4 Onslaught2, 3, 4, 5 KEYWORDS POXWALKERS units from your army gain the BATTLELINE keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.enhancement.witherbone-pipes",
+      "name": "Witherbone Pipes",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "25 pts. NOXIOUS BLIGHTBRINGER only. While the bearer is leading a POXWALKERS unit, add 1 to the Objective Control characteristic of models in that unit, and each time that unit takes a Battle-shock or Leadership test, add 1 to that test.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.enhancement.lord-of-the-walking-pox",
+      "name": "Lord of the Walking Pox",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "15 pts. DEATH GUARD model only. If the bearer is leading a POXWALKER unit, and is in Strategic Reserves, for the purposes of setting up that unit on the battlefield, treat the current battle round as the third battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.enhancement.sorrowsyphon",
+      "name": "Sorrowsyphon",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "10 pts. MALIGNANT PLAGUECASTER only. While the bearer is leading a POXWALKERS unit, add 1 to the Damage characteristic of the bearer's Plague Wind weapon. Each time the bearer makes one or more attacks with a Plague Wind weapon, after the bearer's unit has resolved its attacks, D3 Bodyguard models from the bearer's unit are destroyed.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.enhancement.talisman-of-burgeoning",
+      "name": "Talisman of Burgeoning",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "25 pts. DEATH GUARD model only. While the bearer is leading a unit, add 1 to the Toughness characteristic of POXWALKERS models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.stratagem.grip-of-the-walking-pox",
+      "name": "GRIP OF THE WALKING POX",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "1CP. Shamblerot Vectorium - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One POXWALKERS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: After the attacking unit has fought, roll one D6 for each model from your unit that was destroyed as a result of those attacks: on a 6, the attacking unit suffers 1 mortal wound. If your unit is not destroyed after the attacking unit has fought, enemy models destroyed as a result of this Stratagem count as enemy models destroyed by an attack made by a model in your unit for the purposes of the Curse of the Walking Pox ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium - GRIP OF THE WALKING POX",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium - GRIP OF THE WALKING POX"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.stratagem.smeared-with-filth",
+      "name": "SMEARED WITH FILTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "1CP. Shamblerot Vectorium - Strategic Ploy Stratagem. WHEN: Fight phase. TARGET: One POXWALKERS unit from your army that was just destroyed. You can target that unit with this Stratagem even though it was just destroyed. EFFECT: Select one enemy unit that made one or more attacks that targeted your unit this phase. Until the end of the battle, that enemy unit is Afflicted.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium - SMEARED WITH FILTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium - SMEARED WITH FILTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.stratagem.gnawing-hunger",
+      "name": "GNAWING HUNGER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "1CP. Shamblerot Vectorium - Battle Tactic Stratagem. WHEN: Your Command phase. TARGET: One POXWALKERS unit from your army. EFFECT: Until the end of the turn, add 1 to the Move characteristic of models in your unit, and add 1 to the Attacks and Strength characteristics of melee weapons equipped by models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium - GNAWING HUNGER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium - GNAWING HUNGER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.stratagem.hidden-amongst-the-dead",
+      "name": "HIDDEN AMONGST THE DEAD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "1CP. Shamblerot Vectorium - Strategic Ploy Stratagem. WHEN: The Reinforcements step of your Movement phase. TARGET: One POXWALKERS unit from your army that is in Strategic Reserves and that is not an Attached unit. EFFECT: Until the end of the phase, models in that unit have the Deep Strike ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium - HIDDEN AMONGST THE DEAD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium - HIDDEN AMONGST THE DEAD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.stratagem.shock-and-horror",
+      "name": "SHOCK AND HORROR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "1CP. Shamblerot Vectorium - Strategic Ploy Stratagem. WHEN: Your Charge phase, just after a DEATH GUARD unit from your army ends a Charge move. TARGET: That DEATH GUARD unit. EFFECT: Each enemy unit within Engagement Range of your unit must take a Battle-shock test, subtracting 1 from that test.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium - SHOCK AND HORROR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium - SHOCK AND HORROR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.shamblerot-vectorium.stratagem.shambling-wall",
+      "name": "SHAMBLING WALL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.shamblerot-vectorium",
+      "description": "1CP. Shamblerot Vectorium - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One DEATH GUARD unit from your army that was selected as the target of one or more of the attacking unit's attacks, and one friendly POXWALKERS unit within 3\" of your unit and visible to both your unit and the attacking unit. EFFECT: Until the end of the phase, each time you would allocate an attack to a model in your DEATH GUARD unit, if your POXWALKERS unit is visible to the attacking model and is an eligible target for that attack, no saving throw is made for that attack; instead a number of POXWALKERS from your POXWALKERS unit equal to the Damage characteristic of that attack are destroyed.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Shamblerot Vectorium - SHAMBLING WALL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Shamblerot Vectorium - SHAMBLING WALL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen",
+      "name": "Death Lord's Chosen - Deadly Vectors",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "In your opponent's Command phase, roll 2D6 for each Afflicted enemy unit, subtracting 1 from the result if that unit is Below Half-strength. If the result is 6 or less, that enemy unit suffers D3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.enhancement.face-of-death",
+      "name": "Face of Death",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "10 pts. TERMINATOR model only. At the start of the Fight phase, each enemy unit within Engagement Range of the bearer's unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.enhancement.vile-vigour",
+      "name": "Vile Vigour",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "15 pts. TERMINATOR model only. While the bearer is leading a unit, add 1\" to the Movement characteristic of models in that unit and you can re-roll Advance rolls made for that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.enhancement.warprot-talisman",
+      "name": "Warprot Talisman",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "30 pts. TERMINATOR model only. Once per battle, at the end of your opponent's turn, if the bearer's unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.enhancement.helm-of-the-fly-king",
+      "name": "Helm of the Fly King",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "20 pts. TERMINATOR model only. While the bearer is leading a unit, models in that unit cannot be targeted by ranged attacks unless the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.stratagem.blooming-pestilence",
+      "name": "BLOOMING PESTILENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "1CP. Death Lord's Chosen - Epic Deed Stratagem. WHEN: Start of any phase. TARGET: One TERMINATOR unit from your army. EFFECT: Until the end of the phase, add 3\" to the Contagion Range of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen - BLOOMING PESTILENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen - BLOOMING PESTILENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.stratagem.grim-reapers",
+      "name": "GRIM REAPERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "1CP. Death Lord's Chosen - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One TERMINATOR unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit (excluding MONSTERS and VEHICLES) you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen - GRIM REAPERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen - GRIM REAPERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.stratagem.undying-spite",
+      "name": "UNDYING SPITE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "1CP. Death Lord's Chosen - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One TERMINATOR unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6. On a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen - UNDYING SPITE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen - UNDYING SPITE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.stratagem.signal-pox",
+      "name": "SIGNAL POX",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "1CP. Death Lord's Chosen - Epic Deed Stratagem. WHEN: Your Command phase. TARGET: One LORD OF VIRULENCE model from your army. EFFECT: Select one objective marker within 30\" of and visible to your model. Until the start of your next turn, while an enemy unit is within range of that objective marker, that unit is Afflicted.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen - SIGNAL POX",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen - SIGNAL POX"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.stratagem.mortarions-teachings",
+      "name": "MORTARION'S TEACHINGS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "1CP. Death Lord's Chosen - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One TERMINATOR unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [ASSAULT] and [HEAVY] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen - MORTARION'S TEACHINGS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen - MORTARION'S TEACHINGS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.death-lords-chosen.stratagem.sickening-impact",
+      "name": "SICKENING IMPACT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.death-lords-chosen",
+      "description": "1CP. Death Lord's Chosen - Strategic Ploy Stratagem. WHEN: Your Charge phase, just after a TERMINATOR unit from your army ends a Charge move. TARGET: That TERMINATOR unit. EFFECT: Select one enemy unit within Engagement Range of your unit, then roll one D6 for each model in your unit that is within Engagement Range of that enemy unit: for each 2+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Death Lord's Chosen - SICKENING IMPACT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Death Lord's Chosen - SICKENING IMPACT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.contagion-engines",
+      "name": "Contagion Engines - Warped and Rusted Animus",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.contagion-engines",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly FOETID BLOAT-DRONE/FOETID BLOAT-DRONE WITH HEAVY BLIGHT LAUNCHER/HELBRUTE/MYPHITIC BLIGHT-HAULER units have CONTAGION ENGINE. Friendly CONTAGION ENGINE units' ranged attacks have [ASSAULT]. This detachment has the ENGINES tag and cannot be taken with another ENGINES detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Contagion Engines",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Contagion Engines"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.contagion-engines.enhancement.parasitic-woereaperupgrade",
+      "name": "Parasitic WoeReaperUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.contagion-engines",
+      "maximumSelections": 3,
+      "description": "15 pts. CONTAGION ENGINE unit only. When this unit has fought, one model in this unit heals D3 wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Contagion Engines enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Contagion Engines enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.contagion-engines.enhancement.lancet-of-the-worldsoreupgrade",
+      "name": "Lancet of the WorldsoreUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.contagion-engines",
+      "maximumSelections": 3,
+      "description": "15 pts. Friendly HELBRUTE/MYPHITIC BLIGHT-HAULER unit only. This unit has MOBILE.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Contagion Engines enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Contagion Engines enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.contagion-engines.stratagem.fresh-vectors",
+      "name": "FRESH VECTORS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.contagion-engines",
+      "description": "1CP. Contagion Engines Stratagem. WHEN: Your Shooting phase or the Fight phase, when a friendly CONTAGION ENGINE unit is selected to attack. TARGET: That CONTAGION ENGINE unit. EFFECT: Your unit's attacks can re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Contagion Engines - FRESH VECTORS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Contagion Engines - FRESH VECTORS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.contagion-engines.stratagem.bloodrust-deluge",
+      "name": "BLOODRUST DELUGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.contagion-engines",
+      "description": "1CP. Contagion Engines Stratagem. WHEN: Your Shooting phase, when a friendly CONTAGION ENGINE unit is selected to shoot. TARGET: That CONTAGION ENGINE unit. EFFECT: Select one visible enemy unit. That enemy unit is Afflicted until your unit has attacked.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Contagion Engines - BLOODRUST DELUGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Contagion Engines - BLOODRUST DELUGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.contagion-engines.stratagem.soulrot-flux",
+      "name": "SOULROT FLUX",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.contagion-engines",
+      "description": "1CP. Contagion Engines Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit is selected to make a fall-back move, if that enemy unit is engaged with a friendly CONTAGION ENGINE unit. TARGET: That CONTAGION ENGINE unit. EFFECT: When an enemy unit engaged with your unit is selected to make a fall-back move, roll one D6: On a 1, that enemy unit suffers 1 mortal wound. On a 2-5, that enemy unit suffers D3 mortal wounds. On a 6, that enemy unit suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Contagion Engines - SOULROT FLUX",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Contagion Engines - SOULROT FLUX"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.flyblown-host",
+      "name": "Flyblown Host - Verminous Haze",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.flyblown-host",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "In the Declare Battle Formations step, you can select up to two friendly PLAGUE MARINES units. Those units have Infiltrators. This detachment has the FLYBLOWN tag and cannot be taken with another FLYBLOWN detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Flyblown Host",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyblown Host"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.flyblown-host.enhancement.insectile-murmurationupgrade",
+      "name": "Insectile MurmurationUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.flyblown-host",
+      "maximumSelections": 3,
+      "description": "15 pts. PLAGUE MARINES unit only. When this unit's attacks target a unit within Contagion Range of a friendly unit, those attacks can re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Flyblown Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyblown Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.flyblown-host.enhancement.plagueveilupgrade",
+      "name": "PlagueveilUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.flyblown-host",
+      "maximumSelections": 3,
+      "description": "15 pts. PLAGUE MARINES unit only. This unit has -3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Flyblown Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyblown Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.flyblown-host.stratagem.nauseating-paroxysms",
+      "name": "NAUSEATING PAROXYSMS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.flyblown-host",
+      "description": "1CP. Flyblown Host Stratagem. WHEN: Start of the Fight phase TARGET: One friendly engaged PLAGUE MARINES unit. EFFECT: Select one enemy unit engaged with your unit. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Flyblown Host - NAUSEATING PAROXYSMS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyblown Host - NAUSEATING PAROXYSMS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.flyblown-host.stratagem.droning-horror",
+      "name": "DRONING HORROR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.flyblown-host",
+      "description": "1CP. Flyblown Host Stratagem. WHEN: Your Shooting phase, when a friendly PLAGUE MARINES unit is selected to shoot. TARGET: That PLAGUE MARINES unit. EFFECT: Your unit's ranged attacks: Can re-roll hit rolls of 1. That target a unit within half range, can re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Flyblown Host - DRONING HORROR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyblown Host - DRONING HORROR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.flyblown-host.stratagem.eye-of-the-swarm",
+      "name": "EYE OF THE SWARM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.flyblown-host",
+      "description": "1CP. Flyblown Host Stratagem. WHEN: Your Shooting phase, when a friendly PLAGUE MARINES unit is selected to shoot. TARGET: That PLAGUE MARINES unit. EFFECT: Your unit's ranged attacks have [CLOSE-QUARTERS].",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Flyblown Host - EYE OF THE SWARM",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Flyblown Host - EYE OF THE SWARM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.paragons-of-putrescence",
+      "name": "Paragons of Putrescence - Hypervirulent Strains",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.paragons-of-putrescence",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Friendly DEATH GUARD CHARACTER units have +3\" to their Contagion Range (to a maximum of 12\").",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Paragons of Putrescence",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Paragons of Putrescence"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.paragons-of-putrescence.enhancement.rejuvenating-swarm",
+      "name": "Rejuvenating Swarm",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.paragons-of-putrescence",
+      "description": "20 pts. DEATH GUARD INFANTRY model only (excluding TERMINATOR models). Attacks that target this unit with a S greater than this unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Paragons of Putrescence enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Paragons of Putrescence enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.paragons-of-putrescence.enhancement.host-of-the-hybridised-pox",
+      "name": "Host of the Hybridised Pox",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.paragons-of-putrescence",
+      "description": "40 pts. DEATH GUARD INFANTRY model only. (Once per battle, per army) In your Command phase, you can use this ability. If you do, select one of the Plague listed in Nurgle's Gift. Enemy units within Contagion Range of this unit also have the effect of that Plague in addition to your army's chosen Plague until the end of the battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Paragons of Putrescence enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Paragons of Putrescence enhancements"
+        }
+      ]
+    },
+    {
+      "id": "death-guard.detachment.paragons-of-putrescence.stratagem.territorial-infection",
+      "name": "TERRITORIAL INFECTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.paragons-of-putrescence",
+      "description": "1CP. Paragons of Putrescence Stratagem. WHEN: Start of the Command phase. TARGET: One friendly DEATH GUARD CHARACTER unit. EFFECT: Your unit has +1 OC until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Paragons of Putrescence - TERRITORIAL INFECTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Paragons of Putrescence - TERRITORIAL INFECTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.paragons-of-putrescence.stratagem.aggravus-spasms",
+      "name": "AGGRAVUS SPASMS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.paragons-of-putrescence",
+      "description": "1CP. Paragons of Putrescence Stratagem. WHEN: Start of your Shooting Phase. TARGET: One friendly DEATH GUARD CHARACTER unit. EFFECT: Select one visible enemy unit within Contagion Range of your unit. That enemy unit has +6\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Paragons of Putrescence - AGGRAVUS SPASMS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Paragons of Putrescence - AGGRAVUS SPASMS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "death-guard.detachment.paragons-of-putrescence.stratagem.simultaneous-contamination",
+      "name": "SIMULTANEOUS CONTAMINATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "death-guard.detachment.paragons-of-putrescence",
+      "description": "1CP. Paragons of Putrescence Stratagem. WHEN: Your Shooting phase, when a friendly DEATH GUARD CHARACTER unit starts an action. TARGET: That DEATH GUARD CHARACTER unit. EFFECT: That action does not prevent your unit from being eligible to shoot.",
+      "sources": [
+        {
+          "title": "Wahapedia Death Guard Paragons of Putrescence - SIMULTANEOUS CONTAMINATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+          "capturedAt": "2026-09-25",
+          "section": "Paragons of Putrescence - SIMULTANEOUS CONTAMINATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

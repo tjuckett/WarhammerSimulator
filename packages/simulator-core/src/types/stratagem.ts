@@ -9,7 +9,9 @@ export type CommandRerollRollType =
   | 'damage'
   | 'hazard'
   | 'hit'
+  | 'leadership'
   | 'save'
+  | 'feel-no-pain'
   | 'wound'
   | 'attacks';
 

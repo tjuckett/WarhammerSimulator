@@ -18,7 +18,7 @@ type StoredArmyPayload = {
   name: string;
   faction: string;
   units: ImportedArmy['units'];
-  metadata?: Pick<ImportedArmy, 'battleSizeId' | 'detachmentId' | 'sourceEdition' | 'catalog' | 'sourceMetadata' | 'generation'>;
+  metadata?: Pick<ImportedArmy, 'battleSizeId' | 'forceDisposition' | 'detachmentId' | 'detachmentIds' | 'sourceEdition' | 'catalog' | 'sourceMetadata' | 'generation'>;
   updatedAt?: string;
 };
 

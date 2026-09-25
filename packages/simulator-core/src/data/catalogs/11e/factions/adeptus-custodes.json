@@ -1,0 +1,72 @@
+{
+  "id": "adeptus-custodes",
+  "name": "Adeptus Custodes",
+  "edition": "11e",
+  "unitRefs": [
+    "adeptus-custodes.aleya",
+    "adeptus-custodes.trajann-valoris",
+    "adeptus-custodes.valerian",
+    "adeptus-custodes.blade-champion",
+    "adeptus-custodes.knight-centura",
+    "adeptus-custodes.shield-captain",
+    "adeptus-custodes.shield-captain-in-allarus-terminator-armour",
+    "adeptus-custodes.shield-captain-on-dawneagle-jetbike",
+    "adeptus-custodes.custodian-guard",
+    "adeptus-custodes.anathema-psykana-rhino",
+    "adeptus-custodes.ares-gunship",
+    "adeptus-custodes.allarus-custodians",
+    "adeptus-custodes.custodian-wardens",
+    "adeptus-custodes.prosecutors",
+    "adeptus-custodes.vigilators",
+    "adeptus-custodes.witchseekers",
+    "adeptus-custodes.aquilon-custodians",
+    "adeptus-custodes.custodian-guard-with-adrasite-and-pyrithite-spears",
+    "adeptus-custodes.sagittarum-custodians",
+    "adeptus-custodes.venatari-custodians",
+    "adeptus-custodes.vertus-praetors",
+    "adeptus-custodes.agamatus-custodians",
+    "adeptus-custodes.venerable-land-raider",
+    "adeptus-custodes.coronus-grav-carrier",
+    "adeptus-custodes.orion-assault-dropship",
+    "adeptus-custodes.caladius-grav-tank",
+    "adeptus-custodes.pallas-grav-attack",
+    "adeptus-custodes.venerable-contemptor-dreadnought",
+    "adeptus-custodes.contemptor-achillus-dreadnought",
+    "adeptus-custodes.contemptor-galatus-dreadnought",
+    "adeptus-custodes.telemon-heavy-dreadnought"
+  ],
+  "ruleRefs": [
+    "adeptus-custodes.army-rule.martial-katah"
+  ],
+  "detachmentRefs": [
+    "adeptus-custodes.detachment.talons-of-the-emperor",
+    "adeptus-custodes.detachment.shield-host",
+    "adeptus-custodes.detachment.null-maiden-vigil",
+    "adeptus-custodes.detachment.auric-champions",
+    "adeptus-custodes.detachment.solar-spearhead",
+    "adeptus-custodes.detachment.lions-of-the-emperor",
+    "adeptus-custodes.detachment.might-of-the-moritoi",
+    "adeptus-custodes.detachment.silent-hunters",
+    "adeptus-custodes.detachment.tharanatoi-hammerblow"
+  ],
+  "factionKeywords": [
+    "adeptus-custodes",
+    "Adeptus Custodes"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Adeptus Custodes faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 31,
+    "normalizedEntryCount": 31,
+    "excludedLegendCount": 0,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

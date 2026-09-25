@@ -1,5 +1,7 @@
-import { NECRONS_CATALOG, ORKS_CATALOG } from '../data/catalogs/11e';
-import { baseSizesForUnit } from '../data/unitBaseSizes';
+import { CATALOG_BUNDLES, NECRONS_CATALOG, ORKS_CATALOG } from '../data/catalogs/11e';
+import coreAbilityCatalogData from '../data/catalogs/11e/coreAbilities.json';
+import { baseSizesForUnit, mergeCanonicalBaseGeometry } from '../data/unitBaseSizes';
+import { deriveWargearChoices } from './unitWargear';
 import type { RulesEdition } from './rulesEngine';
 import type { RuleText, UnitProfile, WargearChoice } from '../types/army';
 import type {
@@ -24,6 +26,101 @@ function normalizeName(value: string): string {
     .replace(/[\u2019\u2018`]/g, "'")
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+const coreAbilityDescriptions = Object.entries(coreAbilityCatalogData.abilities)
+  .map(([name, description]) => ({ name, normalizedName: normalizeName(name), description }))
+  .sort((left, right) => right.normalizedName.length - left.normalizedName.length);
+
+function hydrateCoreAbilityDescription(rule: RuleText): RuleText {
+  const match = rule.description.match(/^Core ability:\s*(.+?)\.\s*$/s);
+  if (!match) return rule;
+  const abilityName = match[1].trim();
+  const normalizedAbilityName = normalizeName(abilityName);
+  const definition = coreAbilityDescriptions.find(entry =>
+    normalizedAbilityName === entry.normalizedName
+      || normalizedAbilityName.startsWith(`${entry.normalizedName} `),
+  );
+  if (!definition) return rule;
+
+  let description = definition.description;
+  const suffix = abilityName.slice(definition.name.length).trim();
+  if (suffix) {
+    const escapedName = definition.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parameterToken = definition.name === 'Feel No Pain'
+      ? 'X\\+'
+      : definition.name === 'Scouts' || definition.name === 'Lone Operative'
+        ? 'X"'
+        : 'X';
+    description = description.replace(
+      new RegExp(`(${escapedName}\\s+)${parameterToken}`, 'gi'),
+      `$1${suffix}`,
+    );
+  }
+  return { ...rule, description };
+}
+
+function hydrateCoreAbilities(rules: RuleText[]): RuleText[] {
+  return rules.map(hydrateCoreAbilityDescription);
+}
+
+function isCharacterUnit(unit: UnitProfile): boolean {
+  return unit.keywords.some(keyword => normalizeName(keyword) === 'character')
+    || /\bcharacter\b/i.test(unit.catalogRole ?? '')
+    || !!unit.leaderTargetNames?.length
+    || !!unit.leaderTargetRefs?.length;
+}
+
+function enhancementSubject(rule: RuleDefinition): { subject: string; scope: 'model' | 'unit'; excluded?: string } | undefined {
+  const match = rule.description.match(/(?:^|\.\s*)([^.]+?)\s+(model|unit)\s+only\b(?:\s*\(excluding\s+([^.)]+)\))?/i);
+  return match
+    ? {
+        subject: match[1],
+        scope: match[2].toLowerCase() as 'model' | 'unit',
+        excluded: match[3],
+      }
+    : undefined;
+}
+
+function restrictionMatchesUnit(subject: string, unit: UnitProfile, faction: FactionCatalog): boolean {
+  const candidates = [
+    unit.name,
+    ...(unit.keywords ?? []),
+    ...(unit.factionKeywords ?? []),
+    unit.catalogRole ?? '',
+  ].map(normalizeName).filter(Boolean);
+  const factionTerms = [faction.name, ...(faction.factionKeywords ?? [])].map(normalizeName);
+  const candidateText = candidates.join(' ');
+  const requiredKeywords = ['infantry', 'mounted', 'monster', 'vehicle', 'aircraft']
+    .filter(keyword => new RegExp(`\\b${keyword}\\b`, 'i').test(subject));
+  if (requiredKeywords.some(keyword => !new RegExp(`\\b${keyword}\\b`, 'i').test(candidateText))) return false;
+  const alternatives = subject
+    .replace(/\([^)]*\)/g, '')
+    .split(/\s+or\s+|\//i)
+    .map(value => normalizeName(value)
+      .split(' ')
+      .filter(token => !factionTerms.includes(token)
+        && !['model', 'models', 'unit', 'units', 'only', 'infantry', 'mounted', 'monster', 'vehicle', 'aircraft', 'epic', 'hero', 'character'].includes(token))
+      .join(' '))
+    .filter(Boolean);
+  if (!alternatives.length) return true;
+  return alternatives.some(alternative => candidates.some(candidate =>
+    candidate === alternative || candidate.includes(alternative) || alternative.includes(candidate),
+  ));
+}
+
+function enhancementEligible(rule: RuleDefinition, unit: UnitProfile, faction: FactionCatalog): boolean {
+  const scope = enhancementSubject(rule);
+  if (!scope) return false;
+  if (scope.excluded && restrictionMatchesUnit(scope.excluded, unit, faction)) return false;
+  if (scope.scope === 'model' && !isCharacterUnit(unit)) return false;
+  return restrictionMatchesUnit(scope.subject, unit, faction);
+}
+
+export function rulePoints(rule: RuleDefinition): number | undefined {
+  if (rule.points !== undefined) return rule.points;
+  const points = rule.description.match(/^\s*(\d+)\s+pts\b/i)?.[1];
+  return points === undefined ? undefined : Number(points);
 }
 
 function wargearChoiceGroupKey(choice: WargearChoice): string {
@@ -223,12 +320,23 @@ function copyUnitProfile(profile: UnitProfile): UnitProfile {
       weaponNames: choice.weaponNames ? [...choice.weaponNames] : undefined,
       replacesWeaponNames: choice.replacesWeaponNames ? [...choice.replacesWeaponNames] : undefined,
     })),
+    unitLoadoutOptions: profile.unitLoadoutOptions?.map(option => ({
+      ...option,
+      modelWeaponLoadouts: option.modelWeaponLoadouts?.map(loadout => [...loadout]),
+      modelWargearChoices: option.modelWargearChoices?.map(choices => [...choices]),
+      selectedWargear: option.selectedWargear ? [...option.selectedWargear] : undefined,
+    })),
+    preBattleFormations: profile.preBattleFormations?.map(rule => ({
+      ...rule,
+      modelCounts: [...rule.modelCounts],
+      abilityGroups: rule.abilityGroups?.map(group => ({ ...group, abilityNames: [...group.abilityNames] })),
+    })),
     selectedWargear: profile.selectedWargear ? [...profile.selectedWargear] : undefined,
     movementOverrides: profile.movementOverrides ? { ...profile.movementOverrides } : undefined,
     keywords: [...profile.keywords],
     factionKeywords: [...profile.factionKeywords],
     weapons: profile.weapons.map(weapon => ({ ...weapon, keywords: [...weapon.keywords] })),
-    abilities: profile.abilities.map(rule => ({ ...rule, tags: rule.tags ? [...rule.tags] : undefined })),
+    abilities: hydrateCoreAbilities(profile.abilities.map(rule => ({ ...rule, tags: rule.tags ? [...rule.tags] : undefined }))),
     rules: profile.rules?.map(rule => ({ ...rule, tags: rule.tags ? [...rule.tags] : undefined })),
     deployment: profile.deployment ? { ...profile.deployment } : undefined,
     leaderAttachment: profile.leaderAttachment ? { ...profile.leaderAttachment } : undefined,
@@ -407,13 +515,16 @@ export class CatalogRegistry {
       if (rule) rules.set(rule.id, rule);
     }
 
-    if (normalizedContext.detachmentId) {
-      const detachmentAllowed = faction.detachmentRefs?.includes(normalizedContext.detachmentId) ?? false;
-      if (detachmentAllowed) {
-        for (const rule of this.bundle.rules) {
-          if (rule.detachmentId !== normalizedContext.detachmentId && rule.id !== normalizedContext.detachmentId) continue;
-          if (entryStatusAllowed(rule.status, this.options)) rules.set(rule.id, rule);
-        }
+    const detachmentIds = unique([
+      ...(normalizedContext.detachmentIds ?? []),
+      ...(normalizedContext.detachmentId ? [normalizedContext.detachmentId] : []),
+    ]);
+    for (const detachmentId of detachmentIds) {
+      const detachmentAllowed = faction.detachmentRefs?.includes(detachmentId) ?? false;
+      if (!detachmentAllowed) continue;
+      for (const rule of this.bundle.rules) {
+        if (rule.detachmentId !== detachmentId && rule.id !== detachmentId) continue;
+        if (entryStatusAllowed(rule.status, this.options)) rules.set(rule.id, rule);
       }
     }
     return [...rules.values()];
@@ -421,6 +532,20 @@ export class CatalogRegistry {
 
   stratagemsForContext(context: CatalogArmyContext | string): RuleDefinition[] {
     return this.rulesForContext(context).filter(rule => rule.kind === 'stratagem');
+  }
+
+  enhancementsForContext(context: CatalogArmyContext | string): RuleDefinition[] {
+    return this.rulesForContext(context).filter(rule => rule.kind === 'wargear');
+  }
+
+  enhancementsForUnit(context: CatalogArmyContext | string, unit: UnitProfile): RuleDefinition[] {
+    const normalizedContext: CatalogArmyContext = typeof context === 'string'
+      ? { factionId: context }
+      : context;
+    const faction = this.effectiveFaction(normalizedContext.factionId);
+    if (!faction) return [];
+    return this.enhancementsForContext(normalizedContext)
+      .filter(rule => enhancementEligible(rule, unit, faction));
   }
 
   materializeUnit(selection: UnitSelection, context: CatalogArmyContext): CatalogMaterializationResult {
@@ -448,9 +573,12 @@ export class CatalogRegistry {
     const profile = copyUnitProfile(definition.profile);
     const warnings: string[] = [];
     profile.name = definition.name;
+    profile.catalogRole = definition.role;
     profile.rosterId = selection.instanceId ?? definition.id;
     profile.baseModelCount = modelCount;
     profile.modelCountRange = definition.modelCount ? { ...definition.modelCount } : profile.modelCountRange;
+    profile.leaderTargetNames = definition.leaderTargetNames ? [...definition.leaderTargetNames] : undefined;
+    profile.leaderTargetRefs = definition.leaderTargetRefs ? [...definition.leaderTargetRefs] : undefined;
     profile.wargearOptions = definition.wargearOptions
       ? [...definition.wargearOptions]
       : profile.wargearOptions;
@@ -458,23 +586,47 @@ export class CatalogRegistry {
     profile.leaderAttachment = selection.leaderAttachment ?? profile.leaderAttachment;
     const explicitSelectedWargear = selection.selectedWargear ?? profile.selectedWargear;
     profile.selectedWargear = explicitSelectedWargear ? [...explicitSelectedWargear] : explicitSelectedWargear;
-    profile.wargearChoices = definition.wargearChoices
-      ? materializeWargearChoices(definition.wargearChoices, definition.wargearOptions ?? []).map(choice => ({
+    const explicitSelectedEnhancement = selection.selectedEnhancementId ?? profile.selectedEnhancementId;
+    profile.selectedEnhancementId = explicitSelectedEnhancement;
+    profile.modelWeaponLoadouts = resizeModelLoadouts(profile.modelWeaponLoadouts, modelCount);
+    const choiceModelCount = Math.max(modelCount, range?.maximum ?? modelCount);
+    const choiceProfile = choiceModelCount === modelCount
+      ? profile
+      : {
+        ...profile,
+        baseModelCount: choiceModelCount,
+        modelWeaponLoadouts: resizeModelLoadouts(profile.modelWeaponLoadouts, choiceModelCount),
+      };
+    const catalogWargearChoices = definition.wargearChoices
+      ?? (definition.wargearOptions?.length
+        ? deriveWargearChoices(definition.id, choiceProfile, definition.wargearOptions, definition.wargearOptionGroups)
+        : undefined);
+    profile.wargearChoices = catalogWargearChoices
+      ? materializeWargearChoices(catalogWargearChoices, definition.wargearOptions ?? []).map(choice => ({
         ...choice,
         eligibleModelIndexes: choice.eligibleModelIndexes ? [...choice.eligibleModelIndexes] : undefined,
         weaponNames: choice.weaponNames ? [...choice.weaponNames] : undefined,
         replacesWeaponNames: choice.replacesWeaponNames ? [...choice.replacesWeaponNames] : undefined,
       }))
       : undefined;
+    profile.unitLoadoutOptions = definition.unitLoadoutOptions?.map(option => ({
+      ...option,
+      modelWeaponLoadouts: option.modelWeaponLoadouts?.map(loadout => [...loadout]),
+      modelWargearChoices: option.modelWargearChoices?.map(choices => [...choices]),
+      selectedWargear: option.selectedWargear ? [...option.selectedWargear] : undefined,
+    }));
+    profile.preBattleFormations = (definition.preBattleFormations ?? profile.preBattleFormations)?.map(rule => ({
+      ...rule,
+      modelCounts: [...rule.modelCounts],
+      abilityGroups: rule.abilityGroups?.map(group => ({ ...group, abilityNames: [...group.abilityNames] })),
+    }));
     if (profile.selectedWargear === undefined && profile.wargearChoices?.length) {
       profile.selectedWargear = automaticFreeScalableUnitUpgrades(profile.wargearChoices, modelCount);
     }
     profile.factionKeywords = unique([...profile.factionKeywords, ...(faction.factionKeywords ?? []), faction.name]);
 
-    const canonicalBases = ['boyz', 'squighog boyz'].includes(profile.name.trim().toLowerCase())
-      ? baseSizesForUnit(faction.name, profile)
-      : undefined;
-    const suppliedBases = canonicalBases ?? (profile.modelBases?.length ? profile.modelBases : baseSizesForUnit(faction.name, profile));
+    const canonicalBases = baseSizesForUnit(faction.name, profile);
+    const suppliedBases = mergeCanonicalBaseGeometry(canonicalBases, profile.modelBases);
     if (!profile.modelBases?.length && suppliedBases?.length) {
       warnings.push(`${definition.name} used the compatibility base-size map; move the geometry into the catalog entry during normalization.`);
     }
@@ -482,7 +634,6 @@ export class CatalogRegistry {
     if (!profile.modelBases?.length) {
       warnings.push(`${definition.name} has no resolved model-base geometry.`);
     }
-    profile.modelWeaponLoadouts = resizeModelLoadouts(profile.modelWeaponLoadouts, modelCount);
     profile.modelWargearChoices = resizeModelValues(profile.modelWargearChoices, modelCount, choices => [...choices]);
 
     if (definition.status === 'unsupported' || definition.implementationStatus === 'display-only') {
@@ -504,6 +655,7 @@ export class CatalogRegistry {
       addRuleText(profile.abilities, definition.rawRules ?? []),
       unitRules.map(ruleTextForDefinition),
     );
+    profile.abilities = hydrateCoreAbilities(profile.abilities);
 
     return {
       profile,
@@ -533,7 +685,8 @@ export class CatalogRegistry {
         faction: faction.name,
         units,
         battleSizeId: options.battleSizeId,
-        detachmentId: options.detachmentId,
+        detachmentId: options.detachmentId ?? options.detachmentIds?.[0],
+        ...(options.detachmentIds?.length ? { detachmentIds: [...options.detachmentIds] } : {}),
         sourceEdition: this.manifest.edition,
       },
       catalog: {
@@ -604,6 +757,20 @@ export function materializeCatalogArmy(
   options: CatalogArmyMaterializationOptions,
 ): CatalogArmyMaterializationResult {
   return registry.materializeArmy(options);
+}
+
+const CATALOG_BY_FACTION = new Map(
+  CATALOG_BUNDLES.flatMap(bundle => bundle.factions.map(faction => [faction.id, bundle] as const)),
+);
+
+export function loadCatalog(factionId: string, options: CatalogRegistryOptions = {}): CatalogRegistry {
+  const bundle = CATALOG_BY_FACTION.get(factionId.trim().toLowerCase());
+  if (!bundle) throw new CatalogMaterializationError(`Faction catalog ${factionId} is not available.`);
+  return new CatalogRegistry(bundle, options);
+}
+
+export function loadAllCatalogs(options: CatalogRegistryOptions = {}): CatalogRegistry[] {
+  return CATALOG_BUNDLES.map(bundle => new CatalogRegistry(bundle, options));
 }
 
 export function loadOrkCatalog(options: CatalogRegistryOptions = {}): CatalogRegistry {

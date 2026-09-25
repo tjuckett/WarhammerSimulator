@@ -1,0 +1,6635 @@
+{
+  "factionId": "adepta-sororitas",
+  "units": [
+    {
+      "id": "adepta-sororitas.aestred-thurga-and-agathae-dolan",
+      "name": "Aestred Thurga And Agathae Dolan",
+      "aliases": [
+        "Aestred Thurga And Agathae Dolan (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Aestred-Thurga-And-Agathae-Dolan"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 2
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 80
+        }
+      ],
+      "profile": {
+        "name": "Aestred Thurga And Agathae Dolan",
+        "move": 6,
+        "toughness": 3,
+        "save": 2,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "AESTRED THURGA",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 2,
+            "wounds": 4,
+            "leadership": 6,
+            "oc": 1
+          },
+          {
+            "name": "AGATHAE DOLAN",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 6,
+            "wounds": 3,
+            "leadership": 7,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "AESTRED THURGA",
+          "AGATHAE DOLAN"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blade of Vigil",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Scribe's staff",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Auto-Tapestry of the Emperor's Judgement",
+          "description": "While this unit is leading a unit and contains an Aestred Thurga model, weapons equipped by models in that unit have the [DEVASTATING WOUNDS] ability",
+          "category": "datasheet"
+        },
+        {
+          "name": "Recount the Deeds of the Saints",
+          "description": "While this unit is leading a unit and contains an Agathae Dolan model, each time that unit destroys an enemy unit, you gain 1 Miracle dice. When that Agathae Dolan model is destroyed, you gain D3 Miracle dice.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Aestred Thurga And Agathae Dolan datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Aestred-Thurga-And-Agathae-Dolan",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.daemonifuge",
+      "name": "Daemonifuge",
+      "aliases": [
+        "Daemonifuge (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Daemonifuge"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 2
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 85
+        }
+      ],
+      "profile": {
+        "name": "Daemonifuge",
+        "move": 8,
+        "toughness": 3,
+        "save": 3,
+        "wounds": 5,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "EPHRAEL STERN",
+            "count": 1,
+            "move": 8,
+            "toughness": 3,
+            "save": 3,
+            "wounds": 5,
+            "leadership": 7,
+            "oc": 1
+          },
+          {
+            "name": "KYGANIL OF THE BLOODY TEARS",
+            "count": 1,
+            "move": 8,
+            "toughness": 3,
+            "save": 6,
+            "wounds": 3,
+            "leadership": 7,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "DAEMONIFUGE"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Sanctity",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Anti-chaos 2+",
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "The Outcast's Weapons",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Fights First",
+            "description": "Core ability: Fights First.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Lone Operative",
+            "description": "Core ability: Lone Operative.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Holy Judgement",
+          "description": "At the start of your Shooting phase, select one enemy unit within 12\" of and visible to this unit's Ephrael Stern model. That unit must take a Battle-shock test, subtracting 2 from the result if it is a CHAOS unit. If the test is failed, that enemy unit suffers 3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Mysterious Saviours",
+          "description": "You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do: That use is -1 CP. That use does not prevent any uses of that stratagem on other units this phase.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Daemonifuge datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Daemonifuge",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.saint-celestine",
+      "name": "Saint Celestine",
+      "aliases": [
+        "Saint Celestine (x3)"
+      ],
+      "externalIds": {
+        "wahapedia": "Saint-Celestine"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 150
+        }
+      ],
+      "profile": {
+        "name": "Saint Celestine",
+        "move": 12,
+        "toughness": 3,
+        "save": 2,
+        "wounds": 5,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "CELESTINE",
+            "count": 1,
+            "move": 12,
+            "toughness": 3,
+            "save": 2,
+            "wounds": 5,
+            "leadership": 6,
+            "oc": 1
+          },
+          {
+            "name": "GEMINAE SUPERIA",
+            "count": 2,
+            "move": 12,
+            "toughness": 3,
+            "save": 2,
+            "wounds": 2,
+            "leadership": 7,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "KEYWORDS - ALL MODELS: INFANTRY",
+          "JUMP PACK",
+          "FLY",
+          "GRENADES",
+          "IMPERIUMSAINT CELESTINE: CHARACTER",
+          "EPIC HERO",
+          "SAINT CELESTINE"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "The Ardent Blade",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "The Ardent Blade",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 6,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Healing Tears",
+          "description": "While this unit contains a Celestine model, in your Command phase, you can return 1 destroyed Geminae Superia model to this unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Lifewards",
+          "description": "While this unit contains one or more Geminae Superia models, Celestine has the Feel No Pain 4+ ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Miraculous Intervention",
+          "description": "The first time this unit's Celestine model is destroyed, roll one D6 at the end of the phase. On a 2+, set that Celestine model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with its full wounds remaining.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: SERAPHIM SQUAD ZEPHYRIM SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "SERAPHIM SQUAD",
+        "ZEPHYRIM SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Saint Celestine datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Saint-Celestine",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.seraphim-squad",
+        "adepta-sororitas.zephyrim-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.triumph-of-saint-katherine",
+      "name": "Triumph Of Saint Katherine",
+      "externalIds": {
+        "wahapedia": "Triumph-Of-Saint-Katherine"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 245
+        }
+      ],
+      "profile": {
+        "name": "Triumph Of Saint Katherine",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 18,
+        "leadership": 6,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "TRIUMPH OF SAINT KATHERINE"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistols",
+            "range": 12,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Relic weapons",
+            "range": 0,
+            "attacks": "18",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Relics of the Matriarchs",
+          "description": "At the start of the battle round, select up to two of the abilities in the Relics of the Matriarchs section (see left). Until the start of the next battle round, this model has those abilities.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Solemn Procession",
+          "description": "Each time you gain 1 Miracle dice at the start of the battle round, if this model is on the battlefield, do not roll one D6 to determine the value of that Miracle dice; it has a value of 6.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CRUSADERS SANCTIFIERS",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, the Attacks characteristics of all of its weapons are halved, and you can only select one ability when using its Relics of the Matriarchs ability, instead of up to two.",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "BATTLE SISTERS SQUAD",
+        "CRUSADERS",
+        "SANCTIFIERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Triumph Of Saint Katherine datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Triumph-Of-Saint-Katherine",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.sanctifiers"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.junith-eruita",
+      "name": "Junith Eruita",
+      "externalIds": {
+        "wahapedia": "Junith-Eruita"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 105
+        }
+      ],
+      "profile": {
+        "name": "Junith Eruita",
+        "move": 8,
+        "toughness": 5,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 8,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "CHARACTER",
+          "FLY",
+          "EPIC HERO",
+          "IMPERIUM",
+          "JUNITH ERUITA"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Twin Ministorum heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Mace of Castigation",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "The Pulpit of Saint Holline's Basilica",
+          "description": "This unit has Stealth Melee attacks that target this unit have -1 to hit rolls",
+          "category": "datasheet"
+        },
+        {
+          "name": "Fiery Conviction",
+          "description": "If this model is on the battlefield at the start of your Command phase, you can choose one of the following: Discard 1 Miracle dice and gain 1CP. Take a Leadership test for this model, if that test is passed, gain 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Junith Eruita datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Junith-Eruita",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.intranzia-fraye",
+      "name": "Intranzia Fraye",
+      "externalIds": {
+        "wahapedia": "Intranzia-Fraye"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 135
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Intranzia Fraye",
+        "move": 8,
+        "toughness": 7,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 8,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "CHARACTER",
+          "PENITENT",
+          "EPIC HERO",
+          "INTRANZIA FRAYE"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Melta missile array",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 9,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Mace of Saint Praxedes",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Throne of Blame",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Righteous Denunciation",
+          "description": "At the start of the Fight phase, each enemy unit within 6\" of this model must take a Battle-shock test, subtracting 1 from that test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Judged for Execution",
+          "description": "At the end of your Movement phase, you can select one enemy unit within 18\" of and visible to this model. Until the start of your next Command phase, each time a friendly ADEPTA SORORITAS model makes an attack that targets that enemy unit, that attack has the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Intranzia Fraye datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Intranzia-Fraye",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.morvenn-vahl",
+      "name": "Morvenn Vahl",
+      "externalIds": {
+        "wahapedia": "Morvenn-Vahl"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 200
+        }
+      ],
+      "profile": {
+        "name": "Morvenn Vahl",
+        "move": 8,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 8,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "MORVENN VAHL"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Fidelis",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Paragon missile launcher - prioris",
+            "profileGroup": "Paragon missile launcher",
+            "range": 36,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 9,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Paragon missile launcher - sanctorum",
+            "profileGroup": "Paragon missile launcher",
+            "range": 36,
+            "attacks": "2D6",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lance of Illumination - strike",
+            "profileGroup": "Lance of Illumination",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Lance of Illumination - sweep",
+            "profileGroup": "Lance of Illumination",
+            "range": 0,
+            "attacks": "10",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Abbess Sanctorum",
+          "description": "While this model is leading a unit, each time a model in that unit makes an attack, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Righteous Repugnance",
+          "description": "Each time this model's unit is selected to shoot or fight, you can discard 1 Miracle dice. If you do, until the end of the phase, add 3 to the Attacks characteristic of Fidelis and the Lance of Illumination. Each time an enemy unit is destroyed by this model, you gain 1 Miracle dice.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following unit: PARAGON WARSUITS",
+          "category": "datasheet"
+        },
+        {
+          "name": "Supreme Commander",
+          "description": "If this model is in your army, it must be your Warlord.",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "PARAGON WARSUITS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Morvenn Vahl datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Morvenn-Vahl",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.paragon-warsuits"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.canoness",
+      "name": "Canoness",
+      "externalIds": {
+        "wahapedia": "Canoness"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 60
+        }
+      ],
+      "wargearOptions": [
+        "This model's bolt pistol can be replaced with one of the following:; 1 condemnor boltgun; 1 inferno pistol; 1 plasma pistol",
+        "This model's hallowed chainsword can be replaced with one of the following:; 1 blessed blade; 1 power weapon",
+        "If this model is equipped with a hallowed chainsword, it can be equipped with one of the following:; 1 brazier of holy fire; 1 null rod",
+        "If this model is equipped with a plasma pistol and a power weapon, it can be equipped with:",
+        "1 rod of office"
+      ],
+      "profile": {
+        "name": "Canoness",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "GRENADES",
+          "IMPERIUM",
+          "CANONESS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Brazier of holy fire",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "One Shot",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Condemnor boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-psyker 2+",
+              "Devastating Wounds",
+              "Rapid Fire 1",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blessed blade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lethal Hits"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Hallowed Chainsword",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 3,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 4,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            7
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Sacred Command",
+          "description": "Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "The Emperor's Grace",
+          "description": "Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, this model has a 2+ invulnerable save.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Null Rod",
+          "description": "Models in the bearer's unit have the Feel No Pain 4+ ability against mortal wounds and Psychic Attacks.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Rod of Office",
+          "description": "Each time a model in the bearer's unit makes an attack, re-roll a Hit roll of 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Canoness datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Canoness",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.canoness-with-jump-pack",
+      "name": "Canoness with jump pack",
+      "externalIds": {
+        "wahapedia": "Canoness-with-Jump-Pack"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 75
+        }
+      ],
+      "wargearOptions": [
+        "This model's blessed halberd can be replaced with one of the following:; 1 holy eviscerator; 1 Ministorum hand flamer and 1 power weapon"
+      ],
+      "profile": {
+        "name": "Canoness with jump pack",
+        "move": 12,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "JUMP PACK",
+          "FLY",
+          "GRENADES",
+          "IMPERIUM",
+          "CANONESS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blessed halberd",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Holy Eviscerator",
+            "range": 0,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 4,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Sacred Command",
+          "description": "Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Divine Deliverance",
+          "description": "Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and those weapons have the [DEVASTATING WOUNDS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: SERAPHIM SQUAD ZEPHYRIM SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "SERAPHIM SQUAD",
+        "ZEPHYRIM SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Canoness with jump pack datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Canoness-with-Jump-Pack",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.seraphim-squad",
+        "adepta-sororitas.zephyrim-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.dialogus",
+      "name": "Dialogus",
+      "externalIds": {
+        "wahapedia": "Dialogus"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 40
+        }
+      ],
+      "profile": {
+        "name": "Dialogus",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "DIALOGUS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Dialogus staff",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Support",
+            "description": "Core ability: Support.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Laud Hailer",
+          "description": "Once per battle, at the start of any phase, you can select one friendly ADEPTA SORORITAS unit that is Battle-shocked and within 12\" of this model. That unit is no longer Battle-shocked.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Stirring Rhetoric",
+          "description": "While this model is leading a unit, each time this model's unit performs an Act of Faith, the value of one of the Miracle dice used in that Act of Faith is first changed to a 6.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Support",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.",
+          "category": "datasheet"
+        }
+      ],
+      "supportedByNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Dialogus datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Dialogus",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "supportedByRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.dogmata",
+      "name": "Dogmata",
+      "externalIds": {
+        "wahapedia": "Dogmata"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 45
+        }
+      ],
+      "profile": {
+        "name": "Dogmata",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHARACTER",
+          "IMPERIUM",
+          "DOGMATA"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Mace of the righteous",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Support",
+            "description": "Core ability: Support.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Executioner of Heretics (Aura)",
+          "description": "While an enemy unit is within 6\" of this model, worsen the Leadership characteristic of models in that unit by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Unflinching Determination",
+          "description": "While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Support",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.",
+          "category": "datasheet"
+        }
+      ],
+      "supportedByNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Dogmata datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Dogmata",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "supportedByRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.hospitaller",
+      "name": "Hospitaller",
+      "externalIds": {
+        "wahapedia": "Hospitaller"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 65,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "profile": {
+        "name": "Hospitaller",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 3,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "HOSPITALLER"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chirurgeon's tools",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Support",
+            "description": "Core ability: Support.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Medicus Ministorum",
+          "description": "While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Sacred Healing",
+          "description": "While this model is leading a unit, in your Command phase, you can return up to 1 destroyed model (excluding CHARACTER models) to that unit. If you wish, you can first discard 1 Miracle dice; if you do, you can return up to D3+1 destroyed models (excluding CHARACTER models) to that unit instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Support",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.",
+          "category": "datasheet"
+        }
+      ],
+      "supportedByNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Hospitaller datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Hospitaller",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "supportedByRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.imagifier",
+      "name": "Imagifier",
+      "externalIds": {
+        "wahapedia": "Imagifier"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 55
+        }
+      ],
+      "profile": {
+        "name": "Imagifier",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHARACTER",
+          "IMPERIUM",
+          "IMAGIFIER"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Support",
+            "description": "Core ability: Support.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Litany of Deeds",
+          "description": "Each time you gain a Miracle dice as the result of an ADEPTA SORORITAS unit or model from your army being destroyed, if that unit or model was destroyed within 12\" of this model, you can re-roll the result of that Miracle dice before adding it to your Miracle dice pool.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Stanchion of Holy Martyrs",
+          "description": "While this model is leading a unit, models in that unit have a Save characteristic of 2+ and a 4+ invulnerable save.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Support",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS This model can be attached to a BATTLE SISTERS SQUAD, even if one CANONESS, PALATINE, JUNITH ERUITA or AESTRED THURGA model has already been attached to it. If you do, and that Bodyguard unit is destroyed, the Leader units attached to it become separate units, with their original Starting Strengths.",
+          "category": "datasheet"
+        }
+      ],
+      "supportedByNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Imagifier datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Imagifier",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "supportedByRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.ministorum-priest",
+      "name": "Ministorum Priest",
+      "externalIds": {
+        "wahapedia": "Ministorum-Priest"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 50
+        }
+      ],
+      "wargearOptions": [
+        "This model's zealot's vindictor can be replaced with 1 holy pistol and 1 power weapon."
+      ],
+      "profile": {
+        "name": "Ministorum Priest",
+        "move": 6,
+        "toughness": 3,
+        "save": 6,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "PENITENT",
+          "MINISTORUM PRIEST"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Holy pistol",
+            "range": 12,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Zealot's vindictor",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Power Weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Zealot's vindictor",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Righteous Smiting",
+          "description": "While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Zealot",
+          "description": "Once per battle, in the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength and Attacks characteristics of melee weapons equipped by this model by 3.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: ARCO-FLAGELLANTS BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CRUSADERS DOMINION SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "ARCO-FLAGELLANTS",
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Ministorum Priest datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Ministorum-Priest",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.arco-flagellants",
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.palatine",
+      "name": "Palatine",
+      "externalIds": {
+        "wahapedia": "Palatine"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 50
+        }
+      ],
+      "wargearOptions": [
+        "This model's bolt pistol can be replaced with 1 plasma pistol."
+      ],
+      "profile": {
+        "name": "Palatine",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "GRENADES",
+          "IMPERIUM",
+          "PALATINE"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Palatine blade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 4,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Fury of the Righteous",
+          "description": "While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Rapturous Blows",
+          "description": "Each time this model's unit is selected to fight, you can discard 1 Miracle dice. If you do, then until the end of the phase, each time a melee attack made by this model scores a wound, the target of that attack suffers 1 mortal wound in addition to any normal damage.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: BATTLE SISTERS SQUAD CELESTIAN INSIDIANTS CELESTIAN SACRESANTS CRUSADERS DOMINION SQUAD RETRIBUTOR SQUAD SANCTIFIERS SISTERS NOVITIATE SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "BATTLE SISTERS SQUAD",
+        "CELESTIAN INSIDIANTS",
+        "CELESTIAN SACRESANTS",
+        "CRUSADERS",
+        "DOMINION SQUAD",
+        "RETRIBUTOR SQUAD",
+        "SANCTIFIERS",
+        "SISTERS NOVITIATE SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Palatine datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Palatine",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adepta-sororitas.battle-sisters-squad",
+        "adepta-sororitas.celestian-insidiants",
+        "adepta-sororitas.celestian-sacresants",
+        "adepta-sororitas.dominion-squad",
+        "adepta-sororitas.retributor-squad",
+        "adepta-sororitas.sanctifiers",
+        "adepta-sororitas.sisters-novitiate-squad"
+      ]
+    },
+    {
+      "id": "adepta-sororitas.battle-sisters-squad",
+      "name": "Battle Sisters Squad",
+      "aliases": [
+        "Battle Sisters Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Battle-Sisters-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 100
+        }
+      ],
+      "wargearOptions": [
+        "The Sister Superior's boltgun can be replaced with one of the following:; 1 bolt pistol; 1 combi-weapon; 1 condemnor boltgun; 1 inferno pistol; 1 Ministorum hand flamer; 1 plasma pistol",
+        "The Sister Superior can be equipped with one of the following:; 1 chainsword; 1 power weapon",
+        "1 Battle Sister's boltgun can be replaced with one of the following:; 1 artificer-crafted storm bolter; 1 meltagun; 1 Ministorum flamer",
+        "1 Battle Sister's boltgun can be replaced with one of the following:; 1 artificer-crafted storm bolter; 1 heavy bolter; 1 meltagun; 1 Ministorum flamer; 1 Ministorum heavy flamer; 1 multi-melta",
+        "1 Battle Sister equipped with 1 boltgun can be equipped with 1 simulacrum imperialis (that model's boltgun cannot be replaced)."
+      ],
+      "profile": {
+        "name": "Battle Sisters Squad",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "BATTLELINE",
+          "IMPERIUM",
+          "BATTLE SISTERS SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Artificer-crafted storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-INFANTRY 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Condemnor boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-PSYKER 2+",
+              "Devastating Wounds",
+              "Rapid Fire 1",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Multi-melta",
+            "range": 18,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainsword",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ],
+          [
+            1,
+            2,
+            15
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Cherub",
+          "description": "Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice. Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Defenders of the Faith",
+          "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Simulacrum Imperialis",
+          "description": "At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Battle Sisters Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Battle-Sisters-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.immolator",
+      "name": "Immolator",
+      "externalIds": {
+        "wahapedia": "Immolator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Dedicated Transports",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 100,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 115,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with 1 hunter-killer missile.",
+        "This model's immolation flamers can be replaced with one of the following:; 1 twin heavy bolter; 1 twin multi-melta"
+      ],
+      "profile": {
+        "name": "Immolator",
+        "move": 12,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 11,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "SMOKE",
+          "TRANSPORT",
+          "DEDICATED TRANSPORT",
+          "IMPERIUM",
+          "FRAME",
+          "IMMOLATOR"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hunter-killer missile",
+            "range": 48,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "One Shot"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Immolation flamers",
+            "range": 18,
+            "attacks": "2D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin multi-melta",
+            "range": 18,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            5
+          ]
+        ],
+        "transportCapacity": 6
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Purge and Cleanse",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 6 ADEPTA SORORITAS INFANTRY models. It cannot transport JUMP PACK models or the TRIUMPH OF SAINT KATHERINE. At the start of the Declare Battle Formations step, you can select one BATTLE SISTERS SQUAD, DOMINION SQUAD or SISTERS NOVITIATE SQUAD from your army. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units. If you are splitting a unit that has the Cherub ability, only one of the new units can use that ability during the battle - make a note of which of the new units this will be). One of these units must start the battle embarked within this TRANSPORT; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Immolator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Immolator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.sororitas-rhino",
+      "name": "Sororitas Rhino",
+      "externalIds": {
+        "wahapedia": "Sororitas-Rhino"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Dedicated Transports",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 65,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with 1 hunter-killer missile."
+      ],
+      "profile": {
+        "name": "Sororitas Rhino",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 10,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "DEDICATED TRANSPORT",
+          "SMOKE",
+          "IMPERIUM",
+          "FRAME",
+          "SORORITAS RHINO"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Hunter-killer missile",
+            "range": 48,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "One Shot"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Firing Deck 2",
+            "description": "Core ability: Firing Deck 2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "transportCapacity": 12
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Self Repair",
+          "description": "At the start of your Command phase, this model regains 1 lost wound.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 12 ADEPTA SORORITAS INFANTRY models. It cannot transport JUMP PACK models or the TRIUMPH OF SAINT KATHERINE.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Sororitas Rhino datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Sororitas-Rhino",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.arco-flagellants",
+      "name": "Arco-flagellants",
+      "aliases": [
+        "Arco-flagellants (x3)",
+        "Arco-flagellants (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Arco-flagellants"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 10,
+        "step": 7
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 50
+        },
+        {
+          "modelCount": 10,
+          "points": 140
+        }
+      ],
+      "profile": {
+        "name": "Arco-flagellants",
+        "move": 7,
+        "toughness": 3,
+        "save": 7,
+        "invulnSave": 6,
+        "wounds": 2,
+        "leadership": 8,
+        "oc": 1,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "PENITENT",
+          "ARCO-FLAGELLANTS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Arco-flails",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Extremis Trigger Word",
+          "description": "Each time this unit is selected to fight, you can choose to invoke its extremis trigger word. If you do, then until the end of the phase, arco-flails equipped by models in this unit have an Attacks characteristic of 6 and the [HAZARDOUS] ability.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Arco-flagellants datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Arco-flagellants",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.celestian-insidiants",
+      "name": "Celestian Insidiants",
+      "aliases": [
+        "Celestian Insidiants (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Celestian-Insidiants"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 120
+        }
+      ],
+      "wargearOptions": [
+        "The Celestian Insidiant Superior's condemnor bolt pistol can be replaced with 1 inferno pistol.",
+        "Up to 2 Celestian Insidiants can each have their condemnor bolt pistol replaced with 1 Ministorum hand flamer.",
+        "Up to 2 Celestian Insidiants can each have their condemnor bolt pistol and null mace replaced with 1 blessed sword.",
+        "One Celestian Insidiant's condemnor bolt pistol and null mace can be replaced with 1 virge of admonition.",
+        "One Celestian Insidiant's condemnor bolt pistol can be replaced with 1 denuncia oratory.",
+        "One Celestian Insidiant equipped with 1 condemnor bolt pistol can be equipped with 1 simulacrum imperialis (that model's condemnor bolt pistol cannot be replaced)."
+      ],
+      "profile": {
+        "name": "Celestian Insidiants",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "CELESTIAN",
+          "CELESTIAN INSIDIANTS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Condemnor bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-psyker 4+",
+              "Devastating Wounds",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blessed sword",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lethal Hits"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Null mace",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Anti-psyker 4+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Virge of admonition",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Anti-psyker 4+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": []
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Rituale Nullificatus",
+          "description": "Models in this unit have the Feel No Pain 4+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Virtue of Intolerance",
+          "description": "At the start of the battle, select one unit from your opponent's army to be this unit's quarry. Each time a model in this unit makes an attack that targets its quarry, that attack has the [PRECISION] ability and you can re-roll the Hit roll. This ability can be used even if this unit is embarked within a TRANSPORT.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Simulacrum Imperialis",
+          "description": "At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Denuncia Oratory",
+          "description": "Each time the bearer's unit's quarry is destroyed, you can select a new unit from your opponent's army to be its quarry.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Celestian Insidiants datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Celestian-Insidiants",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.celestian-sacresants",
+      "name": "Celestian Sacresants",
+      "aliases": [
+        "Celestian Sacresants (x5)",
+        "Celestian Sacresants (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Celestian-Sacresants"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 85,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their hallowed mace replaced with 1 anointed halberd.",
+        "The Sacresant Superior's bolt pistol can be replaced with one of the following:; 1 inferno pistol; 1 Ministorum hand flamer; 1 plasma pistol",
+        "The Sacresant Superior's hallowed mace can be replaced with 1 spear of the faithful."
+      ],
+      "profile": {
+        "name": "Celestian Sacresants",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "CELESTIAN",
+          "CELESTIAN SACRESANTS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Anointed halberd",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Hallowed mace",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Lethal Hits"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Spear of the faithful",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            6
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Sworn Protectors",
+          "description": "While an ADEPTA SORORITAS CHARACTER is leading this unit, each time an attack targets this unit, subtract 1 from the Wound roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Celestian Sacresants datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Celestian-Sacresants",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.dominion-squad",
+      "name": "Dominion Squad",
+      "aliases": [
+        "Dominion Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Dominion-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 90,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 100,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "The Dominion Superior's boltgun can be replaced with one of the following:; 1 bolt pistol; 1 combi-weapon; 1 condemnor boltgun; 1 inferno pistol; 1 Ministorum hand flamer; 1 plasma pistol",
+        "The Dominion Superior can be equipped with one of the following:; 1 chainsword; 1 power weapon",
+        "Up to 4 Dominions can each have their boltgun replaced with one of the following:; 1 artificer-crafted storm bolter; 1 meltagun; 1 Ministorum flamer",
+        "1 Dominion equipped with 1 boltgun can be equipped with 1 simulacrum imperialis (that model's boltgun cannot be replaced)."
+      ],
+      "profile": {
+        "name": "Dominion Squad",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "DOMINION SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Artificer-crafted storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 2",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Condemnor boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-psyker 2+",
+              "Devastating Wounds",
+              "Rapid Fire 1",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainsword",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ],
+          [
+            1,
+            2,
+            12
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Cherub",
+          "description": "Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice. Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Righteous Awareness",
+          "description": "In your opponent's Movement phase, if an enemy unit ends a move within 8\" of this unit, if this unit is not within Engagement Range of one or more enemy units it can make a Normal move of up to D6\".",
+          "category": "datasheet"
+        },
+        {
+          "name": "Simulacrum Imperialis",
+          "description": "At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Dominion Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Dominion-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.repentia-squad",
+      "name": "Repentia Squad",
+      "aliases": [
+        "Repentia Squad (x5)",
+        "Repentia Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Repentia-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 70
+        },
+        {
+          "modelCount": 10,
+          "points": 140
+        }
+      ],
+      "profile": {
+        "name": "Repentia Squad",
+        "move": 7,
+        "toughness": 3,
+        "save": 3,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "REPENTIA SUPERIOR",
+            "count": 1,
+            "move": 7,
+            "toughness": 3,
+            "save": 3,
+            "wounds": 1,
+            "leadership": 7,
+            "oc": 1
+          },
+          {
+            "name": "SISTERS REPENTIA",
+            "count": 4,
+            "move": 7,
+            "toughness": 3,
+            "save": 7,
+            "wounds": 1,
+            "leadership": 8,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "PENITENT",
+          "REPENTIA SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Neural whips",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 3,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Penitent eviscerator",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Overseer of Redemption",
+          "description": "While this unit contains a Repentia Superior model, each time a Sisters Repentia model in this unit makes a melee attack, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Repentia Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Repentia-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.retributor-squad",
+      "name": "Retributor Squad",
+      "aliases": [
+        "Retributor Squad (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Retributor-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 105,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 115,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "The Retributor Superior's boltgun can be replaced with one of the following:; 1 bolt pistol; 1 combi-weapon; 1 condemnor boltgun; 1 inferno pistol; 1 Ministorum hand flamer; 1 plasma pistol",
+        "The Retributor Superior can be equipped with one of the following:; 1 chainsword; 1 power weapon",
+        "Each Retributor's heavy bolter can be replaced with one of the following:; 1 Ministorum heavy flamer; 1 multi-melta"
+      ],
+      "profile": {
+        "name": "Retributor Squad",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "RETRIBUTOR SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-INFANTRY 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Condemnor boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-PSYKER 2+",
+              "Devastating Wounds",
+              "Rapid Fire 1",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Multi-melta",
+            "range": 18,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainsword",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            12
+          ],
+          [
+            0,
+            1,
+            12
+          ],
+          [
+            0,
+            1,
+            12
+          ],
+          [
+            0,
+            1,
+            12
+          ],
+          [
+            0,
+            1,
+            12
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Cherubs",
+          "description": "Twice per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice. Designer's Note: Place two Cherub tokens next to the unit, removing one each time this ability has been used.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Storm of Retribution",
+          "description": "Each time a model in this unit makes a ranged attack, that model can re-roll a Hit roll of 1 and re-roll a Wound roll of 1. If such an attack targets an enemy unit that has destroyed one or more ADEPTA SORORITAS units from your army during the battle, add 1 to the Hit roll and add 1 to the Wound roll as well.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Retributor Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Retributor-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.sanctifiers",
+      "name": "Sanctifiers",
+      "aliases": [
+        "Sanctifiers (x9)"
+      ],
+      "externalIds": {
+        "wahapedia": "Sanctifiers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 9
+      },
+      "points": [
+        {
+          "modelCount": 9,
+          "points": 110
+        }
+      ],
+      "wargearOptions": [
+        "1 Missionary model can have its 1 plasma gun replaced with 1 meltagun.",
+        "1 Missionary model equipped with 1 plasma gun can be equipped with 1 holy fire (this model's plasma gun cannot be replaced).",
+        "1 Sanctifier model can have its 1 Sanctifier melee weapon replaced with 1 Ministorum hand flamer and 1 close combat weapon.",
+        "1 Sanctifier model can have its 1 Sanctifier melee weapon replaced with 1 close combat weapon and 1 simulacrum imperialis."
+      ],
+      "profile": {
+        "name": "Sanctifiers",
+        "move": 6,
+        "toughness": 3,
+        "save": 6,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 9,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "SANCTIFIERS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Holy fire",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "One Shot",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma gun - standard",
+            "profileGroup": "Plasma gun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma gun - supercharge",
+            "profileGroup": "Plasma gun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 1",
+              "Hazardous"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Burning hands",
+            "range": 0,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Death Cult blades",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Sanctifier melee weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Ministorum Sermon",
+          "description": "While this unit contains a MINISTORUM PRIEST, melee weapons equipped by models in this unit have the [SUSTAINED HITS 1] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Cherub",
+          "description": "Once per battle, after this unit has performed an Act of Faith, you gain 1 Miracle dice. Designer's Note: Place a Cherub token next to the unit, removing it once this ability has been used.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Salvationist Medikit",
+          "description": "In your Command phase, if the bearer is on the battlefield, you can return up to D3 destroyed models (excluding CHARACTER models) to this unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Simulacrum Imperialis",
+          "description": "At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Sanctifiers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Sanctifiers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.seraphim-squad",
+      "name": "Seraphim Squad",
+      "aliases": [
+        "Seraphim Squad (x5)",
+        "Seraphim Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Seraphim-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 85,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "For every 5 models in the unit, up to 2 Seraphim can each have their 2 bolt pistols replaced with one of the following:; 2 inferno pistols; 2 Ministorum hand flamers",
+        "The Seraphim Superior's 2 bolt pistols can be replaced with one of the following:; 1 bolt pistol and 1 chainsword; 1 bolt pistol and 1 plasma pistol; 1 bolt pistol and 1 power weapon; 1 plasma pistol and 1 chainsword; 1 plasma pistol and 1 power weapon"
+      ],
+      "profile": {
+        "name": "Seraphim Squad",
+        "move": 12,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "JUMP PACK",
+          "FLY",
+          "GRENADES",
+          "IMPERIUM",
+          "SERAPHIM SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Inferno pistol",
+            "range": 6,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -4,
+            "damage": "D3",
+            "keywords": [
+              "Melta 2",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum hand flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            6
+          ],
+          [
+            6
+          ],
+          [
+            6
+          ],
+          [
+            6
+          ],
+          [
+            6
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Angelic Ascent",
+          "description": "In your Shooting phase, after this unit has shot, if it is not within Engagement Range of any enemy units, it can make a Normal move of up to 6\". If it does, until the end of the turn, this unit is not eligible to declare a charge.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Seraphim Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Seraphim-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.sisters-novitiate-squad",
+      "name": "Sisters Novitiate Squad",
+      "aliases": [
+        "Sisters Novitiate Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Sisters-Novitiate-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 90
+        }
+      ],
+      "wargearOptions": [
+        "The Novitiate Superior's bolt pistol and boltgun can be replaced with one of the following:; 1 bolt pistol and 1 power weapon; 1 plasma pistol and 1 power weapon",
+        "1 Sister Novitiate's autogun can be replaced with 1 sacred banner.",
+        "1 Sister Novitiate's autogun can be replaced with 1 simulacrum imperialis.",
+        "Up to 2 Sisters Novitiate can each have their autogun replaced with 1 Ministorum flamer.",
+        "Any number of Sisters Novitiate can each have their autogun and close combat weapon replaced with 1 Novitiate melee weapons."
+      ],
+      "profile": {
+        "name": "Sisters Novitiate Squad",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "NOVITIATE SUPERIOR",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 3,
+            "wounds": 1,
+            "leadership": 7,
+            "oc": 2
+          },
+          {
+            "name": "SISTER NOVITIATE",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 4,
+            "wounds": 1,
+            "leadership": 8,
+            "oc": 2
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "IMPERIUM",
+          "SISTERS NOVITIATE SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Autopistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Autogun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Novitiate melee weapons",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Infiltrators",
+            "description": "Core ability: Infiltrators.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            2,
+            3,
+            7
+          ],
+          [
+            2,
+            3,
+            7
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Impetuous Fervour",
+          "description": "Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack is an enemy unit within range of an objective marker, you can re-roll the Hit roll instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Sacred Banner",
+          "description": "You can re-roll Advance and Charge rolls made for the bearer's unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Simulacrum Imperialis",
+          "description": "At the end of your Command phase, for each objective marker you control that has one or more units from your army with this ability within range of it, roll one D6: on a 4+, you gain 1 Miracle dice showing a value equal to that result.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Sisters Novitiate Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Sisters-Novitiate-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.zephyrim-squad",
+      "name": "Zephyrim Squad",
+      "aliases": [
+        "Zephyrim Squad (x5)",
+        "Zephyrim Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Zephyrim-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 85,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 10,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "The Zephyrim Superior can be equipped with 1 sacred banner.",
+        "The Zephyrim Superior's bolt pistol can be replaced with 1 plasma pistol."
+      ],
+      "profile": {
+        "name": "Zephyrim Squad",
+        "move": 12,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "JUMP PACK",
+          "FLY",
+          "GRENADES",
+          "IMPERIUM",
+          "ZEPHYRIM SQUAD"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Embodied Prophecy",
+          "description": "Each time this unit is selected to fight, select one of the following abilities to apply to melee weapons equipped by models in this unit until the end of the phase: [SUSTAINED HITS 1] [LETHAL HITS] If this unit made a Charge move this turn, until the end of the phase, select both abilities above to apply to melee weapons equipped by models in this unit instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Sacred Banner",
+          "description": "You can re-roll Advance and Charge rolls made for the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Zephyrim Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Zephyrim-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.castigator",
+      "name": "Castigator",
+      "externalIds": {
+        "wahapedia": "Castigator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 165,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 175,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's Castigator autocannons can be replaced with 1 Castigator battle cannon.",
+        "This model can be equipped with 1 hunter-killer missile.",
+        "This model can be equipped with 1 storm bolter."
+      ],
+      "profile": {
+        "name": "Castigator",
+        "move": 10,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 11,
+        "leadership": 7,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "SMOKE",
+          "IMPERIUM",
+          "FRAME",
+          "CASTIGATOR"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Castigator autocannons",
+            "range": 48,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 4",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castigator battle cannon",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Ignores Cover",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hunter-killer missile",
+            "range": 48,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "One Shot"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Rites of Castigation",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly ADEPTA SORORITAS unit makes a ranged attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Castigator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Castigator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.exorcist",
+      "name": "Exorcist",
+      "externalIds": {
+        "wahapedia": "Exorcist"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 180,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 220,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with 1 hunter-killer missile.",
+        "This model's Exorcist missile launcher can be replaced with 1 Exorcist conflagration rockets."
+      ],
+      "profile": {
+        "name": "Exorcist",
+        "move": 10,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 6,
+        "wounds": 11,
+        "leadership": 7,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "SMOKE",
+          "IMPERIUM",
+          "FRAME",
+          "EXORCIST"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Exorcist conflagration rockets",
+            "range": 36,
+            "attacks": "3D6",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Ignores Cover",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Exorcist missile launcher",
+            "range": 36,
+            "attacks": "D6+2",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "Indirect Fire"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hunter-killer missile",
+            "range": 48,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "One Shot"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Devastating Refrain",
+          "description": "In your Shooting phase, after this model has shot, if one or more of those attacks made with an Indirect Fire weapon scored a hit against an enemy unit, that unit must take a Battle-shock test. Each time such an attack destroys an enemy model that has the Deadly Demise ability, that model's Deadly Demise ability inflicts mortal wounds on a D6 roll of 5+ instead of on a 6.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Exorcist datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Exorcist",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.mortifiers",
+      "name": "Mortifiers",
+      "aliases": [
+        "Mortifiers (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Mortifiers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1,
+        "maximum": 2,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 70
+        },
+        {
+          "modelCount": 2,
+          "points": 130
+        }
+      ],
+      "wargearOptions": [
+        "1 model can be equipped with 1 anchorite sarcophagus.",
+        "Any number of models can each have their 2 heavy bolters replaced with one of the following:; 1 heavy bolter and 1 Mortifier flamer; 2 Mortifier flamers",
+        "Any number of models can each have their twin penitent buzz-blades replaced with one of the following:; 1 twin penitent flails; 1 penitent buzz-blade and 1 penitent flail"
+      ],
+      "profile": {
+        "name": "Mortifiers",
+        "move": 8,
+        "toughness": 6,
+        "save": 4,
+        "invulnSave": 6,
+        "wounds": 5,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "PENITENT",
+          "MORTIFIERS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Mortifier flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Penitent buzz-blade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Penitent flail",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Twin penitent buzz-blades",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Twin penitent flails",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Anguish of the Unredeemed",
+          "description": "Each time a model in this unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 2+, do not remove it from play; That destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Anchorite Sarcophagus",
+          "description": "The bearer has a Move characteristic of 7\" and a Save characteristic of 3+.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Mortifiers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Mortifiers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.paragon-warsuits",
+      "name": "Paragon Warsuits",
+      "aliases": [
+        "Paragon Warsuits (x3)"
+      ],
+      "externalIds": {
+        "wahapedia": "Paragon-Warsuits"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 180,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 190,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their Paragon storm bolters replaced with 1 Paragon grenade launchers.",
+        "Any number of models can each have their Paragon war blade replaced with 1 Paragon war mace.",
+        "Any number of models can each have their heavy bolter replaced with one of the following:; 1 Ministorum heavy flamer; 1 multi-melta"
+      ],
+      "profile": {
+        "name": "Paragon Warsuits",
+        "move": 8,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          },
+          {
+            "shape": "round",
+            "diameterMm": 50
+          },
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "GRENADES",
+          "IMPERIUM",
+          "PARAGON WARSUITS"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ministorum heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Multi-melta",
+            "range": 18,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Paragon grenade launchers",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Paragon storm bolters",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Paragon war blade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Paragon war mace",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 12,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            5,
+            6
+          ],
+          [
+            0,
+            1,
+            5,
+            6
+          ],
+          [
+            0,
+            1,
+            5,
+            6
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Righteous Paragons",
+          "description": "Each time a model in this unit makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll and add 1 to the Wound roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Paragon Warsuits datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Paragon-Warsuits",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adepta-sororitas.penitent-engines",
+      "name": "Penitent Engines",
+      "aliases": [
+        "Penitent Engines (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Penitent-Engines"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1,
+        "maximum": 2,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 70
+        },
+        {
+          "modelCount": 2,
+          "points": 140
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their twin penitent buzz-blades replaced with one of the following:; 1 penitent buzz-blade and 1 penitent flail; 1 twin penitent flails"
+      ],
+      "profile": {
+        "name": "Penitent Engines",
+        "move": 8,
+        "toughness": 6,
+        "save": 4,
+        "invulnSave": 6,
+        "wounds": 5,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "PENITENT",
+          "PENITENT ENGINES"
+        ],
+        "factionKeywords": [
+          "adepta-sororitas",
+          "Adepta Sororitas"
+        ],
+        "weapons": [
+          {
+            "name": "Penitent flamers",
+            "range": 12,
+            "attacks": "2D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Penitent buzz-blade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 10,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Penitent flail",
+            "range": 0,
+            "attacks": "8",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Twin penitent buzz-blades",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 10,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Twin penitent flails",
+            "range": 0,
+            "attacks": "8",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adepta-sororitas.army-rule.acts-of-faith"
+      ],
+      "rawRules": [
+        {
+          "name": "Endless Suffering",
+          "description": "This unit is eligible to declare a charge in a turn in which it Advanced.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Penitent Engines datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adepta-sororitas/Penitent-Engines",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

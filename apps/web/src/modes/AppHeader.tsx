@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
+import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import type { TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import { BOARD_FORMATS } from '@warhammer-simulator/core/data/boardFormats';
 import { EDITIONS } from '@warhammer-simulator/core/engine/rulesEngine';
@@ -22,6 +23,7 @@ import {
 type Props = {
   armyBuilderMode?: boolean;
   battleStarted: boolean;
+  battleSetup?: BattleState['setup'];
   editionId: string;
   isEleventhEdition: boolean;
   primaryMission: string;
@@ -46,6 +48,7 @@ type Props = {
 export function AppHeader({
   armyBuilderMode = false,
   battleStarted,
+  battleSetup,
   editionId,
   isEleventhEdition,
   primaryMission,
@@ -205,6 +208,28 @@ export function AppHeader({
           >
             Random Set
           </Button>
+        </Box>
+      )}
+
+      {battleStarted && battleSetup && !armyBuilderMode && (
+        <Box className="battle-mission-summary" aria-label="Primary missions">
+          <Typography className="battle-mission-summary__title" component="span">
+            Primary Missions
+          </Typography>
+          {battleSetup.primaryMissions ? (
+            <>
+              <Typography className="battle-mission-summary__mission battle-mission-summary__mission--blue" component="span">
+                Blue: {battleSetup.primaryMissions[0]}
+              </Typography>
+              <Typography className="battle-mission-summary__mission battle-mission-summary__mission--red" component="span">
+                Red: {battleSetup.primaryMissions[1]}
+              </Typography>
+            </>
+          ) : (
+            <Typography className="battle-mission-summary__mission" component="span">
+              {battleSetup.primaryMission}
+            </Typography>
+          )}
         </Box>
       )}
     </header>

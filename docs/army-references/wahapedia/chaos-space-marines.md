@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/chaos-space-marines/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/chaos-space-marines/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -109,12 +109,17 @@
 | melee | -- | Drach'nyen | devastating wounds | Melee | 8 | 2+ | 14 | -4 | 3 |
 | melee | -- | Talon of Horus | devastating wounds | Melee | 14 | 2+ | 7 | -3 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - The Warmaster: In your Command phase, select one Warmaster ability (see left). Until the start of your next Command phase, this model has that ability.
-  Dark Destiny: Each time this model's unit makes a Dark Pact and does not fail the resulting leadership roll, if the result of that roll was 7+, you gain 1CP.
+- Dark Destiny: Each time this model's unit makes a Dark Pact and does not fail the resulting leadership roll, if the result of that roll was 7+, you gain 1CP.
 
 #### Unit Composition
 - 1 Abaddon the Despoiler - EPIC HERO
@@ -155,12 +160,16 @@ HERETIC ASTARTES
 | melee | -- | Cypher's bolt pistol | sustained hits 1 | Melee | 6 | 2+ | 4 | -1 | 1 |
 | melee | -- | Cypher's plasma pistol | EXTRA ATTACKS | Melee | 3 | 2+ | 8 | -3 | 2 |
 
+#### Core Abilities
+- Lone Operative
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative
-- FACTION: Dark Pacts
 - Agent of Discord: Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do increase the CP cost of tht use of that stratagem by 1CP.
-  Guns Blazing: Once per turn, in your opponent's Shooting phase, when an enemy unit makes a ranged attack that targets a friendly HERETIC ASTARTES unit within 3" of this model, after that enemy unit has shot, this model can shoot as if it were your Shooting phase, but it must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
+- Guns Blazing: Once per turn, in your opponent's Shooting phase, when an enemy unit makes a ranged attack that targets a friendly HERETIC ASTARTES unit within 3" of this model, after that enemy unit has shot, this model can shoot as if it were your Shooting phase, but it must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 #### Unit Composition
 - 1 Cypher - EPIC HERO
@@ -194,13 +203,18 @@ HERETIC ASTARTES
 | melee | -- | Rod of Torment | -- | Melee | 6 | 2+ | 5 | -1 | 3 |
 | melee | -- | Surgeon Acolyte's tools | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader
-- FACTION: Dark Pacts
 - Enhanced Warriors: If this unit is attached to a unit at the start of the battle, until the end of the battle, add 1 to the Strength characteristic of melee weapons equipped by Bodyguard models in that unit and add 1 to the Toughness characteristic of Bodyguard models in that unit.
-  Surgeon Acolyte: Once per turn, when an attack is allocated to a model in this unit, if this unit contains FABIUS BILE, you can change the Damage characteristic of that attack to 0.
-  Chirurgeon: The first time this unit's FABIUS BILE model is destroyed, at the end of the phase, roll one D6: on a 2+, set it back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy models, with its full wounds remaining.
+- Surgeon Acolyte: Once per turn, when an attack is allocated to a model in this unit, if this unit contains FABIUS BILE, you can change the Damage characteristic of that attack to 0.
+- Chirurgeon: The first time this unit's FABIUS BILE model is destroyed, at the end of the phase, roll one D6: on a 2+, set it back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy models, with its full wounds remaining.
 
 #### Unit Composition
 - 1 Fabius Bile - EPIC HERO
@@ -213,6 +227,7 @@ HERETIC ASTARTES
   - ACCURSED CULTISTS
   - CHOSEN
   - CULTIST MOB
+  - CULTIST MOB WITH FIREARMS
   - LEGIONARIES
   - NEGAVOLT CULTISTS
   - RED CORSAIRS RAIDERS
@@ -243,12 +258,17 @@ HERETIC ASTARTES
 | melee | -- | Herald's Talon | precision | Melee | 6 | 2+ | 5 | -2 | 2 |
 | melee | -- | Helspear | extra attacks lance sustained hits d3 | Melee | 1 | 2+ | 8 | -3 | 3 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Head Taker: While this model is leading a unit, each time this model's unit ends a Charge move, select one enemy unit within Engagement Range of this model's unit and roll one D6 for each model in this models unit that is within Engagement Range of that enemy unit: for each 4+, that enemy unit suffers 1 mortal wound.
-  Herald of the Apocalypse (Aura): While an enemy unit is within 6" of this model, in the Battle-shock step of your opponent's Command phase, if that enemy unit is below its Starting Strength, it must take a Battle-shock test. This ability cannot cause a unit to take two Battle-shock tests in the same phase.
+- Herald of the Apocalypse (Aura): While an enemy unit is within 6" of this model, in the Battle-shock step of your opponent's Command phase, if that enemy unit is below its Starting Strength, it must take a Battle-shock test. This ability cannot cause a unit to take two Battle-shock tests in the same phase.
 
 #### Unit Composition
 - 1 Haarken Worldclaimer - EPIC HERO
@@ -283,12 +303,21 @@ HERETIC ASTARTES
 | ranged | -- | Tyrant's Claw heavy flamer | ignores cover pistol torrent | 12" | D6+2 | N/A | 6 | -1 | 1 |
 | melee | -- | Tyrant's Claw and exalted power weapon | -- | Melee | 6 | 2+ | 8 | -3 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Feel No Pain 5+, Leader
-- FACTION: Dark Pacts
 - Lord of Badab (Aura): While a friendly HERETIC ASTARTES INFANTRY unit (excluding Battle-shocked units and DAMNED units) is within 6" of this model, add 1 to the Objective Control characteristic of models in that unit.
-  Hamadrya's Knowledge (Psychic): Once per battle round, when an enemy unit ends a Normal, Advance or Fall Back move within 8" of this model's unit, if this model's unit is not within Engagement Range of one or more enemy units, it can make a Normal move of up to D3+3".
+- Hamadrya's Knowledge (Psychic): Once per battle round, when an enemy unit ends a Normal, Advance or Fall Back move within 8" of this model's unit, if this model's unit is not within Engagement Range of one or more enemy units, it can make a Normal move of up to D3+3".
 
 #### Unit Composition
 - 1 Huron Blackheart - EPIC HERO
@@ -328,12 +357,20 @@ HERETIC ASTARTES
 | melee | -- | Last Argument and power fist | devastating wounds | Melee | 7 | 2+ | 10 | -2 | 2 |
 | melee | -- | Servo-harness | extra attacks anti-vehicle 2+ | Melee | 3 | 2+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Headlong Destruction: Each time a model in this unit makes an attack that targets the closest eligible enemy unit, improve the Armour Penetration characteristic of that attack by 1.
-  Architect of Ruin: At the start of the battle, select one unit in your opponent's army to be this model's hated foe. Each time this model makes an attack that targets its hated foe, you can re-roll the Wound roll. Each time this model's hated foe is destroyed, you can select a new unit from your opponent's army to be its hated foe.
+- Architect of Ruin: At the start of the battle, select one unit in your opponent's army to be this model's hated foe. Each time this model makes an attack that targets its hated foe, you can re-roll the Wound roll. Each time this model's hated foe is destroyed, you can select a new unit from your opponent's army to be its hated foe.
 
 #### Unit Composition
 - 1 Kravek Morne - EPIC HERO
@@ -379,13 +416,17 @@ HERETIC ASTARTES
 | melee | -- | Power sabre | -- | Melee | 4 | 3+ | 4 | -2 | 1 |
 | melee | -- | Reductor array | -- | Melee | 6 | 3+ | 4 | -2 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Dark Pacts
 - Choice Samples: While this unit's Garreon the Corpsemaster is on the battlefield, in your Command phase, select one of the following: you can return 1 destroyed model (excluding CHARACTER models) to this unit, or, if one or more HERETIC ASTARTES INFANTRY units from your army are below Starting Strength and within 3" of this unit, you gain 1CP.
-  Fleet Command: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield) select up to three HERETIC ASTARTES units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
-  Plunder: Once per battle, after this unit ends a Normal move, you can select one visible enemy unit within 12" of it and roll one D6: on a 2+, that enemy unit suffers D3+1 mortal wounds.
+- Fleet Command: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield) select up to three HERETIC ASTARTES units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
+- Plunder: Once per battle, after this unit ends a Normal move, you can select one visible enemy unit within 12" of it and roll one D6: on a 2+, that enemy unit suffers D3+1 mortal wounds.
 
 #### Unit Composition
 - 1 Garreon the Corpsemaster - EPIC HERO
@@ -431,13 +472,18 @@ HERETIC ASTARTES
 | melee | -- | Vashtorr's hammer - strike | anti-vehicle 4+ devastating wounds | Melee | 6 | 2+ | 14 | -3 | 3 |
 | melee | -- | Vashtorr's hammer - sweep | anti-vehicle 4+ devastating wounds | Melee | 12 | 2+ | 8 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Dark Pacts
 - Unholy Mechanisms (Aura): While a friendly DAEMON VEHICLE unit is within 6" of this model, add 2 to the Strength characteristic of weapons equipped by models in that unit.
-  Reorder Reality: Each time an enemy unit within 18" of this model targets this model, subtract 1 from the Hit roll and, until the end of the phase, that enemy unit's ranged weapons have the [HAZARDOUS] ability.
-  Indentured Daemon Engines: While this model is within 3" of one or more friendly DAEMON VEHICLE units, this model has the Lone Operative ability.
+- Reorder Reality: Each time an enemy unit within 18" of this model targets this model, subtract 1 from the Hit roll and, until the end of the phase, that enemy unit's ranged weapons have the [HAZARDOUS] ability.
+- Indentured Daemon Engines: While this model is within 3" of one or more friendly DAEMON VEHICLE units, this model has the Lone Operative ability.
 
 #### Unit Composition
 - 1 Vashtorr the Arkifane - EPIC HERO
@@ -475,12 +521,22 @@ HERETIC ASTARTES
 | melee | -- | Daemon hammer | devastating wounds | Melee | 5 | 3+ | 8 | -2 | 2 |
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's daemon hammer can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+- This model's plasma pistol can be replaced with 1 power fist.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Lord of Chaos: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Chance for Glory: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength, Attacks, Armour Penetration and Damage characteristics of melee weapons equipped by this model by 1.
+- Chance for Glory: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, improve the Strength, Attacks, Armour Penetration and Damage characteristics of melee weapons equipped by this model by 1.
 
 #### Unit Composition
 - 1 Chaos Lord
@@ -569,12 +625,24 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 7 | 2+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's combi-bolter can be replaced with 1 combi-weapon.
+- This model's exalted weapon can be replaced with one of the following:
+  - 1 chainfist
+  - 1 power fist
+- This model's combi-bolter and exalted weapon can be replaced with 1 paired accursed weapons.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Lord of Chaos: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Formidably Resilient: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
+- Formidably Resilient: Each time an attack is allocated to this model, halve the Damage characteristic of that attack.
 
 #### Unit Composition
 - 1 Chaos Lord in Terminator Armour
@@ -661,12 +729,22 @@ HERETIC ASTARTES
 | melee | -- | Power fist | -- | Melee | 5 | 2+ | 8 | -2 | 2 |
 | melee | -- | Twin lightning claws | TWIN-LINKED | Melee | 6 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- This model's bolt pistol can be replaced with 1 plasma pistol.
+- This model's accursed weapon can be replaced with 1 power fist.
+- This model's bolt pistol and accursed weapon can be replaced with 1 twin lightning claws.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Lord of Chaos: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Cruel Hunter: While this model is leading a unit, each time that unit Piles In or Consolidates, each model in that unit can move up to 6" instead of up to 3".
+- Cruel Hunter: While this model is leading a unit, each time that unit Piles In or Consolidates, each model in that unit can move up to 6" instead of up to 3".
 
 #### Unit Composition
 - 1 Chaos Lord
@@ -750,12 +828,16 @@ HERETIC ASTARTES
 | ranged | -- | Balefire pike | IGNORES COVER TORRENT | 12" | D6+3 | N/A | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 4+ | 4 | -1 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Fiery Faith: While this model is leading a unit, you can re-roll Leadership tests taken for that unit.
-  Cursed Flames: In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
+- Cursed Flames: In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Cultist Firebrand
@@ -765,6 +847,7 @@ HERETIC ASTARTES
 - This model can be attached to the following units:
   - ACCURSED CULTISTS
   - CULTIST MOB
+  - CULTIST MOB WITH FIREARMS
   - NEGAVOLT CULTISTS
 
 #### Enhancements
@@ -819,7 +902,7 @@ HERETIC ASTARTES
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| DARK APOSTLE | (diameter 40mm) | 6" | 4 | 3+ | 4 | 5+ | 1 | 4+ |
+| DARK APOSTLE | (diameter 40mm) | 6" | 4 | 3+ | 4 | 5+ | 1 | -- |
 | DARK DISCIPLE | (diameter 25mm) | 6" | 4 | 6+ | 1 | 7+ | 1 | 4+ |
 
 #### Weapons
@@ -829,13 +912,17 @@ HERETIC ASTARTES
 | melee | -- | Accursed crozius | -- | Melee | 5 | 2+ | 6 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Dark Zealotry: While this unit is leading a unit and contains a DARK APOSTLE model, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Demagogue: Once per battle, at the start of any phase, you can select one friendly HERETIC ASTARTES unit that is Battle-shocked and within 12" of this unit's DARK APOSTLE model. That unit is no longer Battle-shocked.
-  Malign Sacrifice: At the start of the Fight phase, if this unit contains one or more Dark Disciple models, you can select one of those models and one enemy unit within Engagement Range of this unit, then roll one D6: on a 2-5, that enemy unit suffers 1 mortal wound; on a 6, that enemy unit suffers D3 mortal wounds. That Dark Disciple model is then destroyed.
+- Demagogue: Once per battle, at the start of any phase, you can select one friendly HERETIC ASTARTES unit that is Battle-shocked and within 12" of this unit's DARK APOSTLE model. That unit is no longer Battle-shocked.
+- Malign Sacrifice: At the start of the Fight phase, if this unit contains one or more Dark Disciple models, you can select one of those models and one enemy unit within Engagement Range of this unit, then roll one D6: on a 2-5, that enemy unit suffers 1 mortal wound; on a 6, that enemy unit suffers D3 mortal wounds. That Dark Disciple model is then destroyed.
 
 #### Unit Composition
 - 1 Dark Apostle
@@ -848,6 +935,7 @@ HERETIC ASTARTES
   - ACCURSED CULTISTS
   - CHOSEN
   - CULTIST MOB
+  - CULTIST MOB WITH FIREARMS
   - LEGIONARIES
   - NEGAVOLT CULTISTS
   - NEMESIS CLAW
@@ -930,14 +1018,16 @@ HERETIC ASTARTES
 | melee | -- | Commune blade | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 | melee | -- | Commune stave | devastating wounds | Melee | 2 | 4+ | 3 | 0 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Faithful Flock: While this unit is leading a unit and contains a CULT DEMAGOGUE model, models in that unit have a 5+ invulnerable save.
-  Dark Ritual: Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.
-
-#### Wargear Abilities
+- Dark Ritual: Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -954,6 +1044,7 @@ HERETIC ASTARTES
 - This model can be attached to the following units:
   - ACCURSED CULTISTS
   - CULTIST MOB
+  - CULTIST MOB WITH FIREARMS
   - NEGAVOLT CULTISTS
 
 #### Enhancements
@@ -1016,12 +1107,16 @@ HERETIC ASTARTES
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Axe of dismemberment | devastating wounds precision | Melee | 5 | 2+ | 7 | -2 | 2 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Dark Pacts
 - Warp-sighted Butcher: While this model is leading a unit, each time a model in that unit makes a melee attack that targets a unit that is below its Starting Strength, you can re-roll the Hit roll. If that unit is Below Half-strength, you can re-roll the Wound roll as well.
-  Trophy Taker: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
+- Trophy Taker: Each time this model destroys an enemy CHARACTER model, you gain 1CP.
 
 #### Unit Composition
 - 1 Master of Executions
@@ -1102,12 +1197,16 @@ HERETIC ASTARTES
 | ranged | -- | Rite of Possession - focused witchfire | anti-psyker 2+ hazardous pistol precision psychic | 18" | 2 | 3+ | 6 | -3 | 3 |
 | melee | -- | Staff of possession | anti-psyker 2+ psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Daemonkin (Psychic): While this model is leading a unit, add 1 to Advance and Charge rolls made for that unit.
-  Sacrificial Dagger: Once per phase, when this model is selected to shoot or fight, it can use this ability. If it does, this model's unit suffers 1 mortal wound and, until the end of the phase, each time this model makes a Psychic Attack, add 1 to the Hit roll and add 1 to the Wound roll.
+- Sacrificial Dagger: Once per phase, when this model is selected to shoot or fight, it can use this ability. If it does, this model's unit suffers 1 mortal wound and, until the end of the phase, each time this model makes a Psychic Attack, add 1 to the Hit roll and add 1 to the Wound roll.
 
 #### Unit Composition
 - 1 Master of Possession
@@ -1190,12 +1289,21 @@ HERETIC ASTARTES
 | melee | -- | Power maul | -- | Melee | 5 | 2+ | 5 | -2 | 2 |
 | melee | -- | Power sword | sustained hits 1 | Melee | 7 | 2+ | 5 | -2 | 1 |
 
+#### Wargear options
+- This model's power sword can be replaced with 1 power maul.
+- This model can be equipped with 1 plasma pistol.
+
+#### Core Abilities
+- Infiltrators
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader
-- FACTION: Dark Pacts
 - Brutal Raider: Each time this model's unit ends a Charge move, until the end of the turn, add 1 to the Strength characteristic of melee weapons equipped by this model and improve the Armour Penetration characteristics of those weapons by 1.
-  Raider's Due: When this unit declares a charge, If an enemy unit within range of an objective is within 12" of this unit, you can use this ability. If you do:
+- Raider's Due: When this unit declares a charge, If an enemy unit within range of an objective is within 12" of this unit, you can use this ability. If you do:
   - This unit can re-roll that charge roll.
   - This unit must end that charge move engaged with one or more of those enemy units.
 
@@ -1276,12 +1384,16 @@ HERETIC ASTARTES
 | ranged | -- | Infernal Gaze - focused witchfire | devastating wounds hazardous psychic | 24" | D6 | 3+ | 6 | -2 | D3 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Prescience (Psychic): While this model is leading a unit, each time an attack targets that unit, subtract 1 from the Hit roll.
-  Gift of Chaos (Psychic): Each time this model is selected to shoot or fight, after resolving its attacks, select one enemy unit hit by one or more of those attacks that had the [PSYCHIC] ability. That unit must take a Leadership test: if that test is failed, that unit suffers D3 mortal wounds.
+- Gift of Chaos (Psychic): Each time this model is selected to shoot or fight, after resolving its attacks, select one enemy unit hit by one or more of those attacks that had the [PSYCHIC] ability. That unit must take a Leadership test: if that test is failed, that unit suffers D3 mortal wounds.
 
 #### Unit Composition
 - 1 Sorcerer
@@ -1363,14 +1475,21 @@ HERETIC ASTARTES
 | ranged | -- | Infernal Gaze - focused witchfire | devastating wounds hazardous psychic | 24" | D6 | 3+ | 6 | -2 | D3 |
 | melee | -- | Force weapon | psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Wargear options
+- This model's combi-bolter can be replaced with 1 combi-weapon.
+- This model can be equipped with 1 Chaos familiar.
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Dark Pacts
 - Warptime (Psychic): While this model is leading a unit, you can re-roll Advance and Charge rolls made for that unit.
-  Death Hex (Psychic): At the start of your Shooting phase, one PSYKER with this ability can use it. If it does, select one enemy unit within 12" of and visible to that PSYKER and roll one D6: on a 1, that PSYKER's unit suffers D3 mortal wounds; on a 2+, until the start of your next Movement phase, each time an attack targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1.
-
-#### Wargear Abilities
+- Death Hex (Psychic): At the start of your Shooting phase, one PSYKER with this ability can use it. If it does, select one enemy unit within 12" of and visible to that PSYKER and roll one D6: on a 1, that PSYKER's unit suffers D3 mortal wounds; on a 2+, until the start of your next Movement phase, each time an attack targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1.
 - Chaos Familiar: Once per battle, when an attack is allocated to the bearer, you can change the Damage characteristic to 0.
 
 #### Unit Composition
@@ -1442,8 +1561,8 @@ HERETIC ASTARTES
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| TRAITOR ENFORCER | (diameter 32mm) | 6" | 3 | 5+ | 3 | 6+ | 1 | 5+ |
-| TRAITOR OGRYN | (diameter 40mm) | 6" | 6 | 5+ | 4 | 7+ | 1 | -- |
+| TRAITOR ENFORCER | (diameter 32mm) | 6" | 3 | 5+ | 3 | 6+ | 1 | -- |
+| TRAITOR OGRYN | (diameter 40mm) | 6" | 6 | 5+ | 4 | 7+ | 1 | 5+ |
 
 #### Weapons
 | Type | Applies to | Weapon | Weapon keywords | Range | A | BS/WS | S | AP | D |
@@ -1452,12 +1571,19 @@ HERETIC ASTARTES
 | melee | -- | Ogryn weapons | -- | Melee | 5 | 3+ | 7 | -1 | 2 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Brutal Example: Once per turn, while this unit is leading a unit and contains a TRAITOR ENFORCER model, you can target that unit with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted a different unit from your army with that Stratagem this turn. Each time you use this ability, one Bodyguard model in that unit is destroyed.
-  Mutated Bodyguard: While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.
+- Mutated Bodyguard: While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.
 
 #### Unit Composition
 - 1 Traitor Enforcer
@@ -1529,13 +1655,17 @@ HERETIC ASTARTES
 | ranged | -- | Plasma pistol - supercharge | pistol hazardous | 12" | 1 | 2+ | 8 | -3 | 2 |
 | melee | -- | Forge weapon | Anti-Vehicle 4+ | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Dark Pacts
 - Warpsmith: While this model is within 3" of one or more friendly HERETIC ASTARTES VEHICLE units, this model has the Lone Operative ability.
-  Master of Mechanisms: In your Command phase, select one friendly HERETIC ASTARTES VEHICLE model within 3" of this model. That VEHICLE model regains up to D3 lost wounds and, until the start of your next Command phase, each time that VEHICLE makes an attack, add 1 to the Hit roll. Each model can only be selected for this ability once per Command phase.
-  Enrage Machine Spirits: At the end of your Movement phase, select one enemy VEHICLE unit within 12" of this model. That unit must take a Battle-shock test.
+- Master of Mechanisms: In your Command phase, select one friendly HERETIC ASTARTES VEHICLE model within 3" of this model. That VEHICLE model regains up to D3 lost wounds and, until the start of your next Command phase, each time that VEHICLE makes an attack, add 1 to the Hit roll. Each model can only be selected for this ability once per Command phase.
+- Enrage Machine Spirits: At the end of your Movement phase, select one enemy VEHICLE unit within 12" of this model. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Warpsmith
@@ -1620,13 +1750,17 @@ HERETIC ASTARTES
 | melee | -- | Hellforged weapons - strike | -- | Melee | 6 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | -- | Melee | 14 | 2+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Dark Blessing (Aura): While a friendly HERETIC ASTARTES INFANTRY unit is within 6" of this model, each time a ranged attack is allocated to a model in that unit, that model has the Benefit of Cover against that attack.
-  Ascended Daemon: Each time this model shoot or fights, while resolving those attacks, you can re-roll one Hit roll and you can re-roll one Wound roll.
-  Lord of Chaos: While this model is within 3" of one or more friendly HERETIC ASTARTES INFANTRY units, this model has the Lone Operative ability.
+- Ascended Daemon: Each time this model shoot or fights, while resolving those attacks, you can re-roll one Hit roll and you can re-roll one Wound roll.
+- Lord of Chaos: While this model is within 3" of one or more friendly HERETIC ASTARTES INFANTRY units, this model has the Lone Operative ability.
 
 #### Unit Composition
 - 1 Heretic Astartes Daemon Prince
@@ -1692,12 +1826,17 @@ HERETIC ASTARTES
 | melee | -- | Hellforged weapons - strike | -- | Melee | 6 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | -- | Melee | 14 | 2+ | 6 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Dark Pacts
 - Daemonic Destruction: Each time this model ends a Charge move, select one enemy unit within Engagement Range of it and roll one D6 for each of this model's remaining wounds: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).
-  Flying Horror: Each time this model ends a Normal or Advance move, select one enemy unit it moved over during that move. That unit must take a Battle-shock test.
+- Flying Horror: Each time this model ends a Normal or Advance move, select one enemy unit it moved over during that move. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Heretic Astartes Daemon Prince with Wings
@@ -1767,11 +1906,17 @@ HERETIC ASTARTES
 | melee | -- | Impaler chainglaive | lance | Melee | 5 | 2+ | 8 | -3 | 3 |
 | melee | -- | Techno-virus injector | anti-vehicle 2+ extra attacks | Melee | 1 | 3+ | 3 | -3 | 2 |
 
+#### Wargear options
+- This model's Helstalker autocannon can be replaced with 1 baleflamer.
+- This model's techno-virus injector can be replaced with 1 magma cutter.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Corrupt Machine Spirits: At the start of your Shooting phase, select one visible enemy VEHICLE unit within 12" of this model and roll one D6: on a 2-3, that enemy unit suffers D3 mortal wounds; on a 4-5, that enemy unit suffers 3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
-  Spirit Thief: At the start of your Shooting phase, select one visible enemy VEHICLE unit. Until the end of the phase, each time a friendly HERETIC ASTARTES model makes an attack that targets that unit, re-roll a Wound roll of 1.
+- Spirit Thief: At the start of your Shooting phase, select one visible enemy VEHICLE unit. Until the end of the phase, each time a friendly HERETIC ASTARTES model makes an attack that targets that unit, re-roll a Wound roll of 1.
 
 #### Unit Composition
 - 1 Lord Discordant on Helstalker
@@ -1837,9 +1982,14 @@ HERETIC ASTARTES
 | ranged | -- | Bolt pistol | pistol | 12" | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Brutal assault weapon | -- | Melee | 2 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Cultist Champion's autopistol can be replaced with 1 bolt pistol.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - For the Dark Gods: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
 
 #### Unit Composition
@@ -1890,12 +2040,38 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Heavy melee weapon | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Aspiring Champion's boltgun can be replaced with one of the following:
+  - 1 plasma pistol*
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+  - 1 heavy melee weapon
+- The Aspiring Champion's bolt pistol can be replaced with one of the following:
+  - 1 plasma pistol*
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+  - 1 heavy melee weapon
+- 1 model can be equipped with 1 Chaos icon.
+- Any number of Legionaries can each have their boltgun replaced with 1 Astartes chainsword.
+- One Legionary's boltgun can be replaced with 1 heavy melee weapon.
+- One Legionary's boltgun can be replaced with 1 balefire tome.
+- For every 5 models in this unit, 1 Legionary's boltgun can be replaced with one of the following (duplicates are not allowed):
+  - 1 plasma pistol and 1 Astartes chainsword
+  - 1 flamer
+  - 1 havoc autocannon
+  - 1 heavy bolter
+  - 1 lascannon
+  - 1 meltagun
+  - 1 missile launcher
+  - 1 plasma gun
+  - 1 reaper chaincannon
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Veterans of the Long War: Each time a model in this unit targets an enemy unit with a melee attack, re-roll a Wound roll of 1. If that enemy unit is within range of an objective marker, you can re-roll the Wound roll instead.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -1932,12 +2108,18 @@ HERETIC ASTARTES
 | melee | -- | Chainblade | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Khornate eviscerator | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Khorne Berzerker Champion's bolt pistol can be replaced with 1 plasma pistol.
+- For every 5 models in this unit, 1 Khorne Berzerker's bolt pistol can be replaced with 1 plasma pistol.
+- For every 5 models in this unit, 1 Khorne Berzerker's chainblade can be replaced with 1 Khornate eviscerator.
+- 1 model can be equipped with 1 icon of Khorne.
+
+#### Army Rules
+- Blessings of Khorne
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Blessings of Khorne
 - Blood Surge: In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6+2".
-
-#### Wargear Abilities
 - Icon of Khorne: If the bearer's unit contains one or more Icons of Khorne, each time the bearer's unit destroys an enemy unit, you gain 1 Bloodshed point. Each time you make a Blessings of Khorne roll, roll one additional D6 for each Bloodshed point you have, after which, all your Bloodshed points are lost.
 
 #### Unit Composition
@@ -1983,12 +2165,30 @@ HERETIC ASTARTES; WORLD EATERS
 | melee | -- | Plague knives | lethal hits | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Power fist | lethal hits | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Plague Champion's boltgun can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma gun
+  - 1 plasma pistol
+- The Plague Champion's plague knives can be replaced with one of the following:
+  - 1 bubotic weapons
+  - 1 power fist
+- For every 5 models in this unit, 1 Plague Marine's boltgun can be replaced with 1 blight launcher.
+- For every 5 models in this unit, 1 Plague Marine's boltgun can be replaced with 1 plague spewer.
+- For every 5 models in this unit, 1 Plague Marine's boltgun can be replaced with one of the following:
+  - 1 meltagun
+  - 1 plague belcher
+  - 1 plasma gun
+- For every 5 models in this unit, up to 2 Plague Marines can each have their boltgun replaced with 1 bubotic weapons.
+- For every 5 models in this unit, up to 2 Plague Marines can each have their boltgun replaced with 1 heavy plague weapon.
+- One Plague Marine equipped with a boltgun can be equipped with 1 icon of despair. This model's boltgun cannot be replaced.
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Nurgle's Gift (Aura)
 - Infused with the Blessings of Nurgle: In your Shooting phase, each time this unit is selected to shoot, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next turn, that enemy unit is Afflicted.
-
-#### Wargear Abilities
 - Icon of Despair (Aura): While an enemy unit is within 6" of the bearer, worsen the Leadership characteristic of models in that unit by 1.
 
 #### Unit Composition
@@ -2015,7 +2215,7 @@ HERETIC ASTARTES; DEATH GUARD
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Rubric Marine | (diameter 32mm) | 6" | 4 | 3+ | 2 | 7+ | 2 | 5+ |
+| Rubric Marine | (diameter 32mm) | 6" | 4 | 3+ | 2 | 7+ | 2 | -- |
 | Aspiring Sorcerer | (diameter 32mm) | 6" | 4 | 3+ | 3 | 6+ | 2 | 5+ |
 
 #### Weapons
@@ -2030,12 +2230,18 @@ HERETIC ASTARTES; DEATH GUARD
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Force weapon | psychic | Melee | 3 | 3+ | 6 | -1 | D3 |
 
+#### Wargear options
+- The Aspiring Sorcerer's inferno bolt pistol can be replaced with 1 warpflame pistol.
+- 1 Rubric Marine's inferno boltgun can be replaced with 1 soulreaper cannon.
+- Any number of Rubric Marines can each have their inferno boltgun replaced with 1 warpflamer.
+- 1 Rubric Marine can be equipped with 1 icon of flame.
+
+#### Army Rules
+- Cabal of Sorcerers (Aspiring Sorcerer only)
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Cabal of Sorcerers (Aspiring Sorcerer only)
 - Bringers of Change: Each time a model in this unit makes a ranged attack, re-roll a Wound roll of 1. If that attack targets a unit within range of an objective marker you do not control, you can re-roll the Wound roll instead.
-
-#### Wargear Abilities
 - Icon of Flame: Ranged weapons equipped by models in the bearer's unit (excluding CHARACTERS) have the [IGNORES COVER] ability.
 
 #### Unit Composition
@@ -2074,18 +2280,29 @@ HERETIC ASTARTES; THOUSAND SONS
 | ranged | -- | Havoc launcher | blast | 48" | D6 | 3+ | 5 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher or can replace 1 combi-bolter with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Dark Pacts
 - Self Repair: At the start of your Command phase, this model regains 1 lost wound.
+
+#### Transport
+- This model has a transport capacity of 12 HERETIC ASTARTES INFANTRY models. It cannot transport TERMINATOR, JUMP PACK, MUTILATORS, OBLITERATORS or POSSESSED models.
 
 #### Unit Composition
 - 1 Chaos Rhino
   This model is equipped with: combi-bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 HERETIC ASTARTES INFANTRY models. It cannot transport TERMINATOR, JUMP PACK, MUTILATORS, OBLITERATORS or Possessed models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -2112,10 +2329,17 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hideous mutations | -- | Melee | D6+2 | 4+ | 5 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Feel No Pain 5+
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+
-- FACTION: Dark Pacts
 - Mind-breaking Mutations (Aura): While an enemy unit (excluding VEHICLE units) is within 3" of this unit, subtract 1 from the Objective Control characteristic of models in that enemy unit.
 
 #### Unit Composition
@@ -2148,10 +2372,15 @@ HERETIC ASTARTES
 | melee | -- | Blasphemous appendages | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Hideous mutations | -- | Melee | D6+2 | 4+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Feel No Pain 6+
+- Scouts 6"
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+, Scouts 6"
-- FACTION: Dark Pacts
 - Accursed Horde: In your opponent's Shooting phase, when an enemy unit has shot, if a model from this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6".
 
 #### Unit Composition
@@ -2194,10 +2423,23 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 5 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, 1 Terminator's combi-bolter can be replaced with one of the following:
+  - 1 heavy flamer
+  - 1 reaper autocannon
+- Any number of models can each have their combi-bolter replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 model's combi-bolter and accursed weapon can be replaced with 1 paired accursed weapons.
+- For every 5 models in this unit, up to 3 models can each have their accursed weapon replaced with 1 power fist.
+- For every 5 models in this unit, 1 model's accursed weapon can be replaced with 1 chainfist.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Despoilers: Each time this unit makes a Dark Pact, until the end of the phase, each time a model in this unit makes an attack, you can re-roll the Hit roll.
 
 #### Unit Composition
@@ -2237,12 +2479,19 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 5 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 4 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 2 models can each have their bolt pistol replaced with 1 plasma pistol.
+- For every 5 models in this unit, up to 2 models can each have their boltgun replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 model's boltgun and accursed weapon can be replaced with 1 paired accursed weapons.
+- For every 5 models in this unit, 1 model equipped with a boltgun can have its accursed weapon replaced with 1 power fist. That model's boltgun cannot be replaced.
+- 1 model can be equipped with 1 Chaos icon.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Chosen Marauders: This unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -2285,9 +2534,16 @@ HERETIC ASTARTES
 | melee | -- | Corrupted stave | devastating wounds psychic | Melee | 2 | 4+ | 4 | -1 | D3 |
 | melee | -- | Great weapon | -- | Melee | 2 | 5+ | 8 | -1 | 2 |
 
+#### Wargear options
+- The Fellgor Champion's bolt pistol can be replaced with 1 plasma pistol.
+- 1 Fellgor Beastman's close combat weapon can be replaced with 1 great weapon.
+- 1 Fellgor Beastman's close combat weapon can be replaced with 1 corrupted stave.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Bestial Raiders: If this unit starts the game in Strategic Reserves, it can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. If this unit is in Strategic Reserves, for the purposes of setting up this unit on the battlefield, treat the current battle round number as being one higher than it actually is.
 
 #### Unit Composition
@@ -2336,9 +2592,29 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Havoc Champion's Astartes chainsword can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 power fist
+- The Havoc Champion's flamer can be replaced with one of the following:
+  - 1 boltgun
+  - 1 meltagun
+  - 1 plasma gun
+  - 1 plasma pistol
+  - 1 accursed weapon
+  - 1 power fist
+- Any number of Havocs can each have their Havoc autocannon or Havoc lascannon replaced with one of the following:
+  - 1 Havoc autocannon
+  - 1 Havoc heavy bolter
+  - 1 Havoc lascannon
+  - 1 Havoc missile launcher
+  - 1 Havoc reaper chaincannon
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Stabilisation Talons: Each time a model in this unit makes an attack with a ranged weapon, you can ignore any or all modifiers to the Hit roll and any or all modifiers to the Ballistic Skill characteristic of that weapon.
 
 #### Unit Composition
@@ -2375,10 +2651,17 @@ HERETIC ASTARTES
 | melee | -- | Fleshmetal weapons - rending strikes | -- | Melee | 4 | 3+ | 9 | -3 | 3 |
 | melee | -- | Fleshmetal weapons - thunderous blows | -- | Melee | 2 | 3+ | 12 | -4 | D6+2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Crushing Charge: You can re-roll charge rolls made for this unit, and each time this unit makes a Charge move, select one enemy unit and roll one D6 for each model in this unit that is within Engagement Range of that unit: for each 4+, that enemy unit suffers D3 mortal wounds.
 
 #### Unit Composition
@@ -2427,13 +2710,34 @@ HERETIC ASTARTES
 | melee | -- | Paired accursed weapons | twin-linked | Melee | 4 | 3+ | 5 | -2 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Visionary's bolt pistol can be replaced with 1 plasma pistol.
+- The Visionary's Nostraman chainblade can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 power fist
+- Any number of Legionaries can each have their boltgun replaced with 1 Astartes chainsword.
+- If this unit contains 10 models, one Legionary's boltgun can be replaced with one of the following:
+  - 1 heavy bolter
+  - 1 missile launcher
+- One Legionary's boltgun can be replaced with one of the following:
+  - 1 flamer
+  - 1 meltagun
+  - 1 plasma gun
+- Up to four Legionaries can each have their boltgun replaced with one of the following (duplicates are not allowed):
+  - 1 accursed weapon
+  - 1 Nostraman chainglaive
+  - 1 paired accursed weapons
+  - 1 voice eater and 1 Astartes chainsword
+
+#### Core Abilities
+- Stealth
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Stealth
-- FACTION: Dark Pacts
 - Visions of Suffering (Psychic): Each time a model in this unit makes an attack that targets an enemy unit that is below its Starting Strength, add 1 to the Hit roll. If that enemy unit is Below Half-strength, add 1 to the Wound roll as well.
-
-#### Wargear Abilities
 - Voice Eater: Enemy units (excluding MONSTERS and VEHICLES) cannot be targeted with Stratagems while they are within Engagement Range of the bearer's unit.
 
 #### Unit Composition
@@ -2443,7 +2747,7 @@ HERETIC ASTARTES
   Each Legionary is equipped with: bolt pistol; boltgun; close combat weapon.
 
 #### Attached Unit
-- If a Character unit from your army with the Leader ability (excluding EPIC HEROes) can be attached to a LEGIONARIES unit, it can be attached to this unit instead.
+- If a CHARACTER unit from your army with the Leader ability (excluding EPIC HEROes) can be attached to a LEGIONARIES unit, it can be attached to this unit instead.
 
 #### Points
 - YOUR UNIT COSTS: 5 models -- **100 pts**
@@ -2473,10 +2777,14 @@ HERETIC ASTARTES
 | ranged | -- | Fleshmetal guns - warp hail | sustained hits 1 | 24" | D6+3 | 3+ | 5 | -1 | 1 |
 | melee | -- | Crushing fists | -- | Melee | 4 | 3+ | 9 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Warp Rift Firepower: Once per battle, during the shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [INDIRECT FIRE] ability.
 
 #### Unit Composition
@@ -2508,12 +2816,15 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hideous mutations | -- | Melee | 4 | 3+ | 5 | -1 | 2 |
 
+#### Wargear options
+- 1 model can be equipped with 1 Chaos icon.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Unholy Bloodshed: Once per battle, when this unit makes a Dark Pact, until the end of the phase, weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -2559,12 +2870,33 @@ HERETIC ASTARTES
 | melee | -- | Heavy melee weapon | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Mutations | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Raptor Champion's bolt pistol can be replaced with 1 plasma pistol.
+- The Raptor Champion's Astartes chainsword can be replaced with one of the following:
+  - 1 accursed weapon
+  - 1 heavy melee weapon
+- For every 5 models in this unit, up to 2 Raptors can each have their bolt pistol replaced with 1 plasma pistol (these models' Astartes chainswords cannot be replaced).
+- For every 5 models in this unit, up to 2 Raptors can each have their Astartes chainsword replaced with 1 heavy melee weapon.
+- For every 5 models in this unit, 1 Raptor can replace their Astartes chainsword with 1 mutations.
+- Up to 2 Raptors can each have their Astartes chainsword replaced with one of the following options (you cannot select the same option more than once):
+  - 1 flamer and 1 close combat weapon
+  - 1 meltagun and 1 close combat weapon
+  - 1 plasma gun and 1 close combat weapon
+- If this unit contains 10 models, up to 2 additional Raptors can each have their Astartes chainsword replaced with one of the following options (you cannot select the same option more than once):
+  - 1 flamer and 1 close combat weapon
+  - 1 meltagun and 1 close combat weapon
+  - 1 plasma gun and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Fearsome (Aura): While an enemy unit is within 6" of this unit, each time that enemy unit takes a Battle-shock or Leadership test, subtract 1 from the result.
-  Terrifying Assault: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test.
+- Terrifying Assault: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Raptor Champion
@@ -2603,10 +2935,20 @@ HERETIC ASTARTES
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 | melee | -- | Reaver's blade | -- | Melee | 4 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- The Red Corsairs Raider Champion's bolt pistol can be replaced with 1 hand flamer.
+- For every 5 models in this unit:
+  - 1 Red Corsairs Raider's boltgun can be replaced with 1 meltagun
+  - 1 Red Corsairs Raider's reaver's blade can be replaced with 1 power fist
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: Dark Pacts
 - Trophy Takers: The first time this unit destroys an enemy unit, until the end of the battle, while this unit is not Battle-shocked, add 1 to the Objective Control characteristic of models in this unit.
 
 #### Unit Composition
@@ -2653,9 +2995,23 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Up to 3 Traitor Guardsmen can each have their lasgun replaced with one of the following (duplicates are not allowed):
+  - 1 Cultist grenade launcher
+  - 1 flamer
+  - 1 meltagun
+  - 1 plasma gun
+  - 1 Cultist sniper rifle
+- The Traitor Sergeant's close combat weapon can be replaced with one of the following:
+  - 1 chainsword
+  - 1 power weapon
+- The Traitor Sergeant's corrupted pistol can be replaced with 1 boltgun.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Twisted Defence Force: While this unit is within range of an objective, this unit has +1 Sv against ranged attacks.
 
 #### Unit Composition
@@ -2688,10 +3044,17 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Warp claws | twin-linked | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Dark Pacts
 - Warp Strike: At the end of the Fight phase, if this unit destroyed one or more enemy units this phase and is not within Engagement Range of one or more enemy units, you can remove this unit from the battlefield and place it into Strategic Reserves.
 
 #### Unit Composition
@@ -2731,9 +3094,15 @@ HERETIC ASTARTES
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Power sword | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- The Disharmonist's sonic blaster can be replaced with 1 screamer pistol and 1 power sword.
+- Up to 2 Noise Marines can each replace their sonic blaster with 1 blastmaster.
+
+#### Army Rules
+- Thrill Seekers
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Thrill Seekers
 - Terrifying Crescendo: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next Shooting phase, each time a Battle-shock or Leadership test is taken for that enemy unit, subtract 1 from that test.
 
 #### Unit Composition
@@ -2778,12 +3147,25 @@ HERETIC ASTARTES; EMPEROR'S CHILDREN
 | melee | -- | Astartes chainsword | -- | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Power fist | -- | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Biker Champion's bolt pistol can be replaced with one of the following:
+  - 1 plasma pistol
+  - 1 accursed weapon
+  - 1 Astartes chainsword
+  - 1 power fist
+- Any number of Chaos Bikers can each have their bolt pistol replaced with 1 Astartes chainsword.
+- Up to 2 Chaos Bikers can each have their combi-bolter replaced with 1 combi-weapon, or can be equipped with one of the following:
+  - 1 flamer
+  - 1 meltagun
+  - 1 plasma gun
+- 1 model can be equipped with 1 Chaos icon.
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Dark Pacts
 - Outmanoeuvre: Each time a model in this unit makes a melee attack, if this unit made a Charge move this turn, improve the Strength characteristic of that attack by 1.
-
-#### Wargear Abilities
 - Chaos Icon: Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.
 
 #### Unit Composition
@@ -2822,10 +3204,20 @@ HERETIC ASTARTES
 | melee | -- | Great cleaver of Khorne - strike | -- | Melee | 5 | 3+ | 16 | -4 | 8 |
 | melee | -- | Great cleaver of Khorne - sweep | -- | Melee | 15 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- This model's gorestorm cannon can be replaced with one of the following:
+  - 1 daemongore cannon
+  - 1 ichor cannon
+- This model's Hades gatling cannon can be replaced with 1 skullhurler.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Dark Pacts
 - Plough Through the Enemy: In the Fight phase, after this model has finished making its attacks, if this model destroyed one or more enemy units this phase, each enemy unit within 6" of this model must take a Battle-shock test.
 
 #### Unit Composition
@@ -2865,11 +3257,24 @@ HERETIC ASTARTES
 | ranged | -- | Twin heavy bolter | sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Dark Pacts
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 12 HERETIC ASTARTES INFANTRY models (excluding OBLITERATOR and JUMP PACK models). Each POSSESSED, MUTILATORS and TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Chaos Land Raider
@@ -2877,9 +3282,6 @@ HERETIC ASTARTES
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 12 HERETIC ASTARTES INFANTRY models (excluding OBLITERATOR and JUMP PACK models). Each Possessed, MUTILATORS and TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **220 pts**
@@ -2912,10 +3314,23 @@ HERETIC ASTARTES
 | ranged | -- | Predator twin lascannon | twin-linked | 48" | 1 | 3+ | 14 | -3 | D6+1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 Havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Annihilator: Each time a ranged attack made by this model is allocated to a MONSTER or VEHICLE model, you can re-roll the Damage roll.
 
 #### Unit Composition
@@ -2956,10 +3371,23 @@ HERETIC ASTARTES
 | ranged | -- | Predator autocannon | rapid fire 2 | 48" | 4 | 3+ | 9 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 Havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Destructor: Each time a ranged attack made by this model targets an enemy INFANTRY unit, improve the Armour Penetration characteristic of that attack by 1.
 
 #### Unit Composition
@@ -2998,10 +3426,20 @@ HERETIC ASTARTES
 | ranged | -- | Havoc launcher | blast | 48" | D6 | 3+ | 5 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 Havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Siege Shield: When making ranged attacks with its demolisher cannon, this model can target enemy units within Engagement Range of it (provided no other friendly units are also within Engagement Range of that enemy unit). In addition, when making ranged attacks, this model does not suffer the penalty to its Hit rolls for being within Engagement Range of one or more enemy units.
 
 #### Unit Composition
@@ -3038,10 +3476,18 @@ HERETIC ASTARTES
 | ranged | -- | Hades autocannon | -- | 36" | 6 | 3+ | 8 | -1 | 2 |
 | melee | -- | Heldrake claws | anti-fly 2+ devastating wounds | Melee | 5 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's Hades autocannon can be replaced with 1 baleflamer.
+
+#### Core Abilities
+- Deadly Demise D3
+- Hover
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Hover
-- FACTION: Dark Pacts
 - Airborne Predator: Each time this model makes an attack that targets a unit that can FLY, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -3086,12 +3532,28 @@ HERETIC ASTARTES
 | melee | -- | Shearing claws - sweep | -- | Melee | 10 | 3+ | 6 | -2 | 1 |
 | melee | -- | Electroscourge | extra attacks sustained hits 2 | Melee | 5 | 3+ | 12 | -2 | 2 |
 
+#### Wargear options
+- This model's Hades battle cannon can be replaced with 1 ectoplasma destructor.
+- This model's excruciator cannons can be replaced with 2 magma cutters.
+- This model's heavy baleflamer can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+- This model's heavy missile launcher can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Dark Pacts
 - Scuttling Walker: Each time this unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.
-  Daemonforge: Each time this unit makes a Dark Pact, until the end of the phase, each time this model makes an attack, re-roll a Wound roll of 1.
+- Daemonforge: Each time this unit makes a Dark Pact, until the end of the phase, each time this model makes an attack, re-roll a Wound roll of 1.
 
 #### Unit Composition
 - 1 Defiler
@@ -3130,10 +3592,18 @@ HERETIC ASTARTES
 | melee | -- | Armoured limbs | -- | Melee | 2 | 3+ | 6 | 0 | 2 |
 | melee | -- | Forgefiend jaws | -- | Melee | 5 | 3+ | 7 | 0 | 2 |
 
+#### Wargear options
+- This model's 2 Hades autocannons can be replaced with 2 ectoplasma cannons.
+- This model's Forgefiend jaws can be replaced with 1 ectoplasma cannon and 1 armoured limbs.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Daemonic Ordnance: Each time this model is selected to shoot, it can use this ability. If it does, until the end of the phase, its ranged weapons have the [DEVASTATING WOUNDS] and [HAZARDOUS] abilities.
 
 #### Unit Composition
@@ -3181,12 +3651,31 @@ HERETIC ASTARTES
 | melee | -- | Helbrute hammer | -- | Melee | 5 | 4+ | 14 | -3 | D6+1 |
 | melee | -- | Power scourge | -- | Melee | 8 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's multi-melta can be replaced with one of the following:
+  - 1 Helbrute plasma cannon
+  - 1 twin autocannon
+  - 1 twin heavy bolter
+  - 1 twin lascannon
+  - 1 Helbrute fist
+- This model's missile launcher can be replaced with one of the following:
+  - 1 Helbrute fist
+  - 1 Helbrute hammer
+  - 1 power scourge
+- For each Helbrute fist this model is equipped with, it can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 heavy flamer
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Dark Pacts
 - Dark Ascension (Aura): While a friendly HERETIC ASTARTES unit is within 6" of this model, each time that unit makes a Dark Pact, until the end of the phase, weapons equipped by models in that unit gain both abilities conferred by that pact (instead of only one).
-  Devoted to Destruction: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
+- Devoted to Destruction: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
 
 #### Unit Composition
 - 1 Helbrute
@@ -3218,10 +3707,17 @@ HERETIC ASTARTES
 | melee | -- | Lasher tendrils | extra attacks | Melee | 6 | 3+ | 7 | -1 | 1 |
 | melee | -- | Maulerfiend fists | -- | Melee | 6 | 3+ | 14 | -2 | D6+1 |
 
+#### Wargear options
+- This model's lasher tendrils can be replaced with 2 magma cutters.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Siege Crawler: You can ignore any or all modifiers to this model's Move characteristic and to Advance and Charge rolls made for it.
 
 #### Unit Composition
@@ -3256,10 +3752,14 @@ HERETIC ASTARTES
 | ranged | -- | Excruciator cannon | -- | 36" | 6 | 3+ | 6 | -1 | 2 |
 | melee | -- | Soulflayer tendrils and claws | -- | Melee | 6 | 3+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Dark Pacts
 - Soul Eater: At the end of the Fight phase, if one or more attacks made by this model this phase destroyed one or more enemy units, until the end of the battle, add 1 to the Attacks characteristic of this model's weapons.
 
 #### Unit Composition
@@ -3291,13 +3791,17 @@ HERETIC ASTARTES
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | ranged | -- | Lashing warp energies | -- | 6" | 8 | 4+ | 8 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Dark Pacts
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Dark Pacts
 - Malevolent Locus (Aura): While a friendly HERETIC ASTARTES model is wholly within 9" of this FORTIFICATION, improve that unit's Leadership characteristic by 1.
-  Malign Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
-  Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
+- Malign Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol weapon, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
 
@@ -3316,6 +3820,8 @@ HERETIC ASTARTES
 ## Detachments
 
 ### Veterans of the Long War (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Focus of Hatred
 - At the start of your Command phase, select one unit from your opponents army to be your focus of hatred. Until the start of your next Command phase, each time a HERETIC ASTARTES model from your army (excluding DAMNED models) makes an attack that targets your focus of hatred, you can re-roll the Hit roll.
 
@@ -3368,6 +3874,8 @@ HERETIC ASTARTES
   EFFECT: Your unit can make a Normal move of up to 6".
 
 ### Deceptors (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Masters of Misdirection
 - In the Declare Battle Formations step, you can select a number of LEGIONARIES and CULTIST MOB units from your army:
   until the end of the battle, those units, and any CHARACTER units attached to them (excluding EPIC HEROES), have the Infiltrators ability. The maximum number of units you can select in this way depends on the battle size, as shown below.
@@ -3426,6 +3934,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, enemy units that are set up on the battlefield from Reserves cannot be set up within 12" horizontally of your unit.
 
 ### Renegade Raiders (3 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Raiders and Reavers
 - Ranged weapons equipped by HERETIC ASTARTES models from your army have the [ASSAULT] ability, and each time a HERETIC ASTARTES model from your army makes an attack that targets a unit within range of an objective marker, improve the Armour Penetration characteristic of that attack by 1.
 
@@ -3478,6 +3988,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, your unit is eligible to declare a charge in a turn in which it Advanced. If you select one or more units within range of an objective marker as a target of that charge, add 1 to the Charge roll.
 
 ### Dread Talons (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Terror Descends (Aura)
 - In the Battle-shock step of your opponent's Command phase, if an enemy unit that is below its Starting Strength is within 12" of one or more HERETIC ASTARTES units from your army, that enemy unit must take a Battle-shock test.
   Each time an enemy unit within 12" of one or more HERETIC ASTARTES units from your army takes a Battle-shock test, subtract 1 from the result.
@@ -3532,6 +4044,8 @@ HERETIC ASTARTES
   EFFECT: Select one enemy unit that Fell Back this turn and is within 6" of your unit. Your unit can declare a charge as if it were your Charge phase. When doing so, you can only select that enemy unit as the target of that charge (and only if it is an eligible target). Note that even if this charge is successful, your unit does not receive any Charge bonus this turn.
 
 ### Fellhammer Siege-host (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Iron Fortitude
 - Each time a ranged attack targets a HERETIC ASTARTES unit from your army (excluding DAMNED units), if the Strength characteristic of that attack is greater than the Toughness characteristic of that unit, subtract 1 from the Wound roll.
 
@@ -3584,6 +4098,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, each time an enemy unit selects your unit as a target of a charge, subtract 2 from the Charge roll (this is not cumulative with any other negative modifiers to that Charge roll).
 
 ### Pactbound Zealots (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Marks of Chaos
 - When mustering your army, when you select a HERETIC ASTARTES unit to include in your army, if that unit is not an EPIC HERO and does not already have one of the following keywords, you must select one for that unit and note it on your Army Roster: KHORNE. TZEENTCH, NURGLE, SLAANESH, CHAOS UNDIVIDED. Each time a unit with one of these keywords gains a weapon ability as the result of a Dark Pact and does not fail the resulting Leadership test, until the end of the phase, that unit gains the associated ability below.
   UNITS THAT GAINED [LETHAL HITS]
@@ -3596,7 +4112,7 @@ HERETIC ASTARTES
   - CHAOS UNDIVIDED: Each time a model in this unit makes an attack, re-roll a Hit roll of 1.
   RESTRICTIONS
   - You cannot select the KHORNE keyword for a PSYKER unit.
-  - A Character unit can only be attached to a unit if both units share the same keyword from the list above.
+  - A CHARACTER unit can only be attached to a unit if both units share the same keyword from the list above.
   - A unit can only embark within (or start the battle embarked within) a TRANSPORT if both of those units share the same keyword from the list above.
 
 #### Enhancements
@@ -3633,7 +4149,7 @@ HERETIC ASTARTES
 - Pactbound Zealots - Epic Deed Stratagem
 - WHEN: Your Command phase.
   TARGET: One HERETIC ASTARTES unit from your army.
-  EFFECT: One model in your unit regains up to 3 lost wounds. In addition, if your unit is a TZEENTCH unit below its Starting Strength, one destroyed model (excluding Character models) is returned to your unit with its full wounds remaining.
+  EFFECT: One model in your unit regains up to 3 lost wounds. In addition, if your unit is a TZEENTCH unit below its Starting Strength, one destroyed model (excluding CHARACTER models) is returned to your unit with its full wounds remaining.
 - TORPEFYING REFRAIN
 - 1CP
 - Pactbound Zealots - Strategic Ploy Stratagem
@@ -3648,6 +4164,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, your unit has the Stealth ability. In addition, if your unit is a NURGLE unit, it can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 ### Chaos Cult (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Desperate Devotion
 - Each time a DAMNED unit from your army with the Dark Pacts ability is selected to make a Normal or Advance move or declare a charge (excluding units that arrived from Reserves this turn), it can make a Desperate Pact (see below). If it does, until the end of the phase, add 2 to the Move characteristic of models in that unit and add 2 to Charge rolls made for that unit.
   Desperate Pacts
@@ -3704,6 +4222,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, while your DAMNED unit is on the battlefield, each time your opponent would make a Wound roll for an attack that targets your HERETIC ASTARTES unit, if your DAMNED unit is visible to the attacking model and is an eligible target for that attack, no roll is made; instead, your DAMNED unit suffers a number of mortal wounds equal to the Damage characteristic of that attack.
 
 ### Soulforged Warpack (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Debt to the Soul Forge
 - Each time a HERETIC ASTARTES DAEMON VEHICLE unit from your army makes a Dark Pact, it can invoke its contract. If it does, subtract 1 from the resulting Leadership test when making that Dark Pact, and until the end of the phase:
   - Each time a model in that unit makes a ranged attack, add 1 to the Wound roll.
@@ -3716,6 +4236,8 @@ HERETIC ASTARTES
 - WARPSMITH model only. Add 4" to the bearer's Move characteristic.
 - Tempting Addendum 40 pts
 - HERETIC ASTARTES model only. Each time a HERETIC ASTARTES DAEMON VEHICLE unit from your army invokes its contract while within 3" of the bearer:
+  - If it suffers one or more mortal wounds as a result of that Dark Pact, add 1 to the number of mortal wounds it suffers.
+  - Until the end of the phase, each time a model in that unit makes an attack, you can re-roll the Hit roll.
 - Soul Harvester 15 pts
 - HERETIC ASTARTES model only. While the bearer is on the battlefield, each time an enemy unit within 12" of the bearer is destroyed, roll one D6: on a 5+, you gain 1CP.
 
@@ -3758,8 +4280,10 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, each time an enemy unit (excluding MONSTERS and VEHICLES) that is within Engagement Range of your units Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, of that enemy unit is Battle-shocked, substract 1 from each of those tests.
 
 ### Creations of Bile (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Experimental Augmentations
-- At the start of the battle, select which augmentations are active for HERETIC ASTARTES INFANTRY models (excluding DAMNED models) from your army until the end of the battle. To do so, either select one from the list below, or randomly determine two by rolling two D6. If Fabius Bile is your WARLORD, when randomly determining your augmentations, you can re-roll one or both of the dice. Duplicated augmentations have no additional effect.
+- At the start of the battle, select which augmentations are active for HERETIC ASTARTES INFANTRY models (excluding DAMNED models) from your army until the end of the battle. To do so, either select one from the list below, or randomly determine two by rolling two D6. If FABIUS BILE is your WARLORD, when randomly determining your augmentations, you can re-roll one or both of the dice. Duplicated augmentations have no additional effect.
   Cholinergic Accelerants: Add 1 to the Attacks characteristic of melee weapons equipped by this model.
   Hyperadrenal Infusion: Add 2" to the Move characteristic of this model.
   Paraneural Reactions: Improve the Weapon Skill characteristic of melee weapons equipped by this model by 1.
@@ -3807,7 +4331,7 @@ HERETIC ASTARTES
 - Creations of Bile - Strategic Ploy Stratagem
 - WHEN: Your Command phase.
   TARGET: One HERETIC ASTARTES INFANTRY unit (excluding DAMNED units) from your army.
-  EFFECT: One destroyed model (excluding Character models) is returned to your unit. If your unit is a BATTLELINE unit, D3 destroyed models (excluding CHARACTER models) are returned to your unit instead.
+  EFFECT: One destroyed model (excluding CHARACTER models) is returned to your unit. If your unit is a BATTLELINE unit, D3 destroyed models (excluding CHARACTER models) are returned to your unit instead.
 - AUTOSTIMULANTS
 - 1CP
 - Creations of Bile - Strategic Ploy Stratagem
@@ -3816,6 +4340,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the turn, your unit is eligible to declare a charge in a turn in which it Advanced.
 
 ### Nightmare Hunt (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Terror Made Manifest
 - In the Battle-shock step of your opponent's Command phase, if an enemy unit that is below its Starting Strength is within 12" of one or more HERETIC ASTARTES units from your army, that enemy unit must take a Battle-shock test, subtracting 1 from the result. Enemy units affected by this Detachment rule do not need to take any other Battle-shock tests in the same phase.
   Each time a HERETIC ASTARTES model from your army makes an attack that targets a unit that is Below Half-strength, add 1 to the Hit roll.
@@ -3831,7 +4357,8 @@ HERETIC ASTARTES
 - Terrorglut Parasite 20 pts
 - HERETIC ASTARTES model only. At the start of the Fight phase, each enemy unit within Engagement Range of the bearer must take a Battle-shock test, subtracting 1 from the result.
 - Sorrowscent Vulture 35 pts
-- CHAOS LORD JUMP PACK model only. Models in the bearer's unit have the Scouts 6" ability. In the Declare Battle Formations step, the bearer can be attached to a WARP TALONS unit.
+- LEADER: WARP TALONS
+  CHAOS LORD JUMP PACK model only. Models in the bearer's unit have the Scouts 6" ability. In the Declare Battle Formations step, the bearer can be attached to a WARP TALONS unit.
 
 #### Stratagems
 - TALONS SUNK DEEP
@@ -3872,6 +4399,8 @@ HERETIC ASTARTES
   EFFECT: Select one enemy unit (excluding MONSTER and VEHICLE units) within 12" of and visible to your unit: that unit must take a Battle-shock test, subtracting 1 from the result.
 
 ### Huron's Marauders (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Tyrannical Motivation
 - In your Command phase, select one of the following abilities. Until the start of your next Command phase, each Heretic Astartes Infantry unit from your army has that ability. At the start of each phase, if such a unit is visible to a friendly Huron Blackheart model, until the end of the phase, it has both of the following abilities.
   Huron's Elite
@@ -3933,6 +4462,8 @@ HERETIC ASTARTES
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Renegade Warband (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Slaves to None
 - HERETIC ASTARTES models from your army lose the Dark Pacts ability.
   Ranged weapons equipped by HERETIC ASTARTES models from your army have the [ASSAULT] ability.
@@ -3993,6 +4524,8 @@ HERETIC ASTARTES
   EFFECT: Your unit can make a Normal move of up to D6".
 
 ### Warpstrike Champions (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Warp Portals
 - At the end of your opponent's turn, you can select a number of HERETIC ASTARTES TERMINATOR, OBLITERATORS and MUTILATORS units from your army (excluding units that are within Engagement Range of one or more enemy units). The maximum number of units you can select depends on the battle size, as follows:
   BATTLE SIZENUMBER OF UNITS
@@ -4052,8 +4585,10 @@ HERETIC ASTARTES
   EFFECT: Your unit has +2 to charge rolls.
 
 ### Cult of the Arkifane (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Soul Forge Boons
-- HERETIC ASTARTES VEHICLE units from your army gain the Daemon keyword.
+- HERETIC ASTARTES VEHICLE units from your army gain the DAEMON keyword.
   HERETIC ASTARTES VEHICLE, LORD DISCORDANT and VASHTORR THE ARKIFANE units from your army gain the SOUL FORGE keyword.
   SOUL FORGE units from your army have a 5+ invulnerable save.
 
@@ -4065,7 +4600,7 @@ HERETIC ASTARTES
 - Mark of the Soul Forges 20 pts
 - HERETIC ASTARTES model only (excluding DAMNED models). Each time the bearer makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.
 - Crown of Worms 15 pts
-- Warpsmith model only. Add 3" to the range of the bearer's Warpsmith, Master of Mechanisms and Enrage Machine Spirits abilities.
+- WARPSMITH model only. Add 3" to the range of the bearer's Warpsmith, Master of Mechanisms and Enrage Machine Spirits abilities.
 
 #### Stratagems
 - TOUCH OF THE ARKIFANE
@@ -4106,6 +4641,8 @@ HERETIC ASTARTES
   EFFECT: Until the end of the phase, add 1 to the Toughness characteristic of models in your unit.
 
 ### Cabal of Chaos (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Empyric Wellspring
 - In your Shooting phase, when a friendly HERETIC ASTARTES PSYKER unit (excluding DAEMON units) is selected to shoot, if that unit makes a Dark Pact, that unit's ranged attacks have +1 S.
   - In the Fight phase, when a friendly HERETIC ASTARTES DAEMON PRINCE/DAEMON PRINCE WITH WINGS unit (excluding KHORNE units) is selected to fight, if that unit makes a Dark Pact, that unit's melee attacks have:
@@ -4115,6 +4652,8 @@ HERETIC ASTARTES
 #### Enhancements
 - Touched by the Warp 10 pts
 - HERETIC ASTARTES model only (excluding KHORNE models).
+  - This model has PSYKER.
+  - This model's weapons have [PSYCHIC].
 - Conduit of Chaos 20 pts
 - HERETIC ASTARTES DAEMON model only (excluding KHORNE models). This model's melee attacks have [LANCE].
 
@@ -4143,12 +4682,16 @@ HERETIC ASTARTES
   EFFECT: Your unit's ranged attacks have [IGNORES COVER].
 
 ### Devotees of Destruction (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Rain of Ruin
 - Friendly HAVOCS/OBLITERATORS units' ranged attacks have [HEAVY].
 
 #### Enhancements
 - Pact of Destruction 15 pts
 - WARPSMITH model only.
+  - When this unit uses its Dark Pacts ability, this unit can re-roll Leadership rolls.
+  - In your Shooting phase, when this unit has shot, if this unit used its Dark Pacts ability and if those attacks destroyed an enemy model, this unit heals 3 wounds
 - Eye of Oblivion 20 pts
 - WARPSMITH model only. When this unit is selected to shoot, select one enemy unit within 24" of this unit. That enemy unit has +6" detection range until this unit has shot.
 
@@ -4175,6 +4718,8 @@ HERETIC ASTARTES
   EFFECT: Attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.
 
 ### Murdertalon Raiders (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Prey on the Weak
 - Friendly HERETIC ASTARTES INFANTRY FLY units' attacks that target a battle-shocked unit or a unit at or below half-strength can re-roll hit rolls of 1.
   - When an enemy unit's attacks target a friendly HERETIC ASTARTES INFANTRY FLY unit, if that enemy unit is battle-shocked or at or below half-strength, those attacks have -1 to hit rolls.
@@ -4184,7 +4729,10 @@ HERETIC ASTARTES
 - Shadowcowl Talisman 20 pts
 - CHAOS LORD WITH JUMP PACK model only. This unit has 5+ InSv.
 - Pact of Cursed Pinions 20 pts
-- CHAOS LORD WITH JUMP PACK model only.
+- LEADER: WARP TALONS
+  CHAOS LORD WITH JUMP PACK model only.
+  - This model has DAEMON.
+  - This model's melee attacks have +1 A.
 
 #### Stratagems
 - PLUNGING TALONS

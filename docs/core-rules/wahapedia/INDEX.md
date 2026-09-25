@@ -2,7 +2,7 @@
 
 - [Core Rules reference](core-rules.md)
 
-Captured: 2026-08-29.
+Captured: 2026-09-25.
 
 Source: [Wahapedia Core Rules](https://wahapedia.ru/wh40k11ed/the-rules/core-rules/).
 

@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/death-guard/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/death-guard/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -91,12 +91,17 @@
 | melee | -- | Lakrimae - strike | lethal hits | Melee | 6 | 2+ | 9 | -2 | 3 |
 | melee | -- | Lakrimae - sweep | lethal hits | Melee | 12 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Nurgle's Gift (Aura)
 - The Destroyer Hive: While this model is leading a unit, each time a melee attack targets that unit, subtract 1 from the Hit roll.
-  Eater Plague (Psychic): In your Shooting phase, you can select one enemy unit within 18" of and visible to this PSYKER (excluding units with the Lone Operative ability that are not part of an Attached unit and are not within 12" of this PSYKER) and roll one D6: on a 1, this PSYKER's unit suffers D3 mortal wounds; on a 2-5, that enemy unit suffers D6 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
+- Eater Plague (Psychic): In your Shooting phase, you can select one enemy unit within 18" of and visible to this PSYKER (excluding units with the Lone Operative ability that are not part of an Attached unit and are not within 12" of this PSYKER) and roll one D6: on a 1, this PSYKER's unit suffers D3 mortal wounds; on a 2-5, that enemy unit suffers D6 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
 
 #### Unit Composition
 - 1 Typhus - EPIC HERO
@@ -135,12 +140,18 @@ DEATH GUARD
 | melee | -- | Silence - strike | devastating wounds lethal hits | Melee | 5 | 2+ | 14 | -3 | D6+1 |
 | melee | -- | Silence - sweep | lethal hits sustained hits 1 | Melee | 15 | 2+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+- Feel No Pain 5+
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike, Feel No Pain 5+
-- FACTION: Nurgle's Gift (Aura)
 - Lord of the Death Guard: Once per turn, this model can use one of the Lord of the Death Guard abilities (see left).
-  Host of Plagues: At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model, adding 1 to the result if that enemy unit is Afflicted: on a 3+, that enemy unit suffers D3 mortal wounds.
+- Host of Plagues: At the end of your Movement phase, roll one D6 for each enemy unit within 6" of this model, adding 1 to the result if that enemy unit is Afflicted: on a 3+, that enemy unit suffers D3 mortal wounds.
 
 #### Unit Composition
 - 1 Mortarion - EPIC HERO
@@ -175,12 +186,18 @@ DEATH GUARD
 | melee | -- | Gnarlrod - strike | lethal hits psychic | Melee | 7 | 2+ | 10 | -3 | 3 |
 | melee | -- | Gnarlrod - sweep | lethal hits psychic | Melee | 14 | 2+ | 8 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+- Feel No Pain 6+
+
+#### Army Rules
+- Pact of Decay
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike, Feel No Pain 6+
-- FACTION: Pact of Decay
 - Virulent Blessing (Psychic): At the start of the Fight phase, you can select one enemy unit within 24" and visible to this model. Until the end of the phase, each time an attack made by a PLAGUE LEGIONS model is allocated to a model in that unit, add 1 to the Damage characteristic of that attack.
-  Deluge of Nurgle (Aura): While an enemy unit is within 6" of this model, subtract 2 from the Move characteristic and subtract 1 from the Objective Control characteristic of models in that unit.
+- Deluge of Nurgle (Aura): While an enemy unit is within 6" of this model, subtract 2 from the Move characteristic and subtract 1 from the Objective Control characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Rotigus - EPIC HERO
@@ -215,12 +232,17 @@ PLAGUE LEGIONS
 | ranged | -- | Injector pistol | anti-infantry 2+ pistol precision | 3" | 1 | 3+ | 4 | -1 | 3 |
 | melee | -- | Plague knives | lethal hits | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Leader
-- FACTION: Nurgle's Gift (Aura)
 - Foul Infusion: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability. In addition, each time a model in that unit makes an attack, a Critical Hit is scored on an unmodified Hit roll of 5+, instead of only a 6.
-  Extraction of Fresh Disease: The first time this model's unit destroys an enemy unit as the result of a melee attack, until the end of the battle, add 6 to the Objective Control characteristic of this model.
+- Extraction of Fresh Disease: The first time this model's unit destroys an enemy unit as the result of a melee attack, until the end of the battle, add 6 to the Objective Control characteristic of this model.
 
 #### Unit Composition
 - 1 Biologus Putrifier
@@ -275,12 +297,16 @@ DEATH GUARD
 | ranged | -- | Plague sprayer | anti-infantry 2+ ignores cover torrent | 12" | D6 | N/A | 7 | -2 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Blinding Spray: In the Fight phase, you can select one model from your army with this ability to use this ability. If you do, until the end of the phase, that model's unit has the Fights First ability. Each model can only be selected for this ability once per battle.
-  Putrefying Stink: Enemy models cannot start or end an Advance move within 9" of this model.
+- Putrefying Stink: Enemy models cannot start or end an Advance move within 9" of this model.
 
 #### Unit Composition
 - 1 Foul Blightspawn
@@ -334,12 +360,16 @@ DEATH GUARD
 | ranged | -- | Boltgun | lethal hits | 24" | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Plague knife | lethal hits | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Unclean Icon: While this model is leading a unit, add 1 to the Objective Control characteristic of models in that unit.
-  Blessed Icon of Disease: Once per battle, at the start of any phase, you can select one friendly DEATH GUARD unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
+- Blessed Icon of Disease: Once per battle, at the start of any phase, you can select one friendly DEATH GUARD unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Icon Bearer
@@ -393,12 +423,17 @@ DEATH GUARD
 | melee | -- | Manreaper - strike | lethal hits | Melee | 5 | 2+ | 9 | -2 | 3 |
 | melee | -- | Manreaper - sweep | lethal hits | Melee | 10 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Nurgle's Gift (Aura)
 - Vector of Disease: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] and [LANCE] abilities.
-  Unholy Resilience: The first time a model with this ability is destroyed in a battle round, roll one D6 at the end of the phase. On a 2+, set that model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 3 wounds remaining. Each model can only be set up in this way once per battle.
+- Unholy Resilience: The first time a model with this ability is destroyed in a battle round, roll one D6 at the end of the phase. On a 2+, set that model back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with 3 wounds remaining. Each model can only be set up in this way once per battle.
 
 #### Unit Composition
 - 1 Lord of Contagion
@@ -458,12 +493,16 @@ DEATH GUARD
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 2+ | 8 | -3 | 2 |
 | melee | -- | Great plague blade | devastating wounds lethal Hits | Melee | 6 | 2+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Gift of Poxes: Add 3" to the range of this model's Contagion Range.
-  Shroud of Disease: While this model is leading a unit, that unit cannot be targeted by ranged attacks unless the attacking model is within 18".
+- Shroud of Disease: While this model is leading a unit, that unit cannot be targeted by ranged attacks unless the attacking model is within 18".
 
 #### Unit Composition
 - 1 Lord of Poxes
@@ -513,12 +552,17 @@ DEATH GUARD
 | ranged | -- | Twin plague spewer | anti-infantry 2+ ignores cover torrent twin-linked | 12" | D6 | N/A | 5 | -1 | 1 |
 | melee | -- | Power fist | lethal hits | Melee | 5 | 2+ | 8 | -2 | 2 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: Nurgle's Gift (Aura)
 - Virulent Aura: While this model is leading a unit, each time a model in that unit makes a ranged attack, you can re-roll the Wound roll.
-  Blight Bombardment: At the start of your Shooting phase, select one enemy unit within 30" of and visible to this model. Until the end of the phase, each time a friendly DEATH GUARD model makes a ranged attack that targets that unit, re-roll a Hit roll of 1 (if that attack is made with a Blast weapon, you can re-roll the Hit roll instead).
+- Blight Bombardment: At the start of your Shooting phase, select one enemy unit within 30" of and visible to this model. Until the end of the phase, each time a friendly DEATH GUARD model makes a ranged attack that targets that unit, re-roll a Hit roll of 1 (if that attack is made with a Blast weapon, you can re-roll the Hit roll instead).
 
 #### Unit Composition
 - 1 Lord of Virulence
@@ -580,12 +624,16 @@ DEATH GUARD
 | ranged | -- | Plague Wind - focused witchfire | hazardous psychic torrent | 12" | D6+3 | N/A | 6 | -2 | D3 |
 | melee | -- | Corrupted staff | lethal hits psychic | Melee | 4 | 3+ | 6 | -1 | D3 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Gift of Contagion (Psychic): While this model is leading a unit, each time a model in that unit makes an attack that targets a unit that is Afflicted, that attack has the [SUSTAINED HITS 1] ability.
-  Pestilent Fallout (Psychic): In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks made with its Plague Wind. Until the end of your opponent's next turn, that unit is enfeebled. While a unit is enfeebled, subtract 2" from the Move characteristic of models in that unit.
+- Pestilent Fallout (Psychic): In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks made with its Plague Wind. Until the end of your opponent's next turn, that unit is enfeebled. While a unit is enfeebled, subtract 2" from the Move characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Malignant Plaguecaster
@@ -644,12 +692,16 @@ DEATH GUARD
 | ranged | -- | Plasma pistol - supercharge | pistol hazardous | 12" | 1 | 3+ | 8 | -3 | 2 |
 | melee | -- | Cursed plague bell | anti-psyker 2+ lethal hits | Melee | 5 | 3+ | 4 | 0 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Sickening Vitality: While this model is leading a unit, add 1" to the Move characteristic of models in that unit and you can re-roll Advance and Charge rolls made for that unit.
-  Tocsin of Misery (Aura): In the Battle-shock step of your opponent's Command phase, if an enemy unit that is below its Starting Strength is within 9" of this model, that enemy unit must take a Battle-shock test, subtracting 1 from that test if it is a PSYKER unit.
+- Tocsin of Misery (Aura): In the Battle-shock step of your opponent's Command phase, if an enemy unit that is below its Starting Strength is within 9" of this model, that enemy unit must take a Battle-shock test, subtracting 1 from that test if it is a PSYKER unit.
 
 #### Unit Composition
 - 1 Noxious Blightbringer
@@ -705,12 +757,16 @@ DEATH GUARD
 | ranged | -- | Bolt pistol | lethal hits pistol | 12" | 1 | 3+ | 4 | 0 | 1 |
 | melee | -- | Balesword | lethal hits | Melee | 4 | 3+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Tainted Narthecium: While this model is leading a unit, in your Command phase, you can return 1 destroyed Bodyguard model to that unit.
-  Inflamed Infections: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. Until the end of the phase, each time this model makes an attack that targets that unit, an unmodified Hit roll of 5+ scores a Critical Hit. If that unit is Below Half-strength, an unmodified Hit roll of 4+ scores a Critical Hit instead.
+- Inflamed Infections: At the start of the Fight phase, select one enemy unit within Engagement Range of this model. Until the end of the phase, each time this model makes an attack that targets that unit, an unmodified Hit roll of 5+ scores a Critical Hit. If that unit is Below Half-strength, an unmodified Hit roll of 4+ scores a Critical Hit instead.
 
 #### Unit Composition
 - 1 Plague Surgeon
@@ -766,12 +822,16 @@ DEATH GUARD
 | ranged | -- | Plasma pistol - supercharge | hazardous pistol | 12" | 1 | 3+ | 8 | -3 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Nurgle's Gift (Aura)
 - Malicious Calculations: While this model is leading a unit, each time a model in that unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic Skill or Weapon Skill characteristics and/or any or all modifiers to the Hit roll.
-  Sevenfold Chant: In your Command phase, if this model is on the battlefield, roll 2D6: on a 7+, you gain 1CP.
+- Sevenfold Chant: In your Command phase, if this model is on the battlefield, roll 2D6: on a 7+, you gain 1CP.
 
 #### Unit Composition
 - 1 Tallyman
@@ -826,13 +886,17 @@ DEATH GUARD
 | melee | -- | Hellforged weapons - strike | lethal hits | Melee | 7 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | lethal hits | Melee | 14 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Death Guard Defenders: While this model is within 3" of one or more friendly DEATH GUARD INFANTRY units, this model has the Lone Operative ability.
-  Fevered Strategist: Once per battle round, one model from your army with this ability can use it when a friendly DEATH GUARD unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
-  Miasma of Pestilence (Aura): While a friendly DEATH GUARD unit is within 6" of this model, each time a ranged attack targets that unit, models in that unit have the Benefit of Cover against that attack.
+- Fevered Strategist: Once per battle round, one model from your army with this ability can use it when a friendly DEATH GUARD unit within 12" of that model is targeted with a Stratagem. If it does, reduce the CP cost of that usage of that Stratagem by 1CP.
+- Miasma of Pestilence (Aura): While a friendly DEATH GUARD unit is within 6" of this model, each time a ranged attack targets that unit, models in that unit have the Benefit of Cover against that attack.
 
 #### Unit Composition
 - 1 Daemon Prince of Nurgle
@@ -876,12 +940,17 @@ DEATH GUARD
 | melee | -- | Hellforged weapons - strike | lethal hits | Melee | 7 | 2+ | 8 | -2 | 3 |
 | melee | -- | Hellforged weapons - sweep | lethal hits | Melee | 14 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Nurgle's Gift (Aura)
 - Horrifying Visage: Each time this model ends a Charge move, select one enemy unit within Engagement Range of it. That unit must take a Battle-shock test, subtracting 1 from that test.
-  Enfeebling Miasma (Aura): While an enemy unit (excluding MONSTERS and VEHICLES) is within 6" of this model, each time that unit is selected to Fall Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those Desperate Escape tests.
+- Enfeebling Miasma (Aura): While an enemy unit (excluding MONSTERS and VEHICLES) is within 6" of this model, each time that unit is selected to Fall Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those Desperate Escape tests.
 
 #### Unit Composition
 - 1 Daemon Prince of Nurgle with Wings
@@ -928,12 +997,22 @@ DEATH GUARD
 | melee | -- | Bilesword - sweep | lethal hits | Melee | 12 | 2+ | 7 | -1 | 1 |
 | melee | -- | Doomsday bell | lethal hits Reverberating summons | Melee | 6 | 2+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's plague flail can be replaced with 1 bileblade.
+- This model's bilesword can be replaced with 1 doomsday bell.
+
+#### Core Abilities
+- Deadly Demise D6
+- Deep Strike
+- Feel No Pain 6+
+
+#### Army Rules
+- Pact of Decay
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6, Deep Strike, Feel No Pain 6+
-- FACTION: Pact of Decay
 - Daemon Lord of Nurgle (Aura): While a friendly PLAGUE LEGIONS unit is within 6" of this model, add 1 to the Toughness characteristic of models in that unit.
-  Nurgle's Rot (Psychic): At the end of your Movement phase, you can select one enemy unit within 12" of this model. Until the start of your next Movement phase, that unit is rotted. While a unit is rotted, subtract 1 from the Toughness characteristic of models in that unit.
+- Nurgle's Rot (Psychic): At the end of your Movement phase, you can select one enemy unit within 12" of this model. Until the start of your next Movement phase, that unit is rotted. While a unit is rotted, subtract 1 from the Toughness characteristic of models in that unit.
 
 #### Unit Composition
 - 1 Great Unclean One
@@ -983,12 +1062,30 @@ PLAGUE LEGIONS
 | melee | -- | Plague knives | lethal hits | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Power fist | lethal hits | Melee | 3 | 3+ | 8 | -2 | 2 |
 
+#### Wargear options
+- The Plague Champion's boltgun can be replaced with one of the following:
+  - 1 bolt pistol
+  - 1 plasma gun
+  - 1 plasma pistol
+- The Plague Champion's plague knives can be replaced with one of the following:
+  - 1 bubotic weapons
+  - 1 power fist
+- For every 5 models in this unit, 1 Plague Marine's boltgun can be replaced with 1 blight launcher.
+- For every 5 models in this unit, 1 Plague Marine's boltgun can be replaced with 1 plague spewer.
+- For every 5 models in this unit, 1 Plague Marine's boltgun can be replaced with one of the following:
+  - 1 meltagun
+  - 1 plague belcher
+  - 1 plasma gun
+- For every 5 models in this unit, up to 2 Plague Marines can each have their boltgun replaced with 1 bubotic weapons.
+- For every 5 models in this unit, up to 2 Plague Marines can each have their boltgun replaced with 1 heavy plague weapon.
+- One Plague Marine equipped with a boltgun can be equipped with 1 icon of despair. This model's boltgun cannot be replaced.
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Nurgle's Gift (Aura)
 - Infused with the Blessings of Nurgle: In your Shooting phase, each time this unit is selected to shoot, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next turn, that enemy unit is Afflicted.
-
-#### Wargear Abilities
 - Icon of Despair (Aura): While an enemy unit is within 6" of the bearer, worsen the Leadership characteristic of models in that unit by 1.
 
 #### Unit Composition
@@ -1026,13 +1123,19 @@ DEATH GUARD
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Plaguesword | lethal hits | Melee | 2 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Plaguebearer that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Plaguebearer that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Decay
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Decay
 - Infected Outbreak: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -1068,18 +1171,29 @@ PLAGUE LEGIONS
 | ranged | -- | Havoc launcher | blast | 48" | D6 | 3+ | 5 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 additional combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher or can replace 1 combi-bolter with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 2
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 2
-- FACTION: Nurgle's Gift (Aura)
 - Fire Support: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
+
+#### Transport
+- This model has a transport capacity of 12 DEATH GUARD INFANTRY models. It cannot transport TERMINATOR models.
 
 #### Unit Composition
 - 1 Chaos Rhino
   This model is equipped with: combi-bolter; armoured tracks.
-
-#### Transport
-- This model has a transport capacity of 12 DEATH GUARD INFANTRY models. It cannot transport TERMINATOR models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -1106,10 +1220,16 @@ DEATH GUARD
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Putrid appendages | devastating wounds | Melee | 6 | 4+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Deep Strike
+- Scouts 6"
+
+#### Army Rules
+- Pact of Decay
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Deep Strike, Scouts 6"
-- FACTION: Pact of Decay
 - Grotesque Regeneration: At the end of each phase, if a Beasts of Nurgle model in this unit has lost any wounds but is not destroyed, that model regains all of its lost wounds.
 
 #### Unit Composition
@@ -1141,10 +1261,16 @@ PLAGUE LEGIONS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Hideous mutations | -- | Melee | D6+2 | 4+ | 5 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+- Scouts 6"
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+, Scouts 6"
-- FACTION: Nurgle's Gift (Aura)
 - Lethal Ichor: Each time a melee attack is allocated to a model in this unit, after the attacking unit has finished making its attacks, roll one D6 (to a maximum of six D6 per attacking unit): for each 4+, the attacking unit suffers 1 mortal wound.
 
 #### Unit Composition
@@ -1182,10 +1308,22 @@ DEATH GUARD
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 4 | 0 | 1 |
 | melee | -- | Flail of corruption | lethal hits | Melee | 6 | 3+ | 5 | -1 | 2 |
 
+#### Wargear options
+- For every 5 models in this unit, up to 3 models' combi-bolters can each be replaced with 1 combi-weapon.
+- For every 5 models in this unit, 1 Blightlord Terminator's combi-bolter and bubotic blade can be replaced with 1 flail of corruption.
+- For every 5 models in this unit, 1 Blightlord Terminator's combi-bolter can be replaced with 1 blight launcher.
+- For every 5 models in this unit, 1 Blightlord Terminator's combi-bolter can be replaced with 1 reaper autocannon.
+- For every 5 models in this unit, 1 Blightlord Terminator's combi-bolter can be replaced with 1 plague spewer.
+- If this unit contains only 3 models, 1 Blightlord Terminator's combi-bolter and bubotic blade can be replaced with 1 plague spewer and 1 close combat weapon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Nurgle's Gift (Aura)
 - Blistering Fusillade: If this unit has a Starting Strength of 5 or more, or if a CHARACTER is leading this unit, then each time a model in this unit makes a ranged attack that targets an Afflicted unit, improve the Strength and Armour Penetration characteristics of that attack by 1.
 
 #### Unit Composition
@@ -1221,14 +1359,20 @@ DEATH GUARD
 | melee | -- | Manreaper - strike | lethal hits | Melee | 4 | 2+ | 8 | -2 | 2 |
 | melee | -- | Manreaper - sweep | lethal hits | Melee | 8 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- The Deathshroud Champion can be equipped with 1 additional plaguespurt gauntlet.
+- The Deathshroud Champion can be equipped with 1 icon of despair.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Nurgle's Gift (Aura)
 - Silent Bodyguard: While a CHARACTER model is leading this unit, that CHARACTER model has the Feel No Pain 4+ ability.
-  Death Approaches: In your movement phase, each time this unit is set up on the battlefield using the Deep Strike ability, it can be set up anywhere on the battlefield that is more than 6" horizontally away from all Afflicted enemy units, and more than 8" horizontally away from all other enemy units.
-
-#### Wargear Abilities
+- Death Approaches: In your movement phase, each time this unit is set up on the battlefield using the Deep Strike ability, it can be set up anywhere on the battlefield that is more than 6" horizontally away from all Afflicted enemy units, and more than 8" horizontally away from all other enemy units.
 - Icon of Despair (Aura): While an enemy unit is within 6" of the bearer, worsen the Leadership characteristic of models in that unit by 1.
 
 #### Unit Composition
@@ -1263,10 +1407,15 @@ DEATH GUARD
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Improvised weapon | lethal hits | Melee | 2 | 5+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Feel No Pain 5+
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Feel No Pain 5+
-- FACTION: Nurgle's Gift (Aura)
 - Curse of the Walking Pox: Each time a POXWALKER model in this unit makes an attack that destroys an enemy model (excluding MONSTER and VEHICLE models), after this unit has resolved its attacks, you can return one destroyed POXWALKER model to this unit.
   While TYPHUS is leading this unit, enemy models destroyed as a result of TYPHUS' Eater Plague ability count as enemy models destroyed by an attack made by a POXWALKER model in this unit for the purposes of this ability.
 
@@ -1301,13 +1450,19 @@ DEATH GUARD
 | melee | -- | Foul mouthparts | extra attacks lethal hits | Melee | 2 | 4+ | 5 | -1 | 2 |
 | melee | -- | Plaguesword | lethal hits | Melee | 2 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- 1 Plague Drone that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.
+- 1 Plague Drone that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon.
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Pact of Decay
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Pact of Decay
 - Death's Heads: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the turn, each time a friendly PLAGUE LEGIONS unit makes an attack that targets that unit, you can re-roll the Wound roll.
-
-#### Wargear Abilities
 - Daemonic Icon: Models in the bearer's unit have a Leadership characteristic of 6+.
 - Instrument of Chaos: Add 1 to Charge rolls made for the bearer's unit.
 
@@ -1341,10 +1496,15 @@ PLAGUE LEGIONS
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Diseased claws and teeth | lethal hits | Melee | 4 | 5+ | 2 | 0 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+
+#### Army Rules
+- Pact of Decay
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators
-- FACTION: Pact of Decay
 - Mischief Makers: Each time an enemy unit (excluding TITAN units) within Engagement Range of one or more units with this ability is selected to fight, until the end of the phase, each time a model in that enemy unit makes a melee attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -1381,11 +1541,24 @@ PLAGUE LEGIONS
 | ranged | -- | Twin heavy bolter | lethal hits sustained hits 1 twin-linked | 36" | 3 | 3+ | 5 | -1 | 2 |
 | melee | -- | Armoured tracks | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Nurgle's Gift (Aura)
 - Assault Ramp: Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 14 DEATH GUARD INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Unit Composition
 - 1 Chaos Land Raider
@@ -1393,9 +1566,6 @@ PLAGUE LEGIONS
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 DEATH GUARD INFANTRY models. Each TERMINATOR model takes up the space of 2 models.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 1 model -- **220 pts**
@@ -1428,10 +1598,23 @@ DEATH GUARD
 | ranged | -- | Predator twin lascannon | twin-linked | 48" | 1 | 3+ | 14 | -3 | D6+1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 lascannons
+  - 2 heavy bolters
+- This model can be equipped with one of the following:
+  - 1 combi-weapon
+  - 1 combi-bolter
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Metalophagic Infection: In your Shooting phase, after this model has shot, select one enemy MONSTER or VEHICLE unit hit by one or more of those attacks. Roll one D6, adding 1 to the result if that unit is Afflicted; on a 5+, that unit suffers D3 mortal wounds.
 
 #### Unit Composition
@@ -1472,10 +1655,23 @@ DEATH GUARD
 | ranged | -- | Predator autocannon | lethal hits rapid fire 2 | 48" | 4 | 3+ | 9 | -1 | 3 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with one of the following:
+  - 2 heavy bolters
+  - 2 lascannons
+- This model can be equipped with one of the following:
+  - 1 combi-bolter
+  - 1 combi-weapon
+- This model can be equipped with 1 havoc launcher.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Hail of Corrosive Disease: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the end of the phase, each time a friendly DEATH GUARD unit makes a ranged attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per phase.
 
 #### Unit Composition
@@ -1512,10 +1708,17 @@ DEATH GUARD
 | melee | -- | Fleshmower | lethal hits | Melee | 10 | 3+ | 7 | -1 | 2 |
 | melee | -- | Plague probe | lethal hits | Melee | 3 | 3+ | 6 | -1 | 1 |
 
+#### Wargear options
+- This model's fleshmower can be replaced with 2 plaguespitters.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Hovering Death: This model is eligible to shoot and declare a charge in a turn in which it Fell Back.
 
 #### Unit Composition
@@ -1551,10 +1754,14 @@ DEATH GUARD
 | ranged | -- | Heavy blight launcher | blast lethal hits | 36" | D6+2 | 3+ | 10 | -2 | 3 |
 | melee | -- | Plague probe | lethal hits | Melee | 3 | 3+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Explosive Blight: In your Shooting phase, each time this model makes an attack that destroys an enemy unit, before removing the last model in that unit from play, roll a D6, adding 1 to the result if that unit is Afflicted: on a 5+, each enemy unit within 6" of that model is Afflicted until the start of your next turn.
 
 #### Unit Composition
@@ -1593,10 +1800,14 @@ DEATH GUARD
 | ranged | -- | Multi-melta | melta 2 lethal hits | 18" | 2 | 3+ | 9 | -4 | D6 |
 | melee | -- | Gnashing maw | lethal hits | Melee | 4 | 3+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Tank Hunters: In your Shooting phase, each time a model in this unit makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll and add 1 to the Wound roll.
 
 #### Unit Composition
@@ -1637,10 +1848,18 @@ DEATH GUARD
 | ranged | -- | Rothail volley gun | lethal hits rapid fire 3 | 36" | 3 | 3+ | 5 | 0 | 1 |
 | melee | -- | Armoured tracks | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 entropy cannons can be replaced with 2 plaguespitters.
+- This model's heavy slugger can be replaced with 1 rothail volley gun.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Spore-laced Shock Waves: In your Shooting phase, each time you select a target for this model's Plagueburst mortar, roll one D6 for the target unit and every other enemy unit within 3" of the target unit, adding 1 to that roll if the unit being rolled for is Afflicted. On a 6+, the unit being rolled for is struck by spores; after resolving all of this model's attacks against the target unit, each unit struck by spores suffers D3 mortal wounds.
 
 #### Unit Composition
@@ -1686,12 +1905,28 @@ DEATH GUARD
 | melee | -- | Shearing claws - strike | lethal hits | Melee | 5 | 3+ | 16 | -3 | D6+1 |
 | melee | -- | Shearing claws - sweep | lethal hits | Melee | 10 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- This model's Hades battle cannon can be replaced with 1 ectoplasma destructor.
+- This model's excruciator cannons can be replaced with 2 magma cutters
+- This model's heavy baleflamer can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+- This model's heavy missile launcher can be replaced with one of the following:
+  - 1 Hades lascannon
+  - 1 heavy reaper autocannon
+  - 1 electroscourge (a model cannot be equipped with more than one electroscourge)
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Nurgle's Gift (Aura)
 - Scuttling Walker: Each time this unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.
-  Barrage of Filth: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that unit cannot have the Benefit of Cover.
+- Barrage of Filth: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that unit cannot have the Benefit of Cover.
 
 #### Unit Composition
 - 1 Defiler
@@ -1739,12 +1974,31 @@ DEATH GUARD
 | melee | -- | Helbrute hammer | -- | Melee | 4 | 3+ | 14 | -3 | D6+1 |
 | melee | -- | Power scourge | -- | Melee | 8 | 3+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's multi-melta can be replaced with one of the following:
+  - 1 plasma cannon
+  - 1 twin autocannon
+  - 1 twin lascannon
+  - 1 twin heavy bolter
+  - 1 additional Helbrute fist
+- 1 of this model's Helbrute fists can be replaced with 1 missile launcher
+- 1 of this model's Helbrute fists can be replaced with one of the following:
+  - 1 Helbrute hammer
+  - 1 power scourge
+- For each Helbrute fist this model is equipped with, it can be equipped with one of the following:
+  - 1 combi-bolter*
+  - 1 heavy flamer*
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Nurgle's Gift (Aura)
 - Diseased Malice: Each time this model makes an attack that targets an Afflicted unit, add 1 to the Wound roll.
-  Froth-spattered Frenzy: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
+- Froth-spattered Frenzy: If this model is equipped with two melee weapons in addition to its close combat weapon, add 2 to the Attacks characteristic of those two weapons.
 
 #### Unit Composition
 - 1 Helbrute
@@ -1778,13 +2032,17 @@ DEATH GUARD
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | ranged | -- | Miasmic gouts | ignores cover torrent | 9" | 2D6 | N/A | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Nurgle's Gift (Aura)
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Nurgle's Gift (Aura)
 - Putrescent Fog (Aura): Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12" of this model.
-  Diseased Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to the attacking unit because of this Fortification, that model has the Benefit of Cover against that attack.
-  Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
+- Diseased Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to the attacking unit because of this Fortification, that model has the Benefit of Cover against that attack.
+- Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
 
@@ -1803,6 +2061,8 @@ DEATH GUARD
 ## Detachments
 
 ### Virulent Vectorium (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Worldblight
 - At the end of your Command phase, if a friendly DEATH GUARD unit is controlling an objective, that objective is secured. Until you lose control of that objective, while an enemy unit is within range of that objective, that enemy unit is Afflicted.
 
@@ -1855,6 +2115,8 @@ DEATH GUARD
   EFFECT: Until the end of the phase, each time a model in your unit makes a ranged attack that targets an Afflicted unit, you can re-roll the Hit roll and you can re-roll the Wound roll.
 
 ### Mortarion's Hammer (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Miasmic Bombardment
 - At the start of the battle round, select a number of enemy units more than 12" away from every model from your army that is on the battlefield. Until the end of the battle round, those enemy units are Afflicted. The maximum number of units you can select in this way depends on the battle size, as shown below.
   BATTLE SIZEUNITS
@@ -1911,6 +2173,8 @@ DEATH GUARD
   EFFECT: Select one visible enemy unit within 12" of your unit. When that enemy unit declares a charge, that enemy unit has -1 to charge rolls.
 
 ### Champions of Contagion (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Manifold Maladies
 - At the start of the battle round, you can select one of the Plagues listed in Nurgle's Gift. Until the end of the battle, that is your chosen Plague instead of any previously chosen Plague.
 
@@ -1963,6 +2227,8 @@ DEATH GUARD
   EFFECT: Select one enemy unit (excluding VEHICLES) that is within 8" of and visible to your unit. Until the start of your next turn, that unit has the effect of all Plagues (see Nurgle's Gift).
 
 ### Tallyband Summoners (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Reverberant Rancidity
 - While a PLAGUE LEGIONS unit from your army is within 7" of one or more DEATH GUARD units from your army, that PLAGUE LEGIONS unit has the Nurgle's Gift ability.
   While a DEATH GUARD unit from your army is within 7" of one or more PLAGUE LEGIONS units from your army, add 3" to that DEATH GUARD units Contagion Range.
@@ -2023,6 +2289,8 @@ DEATH GUARD
   EFFECT: Until the end of the phase, while an enemy unit is within Engagement Range of your unit, each time that unit is selected to Fall Back, it must take a Leadership test. If that test is failed, that unit must Remain Stationary this phase instead.
 
 ### Shamblerot Vectorium (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Numberless Horde
 - In your Command phase in each of the following battle rounds, depending on your chosen battle size, add a new POXWALKERS unit with a Starting Strength of 10 to your army, in Strategic Reserves.
   BATTLE SIZEBATTLE ROUNDS
@@ -2081,6 +2349,8 @@ DEATH GUARD
   EFFECT: Until the end of the phase, each time you would allocate an attack to a model in your DEATH GUARD unit, if your POXWALKERS unit is visible to the attacking model and is an eligible target for that attack, no saving throw is made for that attack; instead a number of POXWALKERS from your POXWALKERS unit equal to the Damage characteristic of that attack are destroyed.
 
 ### Death Lord's Chosen (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Deadly Vectors
 - In your opponent's Command phase, roll 2D6 for each Afflicted enemy unit, subtracting 1 from the result if that unit is Below Half-strength. If the result is 6 or less, that enemy unit suffers D3 mortal wounds.
 
@@ -2133,6 +2403,8 @@ DEATH GUARD
   EFFECT: Select one enemy unit within Engagement Range of your unit, then roll one D6 for each model in your unit that is within Engagement Range of that enemy unit: for each 2+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).
 
 ### Contagion Engines (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Warped and Rusted Animus
 - Friendly FOETID BLOAT-DRONE/FOETID BLOAT-DRONE WITH HEAVY BLIGHT LAUNCHER/HELBRUTE/MYPHITIC BLIGHT-HAULER units have CONTAGION ENGINE.
   - Friendly CONTAGION ENGINE units' ranged attacks have [ASSAULT].
@@ -2168,6 +2440,8 @@ DEATH GUARD
   - On a 6, that enemy unit suffers 3 mortal wounds.
 
 ### Flyblown Host (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Verminous Haze
 - In the Declare Battle Formations step, you can select up to two friendly PLAGUE MARINES units. Those units have Infiltrators.
   This detachment has the FLYBLOWN tag and cannot be taken with another FLYBLOWN detachment.
@@ -2201,6 +2475,8 @@ DEATH GUARD
   EFFECT: Your unit's ranged attacks have [CLOSE-QUARTERS].
 
 ### Paragons of Putrescence (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Hypervirulent Strains
 - Friendly DEATH GUARD CHARACTER units have +3" to their Contagion Range (to a maximum of 12").
 

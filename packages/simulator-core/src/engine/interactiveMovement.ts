@@ -902,7 +902,7 @@ export interface ScoutMoveContext {
 export function scoutMoveValue(profile: UnitProfile): number | null {
   const texts = [...(profile.abilities ?? []).flatMap(rule => [rule.name, rule.description]), ...(profile.rules ?? []).flatMap(rule => [rule.name, rule.description])];
   for (const text of texts) {
-    const match = text.match(/\bScouts?\s+(\d+)\s*["â€]?/i);
+    const match = text.match(/\bScouts?\s+(\d+)\s*["\u201D]?/i);
     if (match) return Number(match[1]);
   }
   return null;
@@ -1293,10 +1293,13 @@ export function moveModels(
       || context.attachedComponents(state, existing).some(component => component.id === pendingFightMovement.unitId));
   if (hasPendingFightMovement && !fightMovement) return state;
   if (state.phase === 'movement') {
-    if (state.activeArmy !== side || existing.movementComplete || context.isSurgedThisPhase(state, existing) || existing.fellBack
-      || existing.movementAction === 'fellBack' || existing.movementAction === 'remainedStationary') return state;
+    const fallingBack = existing.fellBack && existing.movementAction === 'fellBack' && !existing.movementComplete;
+    if (state.activeArmy !== side || existing.movementComplete || context.isSurgedThisPhase(state, existing)
+      || (existing.fellBack && !fallingBack)
+      || (existing.movementAction === 'fellBack' && !fallingBack)
+      || existing.movementAction === 'remainedStationary') return state;
     if (context.isAircraft(existing) && !context.aircraftCanMakeNormalMove(state)) return state;
-    if (!context.isAircraft(existing) && context.nonAircraftEngagedEnemies(state, existing).length > 0) return state;
+    if (!fallingBack && !context.isAircraft(existing) && context.nonAircraftEngagedEnemies(state, existing).length > 0) return state;
   }
   const next = context.clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
@@ -1359,7 +1362,11 @@ export function moveModels(
   if (next.phase === 'movement') {
     if (!context.preview) {
       context.lockOtherMovedUnits(next, unit);
-      unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+      unit.movementAction = unit.movementAction === 'advanced'
+        ? 'advanced'
+        : unit.movementAction === 'fellBack'
+          ? 'fellBack'
+          : 'normalMove';
     }
   }
   context.updateMovementAllowances(unit);
@@ -1503,6 +1510,9 @@ export function advanceUnit(state: BattleState, unitId: string, side: Side, rule
   context.lockOtherMovedUnits(next, unit);
   context.cancelUnitAction(next, unit, 'it made an Advance move');
   const advance = context.advanceAllowance(unit, rules);
+  // Keep the typed die result on the unit so a Command Re-roll can update the
+  // already-established movement allowance without inspecting display logs.
+  unit.advanceRoll = advance.advanceRoll;
   for (const component of context.attachedComponents(next, unit)) {
     const total = Math.max(0, context.normalMoveAllowance(component) + advance.advanceRoll + (component.profile.movementOverrides?.advanceModifier ?? 0) - context.takeToSkiesDistanceCost(component));
     component.movementAction = 'advanced';
@@ -1696,7 +1706,7 @@ export interface CompleteMovementContext {
 export function completeUnitMovement(state: BattleState, unitId: string, side: Side, context: CompleteMovementContext): BattleState {
   if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!existing || existing.movementComplete || (existing.movementAction !== 'normalMove' && existing.movementAction !== 'advanced')) return state;
+  if (!existing || existing.movementComplete || (existing.movementAction !== 'normalMove' && existing.movementAction !== 'advanced' && existing.movementAction !== 'fellBack')) return state;
   if (context.unitLegalityIssues(state, existing).length > 0) return state;
   const next = context.clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;

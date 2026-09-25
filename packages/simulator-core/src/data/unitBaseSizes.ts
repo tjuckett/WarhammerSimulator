@@ -28,6 +28,7 @@ import tauEmpireBaseSizes from './baseSizes/tau-empire.json';
 import thousandSonsBaseSizes from './baseSizes/thousand-sons.json';
 import tyranidsBaseSizes from './baseSizes/tyranids.json';
 import worldEatersBaseSizes from './baseSizes/world-eaters.json';
+import approximateHullSizes from './approximateHullSizes.json';
 
 type UnitBaseSizeEntry = {
   base?: ModelBase;
@@ -91,6 +92,14 @@ const BASE_SIZE_REGISTRY: Record<string, UnitBaseSizeMap> = Object.fromEntries(
   BASE_SIZE_DATA.map(data => [normalizeName(String(data.faction)), normalizeBaseSizeData(data)]),
 );
 
+for (const factionData of approximateHullSizes.factions) {
+  const factionKey = normalizeName(factionData.faction);
+  BASE_SIZE_REGISTRY[factionKey] = {
+    ...(BASE_SIZE_REGISTRY[factionKey] ?? {}),
+    ...normalizeBaseSizeData(factionData),
+  };
+}
+
 const BASE_SIZE_FACTION_KEYS = Object.keys(BASE_SIZE_REGISTRY);
 
 export function applyBaseSizesToArmy(army: ImportedArmy): ImportedArmy {
@@ -98,9 +107,7 @@ export function applyBaseSizesToArmy(army: ImportedArmy): ImportedArmy {
     ...army,
     units: army.units.map(unit => {
       const canonicalBases = baseSizesForUnit(army.faction, unit);
-      const isCanonicalOrkMixedBaseUnit = normalizeName(army.faction) === 'orks'
-        && ['boyz', 'squighog boyz'].includes(normalizeUnitName(unit.name));
-      const modelBases = isCanonicalOrkMixedBaseUnit ? canonicalBases : unit.modelBases ?? canonicalBases;
+      const modelBases = mergeCanonicalBaseGeometry(canonicalBases, unit.modelBases);
       return {
         ...unit,
         baseModelCount: modelBases && modelBases.length > unit.baseModelCount
@@ -116,9 +123,41 @@ export function baseSizesForUnit(faction: string, unit: UnitProfile): ModelBase[
   const factionMap = baseSizeMapForFaction(faction);
   if (!factionMap) return undefined;
   const exact = factionMap[normalizeUnitName(unit.name)];
-  if (exact) return expandBaseEntry(exact, unit.baseModelCount);
+  if (exact) return resolvedBaseGeometry(expandBaseEntry(exact, unit.baseModelCount));
   const withoutCount = factionMap[stripCountSuffix(normalizeUnitName(unit.name))];
-  return withoutCount ? expandBaseEntry(withoutCount, unit.baseModelCount) : undefined;
+  return withoutCount ? resolvedBaseGeometry(expandBaseEntry(withoutCount, unit.baseModelCount)) : undefined;
+}
+
+export function mergeCanonicalBaseGeometry(
+  canonicalBases: ModelBase[] | undefined,
+  existingBases: ModelBase[] | undefined,
+): ModelBase[] | undefined {
+  if (!canonicalBases?.length) return existingBases;
+  return canonicalBases.map((canonical, index) => {
+    const existing = existingBases?.[index];
+    return existing && sameBaseGeometry(existing, canonical) ? { ...existing } : { ...canonical };
+  });
+}
+
+function resolvedBaseGeometry(bases: ModelBase[] | undefined): ModelBase[] | undefined {
+  if (!bases?.length) return undefined;
+  return bases.every(base => base.shape !== 'hull' || (base.widthMm > 0 && base.lengthMm > 0))
+    ? bases
+    : undefined;
+}
+
+function sameBaseGeometry(left: ModelBase, right: ModelBase): boolean {
+  if (left.shape !== right.shape) return false;
+  if (left.shape === 'round' && right.shape === 'round') return left.diameterMm === right.diameterMm;
+  if (left.shape === 'oval' && right.shape === 'oval') {
+    return left.widthMm === right.widthMm && left.lengthMm === right.lengthMm;
+  }
+  if (left.shape === 'hull' && right.shape === 'hull') {
+    return left.widthMm === right.widthMm
+      && left.lengthMm === right.lengthMm
+      && left.footprint === right.footprint;
+  }
+  return left.shape === 'other' && right.shape === 'other' && left.label === right.label;
 }
 
 function baseSizeMapForFaction(faction: string): UnitBaseSizeMap | undefined {
@@ -196,16 +235,22 @@ function normalizeModelBase(rawBase: unknown): ModelBase | null {
   const base = rawBase as Record<string, unknown>;
   const label = typeof base.label === 'string' ? base.label : undefined;
   if (base.shape === 'round' && typeof base.diameterMm === 'number') {
-    return { shape: 'round', diameterMm: base.diameterMm, label };
+    return { shape: 'round', diameterMm: base.diameterMm, ...(label === undefined ? {} : { label }) };
   }
   if (base.shape === 'oval' && typeof base.widthMm === 'number' && typeof base.lengthMm === 'number') {
-    return { shape: 'oval', widthMm: base.widthMm, lengthMm: base.lengthMm, label };
+    return { shape: 'oval', widthMm: base.widthMm, lengthMm: base.lengthMm, ...(label === undefined ? {} : { label }) };
   }
   if (base.shape === 'hull' && typeof base.widthMm === 'number' && typeof base.lengthMm === 'number') {
     const footprint = ['square', 'rectangle', 'circle'].includes(String(base.footprint))
       ? base.footprint as 'square' | 'rectangle' | 'circle'
       : undefined;
-    return { shape: 'hull', widthMm: base.widthMm, lengthMm: base.lengthMm, footprint, label };
+    return {
+      shape: 'hull',
+      widthMm: base.widthMm,
+      lengthMm: base.lengthMm,
+      ...(footprint === undefined ? {} : { footprint }),
+      ...(label === undefined ? {} : { label }),
+    };
   }
   if (base.shape === 'other' && typeof base.label === 'string') {
     return { shape: 'other', label: base.label };
@@ -242,7 +287,7 @@ function expandBaseEntry(entry: UnitBaseSizeEntry, modelCount: number): ModelBas
 }
 
 function normalizeName(value: string): string {
-  return value.trim().toLowerCase().replace(/[â€™']/g, "'");
+  return value.trim().toLowerCase().replace(/[\u2019']/g, "'");
 }
 
 function normalizeUnitName(value: string): string {

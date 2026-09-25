@@ -1,7 +1,7 @@
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
-import { lockPlayUnitShooting, shootPlayUnitWeapon, shootPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
+import { advancePlayCombatResolution, beginPlayCombatResolution, clearPlayCombatResolution, combatResolutionNeedsFollowThrough, lockPlayUnitShooting, shootPlayUnitWeapon, shootPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
 import { primaryPlaySelectionPart } from './playSelectionHelpers';
@@ -34,6 +34,7 @@ export function createPlayShootingResolution({
   setPlayModelSelection,
   setInspectedSelection,
   setShootingAttackAllocations,
+  onCombatResolutionAdvanced,
 }: {
   battleStateRef: StateRef;
   playModelSelection: PlayModelSelection | null;
@@ -56,12 +57,55 @@ export function createPlayShootingResolution({
   setPlayModelSelection: (selection: PlayModelSelection | null) => void;
   setInspectedSelection: (selection: null) => void;
   setShootingAttackAllocations: (allocations: AllocationTable) => void;
+  onCombatResolutionAdvanced?: (state: BattleState) => void;
 }) {
   function resolveSelectedPlayShooting() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'shooting' || !selection) return;
-    if (!damageAllocationLocked && shootingResolutionStatus === 'rolled') {
+    const pendingStage = prev.pendingCombatResolution;
+    const hasQueuedStageToAdvance = !!pendingStage?.continuationQueue?.some(entry => (entry.stage ?? 'hits') !== 'damage');
+    const hasPendingShootingResolution = pendingStage?.kind === 'shooting'
+      && pendingStage.attackerUnitId === selection.unitId
+      && prev.lastShootingResolution?.shooterUnitId === selection.unitId;
+    const shootingResultOpen = shootingResolutionStatus === 'rolled' || hasPendingShootingResolution;
+    const terminalSaveReview = pendingStage?.stage === 'saves'
+      && !combatResolutionNeedsFollowThrough(prev);
+    if (shootingResultOpen
+      && pendingStage?.kind === 'shooting'
+      && pendingStage.attackerUnitId === selection.unitId
+      && !terminalSaveReview
+      && (pendingStage.stage !== 'damage' || hasQueuedStageToAdvance)) {
+      const advanced = advancePlayCombatResolution(prev, 'shooting', selection.unitId);
+      if (advanced !== prev) {
+        pushPlayUndo(playUndoEntry(prev), advanced, {
+          type: GAME_ACTION_TYPE.AdvanceCombatResolution,
+          kind: 'shooting',
+          unitId: selection.unitId,
+          side: selection.side,
+        });
+        commitBattleState(advanced);
+        onCombatResolutionAdvanced?.(advanced);
+      }
+      return;
+    }
+    if (terminalSaveReview) {
+      clearShootingSession();
+      const cleared = clearPlayCombatResolution(prev, pendingStage?.attackerUnitId);
+      if (cleared !== prev) {
+        pushPlayUndo(playUndoEntry(prev), cleared, {
+          type: GAME_ACTION_TYPE.ClearCombatResolution,
+          unitId: selection.unitId,
+          side: selection.side,
+        });
+        commitBattleState(cleared);
+      }
+      setTargetErrorMsg(null);
+      setPlayModelSelection(null);
+      setInspectedSelection(null);
+      return;
+    }
+    if (!damageAllocationLocked && shootingResultOpen) {
       // Keep a completed result open long enough to show the defender side of
       // the roll. This matters when every wound was saved: there is no pending
       // damage allocation, but the player still needs to be able to inspect
@@ -85,13 +129,22 @@ export function createPlayShootingResolution({
       // A result with no wounds or damage has nothing on the defender side to
       // inspect, so Done releases the shooter lock as before.
       clearShootingSession();
+      const cleared = clearPlayCombatResolution(prev, selection.unitId);
+      if (cleared !== prev) {
+        pushPlayUndo(playUndoEntry(prev), cleared, {
+          type: GAME_ACTION_TYPE.ClearCombatResolution,
+          unitId: selection.unitId,
+          side: selection.side,
+        });
+        commitBattleState(cleared);
+      }
       setTargetErrorMsg(null);
       setPlayModelSelection(null);
       setInspectedSelection(null);
       return;
     }
     if (damageAllocationLocked) {
-      const pendingDamageTarget = shootingResolutionStatus === 'rolled'
+      const pendingDamageTarget = shootingResultOpen
         ? selectPendingDamageUnit(prev, casualtyRemovalShooterId)
         : null;
       if (pendingDamageTarget) {
@@ -120,10 +173,11 @@ export function createPlayShootingResolution({
       commitBattleState(next);
       return;
     }
-    if ([...shootingTargetVisibility.values()].some(check => check.status === 'checking')) {
-      setTargetErrorMsg('Wait for exact line of sight checks to finish before shooting.');
-      return;
-    }
+    // Exact LOS checks are a presentation-time optimization.  The core action
+    // repeats the authoritative model-participation validation, so a pending
+    // background check must not make the declaration button appear inert.
+    // This also keeps the action usable when requestIdleCallback is delayed
+    // by a busy browser tab.
     const noRangedWeapons = selectedPlayShootingOptions.length === 1 && selectedPlayShootingOptions[0].weaponIndex < 0;
     const rawAllocations = buildShootingAttackAllocations(shootingAttackAllocations, shootingResolutionOrder);
     const allocations = rawAllocations.filter(allocation => {
@@ -189,7 +243,9 @@ export function createPlayShootingResolution({
             targetUnitId: lockedTargetId ?? groupAllocations[0].targetUnitId,
           }))
           : groupAllocations;
-        const resolved = shootPlayUnitWeapons(next, group.unitId, selection.side, constrainedAllocations, rules);
+        const resolved = shootPlayUnitWeapons(next, group.unitId, selection.side, constrainedAllocations, rules, {
+          interactiveStage: !attachedGroupDeclaration,
+        });
         if (resolved === next) {
           groupsToLock.add(group.unitId);
           continue;
@@ -225,6 +281,7 @@ export function createPlayShootingResolution({
           shooterUnitId: selection.unitId,
           weapons: mergedWeapons,
         };
+        next = beginPlayCombatResolution(next, 'shooting', selection.unitId, selection.side);
       }
     }
     if (next === prev) {

@@ -1,0 +1,4037 @@
+{
+  "factionId": "emperor-s-children",
+  "units": [
+    {
+      "id": "emperor-s-children.lucius-the-eternal",
+      "name": "Lucius the Eternal",
+      "externalIds": {
+        "wahapedia": "Lucius-the-Eternal"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 120
+        }
+      ],
+      "profile": {
+        "name": "Lucius the Eternal",
+        "move": 8,
+        "toughness": 5,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 6,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "EPIC HERO",
+          "CHAOS",
+          "SLAANESH",
+          "LUCIUS THE ETERNAL"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Blade of the Laer",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 8,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Lash of Torment",
+            "range": 0,
+            "attacks": "10",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Lone Operative",
+            "description": "Core ability: Lone Operative.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "A Challenge Worthy of Skill",
+          "description": "Each time this model makes an attack that targets a CHARACTER, MONSTER or WALKER unit, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Duellist's Hubris",
+          "description": "At the start of the Fight phase; if this model is not leading a unit, until the end of the phase, it has the Fights First ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following unit: FLAWLESS BLADES",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "FLAWLESS BLADES"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Lucius the Eternal datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Lucius-the-Eternal",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "emperor-s-children.flawless-blades"
+      ]
+    },
+    {
+      "id": "emperor-s-children.fulgrim",
+      "name": "Fulgrim",
+      "externalIds": {
+        "wahapedia": "Fulgrim"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 340
+        }
+      ],
+      "profile": {
+        "name": "Fulgrim",
+        "move": 16,
+        "toughness": 11,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 16,
+        "leadership": 5,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 130
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "MOBILE",
+          "FLY",
+          "CHARACTER",
+          "EPIC HERO",
+          "DAEMON",
+          "CHAOS",
+          "SLAANESH",
+          "PRIMARCH",
+          "FULGRIM"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Malefic lash",
+            "range": 12,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Daemonic blades - strike",
+            "profileGroup": "Daemonic blades",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Daemonic blades - sweep",
+            "profileGroup": "Daemonic blades",
+            "range": 0,
+            "attacks": "12",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Serpentine tail",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Daemonic Poisons",
+          "description": "In your Shooting phase and the Fight phase, after this model has finished making its attacks, select one enemy unit hit by one or more of those attacks. Until the end of the battle, that enemy unit is poisoned. At the start of each player's Command phase, roll one D6 for each poisoned enemy unit on the battlefield: on a 4+,that enemy unit suffers D3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daemon Primarch of Slaanesh",
+          "description": "At the start of your opponent's Command phase, select one of the abilities in the Daemon Primarch of Slaanesh section. Until the start of your opponent's next Command phase, this model has that ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Fulgrim datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Fulgrim",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.shalaxi-helbane",
+      "name": "Shalaxi Helbane",
+      "externalIds": {
+        "wahapedia": "Shalaxi-Helbane"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 315
+        }
+      ],
+      "profile": {
+        "name": "Shalaxi Helbane",
+        "move": 14,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 20,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "EPIC HERO",
+          "PSYKER",
+          "CHAOS",
+          "DAEMON",
+          "SUMMONED",
+          "SLAANESH",
+          "SHALAXI HELBANE"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Lash of Slaanesh",
+            "range": 12,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Pavane of Slaanesh - witchfire",
+            "profileGroup": "Pavane of Slaanesh",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "D3",
+            "keywords": [
+              "Devastating Wounds",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Pavane of Slaanesh - focused witchfire",
+            "profileGroup": "Pavane of Slaanesh",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 2,
+            "strength": 9,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Devastating Wounds",
+              "Sustained Hits 3",
+              "Hazardous",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Snapping claws",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds",
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Soulpiercer",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 7,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "No Prey Can Evade",
+          "description": "You can re-roll Advance and Charge rolls made for this model.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Monarch of the Hunt",
+          "description": "At the start of the first battle round, select one enemy unit to be this model's quarry. Each time this model makes a melee attack that targets its quarry, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's quarry is destroyed, select one new enemy unit to be this model's quarry.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-7 Wounds Remaining While this model has 1-7 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Shalaxi Helbane datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Shalaxi-Helbane",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.lord-exultant",
+      "name": "Lord Exultant",
+      "externalIds": {
+        "wahapedia": "Lord-Exultant"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 90,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 100,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's plasma pistol can be replaced with one of the following:; 1 power fist; 1 rapture lash",
+        "This model's Phoenix power spear can be replaced with one of the following:; 1 master-crafted power sword; 1 screamer pistol"
+      ],
+      "profile": {
+        "name": "Lord Exultant",
+        "move": 7,
+        "toughness": 4,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 5,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "GRENADES",
+          "CHAOS",
+          "SLAANESH",
+          "LORD EXULTANT"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Screamer pistol",
+            "range": 12,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Master-crafted power sword",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Phoenix power spear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Power fist",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Rapture lash",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            6,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Perfectionists",
+          "description": "While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Euphoric Strikes",
+          "description": "Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, add 3 to the Attacks characteristic of melee weapons equipped by this model and improve the Armour Penetration characteristic of those weapons by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: INFRACTORS TORMENTORS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "INFRACTORS",
+        "TORMENTORS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Lord Exultant datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Lord-Exultant",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "emperor-s-children.infractors",
+        "emperor-s-children.tormentors"
+      ]
+    },
+    {
+      "id": "emperor-s-children.lord-kakophonist",
+      "name": "Lord Kakophonist",
+      "externalIds": {
+        "wahapedia": "Lord-Kakophonist"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 70
+        }
+      ],
+      "wargearOptions": [
+        "This model's power sword can be replaced with 1 screamer pistol and 1 close combat weapon."
+      ],
+      "profile": {
+        "name": "Lord Kakophonist",
+        "move": 6,
+        "toughness": 5,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 6,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "GRENADES",
+          "CHAOS",
+          "SLAANESH",
+          "LORD KAKOPHONIST"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Screamer pistol",
+            "range": 12,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power sword",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Obsessive Annunciation",
+          "description": "While this model is leading a unit, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Doom Siren",
+          "description": "In your Shooting phase, after this model's unit has shot, select one enemy INFANTRY unit hit by one or more of those attacks and roll three D6: for each 4+, that enemy unit suffers 1 mortal wound. If an enemy unit suffers one or more mortal wounds as a result of this ability, it must take a Battle-shock test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: CHAOS TERMINATORS NOISE MARINES",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "CHAOS TERMINATORS",
+        "NOISE MARINES"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Lord Kakophonist datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Lord-Kakophonist",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "emperor-s-children.chaos-terminators",
+        "emperor-s-children.noise-marines"
+      ]
+    },
+    {
+      "id": "emperor-s-children.sorcerer",
+      "name": "Sorcerer",
+      "externalIds": {
+        "wahapedia": "Sorcerer"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 55
+        }
+      ],
+      "profile": {
+        "name": "Sorcerer",
+        "move": 7,
+        "toughness": 4,
+        "save": 3,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "PSYKER",
+          "GRENADES",
+          "CHAOS",
+          "SLAANESH",
+          "SORCERER"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Agonising Energies - witchfire",
+            "profileGroup": "Agonising Energies",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "D3",
+            "keywords": [
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Agonising Energies - focused witchfire",
+            "profileGroup": "Agonising Energies",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Devastating Wounds",
+              "Hazardous",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Force weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [
+              "Psychic"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Warped Interference (Psychic)",
+          "description": "While this model is leading a unit, each time a ranged attack targets that unit, models in it have the Benefit of Cover against that attack.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Wracking Agonies (Psychic)",
+          "description": "In your Shooting phase, after this model has shot, select one INFANTRY unit hit by one or more of those attacks made with its Agonising Energies. Until the start of your next turn, that unit is wracked with agonies. While a unit is wracked with agonies, subtract 2\" from its Move characteristic and subtract 2 from Charge rolls made for it.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: INFRACTORS NOISE MARINES TORMENTORS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "INFRACTORS",
+        "NOISE MARINES",
+        "TORMENTORS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Sorcerer datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Sorcerer",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "emperor-s-children.infractors",
+        "emperor-s-children.noise-marines",
+        "emperor-s-children.tormentors"
+      ]
+    },
+    {
+      "id": "emperor-s-children.daemon-prince-of-slaanesh",
+      "name": "Daemon Prince of Slaanesh",
+      "externalIds": {
+        "wahapedia": "Daemon-Prince-of-Slaanesh"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 170,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 185,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "profile": {
+        "name": "Daemon Prince of Slaanesh",
+        "move": 10,
+        "toughness": 10,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "CHAOS",
+          "DAEMON",
+          "SLAANESH",
+          "DAEMON PRINCE"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Infernal cannon",
+            "range": 24,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Hellforged weapons - strike",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hellforged weapons - sweep",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "14",
+            "skill": 2,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Lord of Excess",
+          "description": "While this model is within 3\" of one or more friendly SLAANESH INFANTRY units, this model has the Lone Operative ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Excessive Vigour (Aura)",
+          "description": "While a friendly SLAANESH unit is within 6\" of this model, if that unit made a Charge move this turn, improve the Armour Penetration characteristic of melee weapons equipped by models in that unit by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Ecstatic Death",
+          "description": "If this model is destroyed by a melee attack, if it has not fought this phase, roll one D6: on a 2+, do not remove it from play. This model can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Daemon Prince of Slaanesh datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Daemon-Prince-of-Slaanesh",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.daemon-prince-of-slaanesh-with-wings",
+      "name": "Daemon Prince of Slaanesh with Wings",
+      "externalIds": {
+        "wahapedia": "Daemon-Prince-of-Slaanesh-with-Wings"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 205,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 235,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "profile": {
+        "name": "Daemon Prince of Slaanesh with Wings",
+        "move": 14,
+        "toughness": 9,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "FLY",
+          "CHARACTER",
+          "CHAOS",
+          "DAEMON",
+          "SLAANESH",
+          "DAEMON PRINCE WITH WINGS"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Infernal cannon",
+            "range": 24,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Hellforged weapons - strike",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hellforged weapons - sweep",
+            "profileGroup": "Hellforged weapons",
+            "range": 0,
+            "attacks": "14",
+            "skill": 2,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Daemonic Destruction",
+          "description": "Each time this model ends a Charge move, select one enemy unit within Engagement Range of it and roll one D6 for each of this model's remaining wounds: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+          "category": "datasheet"
+        },
+        {
+          "name": "Stimulated by Pain",
+          "description": "Each time an attack is allocated to this model, subtract 1 from the Damage characteristic of that attack.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Daemon Prince of Slaanesh with Wings datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Daemon-Prince-of-Slaanesh-with-Wings",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.keeper-of-secrets",
+      "name": "Keeper of Secrets",
+      "externalIds": {
+        "wahapedia": "Keeper-of-Secrets"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Monster Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 265,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 280,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; living whip; ritual knife; shining aegis"
+      ],
+      "profile": {
+        "name": "Keeper of Secrets",
+        "move": 14,
+        "toughness": 10,
+        "save": 5,
+        "invulnSave": 4,
+        "wounds": 18,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "MONSTER",
+          "CHARACTER",
+          "PSYKER",
+          "CHAOS",
+          "DAEMON",
+          "SUMMONED",
+          "SLAANESH",
+          "KEEPER OF SECRETS"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Living whip",
+            "range": 12,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Phantasmagoria - witchfire",
+            "profileGroup": "Phantasmagoria",
+            "range": 18,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Phantasmagoria - focused witchfire",
+            "profileGroup": "Phantasmagoria",
+            "range": 18,
+            "attacks": "9",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Hazardous",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ritual knife",
+            "range": 0,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Snapping claws",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds",
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Witstealer sword",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            4,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Daemon Lord of Slaanesh (Aura)",
+          "description": "While a friendly LEGIONS OF EXCESS unit is within 6\" of this model, improve the Armour Penetration characteristic of melee weapons equipped by models in that unit by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Mesmerising Form",
+          "description": "Each time an attack targets this model, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Shining Aegis",
+          "description": "The bearer has a Save characteristic of 3+.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Keeper of Secrets datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Keeper-of-Secrets",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.daemonettes",
+      "name": "Daemonettes",
+      "aliases": [
+        "Daemonettes (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Daemonettes"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 100
+        }
+      ],
+      "wargearOptions": [
+        "1 Daemonette that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.",
+        "1 Daemonette that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon."
+      ],
+      "profile": {
+        "name": "Daemonettes",
+        "move": 9,
+        "toughness": 3,
+        "save": 7,
+        "invulnSave": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "CHAOS",
+          "DAEMON",
+          "SUMMONED",
+          "SLAANESH",
+          "DAEMONETTES"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Slashing claws",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Fights First",
+            "description": "Core ability: Fights First.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Horrifying Beauty",
+          "description": "At the start of the Fight phase, each enemy unit within Engagement Range of one or more units from your army with this ability must take a Battle-shock test, subtracting 1 from the result if that enemy unit is Below Half-strength.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daemonic Icon",
+          "description": "Models in the bearer's unit have a Leadership characteristic of 6+.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Instrument of Chaos",
+          "description": "Add 1 to Charge rolls made for the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Daemonettes datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Daemonettes",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.infractors",
+      "name": "Infractors",
+      "aliases": [
+        "Infractors (x5)",
+        "Infractors (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Infractors"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 85
+        },
+        {
+          "modelCount": 10,
+          "points": 160
+        }
+      ],
+      "wargearOptions": [
+        "The Obsessionist's bolt pistol can be replaced with 1 plasma pistol.",
+        "The Obsessionist's power sword can be replaced with 1 rapture lash.",
+        "1 Infractor can be equipped with 1 icon of excess."
+      ],
+      "profile": {
+        "name": "Infractors",
+        "move": 7,
+        "toughness": 4,
+        "save": 3,
+        "wounds": 2,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "GRENADES",
+          "CHAOS",
+          "SLAANESH",
+          "INFRACTORS"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Duelling sabre",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Power sword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Rapture lash",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Excessive Assault",
+          "description": "Each time a model in this unit targets an enemy unit with a melee attack, re-roll a Wound roll of 1. If that enemy unit is within range of an objective marker, you can re-roll the Wound roll instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Icon of Excess",
+          "description": "At the end of your Shooting phase or the Fight phase, if the bearer's unit destroyed one or more enemy units that phase, the bearer's unit takes a Leadership test. If that test is passed, you gain 1CP.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Infractors datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Infractors",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.tormentors",
+      "name": "Tormentors",
+      "aliases": [
+        "Tormentors (x5)",
+        "Tormentors (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Tormentors"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 80
+        },
+        {
+          "modelCount": 10,
+          "points": 160
+        }
+      ],
+      "wargearOptions": [
+        "The Obsessionist's bolt pistol can be replaced with 1 plasma pistol.",
+        "The Obsessionist's power sword can be replaced with 1 rapture lash.",
+        "For every 5 models in this unit, 1 Tormentor's boltgun can be replaced with 1 meltagun.",
+        "For every 5 models in this unit, 1 Tormentor's boltgun can be replaced with 1 plasma gun.",
+        "1 Tormentor can be equipped with 1 icon of excess."
+      ],
+      "profile": {
+        "name": "Tormentors",
+        "move": 7,
+        "toughness": 4,
+        "save": 3,
+        "wounds": 2,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "GRENADES",
+          "CHAOS",
+          "SLAANESH",
+          "TORMENTORS"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Precision",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma gun - standard",
+            "profileGroup": "Plasma gun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma gun - supercharge",
+            "profileGroup": "Plasma gun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 1",
+              "Hazardous",
+              "Precision"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Precision",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Precision",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power sword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Rapture lash",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Infiltrators",
+            "description": "Core ability: Infiltrators.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Objective Defiled",
+          "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Icon of Excess",
+          "description": "At the end of your Shooting phase or the Fight phase, if the bearer's unit destroyed one or more enemy units that phase, the bearer's unit takes a Leadership test. If that test is passed, you gain 1CP.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Tormentors datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Tormentors",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.chaos-rhino",
+      "name": "Chaos Rhino",
+      "externalIds": {
+        "wahapedia": "Chaos-Rhino"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Dedicated Transports",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 70,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 80,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; 1 combi-bolter; 1 combi-weapon",
+        "This model can be equipped with 1 havoc launcher or can replace 1 combi-bolter with 1 havoc launcher."
+      ],
+      "profile": {
+        "name": "Chaos Rhino",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "FRAME",
+          "DEDICATED TRANSPORT",
+          "SMOKE",
+          "CHAOS",
+          "SLAANESH",
+          "RHINO"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Firing Deck 2",
+            "description": "Core ability: Firing Deck 2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            3
+          ]
+        ],
+        "transportCapacity": 12
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Assault Vehicle",
+          "description": "Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 12 EMPEROR'S CHILDREN INFANTRY models (excluding TERMINATOR and FLAWLESS BLADE models).",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Rhino datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Chaos-Rhino",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.chaos-spawn",
+      "name": "Chaos Spawn",
+      "aliases": [
+        "Chaos Spawn (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Chaos-Spawn"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Beast",
+      "modelCount": {
+        "minimum": 2
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 70
+        }
+      ],
+      "profile": {
+        "name": "Chaos Spawn",
+        "move": 10,
+        "toughness": 5,
+        "save": 4,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          },
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "BEAST",
+          "CHAOS",
+          "SLAANESH",
+          "CHAOS SPAWN"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Hideous mutations",
+            "range": 0,
+            "attacks": "D6+2",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Scuttling Horrors",
+          "description": "In your opponent's Movement phase, if an enemy unit ends a move within 8\" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to 6\".",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Spawn datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Chaos-Spawn",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.fiends",
+      "name": "Fiends",
+      "aliases": [
+        "Fiends (x3)",
+        "Fiends (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Fiends"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Beast",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 90
+        },
+        {
+          "modelCount": 6,
+          "points": 190
+        }
+      ],
+      "profile": {
+        "name": "Fiends",
+        "move": 12,
+        "toughness": 5,
+        "save": 7,
+        "invulnSave": 5,
+        "wounds": 4,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 75,
+            "lengthMm": 42
+          },
+          {
+            "shape": "oval",
+            "widthMm": 75,
+            "lengthMm": 42
+          },
+          {
+            "shape": "oval",
+            "widthMm": 75,
+            "lengthMm": 42
+          }
+        ],
+        "keywords": [
+          "BEAST",
+          "CHAOS",
+          "DAEMON",
+          "SUMMONED",
+          "SLAANESH",
+          "FIENDS"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Barbed tail and dissecting claws",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Soporific Musk",
+          "description": "Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, models in that enemy unit must take Desperate Escape tests. When doing so, if that enemy unit is also Battle-shocked, subtract 1 from each of those Desperate Escape tests.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Fiends datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Fiends",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.chaos-terminators",
+      "name": "Chaos Terminators",
+      "aliases": [
+        "Chaos Terminators (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Chaos-Terminators"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 145
+        }
+      ],
+      "wargearOptions": [
+        "1 Chaos Terminator's combi-bolter can be replaced with one of the following:; 1 heavy flamer; 1 reaper autocannon",
+        "Any number of models can each have their combi-bolter replaced with 1 combi-weapon.",
+        "1 model's combi-bolter and accursed weapon can be replaced with 1 paired accursed weapons.",
+        "Up to 3 models can each have their accursed weapon replaced with 1 power fist.",
+        "1 model's accursed weapon can be replaced with 1 chainfist."
+      ],
+      "profile": {
+        "name": "Chaos Terminators",
+        "move": 6,
+        "toughness": 5,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHAOS",
+          "SLAANESH",
+          "TERMINATOR",
+          "TERMINATOR SQUAD"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper autocannon",
+            "range": 36,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Accursed weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Chainfist",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Anti-vehicle 3+"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Paired accursed weapons",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Power fist",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Lethal Obsession",
+          "description": "In your Shooting phase, after this unit has shot, you can use this ability. If you do, select one enemy unit hit by those ranged attacks. Until the end of the turn, when this unit declares a charge: This unit can re-roll that charge roll. This unit must end that charge move engaged with that enemy unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Terminators datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Chaos-Terminators",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.flawless-blades",
+      "name": "Flawless Blades",
+      "aliases": [
+        "Flawless Blades (x3)",
+        "Flawless Blades (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Flawless-Blades"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 95
+        },
+        {
+          "modelCount": 6,
+          "points": 190
+        }
+      ],
+      "profile": {
+        "name": "Flawless Blades",
+        "move": 8,
+        "toughness": 5,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHAOS",
+          "SLAANESH",
+          "FLAWLESS BLADES"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blissblade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Daemonic Patrons",
+          "description": "Each time this unit is selected to fight, it can call upon daemonic patrons. If it does, until the end of the phase, each time a model in this unit makes an attack, an unmodified Wound roll of 3+ scores a Critical Wound. At the end of the Fight phase, if this unit called upon daemonic patrons this phase and no enemy models were destroyed by attacks made by models in this unit this phase, one model in this unit is destroyed.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Flawless Blades datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Flawless-Blades",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.noise-marines",
+      "name": "Noise Marines",
+      "aliases": [
+        "Noise Marines (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Noise-Marines"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 6
+      },
+      "points": [
+        {
+          "modelCount": 6,
+          "points": 145,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "The Disharmonist's sonic blaster can be replaced with 1 screamer pistol and 1 power sword.",
+        "Up to 2 Noise Marines can each replace their sonic blaster with 1 blastmaster."
+      ],
+      "profile": {
+        "name": "Noise Marines",
+        "move": 6,
+        "toughness": 5,
+        "save": 3,
+        "wounds": 2,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 6,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHAOS",
+          "SLAANESH",
+          "NOISE MARINES"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Blastmaster - single frequency",
+            "profileGroup": "Blastmaster",
+            "range": 18,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Ignores Cover"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Blastmaster - varied frequency",
+            "profileGroup": "Blastmaster",
+            "range": 18,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Screamer pistol",
+            "range": 12,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Sonic blaster",
+            "range": 18,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power sword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Terrifying Crescendo",
+          "description": "In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next Shooting phase, each time a Battle-shock or Leadership test is taken for that enemy unit, subtract 1 from that test.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Noise Marines datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Noise-Marines",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.seekers",
+      "name": "Seekers",
+      "aliases": [
+        "Seekers (x5)",
+        "Seekers (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Seekers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted",
+      "modelCount": {
+        "minimum": 5,
+        "maximum": 10,
+        "step": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 85
+        },
+        {
+          "modelCount": 10,
+          "points": 155
+        }
+      ],
+      "wargearOptions": [
+        "1 Seeker that is not equipped with a daemonic icon can be equipped with 1 instrument of Chaos.",
+        "1 Seeker that is not equipped with an instrument of Chaos can be equipped with 1 daemonic icon."
+      ],
+      "profile": {
+        "name": "Seekers",
+        "move": 14,
+        "toughness": 4,
+        "save": 7,
+        "invulnSave": 5,
+        "wounds": 2,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          },
+          {
+            "shape": "oval",
+            "widthMm": 60,
+            "lengthMm": 35.5
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "CHAOS",
+          "DAEMON",
+          "SUMMONED",
+          "SLAANESH",
+          "SEEKERS"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Lashing tongue",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Lethal Hits",
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Slashing claws",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 9\"",
+            "description": "Core ability: Scouts 9\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Unholy Speed",
+          "description": "You can re-roll Advance and Charge rolls made for this unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daemonic Icon",
+          "description": "Models in the bearer's unit have a Leadership characteristic of 6+.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Instrument of Chaos",
+          "description": "Add 1 to Charge rolls made for the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Seekers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Seekers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.chaos-land-raider",
+      "name": "Chaos Land Raider",
+      "externalIds": {
+        "wahapedia": "Chaos-Land-Raider"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Transport",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 220,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 240,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with one of the following:; 1 combi-bolter; 1 combi-weapon",
+        "This model can be equipped with 1 havoc launcher."
+      ],
+      "profile": {
+        "name": "Chaos Land Raider",
+        "move": 10,
+        "toughness": 12,
+        "save": 2,
+        "wounds": 16,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "FRAME",
+          "SMOKE",
+          "CHAOS",
+          "SLAANESH",
+          "LAND RAIDER"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Combi-weapon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 4+",
+              "Devastating Wounds",
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Soulshatter lascannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 8,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            4,
+            5
+          ]
+        ],
+        "transportCapacity": 14,
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Assault Ramp",
+          "description": "Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 14 EMPEROR'S CHILDREN INFANTRY models. Each TERMINATOR and FLAWLESS BLADE model takes up the space of 2 models.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Land Raider datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Chaos-Land-Raider",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.heldrake",
+      "name": "Heldrake",
+      "externalIds": {
+        "wahapedia": "Heldrake"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 175
+        }
+      ],
+      "wargearOptions": [
+        "This model's Hades autocannon can be replaced with 1 baleflamer."
+      ],
+      "profile": {
+        "name": "Heldrake",
+        "move": 12,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 0,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FLY",
+          "CHAOS",
+          "DAEMON",
+          "SLAANESH",
+          "HELDRAKE"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Baleflamer",
+            "range": 12,
+            "attacks": "D6+3",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades autocannon",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Heldrake claws",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Hover",
+            "description": "Core ability: Hover.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Airborne Predator",
+          "description": "Each time this model ends a Normal move, you can select one enemy unit that it moved over during that move and roll two D6, adding 1 to each result if that enemy unit can FLY: for each 4+, that enemy unit suffers D3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Heldrake datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Heldrake",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.defiler",
+      "name": "Defiler",
+      "externalIds": {
+        "wahapedia": "Defiler"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 300,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 350,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's Hades battle cannon can be replaced with 1 ectoplasma destructor.",
+        "This model's excruciator cannons can be replaced with 2 magma cutters",
+        "This model's heavy baleflamer can be replaced with one of the following:; 1 Hades lascannon; 1 heavy reaper autocannon; 1 electroscourge (a model cannot be equipped with more than one electroscourge)",
+        "This model's heavy missile launcher can be replaced with one of the following:; 1 Hades lascannon; 1 heavy reaper autocannon; 1 electroscourge (a model cannot be equipped with more than one electroscourge)"
+      ],
+      "profile": {
+        "name": "Defiler",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 18,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 160
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "SLAANESH",
+          "DAEMON",
+          "DEFILER"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Hades battle cannon",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ectoplasma destructor",
+            "range": 36,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Excruciator cannon",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Magma cutters",
+            "range": 12,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy baleflamer",
+            "range": 12,
+            "attacks": "D6+3",
+            "skill": 6,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hades lascannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy reaper autocannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds",
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy missile launcher - krak",
+            "profileGroup": "Heavy missile launcher",
+            "range": 48,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy missile launcher - frag",
+            "profileGroup": "Heavy missile launcher",
+            "range": 48,
+            "attacks": "2D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Shearing claws - strike",
+            "profileGroup": "Shearing claws",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 16,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Shearing claws - sweep",
+            "profileGroup": "Shearing claws",
+            "range": 0,
+            "attacks": "10",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Electroscourge",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 12,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2",
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "damagedProfile": {
+          "maxRemainingWounds": 6,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Scuttling Walker",
+          "description": "Each time this unit makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and terrain features. When doing so, it can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Revel in Desecration",
+          "description": "Each time this model makes an attack that targets an enemy unit that is not below Half-strength, add 1 to the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-6 Wounds Remaining While this model has 1-6 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Defiler datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Defiler",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "emperor-s-children.maulerfiend",
+      "name": "Maulerfiend",
+      "externalIds": {
+        "wahapedia": "Maulerfiend"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 120,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 130,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's lasher tendrils can be replaced with 2 magma cutters."
+      ],
+      "profile": {
+        "name": "Maulerfiend",
+        "move": 10,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 12,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 120,
+            "lengthMm": 92
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "DAEMON",
+          "SLAANESH",
+          "MAULERFIEND"
+        ],
+        "factionKeywords": [
+          "emperor-s-children",
+          "Emperor's Children"
+        ],
+        "weapons": [
+          {
+            "name": "Magma cutters",
+            "range": 6,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lasher tendrils",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Maulerfiend fists",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 14,
+            "ap": -2,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "emperor-s-children.army-rule.thrill-seekers",
+        "emperor-s-children.army-rule.pact-of-excess"
+      ],
+      "rawRules": [
+        {
+          "name": "Glutton for Punishment",
+          "description": "Each time this model makes an attack, if it is below its Starting Strength, add 1 to the Hit roll. If this model is also Below Half-strength, add 1 to the Wound roll as well.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Maulerfiend datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/emperor-s-children/Maulerfiend",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

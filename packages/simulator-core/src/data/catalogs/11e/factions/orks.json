@@ -5,6 +5,7 @@
   "unitRefs": [
     "orks.boss-snikrot",
     "orks.ghazghkull-thraka",
+    "orks.nazdreg",
     "orks.zodgrod-wortsnagga",
     "orks.mozrog-skragbad",
     "orks.wazdakka-gutsmek",
@@ -17,12 +18,13 @@
     "orks.mek",
     "orks.painboss",
     "orks.painboy",
+    "orks.runtherd",
     "orks.warboss",
     "orks.warboss-in-mega-armour",
     "orks.weirdboy",
-    "orks.wurrboy",
     "orks.beastboss-on-squigosaur",
     "orks.deffkilla-wartrike",
+    "orks.big-mek-dakkarig",
     "orks.beast-snagga-boyz",
     "orks.boyz",
     "orks.trukk",
@@ -31,11 +33,9 @@
     "orks.dakkajet",
     "orks.wazbom-blastajet",
     "orks.breaka-boyz",
-    "orks.burna-boyz",
     "orks.flash-gitz",
     "orks.gretchin",
     "orks.kommandos",
-    "orks.lootas",
     "orks.meganobz",
     "orks.nobz",
     "orks.stormboyz",
@@ -43,56 +43,63 @@
     "orks.hunta-rig",
     "orks.kill-rig",
     "orks.gargantuan-squiggoth",
+    "orks.deffkoptas",
     "orks.squighog-boyz",
     "orks.warbikers",
-    "orks.wartrakk",
+    "orks.wartrakks",
     "orks.gorkanaut",
     "orks.morkanaut",
     "orks.stompa",
     "orks.battlewagon",
-    "orks.boomdakka-snazzwagon",
-    "orks.deffkoptas",
-    "orks.kustom-boosta-blasta",
-    "orks.megatrakk-scrapjet",
+    "orks.gunwagon",
     "orks.mek-gunz",
-    "orks.rukkatrukk-squigbuggy",
-    "orks.shokkjump-dragsta",
-    "orks.big-mek-dakkarig",
+    "orks.rukkatrukk-squigbuggies",
+    "orks.warbuggies",
     "orks.deff-dread",
     "orks.killa-kans",
     "orks.biged-bossbunka"
   ],
   "ruleRefs": [
     "orks.army-rule.waaagh",
-    "orks.unit-rule.kunnin-infiltrator",
-    "orks.unit-rule.grot-riggers",
-    "orks.unit-rule.red-skull-kommandos",
-    "orks.unit-rule.prophet-of-da-great-waaagh",
-    "orks.unit-rule.ghazghkulls-waaagh-banner",
-    "orks.unit-rule.get-da-good-bitz"
+    "orks.army-rule.da-boss",
+    "orks.army-rule.unstable-energies",
+    "orks.army-rule.special-move-types"
   ],
   "detachmentRefs": [
-    "orks.detachment.war-horde"
+    "orks.detachment.war-horde",
+    "orks.detachment.green-tide",
+    "orks.detachment.bully-boyz",
+    "orks.detachment.runt-swarm",
+    "orks.detachment.shoota-boyz",
+    "orks.detachment.taktikal-brigade",
+    "orks.detachment.wreckas",
+    "orks.detachment.da-big-hunt",
+    "orks.detachment.madcap-meks",
+    "orks.detachment.dread-mob",
+    "orks.detachment.blitz-brigade",
+    "orks.detachment.kult-of-speed",
+    "orks.detachment.flyboyz",
+    "orks.detachment.brute-bosses",
+    "orks.detachment.wurrband"
   ],
   "factionKeywords": [
+    "orks",
     "Orks"
   ],
   "sources": [
     {
       "title": "Wahapedia Orks faction reference",
       "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
-      "capturedAt": "2026-08-29",
-      "sourceRevision": "Faction Pack. Orks (11th edition, version 1.2)"
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
     }
   ],
   "coverage": {
-    "sourceEntryCount": 58,
-    "normalizedEntryCount": 58,
-    "excludedLegendCount": 30,
+    "sourceEntryCount": 55,
+    "normalizedEntryCount": 55,
+    "excludedLegendCount": 12,
     "notes": [
-      "All current non-Legends datasheets are selectable.",
-      "Structured model loadouts and unit upgrades are available for the current Ork datasheets with wargear options; Deff Dread replacement slots are represented without enumerating every combination.",
-      "Remaining entries retain source-derived partial profiles pending executable-effect review."
+      "All current non-Legends datasheets are selectable. Profiles, weapons, abilities, points, and base sizes are regenerated from the saved Wahapedia capture; model-specific loadouts and executable effects remain source-scoped work."
     ]
   }
 }

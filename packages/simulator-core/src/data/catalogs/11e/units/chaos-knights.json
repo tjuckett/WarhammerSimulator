@@ -1,0 +1,5179 @@
+{
+  "factionId": "chaos-knights",
+  "units": [
+    {
+      "id": "chaos-knights.cultist-firebrand",
+      "name": "Cultist Firebrand",
+      "externalIds": {
+        "wahapedia": "Cultist-Firebrand"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 45,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 50,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Cultist Firebrand",
+        "move": 6,
+        "toughness": 4,
+        "save": 4,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "GRENADES",
+          "CHAOS",
+          "DAMNED",
+          "CULTIST FIREBRAND"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Balefire pike",
+            "range": 12,
+            "attacks": "D6+3",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": []
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Fiery Faith",
+          "description": "While this model is leading a unit, you can re-roll Leadership tests taken for that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Cursed Flames",
+          "description": "In your Shooting phase, after this model has shot, select one enemy INFANTRY unit hit by one or more of those attacks. That unit must take a Battle-shock test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: ACCURSED CULTISTS CULTIST MOB NEGAVOLT CULTISTS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "ACCURSED CULTISTS",
+        "CULTIST MOB",
+        "NEGAVOLT CULTISTS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Cultist Firebrand datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Cultist-Firebrand",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "chaos-knights.accursed-cultists",
+        "chaos-knights.cultist-mob"
+      ]
+    },
+    {
+      "id": "chaos-knights.dark-commune",
+      "name": "Dark Commune",
+      "aliases": [
+        "Dark Commune (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Dark-Commune"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 90,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 100,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Dark Commune",
+        "move": 6,
+        "toughness": 3,
+        "save": 6,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 28.5
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "CULT DEMAGOGUE",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 6,
+            "wounds": 4,
+            "leadership": 6,
+            "oc": 1
+          },
+          {
+            "name": "OTHER MODELS",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 6,
+            "wounds": 1,
+            "leadership": 7,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "KEYWORDS - ALL MODELS: INFANTRY",
+          "GRENADES",
+          "CHAOS",
+          "DAMNED",
+          "DARK COMMUNEMINDWITCH ONLY: PSYKERCULT DEMAGOGUE ONLY: CHARACTER",
+          "CULT DEMAGOGUE"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Autopistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warp Curse - witchfire",
+            "profileGroup": "Warp Curse",
+            "range": 18,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warp Curse - focused witchfire",
+            "profileGroup": "Warp Curse",
+            "range": 18,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2",
+              "Hazardous",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Commune blade",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Commune stave",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "D3",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            4
+          ],
+          [
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Faithful Flock",
+          "description": "While this unit is leading a unit and contains a CULT DEMAGOGUE model, models in that unit have a 5+ invulnerable save.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Dark Ritual",
+          "description": "Once per battle, in your Command phase, if this unit contains a CULT DEMAGOGUE model, it can use this ability. If it does, until the end of the turn, this unit can declare a charge in a turn in which it Advanced and each time a model in this unit makes an attack, add 1 to the Hit roll and add 1 to the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Chaos Icon",
+          "description": "Each time the bearer's unit takes a Leadership test for the Dark Pacts ability, you can re-roll that test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: ACCURSED CULTISTS CULTIST MOB NEGAVOLT CULTISTS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "ACCURSED CULTISTS",
+        "CULTIST MOB",
+        "NEGAVOLT CULTISTS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Dark Commune datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Dark-Commune",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "chaos-knights.accursed-cultists",
+        "chaos-knights.cultist-mob"
+      ]
+    },
+    {
+      "id": "chaos-knights.traitor-enforcer",
+      "name": "Traitor Enforcer",
+      "aliases": [
+        "Traitor Enforcer (x2)"
+      ],
+      "externalIds": {
+        "wahapedia": "Traitor-Enforcer"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 2
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 70
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Traitor Enforcer",
+        "move": 6,
+        "toughness": 3,
+        "save": 5,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "TRAITOR ENFORCER",
+            "count": 1,
+            "move": 6,
+            "toughness": 3,
+            "save": 5,
+            "wounds": 3,
+            "leadership": 6,
+            "oc": 1
+          },
+          {
+            "name": "TRAITOR OGRYN",
+            "count": 1,
+            "move": 6,
+            "toughness": 6,
+            "save": 5,
+            "wounds": 4,
+            "leadership": 7,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "KEYWORDS - ALL MODELS: INFANTRY",
+          "CHAOS",
+          "GRENADES",
+          "DAMNEDTRAITOR ENFORCER ONLY: CHARACTER",
+          "TRAITOR ENFORCER"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ogryn weapons",
+            "range": 0,
+            "attacks": "5",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power fist",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ],
+          [
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Brutal Example",
+          "description": "Once per turn, while this unit is leading a unit and contains a TRAITOR ENFORCER model, you can target that unit with the Fire Overwatch Stratagem for 0CP, and can do so even if you have already targeted a different unit from your army with that Stratagem this turn. Each time you use this ability, one Bodyguard model in that unit is destroyed.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Mutated Bodyguard",
+          "description": "While this unit contains a Traitor Ogryn model, CHARACTER models in this unit have the Feel No Pain 4+ ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following unit: TRAITOR GUARDSMEN SQUAD",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "TRAITOR GUARDSMEN SQUAD"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Traitor Enforcer datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Traitor-Enforcer",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "chaos-knights.traitor-guardsmen-squad"
+      ]
+    },
+    {
+      "id": "chaos-knights.knight-abominant",
+      "name": "Knight Abominant",
+      "externalIds": {
+        "wahapedia": "Knight-Abominant"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 355,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Knight Abominant",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "ABHORRENT",
+          "PSYKER",
+          "CHARACTER",
+          "CHAOS",
+          "KNIGHT ABOMINANT"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volkite combustor",
+            "range": 30,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 12,
+            "ap": 0,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds",
+              "Ignores Cover"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Balemace",
+            "range": 0,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Extra Attacks"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Electroscourge",
+            "range": 0,
+            "attacks": "9",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Vortex Terrors (Psychic)",
+          "description": "At the start of your Shooting phase, select one enemy unit within 24\" of and visible to this model. That enemy unit must take a Battle-shock test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Warp Storms (Psychic)",
+          "description": "At the end of your Movement phase, roll one D6 for each enemy unit within 9\" of one or more models with this ability: on a 3+, that enemy unit suffers D3 mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Abominant datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Knight-Abominant",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.knight-desecrator",
+      "name": "Knight Desecrator",
+      "externalIds": {
+        "wahapedia": "Knight-Desecrator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 355,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's reaper chainsword can be replaced with 1 warpstrike claw."
+      ],
+      "profile": {
+        "name": "Knight Desecrator",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "ABHORRENT",
+          "CHARACTER",
+          "CHAOS",
+          "KNIGHT DESECRATOR"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Desecrator laser destructor",
+            "range": 72,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 18,
+            "ap": -4,
+            "damage": "D6+3",
+            "keywords": [
+              "Devastating Wounds: MONSTER/VEHICLE"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Warpstrike claw - strike",
+            "profileGroup": "Warpstrike claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Warpstrike claw - sweep",
+            "profileGroup": "Warpstrike claw",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Obsessive Ruthlessness",
+          "description": "This unit's ranged attacks that target a MONSTER/VEHICLE unit can ignore modifiers to this unit's: BS. Hit rolls and wound rolls.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Taskmaster (Aura)",
+          "description": "While a friendly WAR DOG model is within 9\" of this model, each time that WAR DOG model makes a ranged attack, re-roll a Hit roll of 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Desecrator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Knight-Desecrator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.knight-despoiler",
+      "name": "Knight Despoiler",
+      "externalIds": {
+        "wahapedia": "Knight-Despoiler"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 360,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 390,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's daemonbreath meltagun can be replaced with 1 diabolus heavy stubber.",
+        "This model's reaper chainsword can be replaced with one of the following:; 1 daemonbreath thermal cannon; 1 despoiler gatling cannon and 1 heavy darkflamer; 1 despoiler battle cannon and 1 diabolus heavy stubber",
+        "This model's warpstrike claw can be replaced with one of the following:; 1 daemonbreath thermal cannon; 1 despoiler gatling cannon and 1 heavy darkflamer; 1 despoiler battle cannon and 1 diabolus heavy stubber",
+        "This model can be equipped with one of the following:; 1 havoc missile pod; 1 ruinspear rocket pod; 1 hellstorm autocannons"
+      ],
+      "profile": {
+        "name": "Knight Despoiler",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "ABHORRENT",
+          "CHARACTER",
+          "CHAOS",
+          "KNIGHT DESPOILER"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Daemonbreath meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Daemonbreath thermal cannon",
+            "range": 24,
+            "attacks": "2D3",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 6",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Despoiler battle cannon",
+            "range": 72,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Despoiler gatling cannon",
+            "range": 36,
+            "attacks": "18",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc missile pod",
+            "range": 48,
+            "attacks": "D6+1",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Heavy darkflamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hellstorm autocannons",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 2+",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ruinspear rocket pod",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Warpstrike claw - strike",
+            "profileGroup": "Warpstrike claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Warpstrike claw - sweep",
+            "profileGroup": "Warpstrike claw",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Dread Dominion (Aura)",
+          "description": "While a friendly WAR DOG model is within 9\" of this model, improve that WAR DOG model's Leadership and Objective Control characteristics by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Seething Hatred",
+          "description": "Each time this model is selected to shoot or fight, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Despoiler datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Knight-Despoiler",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.knight-rampager",
+      "name": "Knight Rampager",
+      "externalIds": {
+        "wahapedia": "Knight-Rampager"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 355,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Knight Rampager",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "ABHORRENT",
+          "CHARACTER",
+          "CHAOS",
+          "KNIGHT RAMPAGER"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "18",
+            "skill": 2,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Warpstrike claw - strike",
+            "profileGroup": "Warpstrike claw",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Warpstrike claw - sweep",
+            "profileGroup": "Warpstrike claw",
+            "range": 0,
+            "attacks": "12",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 7,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Bloodlust",
+          "description": "Each time this model makes a Charge move, until the end of the turn, its melee weapons have the [DEVASTATING WOUNDS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Frenzied Rampage (Aura)",
+          "description": "While a friendly WAR DOG model is within 9\" of this model, each time that WAR DOG model makes a melee attack, re-roll a Hit roll of 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-7 Wounds Remaining While this model has 1-7 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Rampager datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Knight-Rampager",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.knight-ruinator",
+      "name": "Knight Ruinator",
+      "externalIds": {
+        "wahapedia": "Knight-Ruinator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 340,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 355,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Knight Ruinator",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "ABHORRENT",
+          "CHARACTER",
+          "CHAOS",
+          "KNIGHT RUINATOR"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Darkflame lance",
+            "range": 18,
+            "attacks": "D6+6",
+            "skill": 6,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Terrorpulse missiles",
+            "range": 36,
+            "attacks": "D6+6",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Fellbore - strike",
+            "profileGroup": "Fellbore",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -3,
+            "damage": "6",
+            "keywords": [
+              "Anti-monster 2+",
+              "Anti-vehicle 2+"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Fellbore - sweep",
+            "profileGroup": "Fellbore",
+            "range": 0,
+            "attacks": "10",
+            "skill": 3,
+            "strength": 9,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Methodical Destruction",
+          "description": "At the start of the first battle round, select one unit from your opponent's army to be this model's victim. Each time this model makes an attack that targets its victim, you can re-roll the Wound roll. Each time this model's victim is destroyed, select one new enemy unit to be this model's victim.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Close-range Killers (Aura)",
+          "description": "While a friendly WAR DOG model is within 9\" of this model, each time that WAR DOG model makes an attack that targets the closest enemy unit, improve the Armour Penetration characteristic of that attack by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Ruinator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Knight-Ruinator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.knight-tyrant",
+      "name": "Knight Tyrant",
+      "externalIds": {
+        "wahapedia": "Knight-Tyrant"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 400,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 420,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 gheiststrike missile launchers and twin Desecrator cannon can be replaced with 1 gheiststrike missile launcher and 2 twin Desecrator cannons.",
+        "This model's brimstone volcano lance and ectoplasma decimator can be replaced with 1 darkflame cannon and 1 warpshock harpoon."
+      ],
+      "profile": {
+        "name": "Knight Tyrant",
+        "move": 8,
+        "toughness": 12,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "CHARACTER",
+          "CHAOS",
+          "KNIGHT TYRANT"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Brimstone volcano lance",
+            "range": 60,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 20,
+            "ap": -5,
+            "damage": "D6+8",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Darkflame cannon",
+            "range": 18,
+            "attacks": "3D6",
+            "skill": 6,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ectoplasma decimator - standard",
+            "profileGroup": "Ectoplasma decimator",
+            "range": 36,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ectoplasma decimator - supercharge",
+            "profileGroup": "Ectoplasma decimator",
+            "range": 36,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "3",
+            "keywords": [
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Gheiststrike missile launcher",
+            "range": 72,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 12,
+            "ap": -6,
+            "damage": "D6+1",
+            "keywords": [
+              "Anti-titanic 4+",
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin daemonbreath meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin Desecrator cannon",
+            "range": 36,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Twin-linked",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warpshock harpoon",
+            "range": 12,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 24,
+            "ap": -6,
+            "damage": "12",
+            "keywords": [
+              "Devastating Wounds",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            3,
+            6,
+            8
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Infernal Aegis (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, that WAR DOG model has the Benefit of Cover.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Bastion of Corruption",
+          "description": "Enemy units that are set up on the battlefield as Reinforcements cannot be set up within 12\" of this model.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight Tyrant datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Knight-Tyrant",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-cerastus-knight-acheron",
+      "name": "Chaos Cerastus Knight Acheron",
+      "externalIds": {
+        "wahapedia": "Chaos-Cerastus-Knight-Acheron"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 385,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Chaos Cerastus Knight Acheron",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "CERASTUS",
+          "KNIGHT ACHERON"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Acheron flame cannon",
+            "range": 18,
+            "attacks": "2D6",
+            "skill": 6,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chainfist - strike",
+            "profileGroup": "Reaper chainfist",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainfist - sweep",
+            "profileGroup": "Reaper chainfist",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Searing Flames",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with an Acheron flame cannon. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Unrestrained Terror (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, it is affected by this ability. At the start of the Fight phase, each enemy unit within Engagement Range of one or more WAR DOG units affected by this ability must take a Battle-shock test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Cerastus Knight Acheron datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Cerastus-Knight-Acheron",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-cerastus-knight-atrapos",
+      "name": "Chaos Cerastus Knight Atrapos",
+      "externalIds": {
+        "wahapedia": "Chaos-Cerastus-Knight-Atrapos"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 385,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 415,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Chaos Cerastus Knight Atrapos",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "CERASTUS",
+          "KNIGHT ATRAPOS"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Atrapos lascutter - low intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 36,
+            "attacks": "2D6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Atrapos lascutter - high intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 24,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 14,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Graviton singularity cannon - contained",
+            "profileGroup": "Graviton singularity cannon",
+            "range": 24,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "D6+1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Graviton singularity cannon - singularity",
+            "profileGroup": "Graviton singularity cannon",
+            "range": 24,
+            "attacks": "D3",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "D6+1",
+            "keywords": [
+              "Devastating Wounds",
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Atrapos lascutter - low intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Atrapos lascutter - high intensity",
+            "profileGroup": "Atrapos lascutter",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 14,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            4,
+            5,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Macro-extinction Protocols",
+          "description": "Each time this model makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll. If that target is TITANIC or TOWERING, add 1 to the Wound roll as well.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Consumed with Hunger (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, each time that WAR DOG model makes an attack that targets a TITANIC or TOWERING unit, you can re-roll the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Cerastus Knight Atrapos datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Cerastus-Knight-Atrapos",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-cerastus-knight-castigator",
+      "name": "Chaos Cerastus Knight Castigator",
+      "externalIds": {
+        "wahapedia": "Chaos-Cerastus-Knight-Castigator"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 385,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Chaos Cerastus Knight Castigator",
+        "move": 12,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "CERASTUS",
+          "KNIGHT CASTIGATOR"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Castigator bolt cannon",
+            "range": 36,
+            "attacks": "18",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Tempest warblade - strike",
+            "profileGroup": "Tempest warblade",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Tempest warblade - sweep",
+            "profileGroup": "Tempest warblade",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Storm of Bolts",
+          "description": "In your Shooting phase, after this model has shot, select one unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this model is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Offerings for the Dark Gods (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, ranged weapons equipped by that WAR DOG model have the [SUSTAINED HITS 1] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Cerastus Knight Castigator datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Cerastus-Knight-Castigator",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-cerastus-knight-lancer",
+      "name": "Chaos Cerastus Knight Lancer",
+      "externalIds": {
+        "wahapedia": "Chaos-Cerastus-Knight-Lancer"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 385,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 415,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Chaos Cerastus Knight Lancer",
+        "move": 14,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 4,
+        "wounds": 28,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "CERASTUS",
+          "KNIGHT LANCER"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Cerastus shock lance",
+            "range": 12,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Cerastus shock lance - strike",
+            "profileGroup": "Cerastus shock lance",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Cerastus shock lance - sweep",
+            "profileGroup": "Cerastus shock lance",
+            "range": 0,
+            "attacks": "10",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+2",
+            "description": "Core ability: Deadly Demise D6+2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Shock Charge",
+          "description": "You can target this model with the Crushing Impact Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Dark Fervour (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, ranged weapons equipped by that War Dog model have the [ASSAULT] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Cerastus Knight Lancer datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Cerastus-Knight-Lancer",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-questoris-knight-magaera",
+      "name": "Chaos Questoris Knight Magaera",
+      "externalIds": {
+        "wahapedia": "Chaos-Questoris-Knight-Magaera"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 375,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 390,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser."
+      ],
+      "profile": {
+        "name": "Chaos Questoris Knight Magaera",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "ABHORRENT",
+          "KNIGHT MAGAERA"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Lightning cannon",
+            "range": 48,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Phased plasma-fusil",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin rad cleanser",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 2,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hekaton siege claw - strike",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hekaton siege claw - sweep",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Huntmaster (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, ranged weapons equipped by that WAR DOG model have the [ASSAULT] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Repair Auto-simulacra",
+          "description": "At the end of your Command phase, this model regains up to D3 lost wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Questoris Knight Magaera datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Questoris-Knight-Magaera",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-questoris-knight-styrix",
+      "name": "Chaos Questoris Knight Styrix",
+      "externalIds": {
+        "wahapedia": "Chaos-Questoris-Knight-Styrix"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 365,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 380,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser."
+      ],
+      "profile": {
+        "name": "Chaos Questoris Knight Styrix",
+        "move": 10,
+        "toughness": 11,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 26,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHARACTER",
+          "TITANIC",
+          "TOWERING",
+          "CHAOS",
+          "ABHORRENT",
+          "KNIGHT STYRIX"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Graviton crusher",
+            "range": 18,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-vehicle 2+",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin rad cleanser",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 2,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volkite chierovile",
+            "range": 30,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 12,
+            "ap": 0,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Hekaton siege claw - strike",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hekaton siege claw - sweep",
+            "profileGroup": "Hekaton siege claw",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - strike",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 14,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chainsword - sweep",
+            "profileGroup": "Reaper chainsword",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            5,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 9,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Preysight (Aura)",
+          "description": "While a friendly WAR DOG model is within 6\" of this model, ranged weapons equipped by that WAR DOG model have the [IGNORES COVER] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Grav-pinned",
+          "description": "In your Shooting phase, after this model has shot, if an enemy INFANTRY unit was hit by one or more of those attacks made with a graviton crusher, until the end of your opponent's next turn, that enemy unit is grav-pinned. While a unit is grav-pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-9 Wounds Remaining While this model has 1-9 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Questoris Knight Styrix datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Questoris-Knight-Styrix",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.cultist-mob",
+      "name": "Cultist Mob",
+      "aliases": [
+        "Cultist Mob (x10)",
+        "Cultist Mob (x20)"
+      ],
+      "externalIds": {
+        "wahapedia": "Cultist-Mob"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 10,
+        "maximum": 20,
+        "step": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 50
+        },
+        {
+          "modelCount": 20,
+          "points": 90
+        }
+      ],
+      "wargearOptions": [
+        "The Cultist Champion's autopistol can be replaced with 1 bolt pistol."
+      ],
+      "profile": {
+        "name": "Cultist Mob",
+        "move": 6,
+        "toughness": 3,
+        "save": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "GRENADES",
+          "CHAOS",
+          "DAMNED",
+          "CULTIST MOB"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Autopistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Brutal assault weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "For the Dark Gods",
+          "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Cultist Mob datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Cultist-Mob",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.accursed-cultists",
+      "name": "Accursed Cultists",
+      "aliases": [
+        "Accursed Cultists (x8)",
+        "Accursed Cultists (x16)"
+      ],
+      "externalIds": {
+        "wahapedia": "Accursed-Cultists"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 8,
+        "maximum": 16,
+        "step": 8
+      },
+      "points": [
+        {
+          "modelCount": 8,
+          "points": 90,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 16,
+          "points": 195,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 8,
+          "points": 110,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 16,
+          "points": 215,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "profile": {
+        "name": "Accursed Cultists",
+        "move": 6,
+        "toughness": 4,
+        "save": 6,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 8,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "modelProfiles": [
+          {
+            "name": "MUTANT",
+            "count": 5,
+            "move": 6,
+            "toughness": 4,
+            "save": 6,
+            "wounds": 1,
+            "leadership": 7,
+            "oc": 1
+          },
+          {
+            "name": "TORMENT",
+            "count": 3,
+            "move": 6,
+            "toughness": 4,
+            "save": 6,
+            "wounds": 3,
+            "leadership": 7,
+            "oc": 1
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHAOS",
+          "DAMNED",
+          "ACCURSED CULTISTS"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Blasphemous appendages",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Hideous mutations",
+            "range": 0,
+            "attacks": "D6+2",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 6+",
+            "description": "Core ability: Feel No Pain 6+.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Accursed Horde",
+          "description": "In your opponent's Shooting phase, when an enemy unit has shot, if a model from this unit was destroyed as a result of those attacks, this unit can make a surge move of up to D6\".",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Accursed Cultists datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Accursed-Cultists",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.fellgor-beastmen",
+      "name": "Fellgor Beastmen",
+      "aliases": [
+        "Fellgor Beastmen (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Fellgor-Beastmen"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 60
+        }
+      ],
+      "wargearOptions": [
+        "The Fellgor Champion's bolt pistol can be replaced with 1 plasma pistol.",
+        "1 Fellgor Beastman's close combat weapon can be replaced with 1 great weapon.",
+        "1 Fellgor Beastman's close combat weapon can be replaced with 1 corrupted stave."
+      ],
+      "profile": {
+        "name": "Fellgor Beastmen",
+        "move": 6,
+        "toughness": 4,
+        "save": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 1,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHAOS",
+          "DAMNED",
+          "FELLGOR BEASTMEN"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Autopistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Bolt pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Corrupted stave",
+            "range": 18,
+            "attacks": "D3",
+            "skill": 4,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Psychic"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - standard",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma pistol - supercharge",
+            "profileGroup": "Plasma pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Hazardous",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainsword",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Corrupted stave",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -1,
+            "damage": "D3",
+            "keywords": [
+              "Devastating Wounds",
+              "Psychic"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Great weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 5,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": []
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Bestial Raiders",
+          "description": "If this unit starts the game in Strategic Reserves, it can be set up in the Reinforcements step of your first, second or third Movement phase, regardless of any mission rules. If this unit is in Strategic Reserves, for the purposes of setting up this unit on the battlefield, treat the current battle round number as being one higher than it actually is.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Fellgor Beastmen datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Fellgor-Beastmen",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.traitor-guardsmen-squad",
+      "name": "Traitor Guardsmen Squad",
+      "aliases": [
+        "Traitor Guardsmen Squad (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Traitor-Guardsmen-Squad"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 10
+      },
+      "points": [
+        {
+          "modelCount": 10,
+          "points": 70
+        }
+      ],
+      "wargearOptions": [
+        "Up to 3 Traitor Guardsmen can each have their lasgun replaced with one of the following (duplicates are not allowed):",
+        "1 Cultist grenade launcher",
+        "1 flamer",
+        "1 meltagun",
+        "1 plasma gun",
+        "1 Cultist sniper rifle",
+        "The Traitor Sergeant's close combat weapon can be replaced with one of the following:; 1 chainsword; 1 power weapon",
+        "The Traitor Sergeant's corrupted pistol can be replaced with 1 boltgun."
+      ],
+      "profile": {
+        "name": "Traitor Guardsmen Squad",
+        "move": 6,
+        "toughness": 3,
+        "save": 5,
+        "wounds": 1,
+        "leadership": 7,
+        "oc": 2,
+        "baseModelCount": 10,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          },
+          {
+            "shape": "round",
+            "diameterMm": 25
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "GRENADES",
+          "CHAOS",
+          "DAMNED",
+          "TRAITOR GUARDSMEN SQUAD"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Corrupted pistol",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Cultist grenade launcher - frag",
+            "profileGroup": "Cultist grenade launcher",
+            "range": 24,
+            "attacks": "D3",
+            "skill": 4,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Cultist grenade launcher - krak",
+            "profileGroup": "Cultist grenade launcher",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 9,
+            "ap": -2,
+            "damage": "D3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Cultist sniper rifle",
+            "range": 36,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Precision",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lasgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma gun - standard",
+            "profileGroup": "Plasma gun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Plasma gun - supercharge",
+            "profileGroup": "Plasma gun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 1",
+              "Hazardous"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Chainsword",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "1",
+            "skill": 4,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Power weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 4,
+            "strength": 4,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": []
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Twisted Defence Force",
+          "description": "While this unit is within range of an objective, this unit has +1 Sv against ranged attacks.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Traitor Guardsmen Squad datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Traitor-Guardsmen-Squad",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-acastus-knight-asterius",
+      "name": "Chaos Acastus Knight Asterius",
+      "externalIds": {
+        "wahapedia": "Chaos-Acastus-Knight-Asterius"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 785,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 860,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Chaos Acastus Knight Asterius",
+        "move": 8,
+        "toughness": 13,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 30,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "FRAME",
+          "CHAOS",
+          "ACASTUS",
+          "KNIGHT ASTERIUS"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Asterius volkite culverin",
+            "range": 24,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Karacnos mortar battery",
+            "range": 48,
+            "attacks": "D6+3",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Indirect Fire",
+              "Ignores Cover",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin conversion beam cannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 16,
+            "ap": -2,
+            "damage": "6",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 10,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 2D6",
+            "description": "Core ability: Deadly Demise 2D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Sunderer of Fortresses",
+          "description": "Each time this model makes an attack that targets a VEHICLE, improve the Strength and Damage characteristics of that attack by 1 (if that attack targets a FORTIFICATION, improve the Strength and Damage characteristics of that attack by 2 instead).",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Acastus Knight Asterius datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Acastus-Knight-Asterius",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.chaos-acastus-knight-porphyrion",
+      "name": "Chaos Acastus Knight Porphyrion",
+      "externalIds": {
+        "wahapedia": "Chaos-Acastus-Knight-Porphyrion"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 725,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 800,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 Acastus autocannons can each be replaced with one of the following:; 2 lascannons; 1 Acastus autocannon and 1 lascannon",
+        "This model's Acastus ironstorm missile pod can be replaced with 1 helios defence missiles."
+      ],
+      "profile": {
+        "name": "Chaos Acastus Knight Porphyrion",
+        "move": 8,
+        "toughness": 13,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 30,
+        "leadership": 6,
+        "oc": 10,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "FRAME",
+          "CHAOS",
+          "ACASTUS",
+          "KNIGHT PORPHYRION"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Acastus Autocannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Acastus ironstorm missile pod",
+            "range": 48,
+            "attacks": "D6+6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Helios defence missiles",
+            "range": 48,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "D6",
+            "keywords": [
+              "Anti-fly 2+",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Twin magna lascannon",
+            "range": 72,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 18,
+            "ap": -4,
+            "damage": "D6+6",
+            "keywords": [
+              "Twin-linked",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Titanic feet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 10,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 2D6",
+            "description": "Core ability: Deadly Demise 2D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 10,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Bastion of Firepower",
+          "description": "Each time this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-10 Wounds Remaining While this model has 1-10 wounds remaining, subtract 5 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Acastus Knight Porphyrion datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/Chaos-Acastus-Knight-Porphyrion",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.war-dog-brigand",
+      "name": "War Dog Brigand",
+      "externalIds": {
+        "wahapedia": "War-Dog-Brigand"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 135
+        }
+      ],
+      "wargearOptions": [
+        "This model's diabolus heavy stubber can be replaced with 1 havoc multi-launcher."
+      ],
+      "profile": {
+        "name": "War Dog Brigand",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "WAR DOG",
+          "BRIGAND"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Avenger chaincannon",
+            "range": 24,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Daemonbreath spear",
+            "range": 18,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc multi-launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Brigand",
+          "description": "Each time this model makes a ranged attack that targets a unit that is within range of one or more objective markers, that attack has the [IGNORES COVER] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia War Dog Brigand datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/War-Dog-Brigand",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.war-dog-executioner",
+      "name": "War Dog Executioner",
+      "externalIds": {
+        "wahapedia": "War-Dog-Executioner"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 130
+        }
+      ],
+      "wargearOptions": [
+        "This model's diabolus heavy stubber can be replaced with 1 daemonbreath meltagun."
+      ],
+      "profile": {
+        "name": "War Dog Executioner",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "WAR DOG",
+          "EXECUTIONER"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Daemonbreath meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "War Dog autocannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Executioner",
+          "description": "Each time this model makes an attack that targets a unit Below Half-strength, add 1 to the Hit roll. Each time an enemy unit is destroyed as the result of this model's attacks, before removing the last model in that unit from the battlefield, each unit from your opponent's army that is within 3\" of it must take a Battle-shock test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia War Dog Executioner datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/War-Dog-Executioner",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.war-dog-huntsman",
+      "name": "War Dog Huntsman",
+      "externalIds": {
+        "wahapedia": "War-Dog-Huntsman"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 135
+        }
+      ],
+      "wargearOptions": [
+        "This model's diabolus heavy stubber can be replaced with 1 daemonbreath meltagun."
+      ],
+      "profile": {
+        "name": "War Dog Huntsman",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "WAR DOG",
+          "HUNTSMAN"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Daemonbreath meltagun",
+            "range": 12,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Daemonbreath spear",
+            "range": 18,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chaintalon - strike",
+            "profileGroup": "Reaper chaintalon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chaintalon - sweep",
+            "profileGroup": "Reaper chaintalon",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Huntsman",
+          "description": "Each time this model makes an attack that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia War Dog Huntsman datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/War-Dog-Huntsman",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.war-dog-karnivore",
+      "name": "War Dog Karnivore",
+      "externalIds": {
+        "wahapedia": "War-Dog-Karnivore"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 145
+        }
+      ],
+      "wargearOptions": [
+        "This model's diabolus heavy stubber can be replaced with 1 havoc multi-launcher."
+      ],
+      "profile": {
+        "name": "War Dog Karnivore",
+        "move": 14,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "WAR DOG",
+          "KARNIVORE"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc multi-launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chaintalon",
+            "range": 0,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Slaughterclaw",
+            "range": 0,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Karnivore",
+          "description": "You can re-roll Advance and Charge rolls made for this model.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia War Dog Karnivore datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/War-Dog-Karnivore",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.war-dog-stalker",
+      "name": "War Dog Stalker",
+      "externalIds": {
+        "wahapedia": "War-Dog-Stalker"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 135
+        }
+      ],
+      "wargearOptions": [
+        "This model's avenger chaincannon can be replaced with 1 daemonbreath spear.",
+        "This model's diabolus heavy stubber can be replaced with 1 havoc multi-launcher.",
+        "This model's slaughterclaw can be replaced with 1 reaper chaintalon."
+      ],
+      "profile": {
+        "name": "War Dog Stalker",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 7,
+        "oc": 6,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "WAR DOG",
+          "STALKER"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Avenger chaincannon",
+            "range": 24,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Daemonbreath spear",
+            "range": 18,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 12,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 4"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Diabolus heavy stubber",
+            "range": 36,
+            "attacks": "3",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 3"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Havoc multi-launcher",
+            "range": 48,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaper chaintalon - strike",
+            "profileGroup": "Reaper chaintalon",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaper chaintalon - sweep",
+            "profileGroup": "Reaper chaintalon",
+            "range": 0,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Slaughterclaw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            6
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Stalker",
+          "description": "Each time this model makes an attack that targets an enemy unit, if there are no other units from your opponent's army within 6\" of that target, add 1 to the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia War Dog Stalker datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/War-Dog-Stalker",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "chaos-knights.war-dog-moirax",
+      "name": "War Dog Moirax",
+      "externalIds": {
+        "wahapedia": "War-Dog-Moirax"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's graviton pulsar can be replaced with one of the following;",
+        "1 siege claw and 1 rad cleanser",
+        "1 lightning lock",
+        "1 conversion beam cannon",
+        "1 volkite veuglaire",
+        "This model's volkite veuglaire can be replaced with one of the following:; 1 siege claw and 1 rad cleanser; 1 graviton pulsar; 1 lightning lock; 1 conversion beam cannon"
+      ],
+      "profile": {
+        "name": "War Dog Moirax",
+        "move": 12,
+        "toughness": 10,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 12,
+        "leadership": 7,
+        "oc": 8,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "CHAOS",
+          "WAR DOG",
+          "MOIRAX"
+        ],
+        "factionKeywords": [
+          "chaos-knights",
+          "Chaos Knights"
+        ],
+        "weapons": [
+          {
+            "name": "Conversion beam cannon",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Graviton pulsar",
+            "range": 24,
+            "attacks": "D6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-VEHICLE 2+",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lightning lock",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 8,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Rad cleanser",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 2,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Anti-infantry 2+",
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Volkite veuglaire",
+            "range": 36,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 8,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured feet",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Siege claw",
+            "range": 0,
+            "attacks": "4",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            4,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "chaos-knights.army-rule.dreadblades",
+        "chaos-knights.army-rule.super-heavy-walker"
+      ],
+      "rawRules": [
+        {
+          "name": "Protection Protocols",
+          "description": "You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do: That use is -1 CP. That use does not prevent any uses of that stratagem on other units this phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, subtract 3 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia War Dog Moirax datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/War-Dog-Moirax",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

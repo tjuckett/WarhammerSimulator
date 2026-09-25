@@ -93,6 +93,10 @@ function actionLabel(action: GameAction): string {
       return 'Allocate damage';
     case GAME_ACTION_TYPE.ShootUnitWeapon:
       return 'Shoot';
+    case GAME_ACTION_TYPE.AdvanceCombatResolution:
+      return 'Advance combat roll';
+    case GAME_ACTION_TYPE.ClearCombatResolution:
+      return 'Finish combat result';
     case GAME_ACTION_TYPE.SnapShootUnitWeapon:
       return 'Snap Shoot';
     case GAME_ACTION_TYPE.LockUnitShooting:

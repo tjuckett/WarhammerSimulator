@@ -1,16 +1,18 @@
-import { PHASE_STEP, type BattleState, type BattleUnit, type Phase, type Side } from '../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type CombatRerollSelection, type Phase, type Side } from '../types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition, StratagemUse } from '../types/stratagem';
 import type { RuleEffect } from '../types/ruleEffects';
 import { battleRound } from './battleRound';
 import { clone } from './clone';
 import { canSpendCommandPoints, spendCommandPoints } from './commandPoints';
 import { unitCanBeAffectedByStratagem } from './battleshock';
+import { resolveBattleshockUnit } from './battleshockPhase';
 import { countSuccesses, rollMultiple } from './dice';
 import { hasLOSEdgeToEdge } from './terrainGeometry';
 import { battleUnitMaxBaseRadiusInches } from './baseSizes';
 import { applyDamage, battleModelBaseEdgeDistance, battleUnitsBaseEdgeDistance } from './simulator';
 import type { RulesEdition } from './rulesEngine';
 import { unitHasRule } from './armyUnits';
+import { attachedUnitComponents } from './attachedUnits';
 import { resolveRuleEffects } from './ruleEffects';
 
 let _stratagemUseId = 0;
@@ -304,7 +306,7 @@ export function resolveCommandReroll(
   state: BattleState,
   side: Side,
   originalRolls: number[],
-  options: { sides?: number; label?: string; rollType?: CommandRerollRollType } = {},
+  options: { sides?: number; label?: string; rollType?: CommandRerollRollType; combatRoll?: CombatRerollSelection; rules?: RulesEdition; rollUnitId?: string } = {},
 ): BattleState {
   const pending = state.pendingCommandReroll;
   const sides = options.sides ?? 6;
@@ -320,8 +322,243 @@ export function resolveCommandReroll(
 
   const next: BattleState = clone(state);
   const rerolls = originalRolls.map((roll, index) =>
-    rollType === 'charge' || index === 0 ? rollDie(sides) : roll,
+    rollType === 'charge' || rollType === 'leadership' || index === 0 ? rollDie(sides) : roll,
   );
+  const combatRoll = options.combatRoll;
+  let combatRollApplied = !combatRoll;
+  if (!combatRoll && rollType === 'advance') {
+    const requestedUnitId = options.rollUnitId ?? pending.targetUnitId;
+    const requestedUnit = next.units?.find(unit => unit.id === requestedUnitId && unit.side === side && !unit.destroyed);
+    const rootUnit = requestedUnit?.attachedToUnitId
+      ? next.units?.find(unit => unit.id === requestedUnit.attachedToUnitId && unit.side === side && !unit.destroyed)
+      : requestedUnit;
+    const originalAdvanceRoll = rootUnit?.advanceRoll;
+    if (!rootUnit || originalAdvanceRoll === undefined
+      || rootUnit.profile.movementOverrides?.advanceRoll === 'auto6'
+      || originalRolls.length !== 1
+      || originalRolls[0] !== originalAdvanceRoll) return state;
+    const nextAdvanceRoll = rerolls[0];
+    const delta = nextAdvanceRoll - originalAdvanceRoll;
+    rootUnit.advanceRoll = nextAdvanceRoll;
+    for (const component of attachedUnitComponents(next, rootUnit)) {
+      if (component.movementAction !== 'advanced') continue;
+      if (component.movementAllowanceRemainingByModel) {
+        component.movementAllowanceRemainingByModel = component.movementAllowanceRemainingByModel
+          .map(allowance => Math.max(0, allowance + delta));
+      }
+      if (component.movementAllowanceTotalByModel) {
+        component.movementAllowanceTotalByModel = component.movementAllowanceTotalByModel
+          .map(allowance => Math.max(0, allowance + delta));
+      }
+      if (typeof component.movementAllowanceRemaining === 'number') {
+        component.movementAllowanceRemaining = Math.max(0, component.movementAllowanceRemaining + delta);
+      }
+      const remaining = component.movementAllowanceRemainingByModel
+        ?? (typeof component.movementAllowanceRemaining === 'number' ? [component.movementAllowanceRemaining] : []);
+      component.movementComplete = remaining.length > 0 && remaining.every(allowance => allowance <= 0.001);
+    }
+  }
+  if (!combatRoll && rollType === 'charge') {
+    const charge = next.chargeResolution;
+    const pendingCharge = next.pendingChargeRoll;
+    const originalDice = charge?.dice;
+    if (!charge || charge.status === 'resolved' || (!pendingCharge && charge.status !== 'failed')
+      || originalRolls.length !== 2
+      || !originalDice
+      || originalRolls.some((roll, index) => roll !== originalDice[index])) return state;
+    const rawTotal = rerolls[0] + rerolls[1];
+    // Heroic Intervention's Into the Fray caps the charge roll at 6. The
+    // existing maximum distance already includes Take to the Skies costs, so
+    // update it by the change in the capped total rather than recomputing the
+    // movement modifier here.
+    const wasCapped = charge.total !== charge.rawTotal;
+    const total = wasCapped ? Math.min(6, rawTotal) : rawTotal;
+    next.chargeResolution = {
+      ...charge,
+      dice: [rerolls[0], rerolls[1]],
+      rawTotal,
+      total,
+      maximumDistance: Math.max(0, charge.maximumDistance + total - charge.total),
+    };
+    const maximumDistance = Math.max(0, charge.maximumDistance + total - charge.total);
+    next.pendingChargeRoll = {
+      ...(pendingCharge ?? { unitId: charge.unitId, side: charge.side }),
+      maximumDistance,
+    };
+    if (charge.status === 'failed') {
+      const chargeUnit = next.units?.find(unit => unit.id === charge.unitId && unit.side === charge.side && !unit.destroyed);
+      if (!chargeUnit) return state;
+      for (const component of attachedUnitComponents(next, chargeUnit)) {
+        component.activated = false;
+        if (charge.heroicInterventionMode) {
+          component.heroicInterventionThisPhase = true;
+          component.heroicInterventionMode = charge.heroicInterventionMode;
+        }
+      }
+      next.chargeResolution = {
+        ...next.chargeResolution,
+        maximumDistance,
+        status: 'pending-target',
+        failureReason: undefined,
+      };
+      next.pendingChargeMovement = undefined;
+    }
+  }
+  if (!combatRoll && rollType === 'leadership') {
+    const result = next.battleshockResults?.find(candidate => candidate.unitId === options.rollUnitId);
+    const unit = result ? next.units?.find(candidate => candidate.id === result.unitId && !candidate.destroyed) : undefined;
+    if (!result || !unit || result.automaticallyPassed || !result.dice
+      || originalRolls.length !== 2
+      || originalRolls.some((roll, index) => roll !== result.dice?.[index])) return state;
+    const dice: [number, number] = [rerolls[0], rerolls[1]];
+    const total = dice[0] + dice[1];
+    const passed = total >= result.needed;
+    result.dice = dice;
+    result.total = total;
+    result.passed = passed;
+    for (const component of next.units.filter(candidate =>
+      candidate.side === unit.side
+      && (candidate.id === unit.id || candidate.attachedToUnitId === unit.id || unit.attachedToUnitId === candidate.id),
+    )) component.battleshocked = !passed;
+  }
+  const combatStageForGroup = combatRoll?.groupKind === 'hit'
+    ? 'hits'
+    : combatRoll?.groupKind === 'wound'
+      ? 'wounds'
+      : combatRoll?.groupKind === 'save'
+        ? 'saves'
+        : combatRoll?.groupKind === 'damage'
+          ? 'damage'
+          : undefined;
+  if (combatRoll && next.pendingCombatResolution
+    && next.pendingCombatResolution.kind === combatRoll.kind
+    && next.pendingCombatResolution.attackerUnitId === combatRoll.attackerUnitId
+    && combatStageForGroup
+    && next.pendingCombatResolution.stage === combatStageForGroup) {
+    const pendingCombat = next.pendingCombatResolution;
+    const activeContinuationMatches = pendingCombat.weaponIndex === combatRoll.weaponIndex
+      && pendingCombat.targetUnitId === combatRoll.targetUnitId;
+    const queuedContinuationIndex = activeContinuationMatches
+      ? -1
+      : (pendingCombat.continuationQueue ?? []).findIndex(entry =>
+        entry.weaponIndex === combatRoll.weaponIndex && entry.targetUnitId === combatRoll.targetUnitId,
+      );
+    const continuation = activeContinuationMatches
+      ? pendingCombat.continuation
+      : queuedContinuationIndex >= 0
+        ? pendingCombat.continuationQueue?.[queuedContinuationIndex]?.continuation
+        : undefined;
+    if (!continuation) return state;
+    const result = next.lastShootingResolution?.weapons.find(weapon =>
+      weapon.weaponIndex === combatRoll.weaponIndex && weapon.targetUnitId === combatRoll.targetUnitId,
+    );
+    const group = result?.groups[combatRoll.groupIndex];
+    const attacker = next.units?.find(unit => unit.id === combatRoll.attackerUnitId && !unit.destroyed);
+    const baseWeapon = attacker?.profile.weapons[combatRoll.weaponIndex];
+    if (group?.kind === combatRoll.groupKind
+      && group.rolls[combatRoll.rollIndex] !== undefined
+      && originalRolls.length === 1
+      && originalRolls[0] === group.rolls[combatRoll.rollIndex]) {
+      const previousRolls = [...group.rolls];
+      const groupTarget = group.target;
+      const previousSuccesses = group.successes ?? (groupTarget === undefined
+        ? 0
+        : group.rolls.filter(roll => roll >= groupTarget).length);
+      group.rolls[combatRoll.rollIndex] = rerolls[0];
+      group.rerolledRollIndices = [...new Set([...(group.rerolledRollIndices ?? []), combatRoll.rollIndex])];
+
+      if (group.kind === 'damage') {
+        // Damage groups are linked to the deferred packet they created. Only
+        // variable damage expressions are exposed in the popup; fixed damage
+        // has no meaningful die to reroll.
+        if (!baseWeapon || /^\d+$/i.test(String(baseWeapon.damage).trim())) return state;
+        // A bodyguard can be destroyed before its remaining packet transfers
+        // to a Leader. Search every component so the typed combat-result link
+        // remains valid across that transfer.
+        const packetMatchesCombatGroup = (packet: NonNullable<BattleUnit['pendingDamageAllocations']>[number]) =>
+          packet.combatResult?.weaponIndex === combatRoll.weaponIndex
+          && packet.combatResult.groupIndex === combatRoll.groupIndex;
+        const directOwner = next.units?.find(unit => unit.id === combatRoll.targetUnitId
+          && unit.pendingDamageAllocations?.some(packetMatchesCombatGroup));
+        const relatedOwner = next.units?.find(unit =>
+          (unit.id === combatRoll.targetUnitId
+            || unit.attachedToUnitId === combatRoll.targetUnitId
+            || next.units?.some(candidate => candidate.id === combatRoll.targetUnitId && candidate.attachedToUnitId === unit.id))
+          && unit.pendingDamageAllocations?.some(packetMatchesCombatGroup),
+        );
+        const allocationOwner = directOwner ?? relatedOwner;
+        const allocation = allocationOwner?.pendingDamageAllocations?.find(packet =>
+          packetMatchesCombatGroup(packet),
+        );
+        if (!allocation) return state;
+        const expressionBonus = previousSuccesses - previousRolls.reduce((total, roll) => total + roll, 0);
+        const rerolledDamage = Math.max(1, group.rolls.reduce((total, roll) => total + roll, 0) + expressionBonus);
+        group.successes = rerolledDamage;
+        allocation.damage = Math.max(1, allocation.damage + rerolledDamage - previousSuccesses);
+        pendingCombat.rolls = [...group.rolls];
+        combatRollApplied = true;
+      } else {
+        const rules = options.rules;
+        const weapon = baseWeapon && continuation.weaponKeywords
+          ? { ...baseWeapon, keywords: [...continuation.weaponKeywords] }
+          : baseWeapon;
+        const target = groupTarget;
+        const oldHitResult = group.kind === 'hit' && rules && weapon
+          ? rules.processHits(previousRolls, target ?? 6, weapon)
+          : undefined;
+        const oldWoundResult = group.kind === 'wound' && rules && weapon && target !== undefined
+          ? rules.processWounds(previousRolls, target, weapon)
+          : undefined;
+        const newHitResult = group.kind === 'hit' && rules && weapon
+          ? rules.processHits(group.rolls, target ?? 6, weapon)
+          : undefined;
+        const newWoundResult = group.kind === 'wound' && rules && weapon && target !== undefined
+          ? rules.processWounds(group.rolls, target, weapon)
+          : undefined;
+        group.successes = newHitResult?.hits
+          ?? newWoundResult?.wounds
+          ?? (target === undefined ? group.successes : group.rolls.filter(roll => roll >= target).length);
+        if (group.kind === 'hit') {
+          continuation.hits += (group.successes ?? 0) - previousSuccesses;
+          group.bonusHits = newHitResult?.bonusHits;
+          if (weapon && rules) {
+            const hitGroups = result?.groups.filter(candidate => candidate.kind === 'hit') ?? [];
+            continuation.lethalAutoWounds = weapon.keywords.some(keyword => keyword.toLowerCase().startsWith('lethal hits'))
+              ? hitGroups.reduce((total, candidate) => total + candidate.rolls.filter(roll => roll === 6).length, 0)
+              : continuation.lethalAutoWounds;
+            continuation.totalMortals += (newHitResult?.mortalsFromCrits ?? 0) - (oldHitResult?.mortalsFromCrits ?? 0);
+          }
+        }
+        if (group.kind === 'wound') {
+          continuation.wounds = (continuation.wounds ?? 0) + (group.successes ?? 0) - previousSuccesses;
+          continuation.devastatingWounds += (newWoundResult?.devastatingWounds ?? 0) - (oldWoundResult?.devastatingWounds ?? 0);
+          continuation.totalMortals += (newWoundResult?.mortalsFromCrits ?? 0) - (oldWoundResult?.mortalsFromCrits ?? 0);
+        }
+        if (group.kind === 'save') {
+          const previousUnsaved = group.noSave
+            ? previousSuccesses
+            : previousRolls.length - previousSuccesses;
+          const rerolledSaved = target === undefined ? group.successes ?? 0 : group.rolls.filter(roll => roll >= target).length;
+          group.successes = rerolledSaved;
+          const rerolledUnsaved = group.noSave ? rerolledSaved : group.rolls.length - rerolledSaved;
+          continuation.unsaved = (continuation.unsaved ?? 0) + rerolledUnsaved - previousUnsaved;
+        }
+        if (activeContinuationMatches) pendingCombat.rolls = [...group.rolls];
+        combatRollApplied = true;
+      }
+      if (result) {
+        result.hits = result.groups.filter(candidate => candidate.kind === 'hit')
+          .reduce((total, candidate) => total + (candidate.successes ?? 0), 0);
+        result.wounds = result.groups.filter(candidate => candidate.kind === 'wound')
+          .reduce((total, candidate) => total + (candidate.successes ?? 0), 0);
+        result.unsavedWounds = result.groups.filter(candidate => candidate.kind === 'save')
+          .reduce((total, candidate) => total + (candidate.noSave
+            ? (candidate.successes ?? 0)
+            : candidate.rolls.length - (candidate.successes ?? 0)), 0);
+      }
+    }
+  }
+  if (!combatRollApplied) return state;
   next.pendingCommandReroll = undefined;
   const label = options.label ?? 'roll';
   next.log = [...next.log, {
@@ -526,6 +763,16 @@ export function useStratagem(
     heroicInterventionMode,
   };
   resolveRuleEffects(effectContext, stratagem.effects);
+  // Insane Bravery replaces this unit's current Battle-shock test. Resolve
+  // the typed step action immediately so the player is not asked to press a
+  // Roll button merely to record an automatic pass.
+  if (stratagem.id === 'insane-bravery'
+    && targetUnitId
+    && next.phase === 'command'
+    && next.phaseStep === PHASE_STEP.CommandBattleShock) {
+    const resolution = resolveBattleshockUnit(next, side, targetUnitId);
+    if (resolution) next.log = [...next.log, resolution.log];
+  }
   for (const effect of stratagem.effects ?? []) {
     if (effect.type !== 'deal-mortal-wounds') continue;
     applyMortalWoundEffect(

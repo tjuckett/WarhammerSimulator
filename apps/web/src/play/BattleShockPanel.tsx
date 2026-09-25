@@ -28,14 +28,22 @@ export function BattleShockPanel({
   eligibleUnits,
   results,
   pendingUnitId,
+  selectedUnitId,
+  canRerollUnitId,
+  onSelect,
   onRoll,
+  onResolveCommandReroll,
   popup = false,
 }: {
   armyName: string;
   eligibleUnits: BattleShockEligibleUnit[];
   results: BattleShockResult[];
   pendingUnitId?: string;
+  selectedUnitId?: string;
+  canRerollUnitId?: string;
+  onSelect: (unitId: string) => void;
   onRoll: (unitId: string) => void;
+  onResolveCommandReroll?: (unitId: string, dice: [number, number]) => void;
   popup?: boolean;
 }) {
   const resultByUnitId = new Map(results.map(result => [result.unitId, result]));
@@ -54,15 +62,29 @@ export function BattleShockPanel({
           {eligibleUnits.map(unit => {
             const result = resultByUnitId.get(unit.unitId);
             const isPending = pendingUnitId === unit.unitId && !result;
+            const isSelected = selectedUnitId === unit.unitId;
+            const isHighlighted = isSelected || (!selectedUnitId && isPending);
             return (
               <Box
                 key={unit.unitId}
+                role="button"
+                tabIndex={0}
+                onClick={() => onSelect(unit.unitId)}
+                onKeyDown={event => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelect(unit.unitId);
+                  }
+                }}
                 sx={{
                   display: 'grid',
                   gap: 0.25,
                   p: 0.7,
-                  border: `1px solid ${isPending ? uiTokens.border.warning : uiTokens.border.subtle}`,
-                  background: isPending ? 'rgba(255, 190, 85, 0.12)' : uiTokens.surface.panel,
+                  cursor: 'pointer',
+                  border: `1px solid ${isHighlighted ? uiTokens.border.warning : uiTokens.border.subtle}`,
+                  background: isHighlighted
+                    ? 'rgba(255, 190, 85, 0.12)'
+                    : uiTokens.surface.panel,
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 0.75 }}>
@@ -81,7 +103,7 @@ export function BattleShockPanel({
                       {result.passed ? 'Passed' : 'Failed'}
                     </Typography>
                   ) : (
-                    <Button size="small" variant={isPending ? 'contained' : 'outlined'} onClick={() => onRoll(unit.unitId)}>
+                    <Button size="small" variant={isHighlighted ? 'contained' : 'outlined'} onClick={() => onRoll(unit.unitId)}>
                       Roll 2D6
                     </Button>
                   )}
@@ -90,9 +112,28 @@ export function BattleShockPanel({
                   {unit.reasons.map(reason => reasonLabels[reason]).join(' · ')} · Leadership {unit.leadership}+
                 </Typography>
                 {result && (
-                  <Typography variant="caption" sx={{ color: result.passed ? uiTokens.color.status.success : uiTokens.color.status.warning }}>
-                    {resultLabel(result)}
-                  </Typography>
+                  <>
+                    <Typography variant="caption" sx={{ color: result.passed ? uiTokens.color.status.success : uiTokens.color.status.warning }}>
+                      {resultLabel(result)}
+                    </Typography>
+                    {result.dice && onResolveCommandReroll && canRerollUnitId === unit.unitId && (
+                      <Box sx={{ display: 'flex', gap: 0.35, alignItems: 'center' }}>
+                        <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 800 }}>
+                          Command Re-roll: click either die to reroll both.
+                        </Typography>
+                        {result.dice.map((die, index) => (
+                          <Button
+                            key={`${unit.unitId}-battleshock-die-${index}`}
+                            size="small"
+                            variant="text"
+                            title="Click either die to Command Re-roll both Leadership dice"
+                            onClick={() => onResolveCommandReroll(unit.unitId, result.dice!)}
+                            sx={{ minWidth: 22, width: 22, height: 22, p: 0, border: `1px solid ${uiTokens.color.combat.hit}`, borderRadius: 1, color: uiTokens.color.combat.hit, fontWeight: 800, lineHeight: 1, '&:hover': { background: 'rgba(93, 173, 226, 0.24)' } }}
+                          >{die}</Button>
+                        ))}
+                      </Box>
+                    )}
+                  </>
                 )}
                 {!result && !isPending && (
                   <Typography variant="caption" sx={disabledTextSx}>

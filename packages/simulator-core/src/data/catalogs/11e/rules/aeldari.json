@@ -1,0 +1,2677 @@
+{
+  "factionId": "aeldari",
+  "rules": [
+    {
+      "id": "aeldari.army-rule.battle-focus",
+      "name": "Battle Focus",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is ASURYANI, at the start of the battle round, you receive a number of Battle Focus tokens based on the battle size, as shown in the table below. BATTLE SIZEBATTLE FOCUS TOKENS Incursion2 Strike Force4 Onslaught6 Each time one of the triggers shown in the Agile Manoeuvres section below occurs, you can spend one Battle Focus token to enable the relevant eligible unit to perform that Agile Manoeuvre. A unit is eligible to perform an Agile Manoeuvre if it has this ability and has not already performed an Agile Manoeuvre in the same phase. Unless otherwise stated, you cannot trigger the same Agile Manoeuvre more than once per phase. At the end of the battle round, all unspent Battle Focus tokens are lost. AGILE MANOEUVRES SWIFT AS THE WIND TRIGGER: When an eligible unit from your army is selected to make a Normal, Advance or Fall Back move. You can trigger this Agile Manoeuvre more than once per phase (provided a different unit performs it each time). EFFECT: Until the end of the phase, add 2\" to the Move characteristic of models in that unit. FLITTING SHADOWS TRIGGER: When an eligible unit from your army is selected to make a Normal, Advance or Fall Back move, is set up on the battlefield, or declares a charge. EFFECT: Until the end of the turn, enemy units cannot use the Fire Overwatch Stratagem to shoot at that unit. STAR ENGINES TRIGGER: When an eligible VEHICLE unit from your army is selected to make an Advance move. EFFECT: Until the end of the turn, Ranged weapons equipped by this unit have the [ASSAULT] ability. SUDDEN STRIKE TRIGGER: When an eligible unit from your army is selected to fight. EFFECT: Until the end of the phase, each time a model in that unit makes a Pile-in or Consolidation move, it can move up to 6\" instead of up to 3\". OPPORTUNITY SEIZED TRIGGER: When an enemy unit ends a Fall Back move. EFFECT: One eligible unit from your army (excluding TITANIC units) that started the phase within Engagement Range of that enemy unit can make a Normal move of up to D6+1\". FADE BACK TRIGGER: In your opponent's Shooting phase, just after an enemy unit has shot. EFFECT: One eligible unit from your army (excluding TITANIC units) that was hit by one or more of those attacks can make a Normal move of up to D6+1\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Battle Focus",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Battle Focus"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost",
+      "name": "Warhost - Martial Grace",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "At the start of the battle round, you receive 1 additional Battle Focus token. Each time a unit from your army performs the Swift as the Wind Agile Manoeuvre, until the end of the phase, add an additional 1\" to the Move characteristic of models in that unit. Each time a unit from your army performs an Agile Manoeuvre that involves rolling a D6, add 1 to the result.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.enhancement.phoenix-gem",
+      "name": "Phoenix Gem",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "35 pts. ASURYANI model only. The first time the bearer is destroyed, remove it from play, then, at the end of the phase, roll one D6: on a 2+, set the bearer back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with its full wounds remaining.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.enhancement.timeless-strategist",
+      "name": "Timeless Strategist",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "15 pts. ASURYANI model only. At the start of the battle round, if the bearer is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), you receive 1 additional Battle Focus token.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.enhancement.gift-of-foresight",
+      "name": "Gift of Foresight",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "15 pts. ASURYANI model only. Once per battle round, you can target the bearer's unit with the Command Re-roll Stratagem for 0CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.enhancement.psychic-destroyer",
+      "name": "Psychic Destroyer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "30 pts. ASURYANI PSYKER model only. Add 1 to the Damage characteristic of ranged Psychic weapons equipped by the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.stratagem.lightning-fast-reactions",
+      "name": "LIGHTNING-FAST REACTIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "1CP. Warhost - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One ASURYANI unit from your army (excluding WRAITH CONSTRUCT units) that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost - LIGHTNING-FAST REACTIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost - LIGHTNING-FAST REACTIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.stratagem.skyborne-sanctuary",
+      "name": "SKYBORNE SANCTUARY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "1CP. Warhost - Strategic Ploy Stratagem. WHEN: End of the Fight phase. TARGET: One unengaged ASURYANI unit from your army that was eligible to fight this phase and one friendly TRANSPORT it is able to embark within. EFFECT: If your ASURYANI unit is wholly within 6\" of that TRANSPORT, it can embark within it.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost - SKYBORNE SANCTUARY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost - SKYBORNE SANCTUARY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.stratagem.feigned-retreat",
+      "name": "FEIGNED RETREAT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "1CP. Warhost - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after an ASURYANI unit from your army Falls Back. TARGET: That ASURYANI unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost - FEIGNED RETREAT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost - FEIGNED RETREAT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.stratagem.blitzing-firepower",
+      "name": "BLITZING FIREPOWER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "1CP. Warhost - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASURYANI unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [SUSTAINED HITS 1] ability while targeting an enemy unit within 12\". If such a weapon already has that ability, until the end of the phase, each time an attack is made with that weapon, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost - BLITZING FIREPOWER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost - BLITZING FIREPOWER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.stratagem.fire-and-fade",
+      "name": "FIRE AND FADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "1CP. Warhost - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after an ASURYANI INFANTRY unit from your army (excluding AIRCRAFT, ASURMEN and WRAITH CONSTRUCT units) has shot. TARGET: That ASURYANI unit. EFFECT: Your unit can make a Normal move of up to D6+1\". RESTRICTIONS: Until the end of the turn, your unit is not eligible to declare a charge or embark within a TRANSPORT.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost - FIRE AND FADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost - FIRE AND FADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.warhost.stratagem.webway-tunnel",
+      "name": "WEBWAY TUNNEL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.warhost",
+      "description": "1CP. Warhost - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One ASURYANI INFANTRY unit from your army that is wholly within 9\" of one or more battlefield edges. EFFECT: If your unit is not within Engagement Range of one or more enemy units, remove it from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Warhost - WEBWAY TUNNEL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Warhost - WEBWAY TUNNEL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host",
+      "name": "Windrider Host - Ride the Wind",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "In the Declare Battle Formations step you can set up ASURYANI MOUNTED and VYPER units from your army in Reserves. During the battle, such units can be set up on the battlefield as if they were arriving from Strategic Reserves. For the purposes of setting up ASURYANI MOUNTED or VYPER units from your army on the battlefield, treat the current battle round number as being one higher than it actually is. In addition, at the end of your opponent's turn, you can select a number of ASURYANI MOUNTED or VYPER units from your army (excluding units within Engagement Range of one or more enemy units), then remove those units from the battlefield and place them into Strategic Reserves. The maximum number of units you can select depends on the battle size, as shown below. BATTLE SIZENUMBER OF UNITS Incursion1 Strike Force2 Onslaught3 KEYWORDS WINDRIDERS units from your army gain the BATTLELINE keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.enhancement.firstdrawn-blade",
+      "name": "Firstdrawn Blade",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "10 pts. ASURYANI MOUNTED model only. Models in the bearer's unit have the Scouts 9\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.enhancement.mirage-field",
+      "name": "Mirage Field",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "25 pts. ASURYANI MOUNTED model only. Each time an attack targets the bearer's unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.enhancement.seersight-strike",
+      "name": "Seersight Strike",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "15 pts. ASURYANI MOUNTED PSYKER model only. Psychic weapons equipped by the bearer have the [anti-monster 2+] and [anti-vehicle 2+] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.enhancement.echoes-of-ulthanesh",
+      "name": "Echoes of Ulthanesh",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "20 pts. ASURYANI MOUNTED model only. In your Command phase, roll one D6, adding 1 to the result if the bearer is not within your deployment zone, and adding an additional 1 to the result if the bearer is within your opponent's deployment zone: on a 5+, you gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.stratagem.death-from-on-high",
+      "name": "DEATH FROM ON HIGH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "1CP. Windrider Host - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One ASURYANI MOUNTED or VYPER unit from your army that was set upon the battlefield from Reserves this turn and has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host - DEATH FROM ON HIGH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host - DEATH FROM ON HIGH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.stratagem.overflight",
+      "name": "OVERFLIGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "1CP. Windrider Host - Strategic Ploy Stratagem. WHEN: End of your Shooting phase or the end of the Fight phase. TARGET: One ASURYANI MOUNTED unit from your army that destroyed one or more enemy units this phase. EFFECT: Your unit can make a Normal move of up to 7\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host - OVERFLIGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host - OVERFLIGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.stratagem.wind-of-blades",
+      "name": "WIND OF BLADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "1CP. Windrider Host - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One ASURYANI MOUNTED or VYPER unit from your army that has not been selected to move this phase. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced or Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host - WIND OF BLADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host - WIND OF BLADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.stratagem.daring-riders",
+      "name": "DARING RIDERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "1CP. Windrider Host - Strategic Ploy Stratagem. WHEN: The Reinforcements step of your Movement phase. TARGET: One ASURYANI MOUNTED or VYPER unit from your army in Reserves. EFFECT: Until the end of the phase, when setting up your unit on the battlefield from Reserves, it can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy units. When doing so, if your unit is set up within 8\" horizontally of one or more enemy units, until the end of the turn, it is not eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host - DARING RIDERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host - DARING RIDERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.stratagem.focused-firepower",
+      "name": "FOCUSED FIREPOWER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "1CP. Windrider Host - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASURYANI MOUNTED or VYPER unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host - FOCUSED FIREPOWER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host - FOCUSED FIREPOWER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.windrider-host.stratagem.spiralling-evasion",
+      "name": "SPIRALLING EVASION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.windrider-host",
+      "description": "1CP. Windrider Host - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ASURYANI MOUNTED or VYPER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Windrider Host - SPIRALLING EVASION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Windrider Host - SPIRALLING EVASION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave",
+      "name": "Spirit Conclave - Shepherds of the Dead",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time an ASURYANI PSYKER model from your army is destroyed by an enemy unit, that enemy unit gains a Vengeful Dead token. Each time a WRAITH CONSTRUCT model from your army makes an attack that targets a unit with one or more Vengeful Dead tokens, add 1 to the Hit roll and add 1 to the Wound roll. ASURYANI PSYKER models from your army have the following ability: Spirit Guides (Aura): While a WRAITHBLADES, WRAITHGUARD or WRAITHLORD unit from your army is within 12\" of this model, that unit has the Battle Focus ability. KEYWORDS WRAITHBLADES and WRAITHGUARD units from your army gain the BATTLELINE keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.enhancement.light-of-clarity",
+      "name": "Light of Clarity",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "30 pts. SPIRITSEER model only. In your Command phase, select one friendly WRAITH CONSTRUCT unit within 12\" of the bearer. Until the start of your next Command phase, add 1 to the Objective Control characteristic of INFANTRY models in that unit and add 3 to the Objective Control characteristic of MONSTER models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.enhancement.stave-of-kurnous",
+      "name": "Stave of Kurnous",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "15 pts. SPIRITSEER model only. In your Command phase, select one friendly WRAITH CONSTRUCT unit within 12\" of the bearer (excluding TITANIC units). Until the start of your next Command phase, each time a model in that unit makes an attack, on a Critical Wound, that attack has the [precision] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.enhancement.rune-of-mists",
+      "name": "Rune of Mists",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "10 pts. SPIRITSEER model only. In your Command phase, select one friendly WRAITH CONSTRUCT unit within 12\" of the bearer. Until the start of your next Command phase, each time a ranged attack targets that unit, unless the attacking model is within 18\", models in that unit have the Benefit of Cover against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.enhancement.higher-duty",
+      "name": "Higher Duty",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "25 pts. SPIRITSEER model only. In your opponent's Movement phase, if an enemy unit ends a move within 8\" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.stratagem.seers-eye",
+      "name": "SEER'S EYE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "1CP. Spirit Conclave - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One AELDARI PSYKER model from your army and one friendly WRAITH CONSTRUCT unit within 12\" of it that has not been selected to shoot or fight this phase. EFFECT: Select one enemy unit visible to your PSYKER model. Until the end of the phase, each time a model in your WRAITH CONSTRUCT unit makes an attack that targets that enemy unit, you can ignore any or all modifiers to the Armour Penetration and/or Damage characteristics of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave - SEER'S EYE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave - SEER'S EYE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.stratagem.wraithbone-armour",
+      "name": "WRAITHBONE ARMOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "1CP. Spirit Conclave - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One WRAITH CONSTRUCT unit from your army (excluding TITANIC units] that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave - WRAITHBONE ARMOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave - WRAITHBONE ARMOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.stratagem.blades-from-beyond",
+      "name": "BLADES FROM BEYOND",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "1CP. Spirit Conclave - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One WRAITHBLADES, WRAITHLORD or WRAITHKNIGHT unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [DEVASTATING WOUNDS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave - BLADES FROM BEYOND",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave - BLADES FROM BEYOND"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.stratagem.soul-bridge",
+      "name": "SOUL BRIDGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "1CP. Spirit Conclave - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One WRAITHBLADES, WRAITHGUARD or WRAITHLORD unit from your army and one ASURYANI PSYKER model from your army. EFFECT: Until the start of your next Command phase, your WRAITHBLADES, WRAITHGUARD or WRAITHLORD unit is considered to be within 12\" of your PSYKER model for the purposes of the Psychic Guidance and Spirit Guides abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave - SOUL BRIDGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave - SOUL BRIDGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.stratagem.spirit-token",
+      "name": "SPIRIT TOKEN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "1CP. Spirit Conclave - Strategic Ploy Stratagem. WHEN: Start of your Movement phase. TARGET: One WRAITHBLADES or WRAITHGUARD unit from your army. EFFECT: Select one objective marker you control that your unit is within range of. That objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave - SPIRIT TOKEN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave - SPIRIT TOKEN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.spirit-conclave.stratagem.crushing-strides",
+      "name": "CRUSHING STRIDES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.spirit-conclave",
+      "description": "1CP. Spirit Conclave - Battle Tactic Stratagem. WHEN: Your Charge phase, just after a WRAITHBLADES, WRAITHLORD or WRAITHKNIGHT unit from your army ends a Charge move. TARGET: That WRAITHBLADES, WRAITHLORD or WRAITHKNIGHT unit. EFFECT: Select one enemy unit within Engagement Range of your unit and roll one D6 for each WRAITHBLADES model in your unit, or roll four D6 if your unit has the WRAITHLORD keyword, or roll six D6 if your unit has the WRAITHKNIGHT keyword: for each 3+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Spirit Conclave - CRUSHING STRIDES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Spirit Conclave - CRUSHING STRIDES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost",
+      "name": "Guardian Battlehost - Defend at All Costs",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time a DIRE AVENGER, GUARDIAN, SUPPORT WEAPON or WAR WALKER model from your army makes an attack, if that model's unit and/or the target unit are within range of one or more objective markers, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.enhancement.craftworlds-champion",
+      "name": "Craftworld's Champion",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "25 pts. ASURYANI model only. The bearer has an Objective Control characteristic of 5.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.enhancement.ethereal-pathway",
+      "name": "Ethereal Pathway",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "30 pts. ASURYANI model only. In the Deploy Armies step, select up to two GUARDIANS units from your army. Models in the selected units have the Infiltrators ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.enhancement.protector-of-the-paths",
+      "name": "Protector of the Paths",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "20 pts. ASURYANI model only. While the bearer is leading a DIRE AVENGERS or GUARDIANS unit, once per battle round, you can target the bearer's unit with the Fire Overwatch Stratagem for 0CP, and while resolving that Stratagem, hits are scored on unmodified Hit rolls of 5+, or unmodified Hit rolls of 4+ instead if the bearer's unit is within range of an objective marker you control.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.enhancement.breath-of-vaul",
+      "name": "Breath of Vaul",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "10 pts. ASURYANI model only. While the bearer is leading a STORM GUARDIANS unit, each time you roll to determine the number of attacks made with a flamer equipped by a model in that unit, you can re-roll the result, and each time you make a Damage roll for a model equipped with a fusion gun in that unit, you can re-roll the result.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.stratagem.warding-salvoes",
+      "name": "WARDING SALVOES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "1CP. Guardian Battlehost - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One DIRE AVENGERS or GUARDIANS unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit within range of one or more objective markers, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost - WARDING SALVOES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost - WARDING SALVOES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.stratagem.shield-nodes",
+      "name": "SHIELD NODES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "1CP. Guardian Battlehost - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DIRE AVENGERS or GUARDIANS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: If your unit is within range of one or more objective markers, until the end of the phase, each time an attack targets your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost - SHIELD NODES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost - SHIELD NODES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.stratagem.vauls-vengeance",
+      "name": "VAUL'S VENGEANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "1CP. Guardian Battlehost - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit destroys a DIRE AVENGERS or GUARDIANS unit from your army. TARGET: One WAR WALKERS unit from your army. EFFECT: After that enemy unit has finished making its attacks, your unit can shoot as if it were your Shooting phase, but when resolving those attacks, it can only target that enemy unit (and only if it is an eligible target). RESTRICTIONS: You can only use this Stratagem once per battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost - VAUL'S VENGEANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost - VAUL'S VENGEANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.stratagem.time-to-strike",
+      "name": "TIME TO STRIKE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "1CP. Guardian Battlehost - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One STORM GUARDIANS unit from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, each time your unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6\" to the Move characteristic of models in your unit. Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost - TIME TO STRIKE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost - TIME TO STRIKE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.stratagem.blades-of-asuryan",
+      "name": "BLADES OF ASURYAN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "1CP. Guardian Battlehost - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One DIRE AVENGERS or GUARDIANS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [PISTOL] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost - BLADES OF ASURYAN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost - BLADES OF ASURYAN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.guardian-battlehost.stratagem.cost-of-victory",
+      "name": "COST OF VICTORY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.guardian-battlehost",
+      "description": "1CP. Guardian Battlehost - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One GUARDIANS unit from your army. EFFECT: If your unit is not within Engagement Range of one or more enemy units, remove it from the battlefield and place it into Strategic Reserves. When doing so, return every destroyed GUARDIANS model to your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Guardian Battlehost - COST OF VICTORY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Guardian Battlehost - COST OF VICTORY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway",
+      "name": "Ghosts of the Webway - Acrobatic Onslaught",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "Each time a HARLEQUINS model from your army makes a Charge move, it can move through enemy models. TRAVELLING PLAYERS TROUPE units from your army gain the BATTLELINE keyword and TROUPE models in those units have an Objective Control characteristic of 2. You can include up to three of each of the following models in your army: DEATH JESTER, SHADOWSEER, TROUPE MASTER. When mustering your army, you can select a friendly HARLEQUINS CHARACTER model to be your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.enhancement.cegorachs-coil",
+      "name": "Cegorach's Coil",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "25 pts. TROUPE MASTER model only. Each time the bearer's unit ends a Charge move, select one enemy unit within Engagement Range of the bearer's unit, then roll one D6 for each model in the bearer's unit that is within Engagement Range of that enemy unit: for each 4+, that enemy unit suffers 1 mortal wound (to a maximum of 6 mortal wounds).",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.enhancement.mask-of-secrets",
+      "name": "Mask of Secrets",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "15 pts. HARLEQUINS model only. Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of the bearer's unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.enhancement.murders-jest",
+      "name": "Murder's Jest",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "20 pts. DEATH JESTER model only. Each time the bearer makes an attack that targets a unit that is Below Half-strength, each successful Hit roll scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.enhancement.mistweave",
+      "name": "Mistweave",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "15 pts. SHADOWSEER model only. While the bearer is leading a unit, models in that unit have the Infiltrators ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.stratagem.staged-death",
+      "name": "STAGED DEATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "1CP. Ghosts of the Webway - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One HARLEQUINS CHARACTER model from your army that was just destroyed. You can use this Stratagem on that model even though it was just destroyed. EFFECT: At the end of the phase, set your model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with half of its starting number of wounds remaining. RESTRICTIONS: Each model can only be targeted with this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway - STAGED DEATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway - STAGED DEATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.stratagem.heroes-fall",
+      "name": "HEROES' FALL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "1CP. Ghosts of the Webway - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One HARLEQUINS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6. On a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway - HEROES' FALL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway - HEROES' FALL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.stratagem.mocking-flight",
+      "name": "MOCKING FLIGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "1CP. Ghosts of the Webway - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a HARLEQUINS unit from your army Falls Back. TARGET: That HARLEQUINS unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway - MOCKING FLIGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway - MOCKING FLIGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.stratagem.tricksters-retort",
+      "name": "TRICKSTERS' RETORT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "1CP. Ghosts of the Webway - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One TROUPE unit from your army that is within 8\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway - TRICKSTERS' RETORT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway - TRICKSTERS' RETORT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.stratagem.bloody-dance",
+      "name": "BLOODY DANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "1CP. Ghosts of the Webway - Strategic Ploy Stratagem. WHEN: End of your opponent's Charge phase. TARGET: One HARLEQUINS INFANTRY or HARLEQUINS MOUNTED unit from your army that is within 6\" of one or more enemy units and would be eligible to declare a charge against one or more of those enemy units if it were your Charge phase. EFFECT: Your unit now declares a charge that only targets one or more of those enemy units, and you resolve that charge. RESTRICTIONS: Note that even if this charge is successful, your unit does not receive any Charge bonus this turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway - BLOODY DANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway - BLOODY DANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.ghosts-of-the-webway.stratagem.exit-the-stage",
+      "name": "EXIT THE STAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.ghosts-of-the-webway",
+      "description": "1CP. Ghosts of the Webway - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One HARLEQUINS unit from your army that is not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Ghosts of the Webway - EXIT THE STAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Ghosts of the Webway - EXIT THE STAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead",
+      "name": "Devoted of Ynnead - Strength from Death",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "You can use the following rules: Lethal Intent At the end of your opponent's Shooting phase, if one or more YNNARI units from your army were destroyed this phase, select one YNNARI INFANTRY or YNNARI MOUNTED unit from your army that was within 6\" of your destroyed unit. That unit can make a normal move of up to D6+1. Lethal Surge Once per turn, when a YNNARI unit from your army performs the Fade Back Agile Manouvre, it can make a surge move of up to D6+1\" instead of a normal move. Lethal Reprisal At the start of the Fight phase, select one YNNARI unit from your army (excluding TITANIC units) that is below its Starting Strength. Until the end of the phase, that unit has the Fights First ability. SERVANTS OF THE WHISPERING GOD You can include YNNARI units in your army, even though they do not have the ASURYANI Faction keyword. ASURYANI units (excluding EPIC HEROES) from your army gain the YNNARI keyword. You must include YVRAINE and/or THE YNCARNE in your army, and one of those models must be your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.enhancement.gaze-of-ynnead",
+      "name": "Gaze of Ynnead",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "15 pts. FARSEER model only. The bearer's Eldritch Storm weapon has the [devastating wounds] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.enhancement.storm-of-whispers",
+      "name": "Storm of Whispers",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "10 pts. WARLOCK model only. In your Shooting phase, after the bearer has shot, select one enemy unit hit by one or more of those attacks. That unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.enhancement.borrowed-vigour",
+      "name": "Borrowed Vigour",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "10 pts. ARCHON model only. Add 2 to the Attacks characteristic of the bearer's melee weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.enhancement.morbid-might",
+      "name": "Morbid Might",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "15 pts. SUCCUBUS model only. Each time the bearer makes a melee attack, you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.stratagem.pall-of-dread",
+      "name": "PALL OF DREAD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "1CP. Devoted of Ynnead - Strategic Ploy Stratagem. WHEN: Any phase. TARGET: One YNNARI unit from your army that was just destroyed while it was within range of one or more objective markers you controlled at the end of the previous phase. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Select one of those objective markers. That objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead - PALL OF DREAD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead - PALL OF DREAD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.stratagem.macabre-resilience",
+      "name": "MACABRE RESILIENCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "1CP. Devoted of Ynnead - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One YNNARI INFANTRY or YNNARI MOUNTED unit from your army (excluding WRAITH CONSTRUCT units) that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead - MACABRE RESILIENCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead - MACABRE RESILIENCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.stratagem.emissaries-of-ynnead",
+      "name": "EMISSARIES OF YNNEAD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "1CP. Devoted of Ynnead - Battle Tactic Stratagem. WHEN: Fight phase, just after a YNNARI INFANTRY unit from your army has selected its targets. TARGET: That YNNARI INFANTRY unit. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, re-roll a Hit roll of 1. If your unit is below its Starting Strength, you can re-roll the Hit roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead - EMISSARIES OF YNNEAD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead - EMISSARIES OF YNNEAD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.stratagem.parting-the-veil",
+      "name": "PARTING THE VEIL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "2CP. Devoted of Ynnead - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One YNNARI unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead - PARTING THE VEIL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead - PARTING THE VEIL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.stratagem.soulsight",
+      "name": "SOULSIGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "1CP. Devoted of Ynnead - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One YNNARI unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [LETHAL HITS] and [IGNORES COVER] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead - SOULSIGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead - SOULSIGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.devoted-of-ynnead.stratagem.death-answers-death",
+      "name": "DEATH ANSWERS DEATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.devoted-of-ynnead",
+      "description": "1CP. Devoted of Ynnead - Strategic Ploy Stratagem. WHEN: End of your opponent's Shooting phase. TARGET: One YNNARI unit from your army (excluding WRAITH CONSTRUCT units), if one or more models in that unit were destroyed this phase. EFFECT: Your unit can shoot as if it were your Shooting phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Devoted of Ynnead - DEATH ANSWERS DEATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Devoted of Ynnead - DEATH ANSWERS DEATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council",
+      "name": "Seer Council - Strands of Fate",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "At the start of the first battle round, you generate Fate dice by rolling a number of D6 based on the battle size, as shown below. Keep your Fate dice to one side - this is your Fate dice pool. BATTLE SIZENUMBER OF D6 Incursion3 Strike Force6 Onslaught9 Each time you use one of the Stratagems below, if your Fate dice pool contains one or more Fate dice showing the corresponding value in the table below, you can discard one of those corresponding Fate dice. If you do, reduce the CP cost of that usage of that Stratagem by 1CP. STRATAGEMFATE DICE VALUE Presentiment of Dread1 Forewarned2 Unshrouded Truth3 Fate Inescapable4 Isha's Fury5 Psychic Shield6",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.enhancement.lucid-eye",
+      "name": "Lucid Eye",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "30 pts. ASURYANI PSYKER model only. In your Command phase, you can add 1 to or subtract 1 from the value of one Fate dice in your Fate dice pool.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.enhancement.runes-of-warding",
+      "name": "Runes of Warding",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "25 pts. ASURYANI PSYKER model only. Models in the bearer's unit have the Feel No Pain 4+ ability against mortal wounds, Psychic Attacks and Critical Wounds caused by attacks with the [devastating wounds] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.enhancement.stone-of-eldritch-fury",
+      "name": "Stone of Eldritch Fury",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "15 pts. ASURYANI PSYKER model only. Add 12\" to the Range characteristic of ranged Psychic weapons equipped by the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.enhancement.torc-of-morai-heg",
+      "name": "Torc of Morai-Heg",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "20 pts. ASURYANI PSYKER model only. Once per turn, when your opponent targets a unit from their army within 12\" of the bearer with a Stratagem, the bearer can use this Enhancement. If it does, increase the CP cost of that usage of that Stratagem by 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.stratagem.presentiment-of-dread",
+      "name": "PRESENTIMENT OF DREAD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "1CP. Seer Council - Strategic Ploy Stratagem. WHEN: Command phase. TARGET: One ASURYANI PSYKER model from your army. EFFECT: Select one enemy unit within 18\" of and visible to your model. That enemy unit must take a Battle-shock test, subtracting 1 from that test.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council - PRESENTIMENT OF DREAD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council - PRESENTIMENT OF DREAD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.stratagem.forewarned",
+      "name": "FOREWARNED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "1CP. Seer Council - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One ASURYANI INFANTRY unit from your army (excluding WRAITH CONSTRUCT units) that was selected as the target of one or more of the attacking unit's attacks and is within 9\" of one or more friendly ASURYANI PSYKER models. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll and subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council - FOREWARNED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council - FOREWARNED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.stratagem.unshrouded-truth",
+      "name": "UNSHROUDED TRUTH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "1CP. Seer Council - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One ASURYANI INFANTRY unit from your army (excluding WRAITH CONSTRUCT units) that has not been selected to move this phase, was not set up on the battlefield this phase, and is within 9\" of one or more friendly ASURYANI PSYKER models. EFFECT: Place your unit in strategic reserves. Your unit has Deep Strike. Your unit must make an ingress move this phase. RESTRICTIONS: Until the end of the phase, your unit is not eligible to be selected to move.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council - UNSHROUDED TRUTH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council - UNSHROUDED TRUTH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.stratagem.fate-inescapable",
+      "name": "FATE INESCAPABLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "1CP. Seer Council - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASURYANI INFANTRY unit from your army (excluding WRAITH CONSTRUCT units) that has not been selected to shoot this phase and is within 9\" of one or more friendly ASURYANI PSYKER models. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability and each time a model in your unit makes an attack, on a Critical Wound, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council - FATE INESCAPABLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council - FATE INESCAPABLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.stratagem.ishas-fury",
+      "name": "ISHA'S FURY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "1CP. Seer Council - Epic Deed Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One ASURYANI PSYKER model from your army within 9\" of that enemy unit. EFFECT: Roll six D6: for each 3+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council - ISHA'S FURY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council - ISHA'S FURY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.seer-council.stratagem.psychic-shield",
+      "name": "PSYCHIC SHIELD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.seer-council",
+      "description": "1CP. Seer Council - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ASURYANI INFANTRY unit from your army (excluding WRAITH CONSTRUCT units) that was selected as the target of one or more of the attacking unit's attacks and is within 9\" of one or more friendly ASURYANI PSYKER models. EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Seer Council - PSYCHIC SHIELD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Seer Council - PSYCHIC SHIELD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host",
+      "name": "Aspect Host - Path of the Warrior",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Each time an ASPECT WARRIORS or AVATAR OF KHAINE unit from your army is selected to shoot or fight, select one of the following abilities for it to gain until the end of the phase: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. Each time a model in this unit makes an attack, re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.enhancement.aspect-of-murder",
+      "name": "Aspect of Murder",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "15 pts. AUTARCH or AUTARCH WAYLEAPER model only. Add 1 to the Damage characteristic of melee weapons equipped by the bearer, and those weapons have the [precision] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.enhancement.mantle-of-wisdom",
+      "name": "Mantle of Wisdom",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "20 pts. AUTARCH or AUTARCH WAYLEAPER model only. While the bearer is leading an ASPECT WARRIORS unit, each time that unit is selected to shoot or fight, until the end of the phase, models in that unit gain both of the abilities from the Path of the Warrior Detachment rule.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.enhancement.shimmerstone",
+      "name": "Shimmerstone",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "10 pts. AUTARCH or AUTARCH WAYLEAPER model only. While the bearer is leading an ASPECT WARRIORS unit, each time a ranged attack targets that unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.enhancement.strategic-savant",
+      "name": "Strategic Savant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "10 pts. AUTARCH or AUTARCH WAYLEAPER model only. While the bearer is leading an ASPECT WARRIORS unit, add 1 to the Objective Control characteristic of models in that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.stratagem.warrior-focus",
+      "name": "WARRIOR FOCUS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "1CP. Aspect Host - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One ASPECT WARRIORS or AVATAR OF KHAINE unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic Skill, Weapon skill, Strength, Armour Penetration and Damage characteristics and/or any or all modifiers to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host - WARRIOR FOCUS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host - WARRIOR FOCUS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.stratagem.to-their-final-breath",
+      "name": "TO THEIR FINAL BREATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "1CP. Aspect Host - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One ASPECT WARRIORS or AVATAR OF KHAINE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Each time you use this Stratagem, you can remove one Aspect Shrine token your unit has (see datasheets). Then, until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 to the result if you removed an Aspect Shrine token during this usage of this Stratagem. On a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host - TO THEIR FINAL BREATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host - TO THEIR FINAL BREATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.stratagem.skyborne-sanctuary",
+      "name": "SKYBORNE SANCTUARY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "1CP. Aspect Host - Strategic Ploy Stratagem. WHEN: End of the Fight phase. TARGET: One unengaged ASURYANI unit from your army that was eligible to fight this phase and one friendly TRANSPORT it is able to embark within. EFFECT: If your ASURYANI unit is wholly within 6\" of that TRANSPORT, it can embark within it.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host - SKYBORNE SANCTUARY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host - SKYBORNE SANCTUARY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.stratagem.doom-inescapable",
+      "name": "DOOM INESCAPABLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "1CP. Aspect Host - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One AVATAR OF KHAINE model from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, your model's Wailing Doom ranged weapon has a Range characteristic of 18\" and a Damage characteristic of 8.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host - DOOM INESCAPABLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host - DOOM INESCAPABLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.stratagem.preternatural-precision",
+      "name": "PRETERNATURAL PRECISION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "1CP. Aspect Host - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ASPECT WARRIORS unit from your army that has not been selected to shoot this phase. EFFECT: Each time you use this Stratagem, you can remove one Aspect Shrine token your unit has (see datasheets). Then, select one of the following abilities, or select two of the following abilities if you removed an Aspect Shrine token during this usage of this Stratagem: [IGNORES COVER], [LETHAL HITS], [SUSTAINED HITS 1]. Until the end of the phase, ranged weapons equipped by models in your unit have the selected abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host - PRETERNATURAL PRECISION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host - PRETERNATURAL PRECISION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.aspect-host.stratagem.khaines-vengeance",
+      "name": "KHAINE'S VENGEANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.aspect-host",
+      "description": "1CP. Aspect Host - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit (excluding MONSTERS and VEHICLES) is selected to Fall Back. TARGET: One ASPECT WARRIORS or AVATAR OF KHAINE unit from your army that is within Engagement Range of that enemy unit. EFFECT: All models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Aspect Host - KHAINE'S VENGEANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Aspect Host - KHAINE'S VENGEANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.armoured-warhost",
+      "name": "Armoured Warhost - Skilled Crews",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.armoured-warhost",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "Friendly AELDARI VEHICLE units' ranged attacks have [ASSAULT].",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Armoured Warhost",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Warhost"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.armoured-warhost.enhancement.spirit-stone-of-raelyth",
+      "name": "Spirit Stone of Raelyth",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.armoured-warhost",
+      "description": "20 pts. AELDARI PSYKER model only. While this model is within 3\" of a friendly AELDARI VEHICLE unit, this model has Lone Operative. In your Movement phase, at the start or end of this unit's move, you can select one friendly AELDARI VEHICLE model within 3\" of this model. That VEHICLE model heals D3 wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Armoured Warhost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Warhost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.armoured-warhost.enhancement.guiding-presence",
+      "name": "Guiding Presence",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.armoured-warhost",
+      "description": "25 pts. AELDARI PSYKER model only. At the start of your Shooting phase, select one visible friendly AELDARI VEHICLE unit within 6\" of this model. That VEHICLE unit's ranged attacks have +1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Armoured Warhost enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Warhost enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.armoured-warhost.stratagem.layered-wards",
+      "name": "LAYERED WARDS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.armoured-warhost",
+      "description": "1CP. Armoured Warhost Stratagem. WHEN: Any phase, when a friendly AELDARI VEHICLE unit suffers a mortal wound. TARGET: That AELDARI VEHICLE unit. EFFECT: Your unit has Feel No Pain 5+ against mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Armoured Warhost - LAYERED WARDS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Warhost - LAYERED WARDS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.armoured-warhost.stratagem.soulsight",
+      "name": "SOULSIGHT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.armoured-warhost",
+      "description": "1CP. Armoured Warhost Stratagem. WHEN: Your Shooting phase, when a friendly AELDARI VEHICLE unit is selected to shoot. TARGET: That AELDARI VEHICLE unit. EFFECT: Your unit's attacks can re-roll: One hit roll. One wound roll. One damage roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Armoured Warhost - SOULSIGHT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Warhost - SOULSIGHT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.armoured-warhost.stratagem.vectored-engines",
+      "name": "VECTORED ENGINES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.armoured-warhost",
+      "description": "1CP. Armoured Warhost Stratagem. WHEN: Your Movement phase, when a friendly AELDARI VEHICLE unit makes a fall-back move. TARGET: That AELDARI VEHICLE unit. EFFECT: That move does not prevent your unit from being eligible to shoot.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Armoured Warhost - VECTORED ENGINES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Armoured Warhost - VECTORED ENGINES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.fateful-performance",
+      "name": "Fateful Performance - Acrobatic Onslaught",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.fateful-performance",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "While a friendly HARLEQUINS unit is making a charge move, that unit can move through enemy models. This detachment has the ACROBATIC tag and cannot be taken with another ACROBATIC detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Fateful Performance",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Fateful Performance"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.fateful-performance.enhancement.a-foot-in-the-future",
+      "name": "A Foot in the Future",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.fateful-performance",
+      "description": "15 pts. TROUPE MASTER model only. This unit can re-roll charge rolls",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Fateful Performance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Fateful Performance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.fateful-performance.enhancement.mistweave",
+      "name": "Mistweave",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.fateful-performance",
+      "description": "20 pts. SHADOWSEER model only. This unit has Infiltrators.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Fateful Performance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Fateful Performance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.fateful-performance.stratagem.heroes-fall",
+      "name": "HEROES' FALL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.fateful-performance",
+      "description": "1CP. Fateful Performance Stratagem. WHEN: Fight phase, when an enemy unit targets a friendly HARLEQUINS unit. TARGET: That HARLEQUINS unit. EFFECT: When a model in your unit is destroyed, if your unit has not been selected to fight this phase, roll one D6: On a 4+, do not remove that model from the battlefield. When your unit has fought, or at the end of the phase (whichever comes first), that model is removed from the battlefield.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Fateful Performance - HEROES' FALL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Fateful Performance - HEROES' FALL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.fateful-performance.stratagem.exit-the-stage",
+      "name": "EXIT THE STAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.fateful-performance",
+      "description": "1CP. Fateful Performance Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One friendly unengaged HARLEQUINS unit. EFFECT: Place your unit in strategic reserves",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Fateful Performance - EXIT THE STAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Fateful Performance - EXIT THE STAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.fateful-performance.stratagem.deceptive-feint",
+      "name": "DECEPTIVE FEINT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.fateful-performance",
+      "description": "1CP. Fateful Performance Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move within 8\" of a friendly unengaged HARLEQUINS INFANTRY unit. TARGET: That HARLEQUINS INFANTRY unit. EFFECT: Your unit can make a normal move of up to D3+3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Fateful Performance - DECEPTIVE FEINT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Fateful Performance - DECEPTIVE FEINT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.path-of-the-outcast",
+      "name": "Path of the Outcast - Far-Reaching Doom",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.path-of-the-outcast",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "When a friendly RANGERS/SHROUD RUNNERS unit is selected to shoot, enemy units have +6\" detection range until that friendly unit has shot.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Path of the Outcast",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Path of the Outcast"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.path-of-the-outcast.enhancement.camouflaged-snipersupgrade",
+      "name": "Camouflaged SnipersUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.path-of-the-outcast",
+      "maximumSelections": 3,
+      "description": "10 pts. RANGERS unit only. This unit's ranged attacks do not prevent this unit from being hidden.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Path of the Outcast enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Path of the Outcast enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.path-of-the-outcast.enhancement.assassins-eyeupgrade",
+      "name": "Assassins' EyeUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.path-of-the-outcast",
+      "maximumSelections": 3,
+      "description": "15 pts. RANGERS/SHROUD RUNNERS unit only. This unit's ranged attacks that target a CHARACTER unit have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Path of the Outcast enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Path of the Outcast enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.path-of-the-outcast.stratagem.eldritch-suppression",
+      "name": "ELDRITCH SUPPRESSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.path-of-the-outcast",
+      "description": "1CP. Path of the Outcast Stratagem. WHEN: Your Shooting phase, when a friendly RANGERS/SHROUD RUNNERS unit has shot. TARGET: That RANGERS/SHROUD RUNNERS unit. EFFECT: Select one enemy unit hit by those ranged attacks. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll if a model in that enemy unit was destroyed by those attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Path of the Outcast - ELDRITCH SUPPRESSION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Path of the Outcast - ELDRITCH SUPPRESSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.path-of-the-outcast.stratagem.casting-back-the-veil",
+      "name": "CASTING BACK THE VEIL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.path-of-the-outcast",
+      "description": "1CP. Path of the Outcast Stratagem. WHEN: Your Shooting phase, when a friendly RANGERS/SHROUD RUNNERS unit has shot. TARGET: That RANGERS/SHROUD RUNNERS unit. EFFECT: Select one enemy unit hit by those ranged attacks. That enemy unit has +6\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Path of the Outcast - CASTING BACK THE VEIL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Path of the Outcast - CASTING BACK THE VEIL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.path-of-the-outcast.stratagem.nomads-of-the-hidden-way",
+      "name": "NOMADS OF THE HIDDEN WAY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.path-of-the-outcast",
+      "description": "1CP. Path of the Outcast Stratagem. WHEN: Your Shooting phase, when a friendly RANGERS/SHROUD RUNNERS unit has shot. TARGET: That RANGERS/SHROUD RUNNERS unit. EFFECT: Your unit can make a normal move of up to D6\". Your unit is not eligible to declare a charge or embark within a TRANSPORT until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Path of the Outcast - NOMADS OF THE HIDDEN WAY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Path of the Outcast - NOMADS OF THE HIDDEN WAY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.twilight-flickers",
+      "name": "Twilight Flickers - Dance of Distortion",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.twilight-flickers",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly HARLEQUINS units have Stealth. This detachment has the ACROBATIC tag and cannot be taken with another ACROBATIC detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Twilight Flickers",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Twilight Flickers"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.twilight-flickers.enhancement.shadowfall-masksupgrade",
+      "name": "Shadowfall MasksUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.twilight-flickers",
+      "maximumSelections": 3,
+      "description": "15 pts. TROUPE unit only. This unit has Fights First.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Twilight Flickers enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Twilight Flickers enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.twilight-flickers.enhancement.prelude-performer",
+      "name": "Prelude Performer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.twilight-flickers",
+      "description": "20 pts. HARLEQUINS model only. This unit has Scouts 6\"",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Twilight Flickers enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Twilight Flickers enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.twilight-flickers.stratagem.presaged-rehearsal",
+      "name": "PRESAGED REHEARSAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.twilight-flickers",
+      "description": "1CP. Twilight Flickers Stratagem. WHEN: Fight phase, when a friendly TROUPE unit is selected to fight. TARGET: That TROUPE unit. EFFECT: Your unit's melee attacks have [LANCE].",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Twilight Flickers - PRESAGED REHEARSAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Twilight Flickers - PRESAGED REHEARSAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.twilight-flickers.stratagem.captivating-performance",
+      "name": "CAPTIVATING PERFORMANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.twilight-flickers",
+      "description": "1CP. Twilight Flickers Stratagem. WHEN: End of your Movement phase. TARGET: One friendly TROUPE unit. EFFECT: Select one objective your unit is controlling. That objective is secured.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Twilight Flickers - CAPTIVATING PERFORMANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Twilight Flickers - CAPTIVATING PERFORMANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.twilight-flickers.stratagem.phantasmal-mirage",
+      "name": "PHANTASMAL MIRAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.twilight-flickers",
+      "description": "1CP. Twilight Flickers Stratagem. WHEN: Your Shooting phase, when a friendly HARLEQUINS VEHICLE unit has shot. TARGET: That HARLEQUINS VEHICLE unit. EFFECT: Your unit can make a normal move of up to D6\". Your unit is not eligible to declare a charge until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Twilight Flickers - PHANTASMAL MIRAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Twilight Flickers - PHANTASMAL MIRAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood",
+      "name": "Serpent's Brood - Boons of the Brood",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "Weapons equipped by HARLEQUINS MOUNTED and HARLEQUINS VEHICLE models from your army have the [SUSTAINED HITS 1] ability. Each time a HARLEQUINS unit from your army disembarks from a TRANSPORT, until the end of the turn, that unit's weapons have the [SUSTAINED HITS 1] ability. TRAVELLING PLAYERS TROUPE units from your army gain the BATTLELINE keyword, and TROUPE models in those units have an Objective Control characteristic of 2. You can include up to three of each of the following models in your army: DEATH JESTER, SHADOWSEER, TROUPE MASTER. When mustering your army, you can select a friendly HARLEQUINS CHARACTER model to be your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.enhancement.key-of-ghosts",
+      "name": "Key of Ghosts",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "20 pts. HARLEQUINS model only (excluding SOLITAIRE models). Models in the bearer's unit have the Scouts 6\" ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.enhancement.weavers-wail",
+      "name": "Weavers' Wail",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "20 pts. TROUPE MASTER model only. Add 3 to the Strength and add 1 to the Attacks characteristics of the bearer's melee weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.enhancement.fanged-leer",
+      "name": "Fanged Leer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "10 pts. DEATH JESTER model only. When using the bearer's Cruel Amusement ability, you can select two of the abilities for its shrieker cannon to gain, instead of one.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.enhancement.shedskin-raiment",
+      "name": "Shedskin Raiment",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "25 pts. SHADOWSEER model only. After both players have deployed their armies, select up to three HARLEQUINS units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood enhancements"
+        }
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.stratagem.fangs-of-the-brood",
+      "name": "FANGS OF THE BROOD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "1CP. Serpent's Brood Stratagem. WHEN: Start of the Fight phase. TARGET: One TROUPE unit from your army. EFFECT: Until the end of the phase, when using your unit's Dance of Death ability, you can select three of the abilities for your unit to gain, instead of one.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood - FANGS OF THE BROOD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood - FANGS OF THE BROOD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.stratagem.venomous-wrath",
+      "name": "VENOMOUS WRATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "1CP. Serpent's Brood Stratagem. WHEN: Your Shooting phase. TARGET: One HARLEQUINS VEHICLE unit from your army that has not been selected to shoot this phase. EFFECT: After your unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6\". Until the end of the turn, your unit is not eligible to declare a charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood - VENOMOUS WRATH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood - VENOMOUS WRATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.stratagem.striking-stride",
+      "name": "STRIKING STRIDE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "1CP. Serpent's Brood Stratagem. WHEN: Your Charge phase. TARGET: One HARLEQUINS unit from your army. EFFECT: Until the end of the phase, your unit is eligible to declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood - STRIKING STRIDE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood - STRIKING STRIDE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.stratagem.weavers-coils",
+      "name": "WEAVERS' COILS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "1CP. Serpent's Brood Stratagem. WHEN: End of your Fight phase. TARGET: One HARLEQUINS MOUNTED unit from your army that was eligible to fight this phase. EFFECT: If your unit is not within Engagement Range of one or more enemy units, it can make a Normal move. Otherwise, your unit can make a Fall Back move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood - WEAVERS' COILS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood - WEAVERS' COILS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.stratagem.weaving-stride",
+      "name": "WEAVING STRIDE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "1CP. Serpent's Brood Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One HARLEQUINS INFANTRY unit from your army that is within 8\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood - WEAVING STRIDE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood - WEAVING STRIDE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.serpents-brood.stratagem.skyward-lunge",
+      "name": "SKYWARD LUNGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.serpents-brood",
+      "description": "1CP. Serpent's Brood Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One HARLEQUINS VEHICLE or HARLEQUINS MOUNTED unit from your army. EFFECT: If your unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Serpent's Brood - SKYWARD LUNGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Serpent's Brood - SKYWARD LUNGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders",
+      "name": "Eldritch Raiders - Yriel's Own",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "AELDARI units in your army are eligible to declare a charge in a turn in which they Advanced. In addition, each time an ANHRATHE, RANGERS or SHROUD RUNNERS unit from your army Advances, you can re-roll the Advance roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders.stratagem.raiders-spoils",
+      "name": "RAIDERS' SPOILS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "description": "1CP. Eldritch Raiders - Strategic Ploy Stratagem. WHEN: Command phase. TARGET: One ANHRATHE unit from your army that is within Engagement Range of one or more enemy units. EFFECT: Until the start of the next Command phase, add 1 to the Objective Control characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders - RAIDERS' SPOILS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders - RAIDERS' SPOILS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders.stratagem.ruthless-killers",
+      "name": "RUTHLESS KILLERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "description": "1CP. Eldritch Raiders - Strategic Ploy Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One CORSAIR VOIDSCARRED unit from your army that has not been selected to shoot or Fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, add 1 to the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders - RUTHLESS KILLERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders - RUTHLESS KILLERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders.stratagem.yriels-example",
+      "name": "YRIEL'S EXAMPLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "description": "1CP. Eldritch Raiders - Epic Deed Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One AELDARI INFANTRY unit from your army (excluding WRAITH CONSTRUCT units) that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 5+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders - YRIEL'S EXAMPLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders - YRIEL'S EXAMPLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders.stratagem.no-prey-too-big",
+      "name": "NO PREY TOO BIG",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "description": "1CP. Eldritch Raiders - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One ANHRATHE, RANGERS or SHROUD RUNNERS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, if the Strength characteristic of that attack is less than the highest Toughness characteristic of models in the target unit, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders - NO PREY TOO BIG",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders - NO PREY TOO BIG"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders.stratagem.impeding-fire",
+      "name": "IMPEDING FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "description": "1CP. Eldritch Raiders - Wargear Stratagem. WHEN: Start of your opponent's Charge phase. TARGET: One RANGERS, SHROUD RUNNERS or STARFANG unit from your army. EFFECT: Select one enemy unit (excluding TITANIC units) visible to and within 36\" of your unit. Until the end of the phase, each time that enemy unit declares a charge, subtract 2 from the Charge roll (this is not cumulative with any other negative modifiers to that Charge roll).",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders - IMPEDING FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders - IMPEDING FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.eldritch-raiders.stratagem.withdraw-and-reinforce",
+      "name": "WITHDRAW AND REINFORCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.eldritch-raiders",
+      "description": "1CP. Eldritch Raiders - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One ANHRATHE unit from your army that is not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves. If that unit is below Starting Strength, return all destroyed models (excluding CHARACTER models) to that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Eldritch Raiders - WITHDRAW AND REINFORCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Eldritch Raiders - WITHDRAW AND REINFORCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie",
+      "name": "Corsair Coterie - Relentless Raiders",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "While an objective marker is under your control, each time an enemy unit ends a Normal, Advance, Fall Back or Charge move within range of that objective marker, roll one D6: on a 2+, that enemy unit suffers D3 mortal wounds. ANHRATHE units from your army have the following ability: Void Thieves: At the end of a phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie.stratagem.pirates-due",
+      "name": "PIRATES' DUE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "description": "1CP. Corsair Coterie - Battle Tactic Stratagem. WHEN: The Fight phase. TARGET: One AELDARI unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, re-roll a Wound roll of 1. If your unit has the ANHRATHE keyword, then until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit within range of an objective marker, you can re-roll the Wound roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie - PIRATES' DUE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie - PIRATES' DUE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie.stratagem.lethal-ruse",
+      "name": "LETHAL RUSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "description": "1CP. Corsair Coterie - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after an AELDARI unit from your army Falls Back. TARGET: That AELDARI unit. EFFECT: Until the end of the turn, your unit is eligible to declare a charge in a turn in which it Fell Back. If it is an ANHRATHE unit, also select one enemy unit your unit was within Engagement Range of at the start of the phase, and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie - LETHAL RUSE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie - LETHAL RUSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie.stratagem.outcast-ambush",
+      "name": "OUTCAST AMBUSH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "description": "1CP. Corsair Coterie - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One RANGERS or SHROUD RUNNERS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] and [RAPID FIRE 1] abilities, and until the end of the phase, improve the Armour Penetration characteristic of those weapons by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie - OUTCAST AMBUSH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie - OUTCAST AMBUSH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie.stratagem.into-the-breach",
+      "name": "INTO THE BREACH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "description": "1CP. Corsair Coterie - Strategic Ploy Stratagem. WHEN: Your Shooting phase, just after an ANHRATHE unit from your army destroyed one or more enemy units. TARGET: That ANHRATHE unit. EFFECT: After your unit has resolved all of its shooting attacks, it can make a Normal move of up to D6+1\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie - INTO THE BREACH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie - INTO THE BREACH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie.stratagem.cloak-and-shadow",
+      "name": "CLOAK AND SHADOW",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "description": "1CP. Corsair Coterie - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One AELDARI INFANTRY unit from your army that is within range of an objective marker that you control and that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have the Stealth ability and your unit can only be selected as the target of a ranged attack if the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie - CLOAK AND SHADOW",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie - CLOAK AND SHADOW"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "aeldari.detachment.corsair-coterie.stratagem.vengeful-sorrow",
+      "name": "VENGEFUL SORROW",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "aeldari.detachment.corsair-coterie",
+      "description": "1CP. Corsair Coterie - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One AELDARI INFANTRY unit from your army, if one or more models in that unit were destroyed as a result of those attacks, and if that AELDARI unit is neither Battle-shocked nor within Engagement Range of one or more enemy units. EFFECT: Your unit can make a surge move of up to D6+1\".",
+      "sources": [
+        {
+          "title": "Wahapedia Aeldari Corsair Coterie - VENGEFUL SORROW",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/aeldari/",
+          "capturedAt": "2026-09-25",
+          "section": "Corsair Coterie - VENGEFUL SORROW"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

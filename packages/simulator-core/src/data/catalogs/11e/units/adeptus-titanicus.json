@@ -1,0 +1,903 @@
+{
+  "factionId": "adeptus-titanicus",
+  "units": [
+    {
+      "id": "adeptus-titanicus.reaver-titan",
+      "name": "Reaver Titan",
+      "externalIds": {
+        "wahapedia": "Reaver-Titan"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 2200
+        }
+      ],
+      "wargearOptions": [
+        "This model's Reaver gatling blaster can be replaced with one of the following:; 1 Reaver laser blaster; 1 Reaver melta cannon; 1 Reaver volcano cannon; 1 Reaver power fist",
+        "This model's Reaver laser blaster can be replaced with one of the following:; 1 Reaver gatling blaster; 1 Reaver melta cannon; 1 Reaver volcano cannon"
+      ],
+      "profile": {
+        "name": "Reaver Titan",
+        "move": 12,
+        "toughness": 14,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 60,
+        "leadership": 6,
+        "oc": 20,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "FRAME",
+          "IMPERIUM",
+          "REAVER TITAN"
+        ],
+        "factionKeywords": [
+          "adeptus-titanicus",
+          "Adeptus Titanicus"
+        ],
+        "weapons": [
+          {
+            "name": "Reaver apocalypse launcher",
+            "range": 200,
+            "attacks": "3D6",
+            "skill": 3,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver gatling blaster",
+            "range": 72,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver laser blaster",
+            "range": 72,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver melta cannon",
+            "range": 48,
+            "attacks": "D6+2",
+            "skill": 3,
+            "strength": 13,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [
+              "Melta 4",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver volcano cannon",
+            "range": 120,
+            "attacks": "D3+1",
+            "skill": 3,
+            "strength": 24,
+            "ap": -5,
+            "damage": "14",
+            "keywords": [
+              "Blast",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver feet",
+            "range": 0,
+            "attacks": "8",
+            "skill": 4,
+            "strength": 12,
+            "ap": -2,
+            "damage": "4",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaver power fist - strike",
+            "profileGroup": "Reaver power fist",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 20,
+            "ap": -4,
+            "damage": "14",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Reaver power fist - sweep",
+            "profileGroup": "Reaver power fist",
+            "range": 0,
+            "attacks": "12",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "6",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+6",
+            "description": "Core ability: Deadly Demise D6+6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 20,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-titanicus.army-rule.towering-example",
+        "adeptus-titanicus.army-rule.titanic-support",
+        "adeptus-titanicus.army-rule.super-heavy-walker",
+        "adeptus-titanicus.army-rule.titanicus-traitoris"
+      ],
+      "rawRules": [
+        {
+          "name": "Striding Colossus",
+          "description": "Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.",
+          "category": "datasheet"
+        },
+        {
+          "name": "God-machine",
+          "description": "This model is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-20 Wounds Remaining While this model has 1-20 wounds remaining, subtract 10 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Reaver Titan datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/Reaver-Titan",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-titanicus.warbringer-nemesis-titan",
+      "name": "Warbringer Nemesis Titan",
+      "externalIds": {
+        "wahapedia": "Warbringer-Nemesis-Titan"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 2600
+        }
+      ],
+      "wargearOptions": [
+        "This model's Nemesis quake cannon can be replaced with 1 Nemesis volcano cannon.",
+        "This model's Reaver gatling blaster can be replaced with one of the following:; 1 Reaver laser blaster; 1 Reaver melta cannon; 1 Reaver volcano cannon",
+        "This model's Reaver laser blaster can be replaced with one of the following:; 1 Reaver gatling blaster; 1 Reaver melta cannon; 1 Reaver volcano cannon"
+      ],
+      "profile": {
+        "name": "Warbringer Nemesis Titan",
+        "move": 12,
+        "toughness": 14,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 80,
+        "leadership": 6,
+        "oc": 20,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "FRAME",
+          "IMPERIUM",
+          "WARBRINGER NEMESIS TITAN"
+        ],
+        "factionKeywords": [
+          "adeptus-titanicus",
+          "Adeptus Titanicus"
+        ],
+        "weapons": [
+          {
+            "name": "Anvillus defence battery",
+            "range": 72,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 8,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Anti-fly 4+"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ardex-defensor mauler",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Nemesis quake cannon",
+            "range": 480,
+            "attacks": "D6+6",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "4",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Nemesis volcano cannon",
+            "range": 120,
+            "attacks": "D3+3",
+            "skill": 3,
+            "strength": 24,
+            "ap": -5,
+            "damage": "14",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver gatling blaster",
+            "range": 72,
+            "attacks": "12",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver laser blaster",
+            "range": 72,
+            "attacks": "8",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver melta cannon",
+            "range": 48,
+            "attacks": "D6+2",
+            "skill": 3,
+            "strength": 13,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [
+              "Melta 4",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Reaver volcano cannon",
+            "range": 120,
+            "attacks": "D3+1",
+            "skill": 3,
+            "strength": 24,
+            "ap": -5,
+            "damage": "14",
+            "keywords": [
+              "Blast",
+              "Heavy"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Nemesis feet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 12,
+            "ap": -2,
+            "damage": "4",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6+6",
+            "description": "Core ability: Deadly Demise D6+6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            2,
+            4,
+            5,
+            8
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 26,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-titanicus.army-rule.towering-example",
+        "adeptus-titanicus.army-rule.titanic-support",
+        "adeptus-titanicus.army-rule.super-heavy-walker",
+        "adeptus-titanicus.army-rule.titanicus-traitoris"
+      ],
+      "rawRules": [
+        {
+          "name": "Striding Colossus",
+          "description": "Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Titanic Fire Support",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly Imperium model makes an attack that targets that enemy unit, on a Critical Wound, improve the Armour Penetration characteristic of that attack by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-26 Wounds Remaining While this model has 1-26 wounds remaining, subtract 10 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Warbringer Nemesis Titan datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/Warbringer-Nemesis-Titan",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-titanicus.warhound-titan",
+      "name": "Warhound Titan",
+      "externalIds": {
+        "wahapedia": "Warhound-Titan"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 1100
+        }
+      ],
+      "wargearOptions": [
+        "This model's Warhound plasma blastgun can be replaced with one of the following:; 1 Warhound inferno gun; 1 Warhound turbo-laser destructor; 1 Warhound vulcan mega-bolter",
+        "This model's Warhound vulcan mega-bolter can be replaced with one of the following:; 1 Warhound inferno gun; 1 Warhound plasma blastgun; 1 Warhound turbo-laser destructor"
+      ],
+      "profile": {
+        "name": "Warhound Titan",
+        "move": 14,
+        "toughness": 13,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 40,
+        "leadership": 6,
+        "oc": 16,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "FRAME",
+          "IMPERIUM",
+          "WARHOUND TITAN"
+        ],
+        "factionKeywords": [
+          "adeptus-titanicus",
+          "Adeptus Titanicus"
+        ],
+        "weapons": [
+          {
+            "name": "Warhound inferno gun",
+            "range": 24,
+            "attacks": "3D6",
+            "skill": 6,
+            "strength": 7,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warhound plasma blastgun - standard",
+            "profileGroup": "Warhound plasma blastgun",
+            "range": 72,
+            "attacks": "2D6+3",
+            "skill": 3,
+            "strength": 9,
+            "ap": -3,
+            "damage": "4",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warhound plasma blastgun - supercharge",
+            "profileGroup": "Warhound plasma blastgun",
+            "range": 72,
+            "attacks": "2D6+3",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "5",
+            "keywords": [
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warhound turbo-laser destructor",
+            "range": 72,
+            "attacks": "D3+3",
+            "skill": 3,
+            "strength": 20,
+            "ap": -3,
+            "damage": "2D6",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warhound vulcan mega-bolter",
+            "range": 48,
+            "attacks": "20",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Warhound feet",
+            "range": 0,
+            "attacks": "8",
+            "skill": 4,
+            "strength": 10,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 2D6",
+            "description": "Core ability: Deadly Demise 2D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            4,
+            5
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 13,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-titanicus.army-rule.towering-example",
+        "adeptus-titanicus.army-rule.titanic-support",
+        "adeptus-titanicus.army-rule.super-heavy-walker",
+        "adeptus-titanicus.army-rule.titanicus-traitoris"
+      ],
+      "rawRules": [
+        {
+          "name": "Striding Colossus",
+          "description": "Each time you target this model with a Stratagem, you must spend twice that Stratagem's stated CP cost to do so.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Flank Speed",
+          "description": "Each time this model Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 8\" to the Move characteristic of this model.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-13 Wounds Remaining While this model has 1-13 wounds remaining, subtract 8 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Warhound Titan datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/Warhound-Titan",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-titanicus.warlord-titan",
+      "name": "Warlord Titan",
+      "externalIds": {
+        "wahapedia": "Warlord-Titan"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Titanic",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 3500
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 apocalypse launchers can be replaced with 2 laser blasters.",
+        "This model's arioch power claw can be replaced with one of the following:; 1 belicosa volcano cannon; 1 macro gatling blaster; 1 mori quake cannon; 1 sunfury plasma annihilator",
+        "This model's macro gatling blaster can be replaced with one of the following:; 1 arioch power claw; 1 belicosa volcano cannon; 1 mori quake cannon; 1 sunfury plasma annihilator"
+      ],
+      "profile": {
+        "name": "Warlord Titan",
+        "move": 10,
+        "toughness": 16,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 100,
+        "leadership": 6,
+        "oc": 30,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "TITANIC",
+          "TOWERING",
+          "FRAME",
+          "IMPERIUM",
+          "WARLORD TITAN"
+        ],
+        "factionKeywords": [
+          "adeptus-titanicus",
+          "Adeptus Titanicus"
+        ],
+        "weapons": [
+          {
+            "name": "Apocalypse launcher",
+            "range": 200,
+            "attacks": "20",
+            "skill": 3,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Indirect Fire",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Ardex-defensor lascannon",
+            "range": 48,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Ardex-defensor mauler",
+            "range": 36,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 6,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Arioch power claw",
+            "range": 48,
+            "attacks": "20",
+            "skill": 3,
+            "strength": 6,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Belicosa volcano cannon",
+            "range": 120,
+            "attacks": "D3+3",
+            "skill": 3,
+            "strength": 32,
+            "ap": -5,
+            "damage": "18",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Laser blaster",
+            "range": 72,
+            "attacks": "6",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "D6+3",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Macro gatling blaster",
+            "range": 100,
+            "attacks": "30",
+            "skill": 3,
+            "strength": 9,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Mori quake cannon",
+            "range": 280,
+            "attacks": "3D6",
+            "skill": 3,
+            "strength": 16,
+            "ap": -4,
+            "damage": "6",
+            "keywords": [
+              "Ignores Cover",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Sunfury plasma annihilator - standard",
+            "profileGroup": "Sunfury plasma annihilator",
+            "range": 72,
+            "attacks": "2D6+6",
+            "skill": 3,
+            "strength": 10,
+            "ap": -3,
+            "damage": "5",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Sunfury plasma annihilator - supercharge",
+            "profileGroup": "Sunfury plasma annihilator",
+            "range": 72,
+            "attacks": "2D6+6",
+            "skill": 3,
+            "strength": 12,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [
+              "Hazardous",
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Arioch power claw - strike",
+            "profileGroup": "Arioch power claw",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 20,
+            "ap": -4,
+            "damage": "24",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Arioch power claw - sweep",
+            "profileGroup": "Arioch power claw",
+            "range": 0,
+            "attacks": "12",
+            "skill": 4,
+            "strength": 12,
+            "ap": -3,
+            "damage": "8",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Warlord feet",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 12,
+            "ap": -2,
+            "damage": "4",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 2D6+6",
+            "description": "Core ability: Deadly Demise 2D6+6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            6,
+            3,
+            12
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 33,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-titanicus.army-rule.towering-example",
+        "adeptus-titanicus.army-rule.titanic-support",
+        "adeptus-titanicus.army-rule.super-heavy-walker",
+        "adeptus-titanicus.army-rule.titanicus-traitoris"
+      ],
+      "rawRules": [
+        {
+          "name": "Striding Colossus",
+          "description": "Each time you target this model with a Stratagem, you must spend four times that Stratagem's stated CP cost to do so.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Wrath of the Omnissiah",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. That unit must take a Battle-shock test.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-33 Wounds Remaining While this model has 1-33 wounds remaining, subtract 15 from this model's Objective Control characteristic and each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Warlord Titan datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-titanicus/Warlord-Titan",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

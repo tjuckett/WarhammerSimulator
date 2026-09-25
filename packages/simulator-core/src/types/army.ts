@@ -1,3 +1,5 @@
+import type { EleventhForceDispositionId } from '../data/missions';
+
 export interface WeaponProfile {
   name: string;
   profileGroup?: string; // alternate profiles for the same physical weapon; choose one profile per attack sequence
@@ -84,9 +86,39 @@ export interface WargearChoice {
   description?: string;
 }
 
+/** A catalog-defined unit size/loadout combination shown by roster editors. */
+export interface UnitLoadoutOption {
+  id: string;
+  label: string;
+  modelCount: number;
+  /** Complete weapon-index loadouts, one entry per model. */
+  modelWeaponLoadouts?: number[][];
+  /** Explicit catalog choice IDs, one entry per model. */
+  modelWargearChoices?: string[][];
+  /** Unit-level wargear IDs selected by this configuration. */
+  selectedWargear?: string[];
+}
+
+/**
+ * A data-driven formation choice made before deployment. The rule describes
+ * the resulting model groups and any abilities that must be assigned across
+ * those groups; it does not encode faction-specific behavior.
+ */
+export interface PreBattleFormationRule {
+  id: string;
+  kind: 'split-unit';
+  modelCounts: number[];
+  abilityGroups?: Array<{
+    id: string;
+    abilityNames: string[];
+  }>;
+}
+
 export interface UnitProfile {
   rosterId?: string;
   name: string;
+  /** Catalog role used for generic eligibility checks such as enhancements. */
+  catalogRole?: string;
   move: number;
   toughness: number;
   save: number;
@@ -105,16 +137,25 @@ export interface UnitProfile {
   modelWargearChoices?: string[][];
   /** Structured catalog choices presented by the roster editor. */
   wargearChoices?: WargearChoice[];
+  /** Named model-count/loadout combinations presented by the roster editor. */
+  unitLoadoutOptions?: UnitLoadoutOption[];
+  /** Data-driven choices made during Declare Battle Formations. */
+  preBattleFormations?: PreBattleFormationRule[];
   /** Original datasheet wargear-option text. */
   wargearOptions?: string[];
   /** Catalog selection metadata; canonical definitions remain immutable. */
   selectedWargear?: string[];
+  /** Selected detachment enhancement, when the unit is eligible for one. */
+  selectedEnhancementId?: string;
   movementOverrides?: MovementRuleOverride;
   keywords: string[];
   factionKeywords: string[];
   weapons: WeaponProfile[];
   abilities: RuleText[];
   rules?: RuleText[];
+  /** Catalog-backed units this Leader can join. */
+  leaderTargetNames?: string[];
+  leaderTargetRefs?: string[];
   deployment?: UnitDeploymentAssignment;
   leaderAttachment?: LeaderAttachment;
   /** Typed datasheet bracket; effects are applied only when explicitly supplied. */
@@ -131,8 +172,12 @@ export interface ImportedArmy {
   units: UnitProfile[];
   /** Selected BattleScribe/NewRecruit battle-size option, when the roster provides one. */
   battleSizeId?: string;
-  /** Selected faction detachment, when the catalog or roster provides one. */
+  /** Selected 11th-edition force disposition for this army. */
+  forceDisposition?: EleventhForceDispositionId;
+  /** Legacy selected faction detachment, retained as the primary selection for older rosters. */
   detachmentId?: string;
+  /** Selected faction detachments, when the catalog or roster provides one. */
+  detachmentIds?: string[];
   /** Source roster edition, when the importer can identify it. */
   sourceEdition?: '10e' | '11e' | 'unknown';
   /** Catalog constraints recovered from an authoritative roster export, when present. */

@@ -1,10 +1,11 @@
-import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleSetup, type BattleState, type BattleUnit, type FightMovementIntent, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature, type ShootingWeaponResult } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleSetup, type BattleState, type BattleUnit, type CombatRerollSelection, type FightMovementIntent, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature, type ShootingWeaponResult } from '../types/battle';
 import { clone } from './clone';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { addAircraftStrategicReserves, deployArmy, everyModelWithinRange as everyModelWithinTransportRange, fp, isTransportProfile, nearestFriendlyTransportInRange as nearestTransportInRange, pointInDeploymentZone, transportCapacityRemaining as deploymentTransportCapacityRemaining, transportPassengers, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import * as deploymentActions from './deployment';
+import { pendingPreBattleFormations, resolvePreBattleFormation, type PreBattleFormationResolution } from './preBattleFormations';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -62,6 +63,11 @@ import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
 import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
+import {
+  advancePendingCombatResolutionInPlace,
+  beginPendingCombatResolution,
+  clearPendingCombatResolution,
+} from './combatResolutionCursor';
 import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from './combatResolution';
 import {
   centroid,
@@ -339,11 +345,16 @@ function participatingWeaponModelIndexes(
 ): number[] {
   if (weapon.isMelee && state) {
     const engagementRange = rulesEditionForRuleset(state.ruleset).engagementRange();
+    // A selected attached unit is represented by its bodyguard for targeting,
+    // but Engagement Range is measured to every model in that unit, including
+    // its attached Leader. Checking only the representative's model list can
+    // incorrectly exclude attackers that are base-to-base with the Leader.
+    const defenderComponents = attachedUnitComponents(state, defender);
     return aliveWeaponModelIndexes(attacker, weaponIndex).filter(modelIndex =>
-      defender.modelPositions.some((_, defenderModelIndex) =>
-        coherencyModelBaseEdgeHorizontalDistance(attacker, modelIndex, defender, defenderModelIndex) <= engagementRange
-        && verticalDistance(attacker.modelPositions[modelIndex], defender.modelPositions[defenderModelIndex]) <= COHERENCY_VERTICAL_RANGE,
-      ),
+      defenderComponents.some(component => component.modelPositions.some((_, defenderModelIndex) =>
+        coherencyModelBaseEdgeHorizontalDistance(attacker, modelIndex, component, defenderModelIndex) <= engagementRange
+        && verticalDistance(attacker.modelPositions[modelIndex], component.modelPositions[defenderModelIndex]) <= COHERENCY_VERTICAL_RANGE,
+      )),
     );
   }
   const needsLOS = !weapon.isMelee && !weaponHasKeyword(weapon, 'Indirect Fire');
@@ -634,6 +645,7 @@ function applyFeelNoPain(
   unit: BattleUnit,
   damage: number,
   state: BattleState,
+  allocationContext?: { forcedFeelNoPainRolls?: number[] },
 ): { damage: number; logs: LogEntry[] } {
   return manualCombat.applyFeelNoPain(unit, damage, state, {
     attachedUnitComponents,
@@ -641,6 +653,7 @@ function applyFeelNoPain(
     rollMultiple,
     resolveFeelNoPainOutcome,
     log,
+    forcedFeelNoPainRolls: allocationContext?.forcedFeelNoPainRolls,
   });
 }
 
@@ -1232,7 +1245,7 @@ function resolveShootingWeaponIntoTarget(
   weapon: WeaponProfile,
   weaponIndex: number,
   rules: RulesEdition,
-  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[] } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[]; interactiveStage?: boolean } = {},
 ): LogEntry[] {
   return manualCombat.resolveShootingWeaponIntoTarget(state, unit, target, weapon, weaponIndex, rules, options, shootingResolutionContext);
 }
@@ -1270,8 +1283,9 @@ function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition):
 export type PlayShootingWeaponOption = manualCombat.PlayShootingWeaponOption;
 export type PlayShootingAttackAllocation = manualCombat.PlayShootingAttackAllocation;
 
-const manualShootingSelectionContext: manualCombat.ManualShootingSelectionContext = {
+const manualShootingSelectionContext = {
   attachedUnitId,
+  attachedUnitComponents,
   aliveWeaponModelCount,
   aliveWeaponCopyCount,
   nearest,
@@ -1310,8 +1324,9 @@ export function shootPlayUnitWeapons(
   side: Side,
   allocations: PlayShootingAttackAllocation[],
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+  options: { interactiveStage?: boolean } = {},
 ): BattleState {
-  return shootingPhaseActions.shootPlayUnitWeapons(state, unitId, side, allocations, rules, {
+  const next = shootingPhaseActions.shootPlayUnitWeapons(state, unitId, side, allocations, rules, {
     ...manualShootingSelectionContext,
     clone,
     aliveWeaponModelIndexes,
@@ -1320,7 +1335,282 @@ export function shootPlayUnitWeapons(
     shootingWeaponSelectionForAll,
     updateAttachedShootingActivation,
     log,
+  }, options);
+  if (next !== state && next.lastShootingResolution !== state.lastShootingResolution
+    && next.lastShootingResolution?.shooterUnitId === unitId) {
+    beginPendingCombatResolution(next, 'shooting', unitId, side);
+  }
+  return next;
+}
+
+function continueInteractiveCombatResolution(
+  state: BattleState,
+  pending: NonNullable<BattleState['pendingCombatResolution']>,
+  options: { skipEmptyWounds?: boolean } = { skipEmptyWounds: true },
+): BattleState {
+  const continuation = pending.continuation;
+  if (!continuation || pending.stage === 'damage') return state;
+  const next = clone(state);
+  const current = next.pendingCombatResolution;
+  const attacker = next.units.find(unit => unit.id === pending.attackerUnitId && !unit.destroyed);
+  const defender = next.units.find(unit => unit.id === pending.targetUnitId && !unit.destroyed);
+  const result = next.lastShootingResolution?.weapons.find(weaponResult =>
+    weaponResult.weaponIndex === pending.weaponIndex && weaponResult.targetUnitId === pending.targetUnitId,
+  );
+  const weapon = attacker?.profile.weapons[pending.weaponIndex];
+  if (!current || !current.continuation || !attacker || !defender || !result || !weapon) return state;
+  const resumeFrom = pending.stage === 'hits' ? 'wounds' : pending.stage === 'wounds' ? 'saves' : 'damage';
+  const logs = resolveCombatAttacks(attacker, defender, weapon, pending.weaponIndex, rulesEditionForRuleset(next.ruleset), next, continuation.hasCover, continuation.hitModifier, continuation.hitModifierNote, {
+    deferCasualties: continuation.deferCasualties,
+    modelIndexes: continuation.modelIndexes,
+    selectedTargetCount: continuation.selectedTargetCount,
+    snapShooting: continuation.snapShooting,
+    result,
+    continuation,
+    resumeFrom,
   });
+  manualCombat.finalizeCombatWeaponResult(result);
+  next.log = [...next.log, ...logs];
+  const groupsForStage = (stage: NonNullable<BattleState['pendingCombatResolution']>['stage']) => result.groups
+    .filter(group => (stage === 'hits' && group.kind === 'hit')
+      || (stage === 'wounds' && group.kind === 'wound')
+      || (stage === 'saves' && group.kind === 'save')
+      || (stage === 'feel-no-pain' && group.kind === 'feel-no-pain')
+      || (stage === 'damage' && group.kind === 'damage'));
+  const nextStage = resumeFrom === 'wounds' ? 'wounds' : resumeFrom === 'saves' ? 'saves' : 'damage';
+  // If every wound failed, there is no save step to show. Resolve any typed
+  // mortal/devastating follow-through immediately, then expose the terminal
+  // damage stage so the popup can offer Done instead of a pointless save step.
+  if (nextStage === 'wounds' && options.skipEmptyWounds && (current.continuation.wounds ?? 0) === 0) {
+    const terminalLogs = resolveCombatAttacks(attacker, defender, weapon, pending.weaponIndex, rulesEditionForRuleset(next.ruleset), next, current.continuation.hasCover, current.continuation.hitModifier, current.continuation.hitModifierNote, {
+      deferCasualties: current.continuation.deferCasualties,
+      modelIndexes: current.continuation.modelIndexes,
+      selectedTargetCount: current.continuation.selectedTargetCount,
+      snapShooting: current.continuation.snapShooting,
+      result,
+      continuation: current.continuation,
+      resumeFrom: 'saves',
+    });
+    manualCombat.finalizeCombatWeaponResult(result);
+    next.log = [...next.log, ...terminalLogs];
+    const damageGroups = result.groups.filter(group => group.kind === 'damage');
+    const damageRolls = damageGroups.flatMap(group => group.rolls);
+    current.stage = 'damage';
+    current.rolls = damageRolls;
+    current.target = damageGroups[0]?.target;
+    current.rollIds = damageRolls.map((_roll, index) => `${current.kind}:${current.attackerUnitId}:damage:${index}`);
+    return next;
+  }
+  const groups = groupsForStage(nextStage);
+  const rolls = groups.flatMap(group => group.rolls);
+  current.stage = nextStage;
+  current.rolls = rolls;
+  current.target = groups[0]?.target;
+  current.rollIds = rolls.map((_roll, index) => `${current.kind}:${current.attackerUnitId}:${nextStage}:${index}`);
+  return next;
+}
+
+function activateQueuedCombatResolution(
+  state: BattleState,
+  pending: NonNullable<BattleState['pendingCombatResolution']>,
+): BattleState {
+  const queued = pending.continuationQueue?.[0];
+  // Queued weapons are normally advanced in lockstep with the active weapon.
+  // Keep this path for older saved cursors that still contain hit-stage-only
+  // queue entries, but never rewind a queue entry that has already reached a
+  // later stage (or damage) back to hits.
+  if (!queued || (queued.stage && queued.stage !== 'hits')) return state;
+  const result = state.lastShootingResolution?.weapons.find(weaponResult =>
+    weaponResult.weaponIndex === queued.weaponIndex && weaponResult.targetUnitId === queued.targetUnitId,
+  );
+  if (!result) return state;
+  const hitGroups = result.groups.filter(group => group.kind === 'hit');
+  const rolls = hitGroups.flatMap(group => group.rolls);
+  const next = clone(state);
+  const current = next.pendingCombatResolution;
+  if (!current) return state;
+  current.targetUnitId = queued.targetUnitId;
+  current.weaponIndex = queued.weaponIndex;
+  current.stage = 'hits';
+  current.rolls = rolls;
+  current.target = hitGroups[0]?.target;
+  current.rollIds = rolls.map((_roll, index) => `${current.kind}:${current.attackerUnitId}:hits:${index}`);
+  current.continuation = queued.continuation;
+  current.continuationQueue = pending.continuationQueue?.slice(1);
+  if (!current.continuationQueue?.length) current.continuationQueue = undefined;
+  return next;
+}
+
+function advanceQueuedCombatResolution(
+  state: BattleState,
+  pending: NonNullable<BattleState['pendingCombatResolution']>,
+): BattleState {
+  const queue = pending.continuationQueue;
+  if (!queue?.length || pending.stage === 'damage') return state;
+
+  // Advance the active weapon once, then advance every queued weapon from the
+  // same stage. This keeps multi-weapon attacks together: each weapon gets its
+  // own wound/save result and log before the cursor moves to the next stage.
+  let next = continueInteractiveCombatResolution(state, pending, { skipEmptyWounds: false });
+  if (next === state || !next.pendingCombatResolution) return state;
+  const activePending = next.pendingCombatResolution;
+  const updatedQueue: typeof queue = [];
+
+  for (const queued of queue) {
+    const queuedStage: NonNullable<BattleState['pendingCombatResolution']>['stage'] = queued.stage ?? 'hits';
+    if (queuedStage !== pending.stage) {
+      updatedQueue.push(queued);
+      continue;
+    }
+    const queuedPending: NonNullable<BattleState['pendingCombatResolution']> = {
+      ...pending,
+      targetUnitId: queued.targetUnitId,
+      weaponIndex: queued.weaponIndex,
+      stage: queuedStage,
+      rolls: [],
+      target: undefined,
+      rollIds: [],
+      continuation: queued.continuation,
+      continuationQueue: undefined,
+    };
+    const queuedState = clone(next);
+    queuedState.pendingCombatResolution = queuedPending;
+    const advancedQueuedState = continueInteractiveCombatResolution(queuedState, queuedPending, { skipEmptyWounds: false });
+    if (advancedQueuedState === queuedState || !advancedQueuedState.pendingCombatResolution) {
+      updatedQueue.push(queued);
+      continue;
+    }
+    next = advancedQueuedState;
+    const advancedQueued = advancedQueuedState.pendingCombatResolution;
+    updatedQueue.push({
+      ...queued,
+      stage: advancedQueued.stage,
+      continuation: advancedQueued.continuation ?? queued.continuation,
+    });
+  }
+
+  const current = {
+    ...activePending,
+    continuationQueue: updatedQueue.length ? updatedQueue : undefined,
+  };
+  const resultEntries = [
+    { targetUnitId: current.targetUnitId, weaponIndex: current.weaponIndex },
+    ...updatedQueue,
+  ];
+  const groupsForStage = (result: NonNullable<BattleState['lastShootingResolution']>['weapons'][number]) => result.groups
+    .filter(group => (current.stage === 'hits' && group.kind === 'hit')
+      || (current.stage === 'wounds' && group.kind === 'wound')
+      || (current.stage === 'saves' && group.kind === 'save')
+      || (current.stage === 'feel-no-pain' && group.kind === 'feel-no-pain')
+      || (current.stage === 'damage' && group.kind === 'damage'));
+  const stageGroups = resultEntries.flatMap(entry => {
+    const result = next.lastShootingResolution?.weapons.find(weaponResult =>
+      weaponResult.weaponIndex === entry.weaponIndex && weaponResult.targetUnitId === entry.targetUnitId,
+    );
+    return result ? groupsForStage(result) : [];
+  });
+  const rolls = stageGroups.flatMap(group => group.rolls);
+  current.rolls = rolls;
+  current.target = stageGroups[0]?.target;
+  current.rollIds = rolls.map((_roll, index) => `${current.kind}:${current.attackerUnitId}:${current.stage}:${index}`);
+  const totalWounds = [current.continuation, ...updatedQueue.map(entry => entry.continuation)]
+    .reduce((total, continuation) => total + (continuation?.wounds ?? 0), 0);
+  const hasSaveGroups = stageGroups.some(group => group.kind === 'save');
+  if ((current.stage === 'wounds' && totalWounds === 0)
+    || (current.stage === 'saves' && !hasSaveGroups)) {
+    const queuedPending = {
+      ...current,
+      continuationQueue: updatedQueue.length ? updatedQueue : undefined,
+    };
+    next.pendingCombatResolution = queuedPending;
+    return advanceQueuedCombatResolution(next, queuedPending);
+  }
+  next.pendingCombatResolution = current;
+  return next;
+}
+
+/** Resolves one acknowledgement boundary in an interactive combat popup. */
+export function advancePlayCombatResolution(
+  state: BattleState,
+  kind: 'shooting' | 'fight',
+  attackerUnitId: string,
+): BattleState {
+  if (state.pendingCombatResolution?.kind !== kind
+    || state.pendingCombatResolution.attackerUnitId !== attackerUnitId) return state;
+  if (state.pendingCombatResolution.stage === 'damage' && state.pendingCombatResolution.continuationQueue?.length) {
+    return activateQueuedCombatResolution(state, state.pendingCombatResolution);
+  }
+  if (state.pendingCombatResolution.continuationQueue?.length) {
+    return advanceQueuedCombatResolution(state, state.pendingCombatResolution);
+  }
+  if (state.pendingCombatResolution.continuation) {
+    let next = continueInteractiveCombatResolution(state, state.pendingCombatResolution);
+    while (next !== state
+      && next.pendingCombatResolution?.continuation
+      && next.pendingCombatResolution.stage !== 'damage'
+      && next.pendingCombatResolution.rolls.length === 0) {
+      const advanced = continueInteractiveCombatResolution(next, next.pendingCombatResolution);
+      if (advanced === next) break;
+      next = advanced;
+    }
+    return next;
+  }
+  const next = clone(state);
+  if (!advancePendingCombatResolutionInPlace(next)) return state;
+  return next;
+}
+
+/** Rebinds the staged cursor after attached Leader/bodyguard results are merged. */
+export function beginPlayCombatResolution(
+  state: BattleState,
+  kind: 'shooting' | 'fight',
+  attackerUnitId: string,
+  attackerSide: Side,
+): BattleState {
+  if (!state.lastShootingResolution) return state;
+  const next = clone(state);
+  beginPendingCombatResolution(next, kind, attackerUnitId, attackerSide);
+  return next;
+}
+
+/** Clears the interactive combat cursor after the result review is complete. */
+export function clearPlayCombatResolution(state: BattleState, attackerUnitId?: string): BattleState {
+  if (attackerUnitId && state.pendingCombatResolution?.attackerUnitId !== attackerUnitId) return state;
+  if (!state.pendingCombatResolution) return state;
+  const next = clone(state);
+  clearPendingCombatResolution(next);
+  next.pendingFeelNoPainReroll = undefined;
+  return next;
+}
+
+/**
+ * Reports whether the staged combat result still has typed damage follow-through
+ * after the current save stage. Save rolls can all succeed while mortal,
+ * devastating, or another queued weapon still needs to be reviewed.
+ */
+export function combatResolutionNeedsFollowThrough(state: BattleState): boolean {
+  const pending = state.pendingCombatResolution;
+  if (!pending) return false;
+  const continuations = [pending.continuation, ...(pending.continuationQueue ?? []).map(entry => entry.continuation)];
+  const hasBypassDamage = continuations.some(continuation => (continuation?.devastatingWounds ?? 0) > 0
+    || (continuation?.totalMortals ?? 0) > 0);
+  const result = state.lastShootingResolution;
+  if (pending.stage === 'saves' && result) {
+    // The save groups are the authoritative cursor result. The weapon summary
+    // can still reflect the pre-save aggregate while this stage is open.
+    const saveGroups = result.weapons.flatMap(weapon => weapon.groups.filter(group => group.kind === 'save'));
+    if (saveGroups.length) {
+      const unsaved = saveGroups.reduce((total, group) => total + (group.noSave
+        ? group.successes ?? 0
+        : Math.max(0, group.rolls.length - (group.successes ?? 0))), 0);
+      return hasBypassDamage || unsaved > 0 || result.weapons.some(weapon =>
+        weapon.groups.some(group => group.kind === 'damage'));
+    }
+  }
+  return continuations
+    .some(continuation => (continuation?.unsaved ?? 0) > 0
+      || (continuation?.devastatingWounds ?? 0) > 0
+      || (continuation?.totalMortals ?? 0) > 0);
 }
 
 export function playShootingWeaponOptions(
@@ -1397,7 +1687,7 @@ export function shootPlayUnitWeapon(
   weaponIndex: number | 'all',
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  return shootingPhaseActions.shootPlayUnitWeapon(state, unitId, side, targetUnitId, weaponIndex, rules, {
+  const next = shootingPhaseActions.shootPlayUnitWeapon(state, unitId, side, targetUnitId, weaponIndex, rules, {
     ...manualShootingSelectionContext,
     clone,
     clearFiringDeckWeapons,
@@ -1407,6 +1697,11 @@ export function shootPlayUnitWeapon(
     updateAttachedShootingActivation,
     log,
   });
+  if (next !== state && next.lastShootingResolution !== state.lastShootingResolution
+    && next.lastShootingResolution?.shooterUnitId === unitId) {
+    beginPendingCombatResolution(next, 'shooting', unitId, side);
+  }
+  return next;
 }
 
 export function snapShootPlayUnitWeapon(
@@ -2010,7 +2305,12 @@ export function fightPlayUnitWeapon(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
   targetSplits?: PlayMeleeAttackSplit[],
 ): BattleState {
-  return fightPhaseActions.fightPlayUnitWeapon(state, unitId, side, targetUnitId, weaponIndex, rules, fightPhaseActionContext, targetSplits);
+  const next = fightPhaseActions.fightPlayUnitWeapon(state, unitId, side, targetUnitId, weaponIndex, rules, fightPhaseActionContext, targetSplits);
+  if (next !== state && next.lastShootingResolution !== state.lastShootingResolution
+    && next.lastShootingResolution?.shooterUnitId === unitId) {
+    beginPendingCombatResolution(next, 'fight', unitId, side);
+  }
+  return next;
 }
 
 export function fightPlayUnitWeapons(
@@ -2019,8 +2319,14 @@ export function fightPlayUnitWeapons(
   side: Side,
   allocations: PlayMeleeAttackAllocation[],
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+  options: { interactiveStage?: boolean } = {},
 ): BattleState {
-  return fightPhaseActions.fightPlayUnitWeapons(state, unitId, side, allocations, rules, fightPhaseActionContext);
+  const next = fightPhaseActions.fightPlayUnitWeapons(state, unitId, side, allocations, rules, fightPhaseActionContext, options);
+  if (next !== state && next.lastShootingResolution !== state.lastShootingResolution
+    && next.lastShootingResolution?.shooterUnitId === unitId) {
+    beginPendingCombatResolution(next, 'fight', unitId, side);
+  }
+  return next;
 }
 
 export function playFightWeaponAllocationCap(
@@ -2289,6 +2595,8 @@ export function createDeploymentState(
 ): BattleState {
   return deploymentActions.createDeploymentState(army1, color1, army2, color2, terrain, strategy1, strategy2, setup, objectivesOverride, rules, battleSetupContext);
 }
+
+export { pendingPreBattleFormations, resolvePreBattleFormation, type PreBattleFormationResolution };
 
 export function placeNextUnit(state: BattleState): BattleState {
   return deploymentActions.placeNextUnit(state, automatedDeploymentContext);
@@ -3074,6 +3382,20 @@ export function allocatePlayDamageToModel(
   return manualCombat.allocatePlayDamageToModel(state, unitId, side, modelIndex, manualDamageAllocationContext);
 }
 
+export function rerollPlayFeelNoPainAllocation(
+  state: BattleState,
+  selection: CombatRerollSelection,
+  originalRoll: number,
+): BattleState {
+  return manualCombat.rerollPlayFeelNoPainAllocation(
+    state,
+    selection,
+    originalRoll,
+    d6(),
+    manualDamageAllocationContext,
+  );
+}
+
 export function playUnitCanFallBack(
   state: BattleState,
   unitId: string,
@@ -3193,12 +3515,45 @@ export function fallBackPlayUnit(
   return interactiveMovementState.fallBackUnit(state, unitId, side, rules, fallBackMovementContext);
 }
 
+/** Starts a player-directed Fall Back move. The board movement controls own
+ * the destination; final movement validation still requires leaving Engagement
+ * Range before the unit can be completed. */
+export function beginFallBackPlayUnit(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  if (!playUnitCanFallBack(state, unitId, side, rules)) return state;
+  const next = clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  for (const component of attachedUnitComponents(next, unit)) {
+    component.fellBack = true;
+    component.movementAction = 'fellBack';
+    component.movementComplete = false;
+    ensureModelMovementStartPositions(component);
+    ensureModelMovementStartRotations(component);
+    ensureModelMovementAllowanceTotals(component);
+  }
+  return next;
+}
+
 export function completePlayUnitMovement(
   state: BattleState,
   unitId: string,
   side: Side,
 ): BattleState {
-  return interactiveMovementState.completeUnitMovement(state, unitId, side, completeMovementContext);
+  const next = interactiveMovementState.completeUnitMovement(state, unitId, side, completeMovementContext);
+  if (next === state) return state;
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (unit?.movementAction === 'fellBack') {
+    const rules = rulesEditionForRuleset(next.ruleset);
+    for (const component of attachedUnitComponents(next, unit)) {
+      component.inCombat = inEngagement(component, enemies(next, component.side), rules.engagementRange());
+    }
+  }
+  return next;
 }
 
 export function remainStationaryPlayUnit(state: BattleState, unitId: string, side: Side): BattleState {

@@ -1,0 +1,1479 @@
+{
+  "factionId": "chaos-knights",
+  "rules": [
+    {
+      "id": "chaos-knights.army-rule.dreadblades",
+      "name": "Dreadblades",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If every model in your army has the CHAOS keyword, you can include either 1 TITANIC CHAOS KNIGHTS model or up to 3 WAR DOG models in your army, even if they do not have the Faction keyword you selected in the Select Army Faction step. None of these models can be your WARLORD, and they cannot be given Enhancements.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Dreadblades",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Dreadblades"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.army-rule.super-heavy-walker",
+      "name": "Super-heavy Walker",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "Each time a model with this ability makes a Normal, Advance or Fall Back move, it can move through models (excluding TITANIC models) and sections of terrain features that are 4\" or less in height. When doing so: It can move within Engagement Range of enemy models, but cannot end that move within Engagement Range of them. It can also move through sections of terrain features that are more than 4\" in height, but if it does, after it has moved, roll one D6: on a 1, that model is Battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Super-heavy Walker",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Super-heavy Walker"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance",
+      "name": "Traitoris Lance - Paragons of Terror",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "At the start of the first battle round, after selecting one or more Dread abilities to be active for your army, you can select one additional Dread ability to be active for your army (this additional Dread ability cannot be randomly selected).",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.enhancement.nightmares-master",
+      "name": "Nightmare's Master",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "20 pts. CHAOS KNIGHTS model only. At the start of the Fight phase, each enemy unit within Engagement Range of the bearer must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.enhancement.tyrants-shadow",
+      "name": "Tyrant's Shadow",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "25 pts. CHAOS KNIGHTS model only. At the end of your Command phase, select one objective marker the bearer is within range of and that you control. That objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase. In addition, until you lose control of that objective marker, it has the Deathly Terror ability as if it were a CHAOS KNIGHTS model from your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.enhancement.malevolent-heraldry",
+      "name": "Malevolent Heraldry",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "30 pts. CHAOS KNIGHTS model only. Each time you roll dice to randomly select which Dread abilities are active for your army, if the bearer is on the battlefield, you can re-roll one or both results rolled.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.enhancement.veil-of-medrengard",
+      "name": "Veil of Medrengard",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "35 pts. CHAOS KNIGHTS model only. The bearer has a 4+ invulnerable save against ranged attacks, and a 5+ invulnerable save against melee attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.stratagem.pterrorshades",
+      "name": "PTERRORSHADES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "1CP. Traitoris Lance - Wargear Stratagem. WHEN: Any phase, just after an enemy unit fails a Battle-shock test. TARGET: One CHAOS KNIGHTS unit from your army that is within 12\" of that enemy unit. EFFECT: Roll six D6: for each 4+, that enemy unit suffers 1 mortal wound and one model in your unit regains up to 1 lost wound. RESTRICTIONS: You can only use this Stratagem once per battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance - PTERRORSHADES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance - PTERRORSHADES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.stratagem.conquerors-without-mercy",
+      "name": "CONQUERORS WITHOUT MERCY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "1CP. Traitoris Lance - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One CHAOS KNIGHTS model from your army that made a Charge move this turn and has not been selected to fight this phase. EFFECT: Until the end of the phase, improve the Armour Penetration characteristic of melee weapons equipped by your model by 1. After your model has finished making its attacks this phase, if it destroyed one or more enemy units this phase, each enemy unit within 6\" of your model must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance - CONQUERORS WITHOUT MERCY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance - CONQUERORS WITHOUT MERCY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.stratagem.disdain-for-the-weak",
+      "name": "DISDAIN FOR THE WEAK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "1CP. Traitoris Lance - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 6+ ability, and the Feel No Pain 5+ ability against attacks made by Battle-shocked models.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance - DISDAIN FOR THE WEAK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance - DISDAIN FOR THE WEAK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.stratagem.a-long-leash",
+      "name": "A LONG LEASH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "1CP. Traitoris Lance - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One ABHORRENT unit from your army and up to two friendly WAR DOG units. EFFECT: Until the start of your next Command phase, those WAR DOG units are treated as being within range of any Aura abilities your ABHORRENT unit has.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance - A LONG LEASH",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance - A LONG LEASH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.stratagem.imperious-advance",
+      "name": "IMPERIOUS ADVANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "1CP. Traitoris Lance - Epic Deed Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: Up to two WAR DOG units from your army or one TITANIC CHAOS KNIGHTS unit from your army. EFFECT: Until the end of the phase, each time a model in one of your units makes a Normal, Advance, Fall Back or Charge move, it can move through models and terrain features. When doing so, it can move within Engagement Range of such models but, unless it made a Charge move, cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed (the Super-heavy Walker ability does not apply while using this Stratagem).",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance - IMPERIOUS ADVANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance - IMPERIOUS ADVANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.traitoris-lance.stratagem.storm-of-darkness",
+      "name": "STORM OF DARKNESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.traitoris-lance",
+      "description": "1CP. Traitoris Lance - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Your unit has Stealth. Melee attacks that target your unit have -1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Traitoris Lance - STORM OF DARKNESS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Traitoris Lance - STORM OF DARKNESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance",
+      "name": "Infernal Lance - Malefic Surge",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "In your Command phase, one or more CHAOS KNIGHTS units from your army can make a Malefic Surge. Each one that does must first take a Leadership test; if that test is failed, that unit suffers D3 mortal wounds. Then, until the start of your next Command phase, that unit is Empowered. While a unit is Empowered it can use one of the Malefic Surge abilities below. Once that unit has used a Malefic Surge ability, it is no longer Empowered. Unholy Hunger: When a model in this unit makes a Normal, Advance or Fall Back move, until the end of the phase, add 3\" to its Move characteristic. Diabolic Power: When this unit is selected to shoot or fight, select either the [LETHAL HITS] or [SUSTAINED HITS 1] ability. Until the end of the phase, weapons equipped by models in this unit have the selected ability. Unnatural Fortitude: When this unit is selected as the target of an attack, select one of the following to apply until the end of the phase: Models in this unit have a 5+ invulnerable save. Models in this unit have the Feel No Pain 6+ ability. Designer's Note: We recommend placing a token next to Chaos Knights models that are Empowered, removing it once they have used a Malefic Surge ability, and removing all unused tokens at the start of your Command phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.enhancement.knight-diabolus",
+      "name": "Knight Diabolus",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "25 pts. CHAOS KNIGHTS model only. Improve the Weapon Skill characteristic of the bearer's melee weapons by 1. While the bearer is using the Diabolic Power ability, its melee weapons have the [LANCE] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.enhancement.blasphemous-engine",
+      "name": "Blasphemous Engine",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "35 pts. CHAOS KNIGHTS model only. Add 2 to the bearer's Wounds characteristic. Each time the bearer's unit makes a Malefic Surge, you can re-roll the Leadership test taken to see if it suffers any mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.enhancement.fleshmetal-fusion",
+      "name": "Fleshmetal Fusion",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "35 pts. CHAOS KNIGHTS model only. Add 1 to the bearer's Toughness characteristic. While the bearer is using the Unnatural Fortitude ability, each time an attack with a Damage characteristic of 1 is allocated to the bearer, add 1 to any armour saving throw made against that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.enhancement.bestial-aspect",
+      "name": "Bestial Aspect",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "30 pts. CHAOS KNIGHTS model only. The bearer's ranged weapons have the [assault] ability. While the bearer is using the Unholy Hunger ability, it can ignore any or all modifiers to its Move characteristic and/or to Advance rolls made for its unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.stratagem.profane-symbiosis",
+      "name": "PROFANE SYMBIOSIS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "1CP. Infernal Lance - Battle Tactic Stratagem. WHEN: End of any phase. TARGET: One CHAOS KNIGHTS unit from your army that is not Empowered. EFFECT: Your unit makes a Malefic Surge. RESTRICTIONS: You cannot select the same unit as the target of this Stratagem more than once per battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance - PROFANE SYMBIOSIS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance - PROFANE SYMBIOSIS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.stratagem.hellforged-construction",
+      "name": "HELLFORGED CONSTRUCTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "1CP. Infernal Lance - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance - HELLFORGED CONSTRUCTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance - HELLFORGED CONSTRUCTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.stratagem.corrupting-taint",
+      "name": "CORRUPTING TAINT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "1CP. Infernal Lance - Epic Deed Stratagem. WHEN: Your Command phase, just after a CHAOS KNIGHTS CHARACTER unit from your army makes a Malefic Surge. TARGET: That CHAOS KNIGHTS CHARACTER unit. EFFECT: Select one objective marker your unit is within range of that you control. That objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance - CORRUPTING TAINT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance - CORRUPTING TAINT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.stratagem.unleash-balefire",
+      "name": "UNLEASH BALEFIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "1CP. Infernal Lance - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One CHAOS KNIGHTS unit from your army that has not been selected to shoot this phase. EFFECT: After your unit has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test; if the test is failed, until the end of your opponent's next turn, it is aflame. While a unit is aflame, subtract 2\" from its Move characteristic and subtract 2 from Charge rolls made for it.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance - UNLEASH BALEFIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance - UNLEASH BALEFIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.stratagem.warp-vision",
+      "name": "WARP VISION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "1CP. Infernal Lance - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One CHAOS KNIGHTS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance - WARP VISION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance - WARP VISION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.infernal-lance.stratagem.diabolic-bulwark",
+      "name": "DIABOLIC BULWARK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.infernal-lance",
+      "description": "1CP. Infernal Lance - Wargear Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Infernal Lance - DIABOLIC BULWARK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Infernal Lance - DIABOLIC BULWARK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread",
+      "name": "Lords of Dread - Tyrannical Court",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Improve the Objective Control characteristic of CHAOS KNIGHTS CHARACTER models from your army by 2. In addition, once per battle round, if your WARLORD is on the battlefield, you can use the Claimed for the Dark Gods Stratagem for 0CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.enhancement.throne-mechanicum-of-skulls",
+      "name": "Throne Mechanicum of Skulls",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "25 pts. CHAOS KNIGHTS model only. You can re-roll Charge rolls made for the bearer's unit. In addition, once per battle, in your Charge phase, the bearer can use this Enhancement. If it does, until the end of the phase, the bearer's unit is eligible to declare a charge in a turn in which it Advanced.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.enhancement.blade-of-celerity",
+      "name": "Blade of Celerity",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "35 pts. CHAOS KNIGHTS model only. The bearer's ranged weapons have the [ASSAULT] ability. In addition, once per battle, in the Fight phase, the bearer can use this Enhancement. If it does, until the end of the phase, models in the bearer's unit have the Fights First ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.enhancement.warp-borne-stalker",
+      "name": "Warp-borne Stalker",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "25 pts. CHAOS KNIGHTS model only. The bearer has the Deep Strike ability. In addition, once per battle, at the end of your opponent's turn, if the bearer is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.enhancement.putrid-carapace",
+      "name": "Putrid Carapace",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "30 pts. CHAOS KNIGHTS model only. The bearer has a Save characteristic of 2+. In addition, once per battle, at the start of either player's Command phase, the bearer can use this Enhancement. If it does, the bearer regains up to D6 lost wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.enhancement.mirror-of-fates",
+      "name": "Mirror of Fates",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "30 pts. CHAOS KNIGHTS model only. Once per turn, when your opponent targets a unit from their army within 12\" of this model with a stratagem, you can use this ability. If you do, increase the CP cost of that use of that stratagem by 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.enhancement.blessing-of-the-dark-master",
+      "name": "Blessing of the Dark Master",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "20 pts. CHAOS KNIGHTS model only. The bearer has the Stealth ability. In addition, once per battle, after you make a saving throw for the bearer, you can change the Damage characteristic of that attack to 0.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.stratagem.claimed-for-the-dark-gods",
+      "name": "CLAIMED FOR THE DARK GODS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "1CP. Lords of Dread - Epic Deed Stratagem. WHEN: Start of your Command phase. TARGET: One CHAOS KNIGHTS CHARACTER unit from your army that is within range of one or more objective markers you control. EFFECT: Select one of those objective markers. That objective marker remains under your control, with a Level of Control of 5 (unless it would otherwise be higher), until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread - CLAIMED FOR THE DARK GODS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread - CLAIMED FOR THE DARK GODS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.stratagem.spiteful-demise",
+      "name": "SPITEFUL DEMISE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "1CP. Lords of Dread - Epic Deed Stratagem. WHEN: Any phase, just after a CHAOS KNIGHTS CHARACTER unit from your army is destroyed. TARGET: That CHAOS KNIGHTS CHARACTER unit. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: When rolling to determine whether mortal wounds are inflicted by your unit's Deadly Demise ability, that model's Deadly Demise ability inflicts mortal wounds on a D6 roll of a 4+ instead of on a 6.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread - SPITEFUL DEMISE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread - SPITEFUL DEMISE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.stratagem.runes-of-disdain",
+      "name": "RUNES OF DISDAIN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "2CP. Lords of Dread - Epic Deed Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One CHAOS KNIGHTS CHARACTER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread - RUNES OF DISDAIN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread - RUNES OF DISDAIN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.stratagem.titanic-duel",
+      "name": "TITANIC DUEL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "1CP. Lords of Dread - Epic Deed Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One CHAOS KNIGHTS CHARACTER unit from your army that has not been selected to shoot or fight this phase. EFFECT: Select one enemy MONSTER or VEHICLE unit. Until the end of the phase, each time a model in your unit makes an attack that targets that enemy unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1. Each time a model in your unit makes an attack that targets that enemy unit, if that enemy unit is TITANIC, you can re-roll the Hit roll and you can re-roll the Wound roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread - TITANIC DUEL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread - TITANIC DUEL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.stratagem.trophy-hunter",
+      "name": "TROPHY HUNTER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "1CP. Lords of Dread - Epic Deed Stratagem. WHEN: Fight phase, just before a CHAOS KNIGHTS CHARACTER unit from your army consolidates. TARGET: That CHAOS KNIGHTS CHARACTER unit. EFFECT: Until the end of the phase, each time your unit Consolidates, models in it can move an additional 3\" as long as your unit can end that move within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread - TROPHY HUNTER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread - TROPHY HUNTER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.lords-of-dread.stratagem.crushed-like-vermin",
+      "name": "CRUSHED LIKE VERMIN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.lords-of-dread",
+      "description": "1CP. Lords of Dread - Epic Deed Stratagem. WHEN: Your Movement phase, just after a CHAOS KNIGHTS CHARACTER unit from your army ends a Normal move. TARGET: That CHAOS KNIGHTS CHARACTER unit. EFFECT: Select one enemy unit (excluding MONSTERS and VEHICLES) that your unit moved over during that move and roll six D6: for each 4+, that enemy unit suffers 1 mortal wound. If one or more models are destroyed as a result of this Stratagem, that enemy unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Lords of Dread - CRUSHED LIKE VERMIN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Lords of Dread - CRUSHED LIKE VERMIN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance",
+      "name": "Houndpack Lance - Marked Prey",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "At the start of your Command phase, select one unit from your opponent's army. Until the start of your next Command phase, each time a WAR DOG model from your army makes an attack that targets that enemy unit, if that unit is visible to the attacking model, that attack has the [SUSTAINED HITS 1] ability. KEYWORDS While using the Houndpack Lance Detachment, the following rules apply: Your army must include three or more WAR DOG units. WAR DOG units from your army have the BATTLELINE keyword. When mustering your army, select three WAR DOG units from your army. Until the end of the battle, those units have the CHARACTER keyword.* Designer's Note: This means that the selected units can be given Enhancements and one of them can be selected as your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.enhancement.preyslayers-mantle",
+      "name": "Preyslayer's Mantle",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "15 pts. WAR DOG model only. The bearer has the Super-heavy Walker ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.enhancement.final-howl-aura",
+      "name": "Final Howl (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "20 pts. WAR DOG model only. While a friendly War Dog model is within 6\" of the bearer, each time that model makes an attack, re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.enhancement.loping-predator",
+      "name": "Loping Predator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "10 pts. WAR DOG model only. The bearer's ranged weapons have the [assault] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.enhancement.panoply-of-the-cursed-knight",
+      "name": "Panoply of the Cursed Knight",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "15 pts. WAR DOG model only. Each time an attack targets the bearer, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.stratagem.vox-howl",
+      "name": "VOX-HOWL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "2CP. Houndpack Lance - Battle Tactic Stratagem. WHEN: Start of the Shooting phase or the start of the Fight phase. TARGET: One WAR DOG CHARACTER unit from your army. EFFECT: Each enemy unit within 6\" of your unit must take a Battle-shock test. Each friendly WAR DOG unit that is within 6\" of your unit and is Battle-shocked must take a Leadership test; if that test is passed, that unit is no longer Battle-shocked. RESTRICTIONS: You can only use this Stratagem once per turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance - VOX-HOWL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance - VOX-HOWL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.stratagem.hungry-for-combat",
+      "name": "HUNGRY FOR COMBAT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "1CP. Houndpack Lance - Battle Tactic Stratagem. WHEN: Start of the Fight phase. TARGET: Two or more WAR DOG units from your army within Engagement Range of the same enemy unit. EFFECT: Select one enemy unit within Engagement Range of those WAR DOG units. Until the end of the phase, models in those WAR DOG units can only target that enemy unit, but each time a model in one of those WAR DOG units makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance - HUNGRY FOR COMBAT",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance - HUNGRY FOR COMBAT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.stratagem.cunning-hunter",
+      "name": "CUNNING HUNTER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "1CP. Houndpack Lance - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a WAR DOG unit from your army Falls Back. TARGET: That WAR DOG unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance - CUNNING HUNTER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance - CUNNING HUNTER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.stratagem.animalistic-rage",
+      "name": "ANIMALISTIC RAGE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "1CP. Houndpack Lance - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after a WAR DOG unit from your army that has not been selected to attack this phase is destroyed. TARGET: That WAR DOG unit. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Before resolving your unit's Deadly Demise ability, it can either shoot or fight. When doing so, it must target only the enemy unit that just destroyed it, and can only do so if that enemy unit is an eligible target. After it has done so and after any Consolidation moves have been made, resolve your unit's Deadly Demise ability as normal.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance - ANIMALISTIC RAGE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance - ANIMALISTIC RAGE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.stratagem.harrying-hounds",
+      "name": "HARRYING HOUNDS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "1CP. Houndpack Lance - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One WAR DOG unit from your army that is within 8\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance - HARRYING HOUNDS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance - HARRYING HOUNDS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.houndpack-lance.stratagem.encircling-pack",
+      "name": "ENCIRCLING PACK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.houndpack-lance",
+      "description": "1CP. Houndpack Lance - Strategic Ploy Stratagem. WHEN: End of your opponent's Fight phase. TARGET: One WAR DOG unit from your army that is wholly within 12\" of one or more battlefield edges and not within Engagement Range of one or more enemy units. EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Houndpack Lance - ENCIRCLING PACK",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Houndpack Lance - ENCIRCLING PACK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance",
+      "name": "Helhunt Lance - Masters of the Pack",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "If a TITANIC CHAOS KNIGHTS unit from your army has an Aura ability that affects friendly WAR DOG units, while two or more friendly WAR DOG models are within range of that TITANIC CHAOS KNIGHTS unit's Aura ability, that TITANIC CHAOS KNIGHTS unit is affected by that Aura ability as well. Example: Two friendly WAR DOG models are within 9\" of a KNIGHT DESECRATOR when it is selected to shoot. As a result, the KNIGHT DESECRATOR's Taskmaster ability also affects itself, even though it does not have the WAR DOG keyword, so each time that KNIGHT DESECRATOR makes a ranged attack, Hit rolls of 1 are re-rolled.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.enhancement.aspect-of-the-beast",
+      "name": "Aspect of the Beast",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "30 pts. CHAOS KNIGHTS model only. At the start of your Command phase, select one Dread ability to be active for the bearer until the start of your next Command phase, in addition to the Dread abilities active for your army",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.enhancement.hunters-helm",
+      "name": "Hunter's Helm",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "15 pts. CHAOS KNIGHTS model only. You can re-roll Advance and Charge rolls made for the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.enhancement.octagram-of-conjuration",
+      "name": "Octagram of Conjuration",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "40 pts. KNIGHT ABOMINANT model only. The bearer has the following ability: Octagram of Conjuration (Aura): While a friendly WAR DOG model is within 9\" of this model, after that WAR DOG model has shot, you can select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.enhancement.throne-tyrannicus",
+      "name": "Throne Tyrannicus",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "25 pts. TITANIC CHAOS KNIGHTS model only. In your Command phase, select one other CHAOS KNIGHTS CHARACTER model within 9\" of the bearer. If the bearer has one or more Aura abilities that affect friendly WAR DOG units, until the start of your next Command phase, the selected CHAOS KNIGHTS CHARACTER model is affected by those Aura abilities as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.stratagem.feral-arrogance",
+      "name": "FERAL ARROGANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "1CP. Helhunt Lance - Strategic Ploy Stratagem. WHEN: Any phase, just after a mortal wound is allocated to a CHAOS KNIGHTS unit from your army. TARGET: That CHAOS KNIGHTS unit. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 5+ ability against mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance - FERAL ARROGANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance - FERAL ARROGANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.stratagem.merciless-fusillade",
+      "name": "MERCILESS FUSILLADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "1CP. Helhunt Lance - Battle Tactic Stratagem. WHEN: Start of your Shooting phase or the start of the Fight phase. TARGET: One TITANIC CHAOS KNIGHTS unit from your army, and up to two friendly WAR DOG units, that have not been selected to shoot or fight this phase. EFFECT: Select one enemy unit that is an eligible target for each of those CHAOS KNIGHTS units. Until the end of the phase, each time one of those Chaos Knights units is selected to shoot or fight, if that enemy unit is an eligible target, you can only select that enemy unit as the target for all of those attacks and those attacks have the [SUSTAINED HITS 1] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance - MERCILESS FUSILLADE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance - MERCILESS FUSILLADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.stratagem.beasthide-manifestation",
+      "name": "BEASTHIDE MANIFESTATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "1CP. Helhunt Lance - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One CHAOS KNIGHTS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the attacking unit has finished making its attacks, each time an attack targets your unit, worsen the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance - BEASTHIDE MANIFESTATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance - BEASTHIDE MANIFESTATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.stratagem.flush-the-quarry",
+      "name": "FLUSH THE QUARRY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "1CP. Helhunt Lance - Battle Tactic Stratagem. WHEN: Start of your Movement phase. TARGET: One TITANIC CHAOS KNIGHTS unit from your army and up to three friendly WAR DOG units within 6\" of that Titanic Chaos Knights unit. EFFECT: Until the end of the phase, each time one of those War Dog units makes a Normal, Advance or Fall Back move, its models can move through models and terrain features. When doing so, they can move within Engagement Range of such models but cannot end that move within Engagement Range of them, and any Desperate Escape test is automatically passed.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance - FLUSH THE QUARRY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance - FLUSH THE QUARRY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.stratagem.contemptuous-volleys",
+      "name": "CONTEMPTUOUS VOLLEYS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "1CP. Helhunt Lance - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after a CHAOS KNIGHTS unit from your army Falls Back. TARGET: That CHAOS KNIGHTS unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance - CONTEMPTUOUS VOLLEYS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance - CONTEMPTUOUS VOLLEYS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.helhunt-lance.stratagem.goaded-beast",
+      "name": "GOADED BEAST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.helhunt-lance",
+      "description": "1CP. Helhunt Lance - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One CHAOS KNIGHTS unit from your army that lost one or more wounds as a result of those attacks. EFFECT: Your unit can make a surge move of up to D6\"",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Helhunt Lance - GOADED BEAST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Helhunt Lance - GOADED BEAST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.bastions-of-tyranny",
+      "name": "Bastions of Tyranny - Annihilate the Unworthy",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.bastions-of-tyranny",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "Friendly KNIGHT TYRANT units' attacks that target a battle-shocked unit have +1 to the hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Bastions of Tyranny",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Bastions of Tyranny"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.bastions-of-tyranny.enhancement.pterrorshade-rookery",
+      "name": "Pterrorshade Rookery",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.bastions-of-tyranny",
+      "description": "20 pts. KNIGHT TYRANT model only. When this unit is selected to shoot, select one enemy unit within 24\" of this unit. That enemy unit has +6\" detection range until this unit has shot.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Bastions of Tyranny enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Bastions of Tyranny enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.bastions-of-tyranny.enhancement.hate-filled-dominion",
+      "name": "Hate-Filled Dominion",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.bastions-of-tyranny",
+      "description": "20 pts. KNIGHT TYRANT model only. This unit can re-roll rolls to determine the A of a weapon.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Bastions of Tyranny enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Bastions of Tyranny enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.bastions-of-tyranny.stratagem.rune-cursed-stronghold",
+      "name": "RUNE-CURSED STRONGHOLD",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.bastions-of-tyranny",
+      "description": "1CP. Bastions of Tyranny Stratagem. WHEN: Any phase, when a friendly KNIGHT TYRANT unit suffers a mortal wound. TARGET: That KNIGHT TYRANT unit. EFFECT: Your unit has Feel No Pain 5+ against mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Bastions of Tyranny - RUNE-CURSED STRONGHOLD",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Bastions of Tyranny - RUNE-CURSED STRONGHOLD"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.bastions-of-tyranny.stratagem.pitiless-focus",
+      "name": "PITILESS FOCUS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.bastions-of-tyranny",
+      "description": "1CP. Bastions of Tyranny Stratagem. WHEN: Your Movement phase, when a friendly KNIGHT TYRANT unit is selected to make a fall-back move. TARGET: That KNIGHT TYRANT unit. EFFECT: That move does not prevent your unit from being eligible to shoot.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Bastions of Tyranny - PITILESS FOCUS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Bastions of Tyranny - PITILESS FOCUS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.bastions-of-tyranny.stratagem.intimidating-reminder",
+      "name": "INTIMIDATING REMINDER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.bastions-of-tyranny",
+      "description": "1CP. Bastions of Tyranny Stratagem. WHEN: Your Shooting phase, when a friendly KNIGHT TYRANT unit has shot. TARGET: That KNIGHT TYRANT unit. EFFECT: Select one enemy unit hit by those attacks. That enemy unit is suppressed until the start of your next Command phase: While a unit is suppressed, that unit's attacks have -1 to hit rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Bastions of Tyranny - INTIMIDATING REMINDER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Bastions of Tyranny - INTIMIDATING REMINDER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.hunting-warpack",
+      "name": "Hunting Warpack - Scenting Fear",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.hunting-warpack",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "(Once per battle round, per army) In your Shooting phase, you can select one visible enemy unit within 12\" of a friendly WAR DOG unit. That enemy unit has +6\" detection range. This detachment has the WAR DOGS tag and cannot be taken with another WAR DOGS detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Hunting Warpack",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Hunting Warpack"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.hunting-warpack.enhancement.soul-spoor-auspicatorupgrade",
+      "name": "Soul-Spoor AuspicatorUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.hunting-warpack",
+      "maximumSelections": 3,
+      "description": "15 pts. HUNTSMAN unit only. This unit's ranged attacks have +6\" R.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Hunting Warpack enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Hunting Warpack enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.hunting-warpack.enhancement.snarling-rivalryupgrade",
+      "name": "Snarling RivalryUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.hunting-warpack",
+      "maximumSelections": 3,
+      "description": "10 pts. EXECUTIONER unit only. This unit's ranged attacks have [IGNORES COVER].",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Hunting Warpack enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Hunting Warpack enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.hunting-warpack.stratagem.insensate-bloodthirst",
+      "name": "INSENSATE BLOODTHIRST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.hunting-warpack",
+      "description": "1CP. Hunting Warpack Stratagem. WHEN: Fight phase, when an enemy unit targets a friendly WAR DOG unit. TARGET: That WAR DOG unit. EFFECT: Your unit has Feel No Pain 5+",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Hunting Warpack - INSENSATE BLOODTHIRST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Hunting Warpack - INSENSATE BLOODTHIRST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.hunting-warpack.stratagem.leash-of-the-masters",
+      "name": "LEASH OF THE MASTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.hunting-warpack",
+      "description": "1CP. Hunting Warpack Stratagem. WHEN: Your Shooting phase, when a friendly WAR DOG unit has shot. TARGET: That WAR DOG unit. EFFECT: Those attacks do not prevent your unit from being eligible to start an action.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Hunting Warpack - LEASH OF THE MASTERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Hunting Warpack - LEASH OF THE MASTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.hunting-warpack.stratagem.stalking-focus",
+      "name": "STALKING FOCUS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.hunting-warpack",
+      "description": "1CP. Hunting Warpack Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly WAR DOG unit within range of an objective. TARGET: That WAR DOG unit. EFFECT: Ranged attacks that target your unit have -1 AP until that enemy unit has attacked.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Hunting Warpack - STALKING FOCUS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Hunting Warpack - STALKING FOCUS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.iconoclast-fiefdom",
+      "name": "Iconoclast Fiefdom - Wretched Thralls",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.iconoclast-fiefdom",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "You can include DAMNED units in your army (see Codex: Chaos Space Marines). The combined points cost of such units cannot exceed 500 points. Friendly DAMNED units can re-roll leadership rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Iconoclast Fiefdom",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Iconoclast Fiefdom"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.iconoclast-fiefdom.enhancement.cruel-lashmaster-aura",
+      "name": "Cruel Lashmaster (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.iconoclast-fiefdom",
+      "description": "25 pts. CHAOS KNIGHTS model only. While a friendly DAMNED unit is within 6\" of this model, when that unit is selected to make a normal/advance/fall-back move that unit has +2\" M until the end of the phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Iconoclast Fiefdom enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Iconoclast Fiefdom enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.iconoclast-fiefdom.enhancement.iconoclast-idol-aura",
+      "name": "Iconoclast Idol (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.iconoclast-fiefdom",
+      "description": "20 pts. CHAOS KNIGHTS model only. While a friendly DAMNED unit is within 6\" of this model, when you target that unit with the Heroic Intervention stratagem, that use is -1 CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Iconoclast Fiefdom enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Iconoclast Fiefdom enhancements"
+        }
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.iconoclast-fiefdom.stratagem.avenge-the-masters",
+      "name": "AVENGE THE MASTERS!",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.iconoclast-fiefdom",
+      "description": "1CP. Iconoclast Fiefdom Stratagem. WHEN: Any phase, when a friendly CHAOS KNIGHTS unit is destroyed by an enemy unit. TARGET: That enemy unit. EFFECT: That enemy unit is marked until the end of the battle. Friendly DAMNED units' attacks that target a marked unit have [LETHAL HITS].",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Iconoclast Fiefdom - AVENGE THE MASTERS!",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Iconoclast Fiefdom - AVENGE THE MASTERS!"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.iconoclast-fiefdom.stratagem.dark-sacrifice",
+      "name": "DARK SACRIFICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.iconoclast-fiefdom",
+      "description": "1CP. Iconoclast Fiefdom Stratagem. WHEN: Your Command phase. TARGET: One friendly DAMNED unit (excluding ACCURSED CULTISTS units) within 9\" of a friendly CHAOS KNIGHTS model. EFFECT: Select one CHAOS KNIGHTS model within 9\" of your unit and roll D3+3: Your DAMNED unit suffers that number of mortal wounds. That CHAOS KNIGHTS model heals that number of wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Iconoclast Fiefdom - DARK SACRIFICE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Iconoclast Fiefdom - DARK SACRIFICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "chaos-knights.detachment.iconoclast-fiefdom.stratagem.coursing-thralls",
+      "name": "COURSING THRALLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "chaos-knights.detachment.iconoclast-fiefdom",
+      "description": "1CP. Iconoclast Fiefdom Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly DAMNED unit. EFFECT: Select one visible enemy unit within 12\" of your unit. That enemy unit is hunted: While a unit is hunted, that unit has +6\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Chaos Knights Iconoclast Fiefdom - COURSING THRALLS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/chaos-knights/",
+          "capturedAt": "2026-09-25",
+          "section": "Iconoclast Fiefdom - COURSING THRALLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Wahapedia 11th-edition army references
 
-Captured: 2026-08-29.
+Captured: 2026-09-25.
 
 These files are normalized handoff references for later simulator integration. They cover the main faction pages listed in Wahapedia's published 11th-edition sitemap. Legends datasheets and FAQ/errata history are omitted; current page text is treated as the active rule text.
 
@@ -11,7 +11,7 @@ These files are normalized handoff references for later simulator integration. T
 | Adeptus Mechanicus | [adeptus-mechanicus.md](adeptus-mechanicus.md) | 34 | 0 | 4 | 10 | written |
 | Adeptus Titanicus | [adeptus-titanicus.md](adeptus-titanicus.md) | 4 | 4 | 0 | 0 | written |
 | Aeldari | [aeldari.md](aeldari.md) | 76 | 2 | 23 | 15 | written |
-| Astra Militarum | [astra-militarum.md](astra-militarum.md) | 72 | 2 | 62 | 11 | written |
+| Astra Militarum | [astra-militarum.md](astra-militarum.md) | 72 | 2 | 63 | 11 | written |
 | Chaos Daemons | [chaos-daemons.md](chaos-daemons.md) | 74 | 0 | 27 | 9 | written |
 | Chaos Knights | [chaos-knights.md](chaos-knights.md) | 27 | 9 | 10 | 8 | written |
 | Chaos Space Marines | [chaos-space-marines.md](chaos-space-marines.md) | 58 | 0 | 53 | 17 | written |
@@ -24,8 +24,8 @@ These files are normalized handoff references for later simulator integration. T
 | Imperial Knights | [imperial-knights.md](imperial-knights.md) | 28 | 9 | 0 | 8 | written |
 | Leagues of Votann | [leagues-of-votann.md](leagues-of-votann.md) | 22 | 0 | 0 | 10 | written |
 | Necrons | [necrons.md](necrons.md) | 52 | 1 | 12 | 12 | written |
-| Orks | [orks.md](orks.md) | 58 | 1 | 30 | 13 | written |
-| Space Marines | [space-marines.md](space-marines.md) | 183 | 2 | 108 | 58 | written |
+| Orks | [orks.md](orks.md) | 55 | 1 | 12 | 15 | written |
+| Space Marines | [space-marines.md](space-marines.md) | 183 | 2 | 108 | 53 | written |
 | T'au Empire | [t-au-empire.md](t-au-empire.md) | 43 | 4 | 19 | 7 | written |
 | Thousand Sons | [thousand-sons.md](thousand-sons.md) | 34 | 0 | 26 | 9 | written |
 | Tyranids | [tyranids.md](tyranids.md) | 52 | 2 | 5 | 10 | written |

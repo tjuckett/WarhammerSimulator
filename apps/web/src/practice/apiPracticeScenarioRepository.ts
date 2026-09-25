@@ -2,6 +2,7 @@ import type { PracticeScenario } from '@warhammer-simulator/core/practice/scenar
 import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
 import {
   localPracticeScenarioRepository,
+  compactPracticeCheckpoint,
   type PracticeScenarioSummary,
 } from '@warhammer-simulator/core/practice/scenarioStorage';
 
@@ -102,16 +103,19 @@ export const apiPracticeScenarioRepository: PracticeScenarioRepository = {
   saveScenario(scenario: PracticeScenario) {
     return (async () => {
       const saveToApi = async () => {
-        const requestBody = await compressedJsonBody({ scenario });
-        return apiRequest<PracticeScenarioSummary[]>('/api/practice/scenarios', {
+        const requestScenario = compactPracticeCheckpoint(scenario);
+        const timelineEntryStartIndex = 0;
+        const requestBody = await compressedJsonBody({ requestScenario, timelineEntryStartIndex });
+        const summaries = await apiRequest<PracticeScenarioSummary[]>('/api/practice/scenarios', {
           method: 'POST',
           body: requestBody.body,
           headers: requestBody.compressed ? { 'content-encoding': 'gzip' } : undefined,
         });
+        return summaries;
       };
-      const health = await practiceStorageHealth();
-      if (health.storage === 'database') return saveToApi();
-      return localPracticeScenarioRepository.saveScenario(scenario);
+      // The save itself is the health check. Avoid a separate round trip for
+      // every checkpoint, while retaining the local-storage fallback.
+      return withLocalFallback(saveToApi, () => localPracticeScenarioRepository.saveScenario(scenario));
     })();
   },
 

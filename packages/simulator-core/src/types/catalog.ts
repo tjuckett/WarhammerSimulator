@@ -1,6 +1,7 @@
-import type { ImportedArmy, LeaderAttachment, ModelBase, RuleText, UnitDeploymentAssignment, UnitProfile, WargearChoice } from './army';
+import type { ImportedArmy, LeaderAttachment, ModelBase, PreBattleFormationRule, RuleText, UnitDeploymentAssignment, UnitLoadoutOption, UnitProfile, WargearChoice } from './army';
 import type { UnitAbilityDefinition } from './ability';
 import type { StratagemDefinition } from './stratagem';
+import type { EleventhForceDispositionId } from '../data/missions';
 
 export type CatalogEdition = '10e' | '11e';
 
@@ -71,8 +72,14 @@ export interface UnitDefinition {
   points?: UnitPointsEntry[];
   composition?: string[];
   wargearOptions?: string[];
+  /** Optional parallel grouping keys for model-level options that share one loadout pool. */
+  wargearOptionGroups?: string[];
   /** Machine-readable choices used to build and validate a unit's loadout. */
   wargearChoices?: WargearChoice[];
+  /** Named model-count/loadout combinations presented by roster editors. */
+  unitLoadoutOptions?: UnitLoadoutOption[];
+  /** Data-driven choices made during Declare Battle Formations. */
+  preBattleFormations?: PreBattleFormationRule[];
   leaderTargetNames?: string[];
   leaderTargetRefs?: string[];
   supportedByNames?: string[];
@@ -105,10 +112,16 @@ export interface RuleDefinition {
   runtimeId?: string;
   name: string;
   description: string;
+  /** Optional normalized points value; source descriptions remain supported as a fallback. */
+  points?: number;
+  /** Maximum number of units in one army that may receive this rule. */
+  maximumSelections?: number;
   kind: CatalogRuleKind;
   status?: CatalogEntryStatus;
   implementationStatus?: CatalogImplementationStatus;
   detachmentId?: string;
+  /** Force dispositions made available when this rule defines a detachment. */
+  forceDispositions?: EleventhForceDispositionId[];
   runtime?: CatalogRuleRuntime;
   sources?: CatalogSource[];
   notes?: string[];
@@ -151,6 +164,7 @@ export interface UnitSelection {
   instanceId?: string;
   modelCount?: number;
   selectedWargear?: string[];
+  selectedEnhancementId?: string;
   deployment?: UnitDeploymentAssignment;
   leaderAttachment?: LeaderAttachment;
   notes?: string[];
@@ -159,7 +173,10 @@ export interface UnitSelection {
 export interface CatalogArmyContext {
   factionId: string;
   chapterId?: string;
+  /** Legacy single detachment context. */
   detachmentId?: string;
+  /** All selected detachments to include in the resolved context. */
+  detachmentIds?: string[];
   catalog?: CatalogReference;
 }
 

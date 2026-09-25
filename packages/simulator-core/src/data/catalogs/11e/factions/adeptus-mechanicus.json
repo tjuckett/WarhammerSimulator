@@ -1,0 +1,76 @@
+{
+  "id": "adeptus-mechanicus",
+  "name": "Adeptus Mechanicus",
+  "edition": "11e",
+  "unitRefs": [
+    "adeptus-mechanicus.belisarius-cawl",
+    "adeptus-mechanicus.thulia-ghuld",
+    "adeptus-mechanicus.skitarii-marshal",
+    "adeptus-mechanicus.sydonian-skatros",
+    "adeptus-mechanicus.tech-priest-dominus",
+    "adeptus-mechanicus.tech-priest-enginseer",
+    "adeptus-mechanicus.tech-priest-manipulus",
+    "adeptus-mechanicus.technoarcheologist",
+    "adeptus-mechanicus.cybernetica-datasmith",
+    "adeptus-mechanicus.skitarii-rangers",
+    "adeptus-mechanicus.skitarii-vanguard",
+    "adeptus-mechanicus.skorpius-dunerider",
+    "adeptus-mechanicus.archaeopter-fusilave",
+    "adeptus-mechanicus.archaeopter-stratoraptor",
+    "adeptus-mechanicus.corpuscarii-electro-priests",
+    "adeptus-mechanicus.fulgurite-electro-priests",
+    "adeptus-mechanicus.hastarii-exterminators",
+    "adeptus-mechanicus.hastarii-fusiliers",
+    "adeptus-mechanicus.kataphron-breachers",
+    "adeptus-mechanicus.kataphron-destroyers",
+    "adeptus-mechanicus.pteraxii-skystalkers",
+    "adeptus-mechanicus.pteraxii-sterylizors",
+    "adeptus-mechanicus.servitor-battleclade",
+    "adeptus-mechanicus.sicarian-infiltrators",
+    "adeptus-mechanicus.sicarian-ruststalkers",
+    "adeptus-mechanicus.serberys-raiders",
+    "adeptus-mechanicus.serberys-sulphurhounds",
+    "adeptus-mechanicus.archaeopter-transvector",
+    "adeptus-mechanicus.skorpius-disintegrator",
+    "adeptus-mechanicus.ironstrider-ballistarii",
+    "adeptus-mechanicus.kastelan-robots",
+    "adeptus-mechanicus.onager-dunecrawler",
+    "adeptus-mechanicus.sydonian-dragoons-with-radium-jezzails",
+    "adeptus-mechanicus.sydonian-dragoons-with-taser-lances"
+  ],
+  "ruleRefs": [
+    "adeptus-mechanicus.army-rule.doctrina-imperatives"
+  ],
+  "detachmentRefs": [
+    "adeptus-mechanicus.detachment.rad-zone-corps",
+    "adeptus-mechanicus.detachment.skitarii-hunter-cohort",
+    "adeptus-mechanicus.detachment.data-psalm-conclave",
+    "adeptus-mechanicus.detachment.explorator-maniple",
+    "adeptus-mechanicus.detachment.cohort-cybernetica",
+    "adeptus-mechanicus.detachment.eradication-cohort",
+    "adeptus-mechanicus.detachment.haloscreed-battle-clade",
+    "adeptus-mechanicus.detachment.cohort-acquisitus",
+    "adeptus-mechanicus.detachment.lords-of-the-forge",
+    "adeptus-mechanicus.detachment.luminen-auto-choir"
+  ],
+  "factionKeywords": [
+    "adeptus-mechanicus",
+    "Adeptus Mechanicus"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Adeptus Mechanicus faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-mechanicus/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 34,
+    "normalizedEntryCount": 34,
+    "excludedLegendCount": 4,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

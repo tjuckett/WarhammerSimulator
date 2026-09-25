@@ -8,6 +8,21 @@ const unitPath = resolve(outputDir, 'units/necrons.json');
 const factionPath = resolve(outputDir, 'factions/necrons.json');
 const rulePath = resolve(outputDir, 'rules/necrons.json');
 
+const FORCE_DISPOSITIONS_BY_DETACHMENT = {
+  'necrons.detachment.awakened-dynasty': ['take-and-hold'],
+  'necrons.detachment.annihilation-legion': ['purge-the-foe'],
+  'necrons.detachment.canoptek-court': ['take-and-hold'],
+  'necrons.detachment.obeisance-phalanx': ['disruption'],
+  'necrons.detachment.hypercrypt-legion': ['reconnaissance'],
+  'necrons.detachment.starshatter-arsenal': ['priority-targets'],
+  'necrons.detachment.cryptek-conclave': ['priority-targets'],
+  'necrons.detachment.cursed-legion': ['purge-the-foe'],
+  'necrons.detachment.pantheon-of-woe': ['disruption'],
+  'necrons.detachment.hand-of-the-dynasty': ['take-and-hold'],
+  'necrons.detachment.skyshroud-spearhead': ['reconnaissance'],
+  'necrons.detachment.the-phaerons-armoury': ['priority-targets'],
+};
+
 function normalizeName(value) {
   return String(value ?? '')
     .toLowerCase()
@@ -46,37 +61,63 @@ function mappedBase(value) {
 function weaponKeywords(raw) {
   if (!raw || raw === '--') return [];
   const patterns = [
-    /anti-[a-z-]+ \d+\+/g,
-    /rapid fire \d+/g,
-    /sustained hits \d+/g,
-    /melta \d+/g,
-    /feel no pain \d+\+/g,
-    /devastating wounds/g,
-    /extra attacks/g,
-    /indirect fire/g,
-    /ignores cover/g,
-    /twin-linked/g,
-    /lethal hits/g,
-    /one shot/g,
-    /deadly demise \w+/g,
-    /hazardous/g,
-    /precision/g,
-    /torrent/g,
-    /pistol/g,
-    /assault/g,
-    /blast/g,
-    /heavy/g,
-    /lance/g,
-    /psychic/g,
+    /anti-[a-z/]+ \d+\+/gi,
+    /close-quarters/gi,
+    /devastating wounds(?:\s*:\s*(?:non-)?[a-z/]+)?/gi,
+    /lethal hits(?:\s*:\s*(?:non-)?[a-z/]+)?/gi,
+    /sustained hits \d+(?:\s*:\s*(?:non-)?[a-z/]+)?/gi,
+    /rapid fire \d+/gi,
+    /melta \d+/gi,
+    /feel no pain \d+\+/gi,
+    /cleave \d+/gi,
+    /extra attacks/gi,
+    /indirect fire/gi,
+    /ignores cover/gi,
+    /twin-linked/gi,
+    /one shot/gi,
+    /deadly demise \w+/gi,
+    /hazardous/gi,
+    /precision/gi,
+    /torrent/gi,
+    /pistol/gi,
+    /assault/gi,
+    /blast(?: \d+)?/gi,
+    /heavy/gi,
+    /lance/gi,
+    /psychic/gi,
   ];
   const found = [];
-  const lower = String(raw).toLowerCase();
   for (const pattern of patterns) {
-    for (const match of lower.matchAll(pattern)) {
-      if (!found.includes(match[0])) found.push(match[0]);
+    for (const match of String(raw).matchAll(pattern)) {
+      const keyword = match[0].replace(/\s+/g, ' ').trim();
+      if (!found.some(existing => existing.toLowerCase() === keyword.toLowerCase())) found.push(keyword);
     }
   }
-  return found.map(keyword => keyword.replace(/\b\w/g, letter => letter.toUpperCase()));
+  return found.map(keyword => keyword
+    .replace(/\banti-/gi, 'Anti-')
+    .replace(/\bclose-quarters\b/gi, 'Close-Quarters')
+    .replace(/\bdevastating wounds\b/gi, 'Devastating Wounds')
+    .replace(/\blethal hits\b/gi, 'Lethal Hits')
+    .replace(/\bsustained hits\b/gi, 'Sustained Hits')
+    .replace(/\brapid fire\b/gi, 'Rapid Fire')
+    .replace(/\bmelta\b/gi, 'Melta')
+    .replace(/\bfeel no pain\b/gi, 'Feel No Pain')
+    .replace(/\bcleave\b/gi, 'Cleave')
+    .replace(/\bextra attacks\b/gi, 'Extra Attacks')
+    .replace(/\bindirect fire\b/gi, 'Indirect Fire')
+    .replace(/\bignores cover\b/gi, 'Ignores Cover')
+    .replace(/\btwin-linked\b/gi, 'Twin-linked')
+    .replace(/\bone shot\b/gi, 'One Shot')
+    .replace(/\bdeadly demise\b/gi, 'Deadly Demise')
+    .replace(/\bhazardous\b/gi, 'Hazardous')
+    .replace(/\bprecision\b/gi, 'Precision')
+    .replace(/\btorrent\b/gi, 'Torrent')
+    .replace(/\bpistol\b/gi, 'Pistol')
+    .replace(/\bassault\b/gi, 'Assault')
+    .replace(/\bblast\b/gi, 'Blast')
+    .replace(/\bheavy\b/gi, 'Heavy')
+    .replace(/\blance\b/gi, 'Lance')
+    .replace(/\bpsychic\b/gi, 'Psychic'));
 }
 
 function tableRows(section, heading) {
@@ -150,6 +191,24 @@ function parseKeywords(section) {
     .filter(Boolean);
 }
 
+function parseCoreAbilities(section) {
+  return listItems(sectionText(section, '#### Core Abilities'))
+    .flatMap(line => line.split(',').map(value => value.trim()).filter(Boolean))
+    .map(name => ({ name, description: `Core ability: ${name}.`, category: 'datasheet' }));
+}
+
+function parsePreBattleFormations(section) {
+  const text = sectionText(section, '#### Abilities');
+  const match = text.match(/split this unit into two units, each with a starting strength of (\d+)[\s\S]*?will have the (.+?) ability and which one of those units will have the (.+?) ability/i);
+  if (!match) return undefined;
+  return [{
+    id: `split-${slug(match[2])}-${slug(match[3])}`,
+    kind: 'split-unit',
+    modelCounts: [Number(match[1]), Number(match[1])],
+    abilityGroups: [{ id: 'exclusive-abilities', abilityNames: [match[2].trim(), match[3].trim()] }],
+  }];
+}
+
 function parseEquipment(section, weapons, modelCount) {
   const composition = sectionText(section, '#### Unit Composition');
   const match = composition.match(/(?:Every model|This model) is equipped with:\s*([^\.]+)\./i);
@@ -157,9 +216,11 @@ function parseEquipment(section, weapons, modelCount) {
   const names = match[1].split(';').map(value => value.replace(/^\s*\d+\s+/, '').trim());
   const loadout = [];
   for (const name of names) {
-    const index = weapons.findIndex(weapon => weapon.name.toLowerCase() === name.toLowerCase());
-    if (index < 0) return undefined;
-    loadout.push(index);
+    const indexes = weapons
+      .map((weapon, index) => weapon.name.toLowerCase() === name.toLowerCase() ? index : -1)
+      .filter(index => index >= 0);
+    if (!indexes.length) return undefined;
+    loadout.push(...indexes);
   }
   return Array.from({ length: modelCount }, () => [...loadout]);
 }
@@ -168,6 +229,30 @@ function parseTargetNames(section) {
   return listItems(section)
     .filter(item => /^[A-Z0-9][A-Z0-9 /'&.-]+$/.test(item))
     .map(item => item.replace(/\s+/g, ' ').trim());
+}
+
+function namedRules(value, fallbackName) {
+  const body = String(value ?? '').replace(/^\*\*ABILITIES:\*\*\s*/i, '').trim();
+  const entries = [];
+  let current;
+  for (const line of body.split(/\r?\n/)) {
+    if (/^-\s+/.test(line)) {
+      if (current) entries.push(current);
+      current = line.replace(/^-\s+/, '').trim();
+    } else if (current && line.trim()) {
+      current += ` ${line.trim().replace(/^-\s+/, '')}`;
+    }
+  }
+  if (current) entries.push(current);
+  if (!entries.length) return [{ name: fallbackName, description: plainText(body), category: 'datasheet' }];
+  return entries.map(text => {
+    const separator = text.indexOf(':');
+    return {
+      name: separator > 0 ? text.slice(0, separator).trim() : text,
+      description: separator > 0 ? text.slice(separator + 1).trim() : text,
+      category: 'datasheet',
+    };
+  });
 }
 
 function parseRawRules(section) {
@@ -183,12 +268,13 @@ function parseRawRules(section) {
     ['#### Cryptek Retinue', 'Cryptek Retinue'],
     ['#### Damaged:', 'Damaged profile'],
   ];
-  return headings
-    .map(([heading, name]) => {
-      const description = plainText(sectionText(section, heading));
-      return description ? { name, description, category: 'datasheet' } : undefined;
-    })
-    .filter(Boolean);
+  return headings.flatMap(([heading, name]) => {
+    const sourceText = sectionText(section, heading);
+    if (!sourceText) return [];
+    if (heading === '#### Abilities' || heading === '#### Wargear Abilities') return namedRules(sourceText, name);
+    const description = plainText(sourceText);
+    return description ? [{ name, description, category: 'datasheet' }] : [];
+  });
 }
 
 function parseProfileRows(rows, modelCount) {
@@ -257,8 +343,9 @@ function parseUnit(name, section, baseMap, capturedAt) {
     keywords: parseKeywords(section),
     factionKeywords: ['Necrons'],
     weapons,
-    abilities: [],
+    abilities: parseCoreAbilities(section),
     rules: [],
+    preBattleFormations: parsePreBattleFormations(section),
     ...(parseEquipment(section, weapons, modelCount) ? { modelWeaponLoadouts: parseEquipment(section, weapons, modelCount) } : {}),
   };
   const transportCapacity = section.match(/transport capacity of\s+(\d+)/i)?.[1];
@@ -325,6 +412,7 @@ function parseDetachmentRules(detachmentText, capturedAt) {
         status: 'current',
         implementationStatus: 'display-only',
         detachmentId,
+        forceDispositions: FORCE_DISPOSITIONS_BY_DETACHMENT[detachmentId] ?? [],
         description: plainText(detachmentRule[2]),
         sources: [{ title: `Wahapedia ${name} detachment`, url: 'https://wahapedia.ru/wh40k11ed/factions/necrons/', capturedAt, section: name }],
       });
@@ -336,7 +424,9 @@ function parseDetachmentRules(detachmentText, capturedAt) {
       const header = enhancementLines[index].replace(/^[-*]\s+/, '').trim();
       const cost = header.match(/(\d+)\s+pts\s*$/i);
       if (!cost) continue;
-      const enhancementName = header.slice(0, cost.index).replace(/\s*UPGRADE\s*$/i, '').trim();
+      const rawEnhancementName = header.slice(0, cost.index).trim();
+      const isUpgrade = /\s*UPGRADE\s*$/i.test(rawEnhancementName);
+      const enhancementName = rawEnhancementName.replace(/\s*UPGRADE\s*$/i, '').trim();
       const description = [];
       index += 1;
       while (index < enhancementLines.length && !/\d+\s+pts\s*$/i.test(enhancementLines[index].replace(/^[-*]\s+/, ''))) {
@@ -351,6 +441,7 @@ function parseDetachmentRules(detachmentText, capturedAt) {
         status: 'current',
         implementationStatus: 'display-only',
         detachmentId,
+        ...(isUpgrade ? { maximumSelections: 3 } : {}),
         description: `${cost[1]} pts.${description.length ? ` ${description.join(' ')}` : ''}`.trim(),
         sources: [{ title: `Wahapedia ${name} enhancements`, url: 'https://wahapedia.ru/wh40k11ed/factions/necrons/', capturedAt, section: name }],
       });

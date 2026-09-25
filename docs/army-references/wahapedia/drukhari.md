@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/drukhari/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/drukhari/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -89,13 +89,17 @@
 | melee | -- | Executioner's demiklaives - single blade | devastating wounds | Melee | 6 | 2+ | 6 | -2 | 3 |
 | melee | -- | Executioner's demiklaives - dual blades | devastating wounds | Melee | 8 | 2+ | 5 | -2 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Power from Pain
 - Master of Blades (Pain): In the Fight phase, when you select this model's unit to fight, you can spend 1 Pain token to Empower that unit. While that unit is Empowered, each time a model in that unit makes a melee attack, add 1 to the Wound roll.
-  Onslaught: While this model is leading a unit, each time a model in that unit makes a Pile-in or Consolidation move, it can move up to 6" instead of up to 3".
-  Silent Executioner: Each time this model makes an attack that targets a unit that is below its Starting Strength, you can re-roll the Hit roll. If that target is Below Half-strength, you can re-roll the Wound roll as well.
+- Onslaught: While this model is leading a unit, each time a model in that unit makes a Pile-in or Consolidation move, it can move up to 6" instead of up to 3".
+- Silent Executioner: Each time this model makes an attack that targets a unit that is below its Starting Strength, you can re-roll the Hit roll. If that target is Below Half-strength, you can re-roll the Wound roll as well.
 
 #### Unit Composition
 - 1 Drazhar - EPIC HERO
@@ -130,14 +134,19 @@ DRUKHARI
 | melee | -- | Lady's Blade | devastating wounds hazardous | Melee | 6 | 2+ | 5 | -3 | 3 |
 | melee | -- | Razor fan | extra attacks | Melee | 6 | 2+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader
-- FACTION: Power from Pain
 - Archon of the Poisoned Tongue (Pain): In your Shooting phase or the Fight phase, when you select this model's
   unit to shoot or fight, you can spend 1 Pain token to Empower that unit. If you do, select one of the following abilities: [SUSTAINED HITS 1]; [LETHAL HITS]. Until the end of the phase, while that unit is Empowered, weapons equipped by models in that unit have that selected ability.
-  Precognisant: If your army includes this model, after both players have deployed their armies, select up to three DRUKHARI units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
-  Mind Like a Steel Trap (Aura): Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
+- Precognisant: If your army includes this model, after both players have deployed their armies, select up to three DRUKHARI units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves if you wish, regardless of how many units are already in Strategic Reserves.
+- Mind Like a Steel Trap (Aura): Once per turn, when your opponent targets a unit from their army within 12" of this model with a stratagem, you can use this ability. If you do increase the CP cost of that use of that stratagem by 1CP.
 
 #### Unit Composition
 - 1 Lady Malys - EPIC HERO
@@ -173,13 +182,18 @@ DRUKHARI
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Lelith's blades | anti-infantry 2+ precision sustained hits 2 | Melee | 8 | 2+ | 3 | -2 | 1 |
 
+#### Core Abilities
+- Fights First
+- Leader
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Leader
-- FACTION: Power from Pain
 - Brides of Death (Pain): In the Fight phase, when you select this model's unit to fight, you can spend 1 Pain token to Empower that unit. While that unit is Empowered, each time a model in that unit makes a melee attack, improve the Strength and Armour Penetration characteristics of that attack by 1.
-  Blur of Blades: While this model is leading a unit, models in that unit have the Fights First ability.
-  Thrilling Spectacle: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, this model has a 3+ invulnerable save and change the Attacks characteristic of melee weapons equipped by this model to 12.
+- Blur of Blades: While this model is leading a unit, models in that unit have the Fights First ability.
+- Thrilling Spectacle: Once per battle, at the start of the Fight phase, this model can use this ability. If it does, until the end of the phase, this model has a 3+ invulnerable save and change the Attacks characteristic of melee weapons equipped by this model to 12.
 
 #### Unit Composition
 - 1 Lelith Hesperax - EPIC HERO
@@ -214,12 +228,20 @@ DRUKHARI
 | ranged | -- | Dread of the Deep Void | anti-infantry 2+ blast hazardous ignores cover psychic | 24" | D6+2 | 3+ | 3 | -2 | 1 |
 | melee | -- | Waystave | anti-infantry 2+ psychic | Melee | 3 | 2+ | 3 | 0 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 7"
-- FACTION: Battle Focus
 - Aethersense (Psychic): Enemy units that are set up on the battlefield from Reserves cannot be set up within 12" of this model.
-  Fury of the Void (Psychic): In your Shooting phase, after this model's unit has shot, select one enemy unit hit by one or more attacks made with this model's Dread of the Deep Void. Until the end of the turn, that unit is riven. Each time an AELDARI model from your army makes an attack that targets a riven unit, add 1 to the Strength characteristic of that attack.
+- Fury of the Void (Psychic): In your Shooting phase, after this model's unit has shot, select one enemy unit hit by one or more attacks made with this model's Dread of the Deep Void. Until the end of the turn, that unit is riven. Each time an AELDARI model from your army makes an attack that targets a riven unit, add 1 to the Strength characteristic of that attack.
 
 #### Unit Composition
 - 1 Kharseth - EPIC HERO
@@ -257,12 +279,20 @@ DRUKHARI; ASURYANI
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Spear of Twilight | lance | Melee | 5 | 2+ | 7 | -3 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Leader
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Scouts 7"
-- FACTION: Battle Focus
 - Piratical Hero: While this model is leading a unit, each time a model in that unit makes an attack, that attack has the [SUSTAINED HITS 1] ability and add 1 to the Hit roll.
-  Prince of Corsairs: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), select up to three AELDARI units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
+- Prince of Corsairs: After both players have deployed their armies, if this unit is on the battlefield (or any TRANSPORT it is embarked within is on the battlefield), select up to three AELDARI units from your army and redeploy them. When doing so, you can set those units up in Strategic Reserves, regardless of how many units are already in Strategic Reserves.
 
 #### Unit Composition
 - 1 Prince Yriel - EPIC HERO
@@ -298,14 +328,19 @@ DRUKHARI; ASURYANI
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Solitaire weapons | precision | Melee | 9 | 2+ | 6 | -2 | 2 |
 
+#### Core Abilities
+- Fights First
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Fights First, Lone Operative, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Blitz: Once per battle, in your Movement phase, before this model makes a Normal move, it can use this ability. If it does, until the end of the turn, add 2D6" to this model's Move characteristic and add 3 to the Attacks characteristic of this model's Solitaire weapons.
-  Blur of Movement: This model is eligible to declare a charge in a turn in which it Advanced.
-
-#### Wargear Abilities
+- Blur of Movement: This model is eligible to declare a charge in a turn in which it Advanced.
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -340,15 +375,25 @@ HARLEQUINS
 | melee | -- | Huskblade | devastating wounds | Melee | 4 | 2+ | 3 | -2 | 3 |
 | melee | -- | Master-crafted power weapon | -- | Melee | 5 | 2+ | 4 | -2 | 2 |
 
+#### Wargear options
+- This model's splinter pistol can be replaced with one of the following:
+  - 1 blast pistol
+  - 1 soul trap
+- This model's huskblade can be replaced with one of the following:
+  - 1 agoniser
+  - 1 master-crafted power weapon
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Power from Pain
 - Hatred Eternal (Pain): In your Shooting phase or the Fight phase, when you select this model's unit to shoot or fight, you can spend 1 Pain token to Empower that unit. While that unit is Empowered, each time a model in that unit makes an attack, you can re-roll the Hit roll.
-  Overlord: Once per battle, at the start of any phase, you can select one friendly DRUKHARI unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
-  Devious Mastermind: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-
-#### Wargear Abilities
+- Overlord: Once per battle, at the start of any phase, you can select one friendly DRUKHARI unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
+- Devious Mastermind: Once per battle round, one model from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 - Shadowfield: While this model has an InSv, this unit cannot re-roll save rolls. When this model loses a wound (excluding from mortal wounds), this model has no InSv until the end of the battle.
 - Soul Trap: Add 1 to the Attacks and Strength characteristics of the bearer's melee weapons. The first time the bearer makes a melee attack that destroys an enemy model, after all the bearer's attacks have been resolved, until the end of the battle, add an additional 1 to the Attacks and Strength characteristics of the bearer's melee weapons.
 
@@ -409,13 +454,18 @@ DRUKHARI
 | ranged | -- | Stinger pistol | anti-infantry 2+ pistol precision | 12" | 1 | 2+ | 2 | -1 | D3 |
 | melee | -- | Haemonculus tools and scissorhands | anti-infantry 2+ precision | Melee | 5 | 2+ | 3 | -1 | D3 |
 
+#### Core Abilities
+- Feel No Pain 5+
+- Leader
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 5+, Leader
-- FACTION: Power from Pain
 - Fleshcraft (Pain): In your Command phase, you can spend 1 Pain token to Empower this model's unit. Each time you do, you can return up to D3+1 destroyed Bodyguard models to that unit.
-  Fear Incarnate (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1. In addition, in the Battle-shock step of your opponent's Command phase, if such an enemy unit is below its Starting Strength, it must take a Battle-shock test.
-  Pain Adept: In your Command phase, if one or more models from your army with this ability are on the battlefield, roll one D6: on a 4+, you gain 1 Pain token.
+- Fear Incarnate (Aura): While an enemy unit is within 6" of this model, worsen the Leadership characteristic of models in that unit by 1. In addition, in the Battle-shock step of your opponent's Command phase, if such an enemy unit is below its Starting Strength, it must take a Battle-shock test.
+- Pain Adept: In your Command phase, if one or more models from your army with this ability are on the battlefield, roll one D6: on a 4+, you gain 1 Pain token.
 
 #### Unit Composition
 - 1 Haemonculus
@@ -469,13 +519,17 @@ DRUKHARI
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Archite glaive and agoniser | anti-infantry 3+ precision | Melee | 7 | 2+ | 3 | -2 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Power from Pain
 - Lithe Agility (Pain): In your Movement phase when you select this model's unit to Advance, or in your Charge phase before you make a Charge roll for this model's unit, you can spend 1 Pain token to Empower that unit. While that unit is Empowered, you can re-roll Advance and Charge rolls made for that unit.
-  Storm of Blades: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Bloody Spectacle: Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's unit destroys a CHARACTER model, you gain 1CP.
+- Storm of Blades: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
+- Bloody Spectacle: Each time this model makes a melee attack that targets a CHARACTER unit, you can re-roll the Hit roll and you can re-roll the Wound roll. Each time this model's unit destroys a CHARACTER model, you gain 1CP.
 
 #### Unit Composition
 - 1 Succubus
@@ -531,17 +585,20 @@ DRUKHARI
 | ranged | -- | Shrieker cannon | -- | 24" | 3 | 2+ | 6 | -2 | 2 |
 | melee | -- | Jester's blade | -- | Melee | 4 | 2+ | 4 | 0 | 1 |
 
+#### Core Abilities
+- Lone Operative
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative
-- FACTION: Battle Focus, Disparate Paths
 - Death is Not Enough: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. That enemy unit must take a Battle-shock test. If one or more of those attacks destroyed a model in that enemy unit, subtract 1 from that test.
-  Cruel Amusement: In your Shooting phase, each time this model is selected to shoot, select one of the abilities below. Until the end of the phase, this model's shrieker cannon has that ability.
+- Cruel Amusement: In your Shooting phase, each time this model is selected to shoot, select one of the abilities below. Until the end of the phase, this model's shrieker cannon has that ability.
   - [IGNORES COVER]
   - [PRECISION]
   - [SUSTAINED HITS 3]
-
-#### Wargear Abilities
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -579,14 +636,21 @@ HARLEQUINS
 | ranged | -- | Shuriken pistol | assault pistol | 12" | 1 | 2+ | 4 | -1 | 1 |
 | melee | -- | Miststave | psychic | Melee | 4 | 2+ | 5 | -1 | D3 |
 
+#### Wargear options
+- This model's shuriken pistol can be replaced with 1 neuro disruptor.
+
+#### Core Abilities
+- Leader
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Fog of Dreams (Psychic): While this model is leading a unit, that unit can only be selected as the target of a ranged attack if the attacking model is within 18".
-  Treacherous Illusion (Psychic): Melee weapons equipped by enemy models have the [HAZARDOUS] ability while targeting this model's unit.
-
-#### Wargear Abilities
+- Treacherous Illusion (Psychic): Melee weapons equipped by enemy models have the [HAZARDOUS] ability while targeting this model's unit.
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -630,14 +694,23 @@ HARLEQUINS
 | melee | -- | Harlequin's special weapon | devastating wounds | Melee | 6 | 2+ | 4 | -1 | 2 |
 | melee | -- | Troupe Master's blade | devastating wounds | Melee | 5 | 2+ | 5 | -2 | 2 |
 
+#### Wargear options
+- This model's shuriken pistol can be replaced with one of the following:
+  - 1 fusion pistol
+  - 1 neuro disruptor
+- This model's Troupe Master's blade can be replaced with 1 Harlequin's special weapon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Battle Focus, Disparate Paths
 - Choreographer of War: While this model is leading a unit, each time a model in that unit makes a Pile-in or Consolidation move, it can move up to 6" instead of up to 3". In addition, it does not need to end that move closer to the closest enemy model, provided it ends it as close as possible to the closest enemy unit.
-  Cegorach's Favour: Each time this model makes a melee attack, you can re-roll a Hit roll of 1 and add 1 to the Wound roll.
-
-#### Wargear Abilities
+- Cegorach's Favour: Each time this model makes a melee attack, you can re-roll a Hit roll of 1 and add 1 to the Wound roll.
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -685,13 +758,26 @@ HARLEQUINS
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | anti-infantry 3+ | Melee | 3 | 3+ | 3 | -2 | 1 |
 
+#### Wargear options
+- The Sybarite's close combat weapon can be replaced with 1 power weapon.
+- The Sybarite can be equipped with one of the following:
+  - 1 Kabalite icon
+  - 1 phantasm grenade launcher
+- The Sybarite's splinter rifle can be replaced with one of the following:
+  - 1 blast pistol
+  - 1 splinter pistol
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 blaster.
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 dark lance.
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 shredder.
+- 1 Kabalite Warrior's splinter rifle can be replaced with 1 splinter cannon.
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Power from Pain
 - Sadistic Raiders (Pain): In your Shooting phase or the Fight phase, when you select this unit to shoot or fight, you can spend 1 Pain token to Empower this unit. While Empowered, each time a model in this unit makes an attack, re-roll a Wound roll of 1. If the target is within range of an objective marker, you can re-roll the Wound roll instead.
-  Cruel Enforcers: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
-
-#### Wargear Abilities
+- Cruel Enforcers: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective marker is greater than yours at the end of a phase.
 - Kabalite Icon: While the bearer's unit is not Battle-shocked, add 1 to the bearer's Objective Control characteristic.
 - Phantasm Grenade Launcher: The bearer's unit has the SMOKE and GRENADES keywords.
 
@@ -730,13 +816,24 @@ DRUKHARI
 | melee | -- | Torturer's tools | anti-infantry 4+ | Melee | 2 | 3+ | 4 | -1 | 1 |
 | melee | -- | Twin torturer's tools | anti-infantry 4+ twin-linked | Melee | 2 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- For every 5 models in this unit:
+  - 1 model's twin torturer's tools can be replaced with 1 hexrifle and 1 torturer's tool
+  - 1 model's twin torturer's tools can be replaced with 1 liquifier gun and 1 torturer's tool
+  - 1 model's twin torturer's tools can be replaced with 1 ossefactor and 1 torturer's tool
+  - 1 model's twin torturer's tools can be replaced with 1 stinger pistol and 1 torturer's tool
+- The Acothyst's twin torturer's tools can be replaced with 1 power weapon and 1 torturer's tool.
+- If the Acothyst is not equipped with a power weapon, its torturer's tool can be replaced with 1 power weapon.
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Power from Pain
 - Experimental Enhancements (Pain): In the Fight phase, when you select this unit to fight, you can spend 1 Pain token to Empower this unit. Each time you do, select one of the following to apply to this unit until the end of the phase:
   - Melee weapons equipped by non-CHARACTER models in this unit have an Attacks characteristic of 3.
   - Melee weapons equipped by non-CHARACTER models in this unit have an Attacks characteristic of 4 and the [HAZARDOUS] ability.
-  Torturer's Craft: In your Shooting phase and the Fight phase, after this unit has shot or fought, select one enemy unit (excluding VEHICLES) hit by one or more of those attacks. That unit must take a Battle-shock test.
+- Torturer's Craft: In your Shooting phase and the Fight phase, after this unit has shot or fought, select one enemy unit (excluding VEHICLES) hit by one or more of those attacks. That unit must take a Battle-shock test.
 
 #### Unit Composition
 - 1 Acothyst
@@ -773,11 +870,18 @@ DRUKHARI
 | melee | -- | Hekatarii blade | -- | Melee | 4 | 3+ | 3 | -1 | 1 |
 | melee | -- | Power weapon | anti-infantry 3+ | Melee | 5 | 3+ | 3 | -2 | 1 |
 
+#### Wargear options
+- The Hekatrix's splinter pistol can be replaced with 1 blast pistol.
+- The Hekatrix's Hekatarii blade can be replaced with 1 power weapon.
+- Up to 3 Wyches can each have their splinter pistol and Hekatarii blade replaced with 1 gladiatorial weapons.
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Power from Pain
 - Acrobatic Gladiators (Pain): At the start of your Charge phase, you can spend 1 Pain token to Empower this unit. While Empowered, this unit is eligible to declare a charge in a turn in which it Advanced or Fell Back.
-  No Escape: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
+- No Escape: Each time an enemy unit (excluding MONSTERS and VEHICLES) within Engagement Range of one or more units from your army with this ability Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
 
 #### Unit Composition
 - 1 Hekatrix
@@ -816,13 +920,29 @@ DRUKHARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power sword | -- | Melee | 2 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Voidreaver Felarch's shuriken pistol can be replaced with one of the following:
+  - 1 neuro disruptor
+  - 1 shuriken rifle
+- The Voidreaver Felarch can be equipped with:
+  - 1 mistshield
+- Any number of Corsair Voidreavers in this unit can each have their shuriken pistol and power sword replaced with 1 shuriken rifle.
+- For every 5 models in this unit, 1 Corsair Voidreaver's power sword or shuriken rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 shredder
+- If this unit contains 10 models, 1 Corsair Voidreaver's shuriken rifle can be replaced with one of the following:
+  - 1 shuriken cannon
+  - 1 wraithcannon
+
+#### Core Abilities
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
-- FACTION: Battle Focus
 - Reavers of the Void: Each time a model in this unit makes an attack, re-roll a Hit roll of 1. If the target of that attack is within range of an objective marker, you can re-roll the Hit roll instead.
-
-#### Wargear Abilities
 - Mistshield: The bearer has a 4+ invulnerable save.
 
 #### Unit Composition
@@ -857,19 +977,28 @@ DRUKHARI; ASURYANI, YNNARI
 | ranged | -- | Disintegrator cannon | -- | 36" | 3 | 3+ | 6 | -3 | 2 |
 | melee | -- | Bladevanes and chainsnares | -- | Melee | D3+3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- This model's dark lance can be replaced with 1 disintegrator cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+- Firing Deck 11
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike, Firing Deck 11
-- FACTION: Power from Pain
 - Splinter Racks (Pain): In your Shooting phase, when you select this model to shoot, you can spend 1 Pain token to Empower this model. While Empowered, if one or more units are embarked within this model, each time this model makes an attack with a ranged weapon that has the [ANTI] ability, you can re-roll the Hit roll.
-  Vanguard of the Dark City: At the start of your Command phase, select one of the abilities in the Vanguard of the Dark City section (see above) for this model. Until the start of your next Command phase, this model has that ability.
+- Vanguard of the Dark City: At the start of your Command phase, select one of the abilities in the Vanguard of the Dark City section (see above) for this model. Until the start of your next Command phase, this model has that ability.
+
+#### Transport
+- This model has a transport capacity of 11 DRUKHARI INFANTRY models (excluding JUMP PACK models).
 
 #### Unit Composition
 - 1 Raider
   This model is equipped with: dark lance; bladevanes and chainsnares.
-
-#### Transport
-- This model has a transport capacity of 11 DRUKHARI INFANTRY models (excluding JUMP PACK models).
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -898,20 +1027,30 @@ DRUKHARI
 | ranged | -- | Twin splinter rifle | anti-infantry 3+ assault rapid fire 2 twin-linked | 24" | 2 | 3+ | 2 | 0 | 1 |
 | melee | -- | Bladevanes | -- | Melee | 3 | 4+ | 5 | -1 | 1 |
 
+#### Wargear options
+- This model's twin splinter rifle can be replaced with 1 splinter cannon.
+
+#### Core Abilities
+- Deadly Demise 1
+- Deep Strike
+- Firing Deck 6
+- Stealth
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Deep Strike, Firing Deck 6, Stealth
-- FACTION: Power from Pain
 - Rapid Deployment (Pain): In your Movement phase, when you select this model to Advance, you can spend 1 Pain token to Empower this model. While Empowered, units can disembark from this model after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
-  Aerialists: At the end of the Fight phase, if there are no models currently embarked within this TRANSPORT, you can select one friendly DRUKHARI INFANTRY unit that has 6 or fewer models that is wholly within 6" of this TRANSPORT (you cannot select a unit that can FLY). Unless that unit is within Engagement Range of one or more enemy units, it can embark within this TRANSPORT. That unit can embark within this TRANSPORT in a turn it disembarked from a TRANSPORT.
-
-#### Unit Composition
-- 1 Venom
-  This model is equipped with: splinter cannon; twin splinter rifle; bladevanes.
+- Aerialists: At the end of the Fight phase, if there are no models currently embarked within this TRANSPORT, you can select one friendly DRUKHARI INFANTRY unit that has 6 or fewer models that is wholly within 6" of this TRANSPORT (you cannot select a unit that can FLY). Unless that unit is within Engagement Range of one or more enemy units, it can embark within this TRANSPORT. That unit can embark within this TRANSPORT in a turn it disembarked from a TRANSPORT.
 
 #### Transport
 - This model has a transport capacity of 6 DRUKHARI INFANTRY models (excluding JUMP PACK models).
   Before the battle, at the start of the Declare Battle Formations step, you can select one KABALITE WARRIORS, HAND OF THE ARCHON or WYCHES unit from your army that has not already been split. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units]. One of these units must start the battle embarked within this model; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.
+
+#### Unit Composition
+- 1 Venom
+  This model is equipped with: splinter cannon; twin splinter rifle; bladevanes.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **65 pts**
@@ -939,18 +1078,24 @@ DRUKHARI
 | ranged | -- | Shuriken cannon | lethal hits | 24" | 3 | 3+ | 6 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+- Firing Deck 6
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Firing Deck 6
-- FACTION: Battle Focus, Disparate Paths
 - Rapid Embarkation: At the end of the Fight phase, if there are no models currently embarked within this TRANSPORT, you can select one friendly HARLEQUINS INFANTRY unit that has 6 or fewer models that is wholly within 6" of this TRANSPORT. Unless that unit is within Engagement Range of one or more enemy units, it can embark within this TRANSPORT. That unit can embark within this TRANSPORT in a turn it disembarked from this TRANSPORT.
+
+#### Transport
+- This model has a transport capacity of 6 HARLEQUINS INFANTRY models.
 
 #### Unit Composition
 - 1 Starweaver
   This model is equipped with: 2 shuriken cannons; close combat weapon.
-
-#### Transport
-- This model has a transport capacity of 6 HARLEQUINS INFANTRY models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **70 pts**
@@ -984,12 +1129,21 @@ HARLEQUINS
 | ranged | -- | Twin splinter rifle | anti-infantry 3+ assault rapid fire 2 twin-linked | 24" | 2 | 3+ | 2 | 0 | 1 |
 | melee | -- | Bladed wings | -- | Melee | 3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- This model's 2 dark lances can be replaced with 2 disintegrator cannons.
+- This model's twin splinter rifle can be replaced with 1 splinter cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Stealth
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Stealth
-- FACTION: Power from Pain
 - Nowhere to Run (Pain): In your Shooting phase, when you select this unit to shoot, you can spend 1 Pain token to Empower this unit. While Empowered, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks; until the start of your next turn, that enemy unit is pinned. While a unit is pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.
-  Ground Attack Craft: Each time a model in this unit makes a ranged attack that targets an enemy unit (excluding units that can FLY), add 1 to the Hit roll.
+- Ground Attack Craft: Each time a model in this unit makes a ranged attack that targets an enemy unit (excluding units that can FLY), add 1 to the Hit roll.
 
 #### Unit Composition
 - 1 Razorwing Jetfighter
@@ -1023,12 +1177,21 @@ DRUKHARI
 | ranged | -- | Voidraven missiles - shatterfield missiles | blast | 48" | D6 | 3+ | 7 | -2 | 1 |
 | melee | -- | Bladed wings | -- | Melee | 3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 Voidraven missiles.
+- This model's 2 void lances can be replaced with 2 dark scythes.
+
+#### Core Abilities
+- Deadly Demise D3
+- Stealth
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Stealth
-- FACTION: Power from Pain
 - Nowhere to Hide (Pain): In your Shooting phase, when you select this unit to shoot, you can spend 1 Pain token to Empower this unit. While Empowered, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
-  Void Mine: At the end of your opponent's Fight phase, select one visible enemy model (excluding Lone Operative units) within 24" of this unit, and roll one D6 for each enemy unit within D6" of that model: For each 4+, that unit suffers D6 mortal wounds.
+- Void Mine: At the end of your opponent's Fight phase, select one visible enemy model (excluding Lone Operative units) within 24" of this unit, and roll one D6 for each enemy unit within D6" of that model: For each 4+, that unit suffers D6 mortal wounds.
 
 #### Unit Composition
 - 1 Voidraven Bomber
@@ -1073,14 +1236,36 @@ DRUKHARI
 | melee | -- | Power weapon | anti-infantry 3+ | Melee | 4 | 3+ | 3 | -2 | 1 |
 | melee | -- | Razorflail | -- | Melee | 4 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- The Kabalite Archsybarite's close combat weapon can be replaced with 1 power weapon.
+- The Kabalite Archsybarite's splinter rifle can be replaced with one of the following:
+  - 1 blast pistol
+  - 1 splinter pistol
+- The Kabalite Archsybarite can be equipped with one of the following:
+  - 1 Kabalite icon
+  - 1 phantasm grenade launcher
+- 1 Kabalite Agent's splinter rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 shredder
+- 1 Kabalite Agent's splinter rifle can be replaced with one of the following:
+  - 1 dark lance
+  - 1 splinter cannon
+- 1 Kabalite Agent's splinter rifle can be replaced with 1 stinger pistol.
+- 1 Kabalite Agent's splinter rifle can be replaced with 1 shardcarbine.
+- 1 Kabalite Agent's splinter rifle can be replaced with 1 pain sculptors.
+- 1 Kabalite Agent's splinter rifle can be replaced with 1 splinter pistol and 1 razorflail.
+- 1 Kabalite Agent equipped with a splinter rifle can be equipped with 1 stimm-needler. This model's splinter rifle cannot be replaced.
+
+#### Core Abilities
+- Scouts 7"
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
-- FACTION: Power from Pain
 - Assassins' Poisons (Pain): In your Shooting phase or the Fight phase, when you select this unit to shoot or fight, you can spend 1 Pain token to Empower this unit. While Empowered, weapons equipped by models in this unit (excluding blast pistols, blasters and dark lances) have the [LETHAL HITS] and [PRECISION] abilities.
-  Archon's Will: At the start of the first battle round, select one objective marker on the battlefield. Until the end of the battle, while this unit is within range of that objective marker, unless this unit is Battle-shocked, models in this unit have a 5+ invulnerable save and an Objective Control characteristic of 3.
-
-#### Wargear Abilities
+- Archon's Will: At the start of the first battle round, select one objective marker on the battlefield. Until the end of the battle, while this unit is within range of that objective marker, unless this unit is Battle-shocked, models in this unit have a 5+ invulnerable save and an Objective Control characteristic of 3.
 - Kabalite Icon: While the bearer's unit is not Battle-shocked, add 1 to the bearer's Objective Control characteristic.
 - Phantasm Grenade Launcher: The bearer's unit has the SMOKE keyword.
 - Stimm-needler: Once per turn, the first time a saving throw is failed for a model in the bearer's unit, change the Damage characteristic of that attack to 0.
@@ -1110,7 +1295,7 @@ DRUKHARI
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| INCUBI | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | 5+ |
+| INCUBI | (diameter 28.5mm) | 7" | 3 | 3+ | 1 | 6+ | 1 | -- |
 | KLAIVEX | (diameter 28.5mm) | 7" | 3 | 3+ | 2 | 6+ | 1 | 5+ |
 
 #### Weapons
@@ -1120,13 +1305,17 @@ DRUKHARI
 | melee | -- | Demiklaives - dual blades | twin-linked | Melee | 6 | 3+ | 4 | -2 | 1 |
 | melee | -- | Klaive | -- | Melee | 3 | 3+ | 5 | -2 | 2 |
 
+#### Wargear options
+- The Klaivex's klaive can be replaced with 1 demiklaives.
+- For every 5 models in this unit, it can be equipped with 1 Incubi Shrine token.
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Power from Pain
 - Decapitating Strikes (Pain): In the Fight phase, when you select this unit to fight, you can spend 1 Pain token to Empower this unit. While Empowered, each time a model in this unit makes a melee attack that targets an INFANTRY unit, that attack has the [DEVASTATING WOUNDS] ability.
-  Tormentors: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test. Each time a model in this unit makes a melee attack that targets a Battle-shocked unit, add 1 to the Hit roll.
-
-#### Wargear Abilities
+- Tormentors: At the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test. Each time a model in this unit makes a melee attack that targets a Battle-shocked unit, add 1 to the Hit roll.
 - Incubi Shrine Token: Once per battle for each Incubi Shrine token this unit has, you can change the result of one Hit roll or one Wound roll made for a Klaivex or Incubi model in this unit to an unmodified 6.
   Designer's Note: Place an Incubi Shrine token next to the unit for each Incubi Shrine token it has, removing one each time this ability is used.
 
@@ -1163,12 +1352,18 @@ DRUKHARI
 | ranged | -- | Baleblast | assault devastating wounds ignores cover | 18" | 2 | 3+ | 5 | -1 | 1 |
 | melee | -- | Glimmersteel blade | devastating wounds | Melee | 3 | 3+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Infiltrators, Stealth
-- FACTION: Power from Pain
 - Fade Away (Pain): At the end of your opponent's Fight phase, if this unit is not within Engagement Range of one or more enemy units, you can spend 1 Pain token to Empower this unit. Each time you do, remove this unit from the battlefield and place it into Strategic Reserves.
-  Shade Weavers: This unit cannot be targeted by ranged attacks unless the attacking model is within 18".
+- Shade Weavers: This unit cannot be targeted by ranged attacks unless the attacking model is within 18".
 
 #### Unit Composition
 - 1 Nightfiend
@@ -1212,12 +1407,27 @@ DRUKHARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | anti-infantry 3+ | Melee | 3 | 3+ | 3 | -2 | 1 |
 
+#### Wargear options
+- The Solarite's shardcarbine can be replaced with one of the following:
+  - 1 blast pistol and 1 power weapon
+  - 1 splinter pistol and 1 power weapon
+- Any number of Scourges can each replace their splinter cannon with one of the following:
+  - 1 blaster
+  - 1 dark lance
+  - 1 haywire blaster
+  - 1 heat lance
+  - 1 shredder
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Power from Pain
 - Winged Strike (Pain): In your Shooting phase, when you select this unit to shoot, you can spend 1 Pain token to Empower this unit. While Empowered, each time a model in this unit makes a ranged attack, you can re-roll the Hit roll.
-  Airborne Evasion: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
+- Airborne Evasion: In your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
 
 #### Unit Composition
 - 1 Solarite
@@ -1258,17 +1468,29 @@ DRUKHARI
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 3 | 0 | 1 |
 | melee | -- | Power weapon | anti-infantry 3+ | Melee | 3 | 3+ | 3 | -2 | 1 |
 
+#### Wargear options
+- The Solarite's shardcarbine can be replaced with one of the following:
+  - 1 blast pistol and 1 power weapon
+  - 1 splinter pistol and 1 power weapon
+- 1 Scourge's shardcarbine can be replaced with one of the following:
+  - 1 blaster
+  - 1 shredder
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Power from Pain
 - Swooping Descent (Pain): In your Movement phase, you can spend 1 Pain token to Empower this unit. While Empowered, each time a model in this unit is set up on the battlefield using the Deep Strike ability, it can be set up anywhere on the battlefield that is more than 6" horizontally away from all enemy units. When doing so, if this unit is set up within 8" of one or more enemy units, until the end of the turn, it is not eligible to declare a charge.
-  Murderous Crossfire: After this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly DRUKHARI unit makes a ranged attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.
+- Murderous Crossfire: After this unit has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly DRUKHARI unit makes a ranged attack that targets that enemy unit, improve the Armour Penetration characteristic of that attack by 1. The same enemy unit can only be affected by this ability once per turn.
 
 #### Unit Composition
 - 1 Solarite
   - 4 Scourges
-  The Solarite is equipped with: shardcarbine; close combat weapon.
+  Every model is equipped with: shardcarbine; close combat weapon.
 
 #### Points
 - YOUR 1ST TO 2ND UNITS COST: 5 models -- **75 pts**
@@ -1303,10 +1525,25 @@ DRUKHARI
 | melee | -- | Corsair blade | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Skyreaver Felarch can replace its shuriken pistol with one of the following:
+  - 1 blast pistol
+  - 1 neuro disruptor
+- For every 5 models in the unit, up to 2 Skyreaver models can each have their shuriken pistol and Corsair blade replaced with one of the following*:
+  - 1 blaster and 1 close combat weapon
+  - 1 flamer and 1 close combat weapon
+  - 1 fusion gun and 1 close combat weapon
+  - 1 shredder and 1 close combat weapon
+
+#### Core Abilities
+- Deep Strike
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Scouts 7"
-- FACTION: Battle Focus
 - Raid and Run: At the end of the Fight phase, if this unit was eligible to fight this phase, and is not within Engagement Range of one or more enemy units, it can make a Normal move of up to D3+3". Otherwise, if this unit was eligible to fight this phase, this unit can make a Fall Back move of up to D3+3".
 
 #### Unit Composition
@@ -1352,13 +1589,31 @@ DRUKHARI; ASURYANI, YNNARI
 | melee | -- | Power sword | -- | Melee | 3 | 3+ | 4 | -2 | 1 |
 | melee | -- | Witch staff | anti-infantry 2+ psychic | Melee | 2 | 2+ | 3 | 0 | D3 |
 
+#### Wargear options
+- Any number of Corsair Voidscarred can each have their shuriken pistol and power sword replaced with 1 shuriken rifle.
+- The Voidscarred Felarch's shuriken pistol can be replaced with one of the following:
+  - 1 neuro disruptor
+  - 1 shuriken rifle
+- The Voidscarred Felarch can be equipped with 1 mistshield.
+- For every 5 models in this unit, 1 Corsair Voidscarred's shuriken rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 shredder
+- If this unit contains 10 models, 1 Corsair Voidscarred's shuriken rifle can be replaced with one of the following:
+  - 1 shuriken cannon
+  - 1 wraithcannon
+- If this unit contains 10 models, 1 Corsair Voidscarred's shuriken rifle can be replaced with 1 long rifle.
+- If this unit contains 10 models, 1 Corsair Voidscarred's power sword can be replaced with 1 fusion pistol.
+- 1 Corsair Voidscarred model equipped with a shuriken pistol and power sword can be equipped with 1 Faolchu.
+
+#### Core Abilities
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
-- FACTION: Battle Focus
 - Piratical Raiders: At the start of the battle, select one unit from your opponent's army. Weapons equipped by models in this unit have the [LETHAL HITS] and [PRECISION] abilities while targeting that unit.
-
-#### Wargear Abilities
 - Channeller Stones: Once per turn, the first time a saving throw is failed for the bearer's unit, change the Damage characteristic of that attack to 0.
 - Faolchu: Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 - Mistshield: The bearer has a 4+ invulnerable save.
@@ -1405,15 +1660,26 @@ DRUKHARI; ASURYANI, YNNARI
 | melee | -- | Harlequin's special weapon | devastating wounds | Melee | 4 | 3+ | 4 | -1 | 1 |
 | melee | -- | Power sword | devastating wounds | Melee | 5 | 3+ | 4 | -2 | 1 |
 
+#### Wargear options
+- Any number of models can each have their Harlequin's blade replaced with 1 Harlequin's special weapon.
+- The Lead Player's Harlequin's blade can be replaced with 1 power sword.
+- If this unit contains 9 or fewer models:
+  - Up to 2 models can each have their shuriken pistol replaced with 1 neuro disruptor
+  - Up to 2 models can each have their shuriken pistol replaced with 1 fusion pistol
+- If this unit contains 10 or more models:
+  - Up to 4 models can each have their shuriken pistol replaced with 1 neuro disruptor
+  - Up to 4 models can each have their shuriken pistol replaced with 1 fusion pistol
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Dance of Death: At the start of the Fight phase, select one of the following abilities for this unit to gain until the end of the phase:
   - Hero's Prowess: Each time a model in this unit makes an attack, re-roll a Hit roll of 1.
   - Villain's Doom: Each time a model in this unit makes an attack, add 1 to the Wound roll.
   - Trickster's Grace: Each time an attack targets this unit, subtract 1 from the Hit roll.
-
-#### Wargear Abilities
 - Flip Belt: Each time the bearer's unit makes a Normal, Advance, Fall Back or Charge move, ignore any vertical distance when determining the total distance the bearer can be moved during that move.
 
 #### Unit Composition
@@ -1450,12 +1716,20 @@ HARLEQUINS
 | ranged | -- | Spirit vortex | blast ignores cover | 18" | D6 | 3+ | 5 | -1 | 1 |
 | melee | -- | Spirit-leech tentacles | anti-infantry 2+ | Melee | 6 | 3+ | 5 | -1 | 1 |
 
+#### Wargear options
+- Any number of models can each be equipped with 1 spirit vortex.
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Power from Pain
 - Pain Parasite (Pain): In your Shooting phase or the Fight phase, when you select this unit to shoot or fight, you can spend 1 Pain token to Empower this unit. While Empowered, each time this unit shoots or fights, after it has resolved its attacks, if one or more enemy models were destroyed as a result of those attacks, one model in this unit regains up to 3 lost wounds (if all models in this unit have their starting number of wounds and this unit is below its Starting Strength, 1 model is returned to this unit with 3 wounds remaining).
-  Pain Engine (Aura): Each time you spend 1 Pain token to Empower a friendly unit within 9" of this unit, roll one D6, adding 1 to the result if one or more models in this unit are not equipped with a spirit vortex: on a 5+, you gain 1 Pain token.
+- Pain Engine (Aura): Each time you spend 1 Pain token to Empower a friendly unit within 9" of this unit, roll one D6, adding 1 to the result if one or more models in this unit are not equipped with a spirit vortex: on a 5+, you gain 1 Pain token.
   Designer's Note: Pain tokens you spend for reasons other than Empowering a unit do not trigger this ability.
 
 #### Unit Composition
@@ -1498,13 +1772,30 @@ DRUKHARI
 | melee | -- | Talos gauntlet | -- | Melee | 5 | 4+ | 9 | -2 | 3 |
 | melee | -- | Talos ichor injector | extra attacks | Melee | 1 | 2+ | 8 | -2 | D6 |
 
+#### Wargear options
+- Any number of models can each replace their twin splinter cannon with one of the following:
+  - 1 stinger pod
+  - 1 twin haywire blaster
+  - 1 twin heat lance
+- Any number of models can each replace one of their macro-scalpels with one of the following:
+  - 1 Talos ichor injector
+  - 1 twin liquifier gun
+- Any number of models can each replace one of their macro-scalpels with one of the following:
+  - 1 chain flails
+  - 1 Talos gauntlet
+
+#### Core Abilities
+- Deadly Demise 1
+- Feel No Pain 5+
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Feel No Pain 5+
-- FACTION: Power from Pain
 - Mindless Killing Machines (Pain): At the start of the Fight phase, you can spend 1 Pain token to Empower this unit. While Empowered, each time a model in this unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6. On a 2+, do not remove it from play; that destroyed model can fight after the attacking unit has finished making its attacks, and it is then removed from play.
-  Devoted to Pain: If a model in this unit is equipped with 2 macro-scalpels, those weapons have the [TWIN-LINKED] ability.
-  Torture Device: Each time this unit destroys an enemy unit, you gain 1 additional Pain token.
+- Devoted to Pain: If a model in this unit is equipped with 2 macro-scalpels, those weapons have the [TWIN-LINKED] ability.
+- Torture Device: Each time this unit destroys an enemy unit, you gain 1 additional Pain token.
 
 #### Unit Composition
 - 1-2 Talos
@@ -1545,14 +1836,23 @@ DRUKHARI
 | melee | -- | Power weapon | anti-infantry 3+ lance sustained hits 1 | Melee | 4 | 3+ | 3 | -2 | 1 |
 | melee | -- | Stunclaw | devastating wounds lance precision | Melee | 4 | 3+ | 3 | -1 | 1 |
 
+#### Wargear options
+- The Helliarch can be equipped with 1 phantasm grenade launcher.
+- The Helliarch's hellglaive can be replaced with one of the following:
+  - 1 splinter pistol and 1 power weapon.
+  - 1 splinter pistol and 1 stunclaw.
+- If the Helliarch is equipped with 1 splinter pistol, it can be equipped with 1 hellglaive (that model's hellglaive cannot be replaced).
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: Power from Pain
 - Battlefield Butchery (Pain): In the Fight phase, when you select this unit to fight, you can spend 1 Pain token to Empower this unit. While Empowered, add 1 to the Attacks and Strength characteristics of this unit's melee weapons.
-  Skyboard Evasion: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
-
-#### Wargear Abilities
+- Skyboard Evasion: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
 - Phantasm Grenade Launcher: The bearer's unit has the SMOKE and GRENADES keywords.
 
 #### Unit Composition
@@ -1591,13 +1891,21 @@ DRUKHARI
 | ranged | -- | Splinter rifle | anti-infantry 3+ assault | 24" | 2 | 3+ | 2 | 0 | 1 |
 | melee | -- | Bladevanes | lance | Melee | 4 | 3+ | 4 | -1 | 1 |
 
+#### Wargear options
+- For every 3 models in this unit, 1 model's splinter rifle can be replaced with one of the following:
+  - 1 blaster
+  - 1 heat lance
+- For every 3 models in this unit, 1 model can be equipped with one of the following:
+  - 1 cluster caltrops
+  - 1 grav-talon
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Power from Pain
 - Matchless Swiftness (Pain): In your Movement phase, when you select this unit to Advance, you can spend 1 Pain token to Empower this unit. While Empowered, each time this unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 8" to the Move characteristic of models in this unit.
-  Eviscerating Fly-by: Each time this unit ends a Normal or Advance move, you can select one enemy unit (excluding MONSTERS and VEHICLES) that it moved over during that move, then roll one D6 for each model in this unit: for each 4+, that enemy unit suffers 1 mortal wound.
-
-#### Wargear Abilities
+- Eviscerating Fly-by: Each time this unit ends a Normal or Advance move, you can select one enemy unit (excluding MONSTERS and VEHICLES) that it moved over during that move, then roll one D6 for each model in this unit: for each 4+, that enemy unit suffers 1 mortal wound.
 - Cluster Caltrops: Each time you roll to inflict wounds using this unit's Eviscerating Fly-by ability, you can re-roll one D6 for each model in this unit equipped with cluster caltrops.
 - Grav-talon: The bearer's melee weapons have an Armour Penetration characteristic of -2 and the [LETHAL HITS] ability.
 
@@ -1637,9 +1945,16 @@ DRUKHARI
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 3 | 0 | 1 |
 | melee | -- | Zephyrglaive | -- | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- Any number of models can each have their shuriken cannon replaced with 1 Skyweaver haywire cannon.
+- Any number of models can each have their star bolas replaced with 1 zephyrglaive.
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Battle Focus, Disparate Paths
 - Acrobatic Grace:
   - This unit has Stealth.
   - Melee attacks that target this unit have -1 to hit rolls.
@@ -1675,12 +1990,20 @@ HARLEQUINS
 | ranged | -- | Disintegrator cannon | -- | 36" | 3 | 3+ | 6 | -3 | 2 |
 | melee | -- | Bladevanes | -- | Melee | 3 | 4+ | 6 | -1 | 1 |
 
+#### Wargear options
+- Any number of this model's dark lances can each be replaced with 1 disintegrator cannon.
+
+#### Core Abilities
+- Deadly Demise D3
+- Deep Strike
+
+#### Army Rules
+- Power from Pain
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Deep Strike
-- FACTION: Power from Pain
 - Agonising Suppression (Pain): In your Shooting phase, when you select this model to shoot, you can spend 1 Pain token to Empower this model. While Empowered, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
-  Eradicate the Foe: Each time this model makes an attack that targets an enemy unit that is at its Starting Strength, you can re-roll the Hit roll.
+- Eradicate the Foe: Each time this model makes an attack that targets an enemy unit that is at its Starting Strength, you can re-roll the Hit roll.
 
 #### Unit Composition
 - 1 Ravager
@@ -1716,10 +2039,18 @@ DRUKHARI
 | ranged | -- | Starfang grenade launcher | assault blast | 36" | D3 | 3+ | 6 | -3 | 2 |
 | melee | -- | Wraithbone hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 1
+- Scouts 7"
+
+#### Army Rules
+- Battle Focus
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Scouts 7"
-- FACTION: Battle Focus
 - Hallucinogen Grenades: At the start of your opponent's Shooting phase, this unit can use this ability. If it does, select one AELDARI INFANTRY unit from your army visible to and within 36" of this unit: until the end of the phase, that unit has the Stealth ability.
 
 #### Unit Composition
@@ -1755,10 +2086,19 @@ DRUKHARI; ASURYANI, YNNARI
 | ranged | -- | Voidweaver haywire cannon | anti-vehicle 4+ devastating wounds | 24" | 3 | 3+ | 4 | -1 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 4 | 3+ | 3 | 0 | 1 |
 
+#### Wargear options
+- This model's Voidweaver haywire cannon can be replaced with 1 prismatic cannon.
+
+#### Core Abilities
+- Deadly Demise 1
+- Stealth
+
+#### Army Rules
+- Battle Focus
+- Disparate Paths
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Stealth
-- FACTION: Battle Focus, Disparate Paths
 - Polychromatic Camouflage: This unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 #### Unit Composition
@@ -1776,6 +2116,8 @@ HARLEQUINS
 ## Detachments
 
 ### Realspace Raiders (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Alliance of Agony
 - At the start of the battle, you gain 2 Pain tokens for each of the following combinations your army contains (these do not need to be in the same Attached unit):
   - One or more ARCHON models and one or more KABALITE WARRIORS units.
@@ -1788,6 +2130,8 @@ HARLEQUINS
 - DRUKHARI model only. The bearer's unit is always Empowered - you do not need to spend any Pain tokens to activate that unit's Pain abilities.
 - Labyrinthine Cunning 25 pts
 - ARCHON model only. At the start of your Command phase, if the bearer is on the battlefield, you can do one of the following:
+  - Spend 1 Pain token and gain 1CP.
+  - Roll one D6: on a 4+, you gain 1CP.
 - Eye of Spite 15 pts
 - SUCCUBUS model only. Improve the Attacks and Armour Penetration characteristics of the bearer's melee weapons by 1. Each time the bearer's unit is selected to fight, you can spend 1 Pain token; if you do, until the end of the phase, improve the Attacks and Armour Penetration characteristics of the bearer's melee weapons by 2 instead.
 - Crucible of Malediction 15 pts
@@ -1833,6 +2177,8 @@ HARLEQUINS
   RESTRICTIONS: You cannot select units that are within Engagement Range of one or more enemy units. Until the end of the turn, those units are not eligible to declare a charge.
 
 ### Skysplinter Assault (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Rain Of Cruelty
 - Each time a DRUKHARI unit from your army disembarks from a TRANSPORT, until the end of the turn:
   - Ranged weapons equipped by models in that disembarking unit have the [ignores cover] ability.
@@ -1841,6 +2187,8 @@ HARLEQUINS
 #### Enhancements
 - Phantasmal Smoke 15 pts
 - DRUKHARI model only. While the bearer's unit is wholly within 6" of a friendly DRUKHARI TRANSPORT:
+  - Models in the bearer's unit have the Stealth ability.
+  - Each time a ranged attack targets the bearer's unit, models in that unit have the Benefit of Cover against that attack.
 - Sadistic Fulcrum 15 pts
 - DRUKHARI model only. Each time you spend 1 Pain token to Empower the bearer's unit in the Shooting phase, select one friendly DRUKHARI TRANSPORT within 6" of the bearer's unit; until the end of the phase, each time that TRANSPORT makes an attack, you can re-roll the Hit roll.
 - Spiteful Raider 10 pts
@@ -1887,6 +2235,8 @@ HARLEQUINS
   EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.
 
 ### Spectacle of Spite (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Combat Drugs
 - At the start of your Command phase, select which Combat Drugs will be active for your army until the start of your next Command phase. To do so, either select one from the list below (you cannot select the same Combat Drug more than once per battle), or randomly select two by rolling two D6. When doing so randomly, Combat Drugs you have previously selected can become active again, but if you randomly select one that is already active for your army, it has no additional effect.
   1. Adrenalight
@@ -1951,6 +2301,8 @@ HARLEQUINS
   EFFECT: Until the end of the phase, models in your unit have a 5+ invulnerable save.
 
 ### Covenite Coterie (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Stitchflesh Abominations
 - Each time an attack targets a HAEMONCULUS COVENS unit from your army, if the Strength characteristic of that attack is greater than the Toughness characteristic of your unit, subtract 1 from the Wound roll.
 
@@ -2004,6 +2356,8 @@ HARLEQUINS
   EFFECT: Your unit can make a surge move of up to D6".
 
 ### Kabalite Cartel (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Murderous Agenda
 - At the start of the first battle round, select one of the Contracts below, then select one unit from your opponent's army that matches the 'Contract' description in that Contract. Until that Contract is completed, that unit is your Contract unit and KABAL and BLADES FOR HIRE units from your army have the ability stated in that Contract. At the start of your Command phase, if your Contract unit is destroyed, that Contract is completed and you gain 3 Pain tokens.
   Trophy Hunters
@@ -2065,6 +2419,8 @@ HARLEQUINS
   EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 ### Reaper's Wager (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Callous Competition
 - At the start of the battle, DRUKHARI units from your army are winning the wager.
   Each time a DRUKHARI unit from your army destroys an enemy unit, DRUKHARI units from your army are winning the wager.
@@ -2088,6 +2444,8 @@ HARLEQUINS
 - Conductor of Torment 20 pts
 - DRUKHARI model only. In your Command phase, you
   can do one of the following:
+  - If your DRUKHARI units are currently losing the wager, you can gain 1 Pain token. If you do, DRUKHARI units from your army are now winning the wager.
+  - If your DRUKHARI units are currently winning the wager, you can discard 1 Pain token. If you do, HARLEQUINS units from your army are now winning the wager.
 
 #### Stratagems
 - MALICIOUS FRENZY
@@ -2128,6 +2486,8 @@ HARLEQUINS
   EFFECT: Your unit can make a Normal move of up to D6". If your unit is currently losing the wager, it can make a Normal move of up to 6" instead.
 
 ### Exhibition of Slaughter (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Exacting Cruelty
 - Friendly WYCH CULT units' melee attacks have [LETHAL HITS: non-MONSTER/VEHICLE].
   This detachment has the WYCH CULT tag and cannot be taken with another WYCH CULT detachment.
@@ -2159,6 +2519,8 @@ HARLEQUINS
   EFFECT: Your unit has 5+ InSv.
 
 ### Kabalite Agonysts (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Contracted Harvest
 - Friendly BLADES FOR HIRE/KABAL units' ranged attacks have [SUSTAINED HITS 1: non-MONSTER/VEHICLE].
   This detachment has the KABAL tag and cannot be taken with another KABAL detachment.
@@ -2166,6 +2528,7 @@ HARLEQUINS
 #### Enhancements
 - Towering Arrogance 15 pts
 - ARCHON model only. This unit has:
+  - +1 Ld and OC.
 - Contempt for Rivals 20 pts
 - ARCHON model only. This unit's attacks have [PRECISION].
 
@@ -2192,6 +2555,8 @@ HARLEQUINS
   EFFECT: Your unit's ranged attacks have [IGNORES COVER].
 
 ### Tools of Torment (1 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Darkest Artifice
 - Attacks that target friendly CRONOS/TALOS units with a S greater than that unit's T have -1 to wound rolls.
   This detachment has the COVENS tag and cannot be taken with another COVENS detachment.

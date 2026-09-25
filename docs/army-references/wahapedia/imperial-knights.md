@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/imperial-knights/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/imperial-knights/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -84,9 +84,8 @@
 | ranged | -- | Hekhtur's pistol | pistol | 12" | 1 | 2+ | 5 | -1 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 2+ | 3 | 0 | 1 |
 
-#### Abilities
-**ABILITIES:**
-- CORE: Lone Operative
+#### Core Abilities
+- Lone Operative
 
 #### Unit Composition
 - 1 Sir Hekhtur - EPIC HERO
@@ -120,12 +119,17 @@ IMPERIAL KNIGHTS
 | melee | -- | Freedom's Hand - strike | sustained hits 1 | Melee | 5 | 2+ | 20 | -3 | 9 |
 | melee | -- | Freedom's Hand - sweep | sustained hits 1 | Melee | 10 | 2+ | 10 | -2 | 3 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Legendary Freeblade: Once per turn, when you target this model with a stratagem, you may reduce the CP cost of that use of that stratagem by 1CP.
-  Chainbreaker: Once per battle, at the start of any phase, you can select one friendly IMPERIUM unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
+- Chainbreaker: Once per battle, at the start of any phase, you can select one friendly IMPERIUM unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Canis Rex - EPIC HERO
@@ -159,12 +163,16 @@ IMPERIAL KNIGHTS
 | ranged | -- | Mechanicus pistol | devastating wounds pistol | 12" | 1 | 3+ | 6 | -1 | 1 |
 | melee | -- | Control stave | -- | Melee | 4 | 3+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Support
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Support
-- FACTION: Doctrina Imperatives
 - Control Edict: While this model is leading a unit, each time a model in that unit makes an attack, you can re-roll the Hit roll.
-  Servo-skull Uplink: Once per battle, at the start of any phase, you can select one friendly SKITARII unit that is Battle-shocked and within 6" of this model. That unit is no longer Battle-shocked.
+- Servo-skull Uplink: Once per battle, at the start of any phase, you can select one friendly SKITARII unit that is Battle-shocked and within 6" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Skitarii Marshal
@@ -204,12 +212,20 @@ ADEPTUS MECHANICUS
 | ranged | -- | Volkite blaster | devastating wounds | 24" | 3 | 3+ | 5 | 0 | 2 |
 | melee | -- | Omnissian axe | -- | Melee | 4 | 3+ | 6 | -2 | 2 |
 
+#### Wargear options
+- This model's macrostubber can be replaced with 1 phosphor serpenta.
+- This model's volkite blaster can be replaced with 1 eradication ray.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Doctrina Imperatives
 - Lord of the Machine Cult: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability. If that unit has the ELECTRO-PRIESTS keyword, models in that unit have the Feel No Pain 4+ ability instead.
-  Data-spike: At the start of the Fight phase, you can select one enemy VEHICLE unit within Engagement Range of this model's unit and roll one D6: on a 4+, that enemy unit suffers D6 mortal wounds and, until the end of the phase, the Weapon Skill characteristic of melee weapons equipped by that enemy unit is worsened by 1.
+- Data-spike: At the start of the Fight phase, you can select one enemy VEHICLE unit within Engagement Range of this model's unit and roll one D6: on a 4+, that enemy unit suffers D6 mortal wounds and, until the end of the phase, the Weapon Skill characteristic of melee weapons equipped by that enemy unit is worsened by 1.
 
 #### Unit Composition
 - 1 Tech-Priest Dominus
@@ -249,12 +265,19 @@ ADEPTUS MECHANICUS
 | ranged | -- | Transonic cannon | devastating wounds torrent | 12" | D6 | N/A | 4 | 0 | 2 |
 | melee | -- | Omnissian staff | -- | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Wargear options
+- This model's magnarail lance can be replaced with 1 transonic cannon.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Doctrina Imperatives
 - Galvanic Field: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Defend the Divine Work: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, all models in this model's unit have a 4+ invulnerable save.
+- Defend the Divine Work: Once per battle, at the start of any phase, this model can use this ability. If it does, until the end of the phase, all models in this model's unit have a 4+ invulnerable save.
 
 #### Unit Composition
 - 1 Tech-Priest Manipulus
@@ -299,13 +322,26 @@ ADEPTUS MECHANICUS
 | melee | -- | Thundershock spear - sweep | lance | Melee | 8 | 3+ | 6 | -3 | 2 |
 | melee | -- | Titanic feet | -- | Melee | 4 | 4+ | 7 | -1 | 2 |
 
+#### Wargear options
+- This model's chastiser gatling cannon can be replaced with one of the following:
+  - 1 bellatus reaper chainsword*
+  - 1 thundershock spear*
+- This model's frag bombard can be replaced with one of the following:
+  - 1 bellatus reaper chainsword*
+  - 1 thundershock spear*
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Ram Jets: Each time this unit is selected to make a Normal or Advance move, until the end of the phase, add D3" to the Move characteristic of this model.
-  Thundercharge: If this model is equipped with a thundershock spear and a bellatus reaper chainsword, add 2 to the Attacks characteristic of melee weapons equipped by this model.
-  Saturation Fire: Each time this model makes a ranged attack that targets a unit within range of one or more objective markers, that attack has the [IGNORES COVER] ability.
+- Thundercharge: If this model is equipped with a thundershock spear and a bellatus reaper chainsword, add 2 to the Attacks characteristic of melee weapons equipped by this model.
+- Saturation Fire: Each time this model makes a ranged attack that targets a unit within range of one or more objective markers, that attack has the [IGNORES COVER] ability.
 
 #### Unit Composition
 - 1 Knight Defender
@@ -369,12 +405,20 @@ IMPERIAL KNIGHTS
 | ranged | -- | Volcano lance | blast | 72" | D3 | 3+ | 18 | -5 | D6+8 |
 | melee | -- | Titanic feet | -- | Melee | 4 | 4+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's 2 shieldbreaker missile launchers and twin siegebreaker cannon can be replaced with 1 shieldbreaker missile launcher and 2 twin siegebreaker cannons.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Code Chivalric, Super-heavy Walker
 - Ion Aegis (Aura): While a friendly ARMIGER model is within 6" of this model, each time a ranged attack targets that model, it has the Benefit of Cover against that attack.
-  Titan Hunter: Each time a ranged attack made by this model is allocated to a MONSTER or VEHICLE model, you can re-roll the Damage roll.
+- Titan Hunter: Each time a ranged attack made by this model is allocated to a MONSTER or VEHICLE model, you can re-roll the Damage roll.
 
 #### Unit Composition
 - 1 Knight Castellan
@@ -442,12 +486,26 @@ IMPERIAL KNIGHTS
 | ranged | -- | Twin Icarus autocannon | anti-fly 2+ twin-linked | 48" | 3 | 3+ | 7 | -1 | 2 |
 | melee | -- | Titanic feet | -- | Melee | 4 | 4+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's meltagun can be replaced with 1 Questoris heavy stubber.
+- This model's thermal cannon can be replaced with:
+  - 1 rapid-fire battle cannon and 1 Questoris heavy stubber
+- This model can be equipped with one of the following:
+  - 1 ironstorm missile pod
+  - 1 stormspear rocket pod
+  - 1 twin Icarus autocannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Crusader's Duty (Bondsman): While a model is affected by this ability, each time that model makes a ranged attack, add 1 to the Hit roll.
-  Punishing Salvoes: In your Movement phase, if this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [SUSTAINED HITS 1] ability.
+- Punishing Salvoes: In your Movement phase, if this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [SUSTAINED HITS 1] ability.
 
 #### Unit Composition
 - 1 Knight Crusader
@@ -510,12 +568,17 @@ IMPERIAL KNIGHTS
 | ranged | -- | Twin incendine combustor | ignores cover torrent twin-linked | 12" | D6 | N/A | 6 | -1 | 1 |
 | melee | -- | Titanic feet | -- | Melee | 4 | 4+ | 8 | -1 | 2 |
 
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Defender's Duty (Bondsman): While a model is affected by this ability, each time an attack is allocated to that model, subtract 1 from the Damage characteristic of that attack.
-  Selfless Protector: Each time a ranged attack is allocated to an IMPERIAL KNIGHTS model from your army, if that model is not fully visible to every model in the attacking unit because of this Knight Defender model, that model has the Benefit of Cover and a 4+ invulnerable save against that attack.
+- Selfless Protector: Each time a ranged attack is allocated to an IMPERIAL KNIGHTS model from your army, if that model is not fully visible to every model in the attacking unit because of this Knight Defender model, that model has the Benefit of Cover and a 4+ invulnerable save against that attack.
 
 #### Unit Composition
 - 1 Knight Defender
@@ -581,12 +644,25 @@ IMPERIAL KNIGHTS
 | melee | -- | Thunderstrike gauntlet - strike | -- | Melee | 4 | 3+ | 20 | -3 | 8 |
 | melee | -- | Thunderstrike gauntlet - sweep | -- | Melee | 8 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's meltagun can be replaced with 1 Questoris heavy stubber.
+- This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.
+- This model can be equipped with one of the following:
+  - 1 ironstorm missile pod
+  - 1 stormspear rocket pod
+  - 1 twin Icarus autocannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Errant's Duty (Bondsman): While a model is affected by this ability, you can re-roll Advance rolls made for that model and ranged weapons equipped by that model have the [ASSAULT] ability.
-  Aggressive Assault: Each time this model makes a ranged attack that targets the closest eligible target, add 1 to the Hit roll.
+- Aggressive Assault: Each time this model makes a ranged attack that targets the closest eligible target, add 1 to the Hit roll.
 
 #### Unit Composition
 - 1 Knight Errant
@@ -651,12 +727,24 @@ IMPERIAL KNIGHTS
 | melee | -- | Thunderstrike gauntlet - strike | devastating wounds | Melee | 6 | 2+ | 20 | -3 | 8 |
 | melee | -- | Thunderstrike gauntlet - sweep | lethal hits | Melee | 12 | 2+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's meltagun can be replaced with 1 Questoris heavy stubber.
+- This model can be equipped with one of the following:
+  - 1 ironstorm missile pod
+  - 1 stormspear rocket pod
+  - 1 twin Icarus autocannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Gallant's Duty (Bondsman): While a model is affected by this ability, you can re-roll Charge rolls made for that model and each time that model makes a melee attack, you can re-roll the Hit roll.
-  Martial Pride: Each time this unit Consolidates, models in it can move an additional 3" provided your unit can end that move within Engagement Range of one or more enemy units.
+- Martial Pride: Each time this unit Consolidates, models in it can move an additional 3" provided your unit can end that move within Engagement Range of one or more enemy units.
 
 #### Unit Composition
 - 1 Knight Gallant
@@ -722,12 +810,25 @@ IMPERIAL KNIGHTS
 | melee | -- | Thunderstrike gauntlet - strike | -- | Melee | 4 | 3+ | 20 | -3 | 8 |
 | melee | -- | Thunderstrike gauntlet - sweep | -- | Melee | 8 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's meltagun can be replaced with 1 Questoris heavy stubber.
+- This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.
+- This model can be equipped with one of the following:
+  - 1 ironstorm missile pod
+  - 1 stormspear rocket pod
+  - 1 twin Icarus autocannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Paladin's Duty (Bondsman): While a model is affected by this ability, weapons equipped by that model have the [LETHAL HITS] ability, and melee weapons equipped by that model have the [LANCE] ability.
-  Seasoned Noble: Each time this model makes a ranged attack that targets the closest eligible target, improve the Armour Penetration characteristic of that attack by 1.
+- Seasoned Noble: Each time this model makes a ranged attack that targets the closest eligible target, improve the Armour Penetration characteristic of that attack by 1.
 
 #### Unit Composition
 - 1 Knight Paladin
@@ -795,12 +896,27 @@ IMPERIAL KNIGHTS
 | melee | -- | Thunderstrike gauntlet - strike | -- | Melee | 4 | 3+ | 20 | -3 | 8 |
 | melee | -- | Thunderstrike gauntlet - sweep | -- | Melee | 8 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's Questoris multi-laser can be replaced with one of the following
+  - 1 meltagun
+  - 1 Questoris heavy stubber
+- This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.
+- This model can be equipped with one of the following:
+  - 1 ironstorm missile pod
+  - 1 stormspear rocket pod
+  - 1 twin Icarus autocannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Mentor (Bondsman): Each time a model affected by this ability makes an attack that targets this model's quarry, you can re-roll the Wound roll.
-  Exemplar of the Code: At the start of the battle, select one unit from your opponent's army to be this model's quarry. Each time this model makes an attack that targets its quarry, you can re-roll the Wound roll. Each time this model's quarry is destroyed, you can select a new unit from your opponent's army to be its quarry.
+- Exemplar of the Code: At the start of the battle, select one unit from your opponent's army to be this model's quarry. Each time this model makes an attack that targets its quarry, you can re-roll the Wound roll. Each time this model's quarry is destroyed, you can select a new unit from your opponent's army to be its quarry.
 
 #### Unit Composition
 - 1 Knight Preceptor
@@ -862,12 +978,20 @@ IMPERIAL KNIGHTS
 | ranged | -- | Twin siegebreaker cannon | blast twin-linked | 36" | D6 | 3+ | 6 | 0 | 1 |
 | melee | -- | Titanic feet | -- | Melee | 4 | 4+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's 2 shieldbreaker missile launchers and twin siegebreaker cannon can be replaced with 1 shieldbreaker missile launcher and 2 twin siegebreaker cannons.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Code Chivalric, Super-heavy Walker
 - Ion Aegis (Aura): While a friendly ARMIGER model is within 6" of this model, each time a ranged attack targets that model, it has the Benefit of Cover against that attack.
-  Thundershock: In your Shooting phase, each time you select a target for this model's thundercoil harpoon, roll one D6 for the target unit and one D6 for each other enemy unit within 6" of the target unit. On a 4+, the unit being rolled for is struck by arcing energies; after resolving all of this model's attacks against the target unit, each unit struck by arcing energies suffers D3 mortal wounds.
+- Thundershock: In your Shooting phase, each time you select a target for this model's thundercoil harpoon, roll one D6 for the target unit and one D6 for each other enemy unit within 6" of the target unit. On a 4+, the unit being rolled for is struck by arcing energies; after resolving all of this model's attacks against the target unit, each unit struck by arcing energies suffers D3 mortal wounds.
 
 #### Unit Composition
 - 1 Knight Valiant
@@ -936,12 +1060,25 @@ IMPERIAL KNIGHTS
 | melee | -- | Thunderstrike gauntlet - strike | -- | Melee | 4 | 3+ | 20 | -3 | 8 |
 | melee | -- | Thunderstrike gauntlet - sweep | -- | Melee | 8 | 3+ | 10 | -2 | 3 |
 
+#### Wargear options
+- This model's meltagun can be replaced with 1 Questoris heavy stubber.
+- This model's reaper chainsword can be replaced with 1 thunderstrike gauntlet.
+- This model can be equipped with one of the following:
+  - 1 ironstorm missile pod
+  - 1 stormspear rocket pod
+  - 1 twin Icarus autocannon
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Warden's Duty (Bondsman): While a model is affected by this ability, weapons equipped by that model have the [SUSTAINED HITS 1] ability, and ranged weapons equipped by that model have the [IGNORES COVER] ability.
-  Thin Their Ranks: Each time this model makes a ranged attack that targets an enemy unit (excluding MONSTERS and VEHICLES), that attack has the [DEVASTATING WOUNDS] ability.
+- Thin Their Ranks: Each time this model makes a ranged attack that targets an enemy unit (excluding MONSTERS and VEHICLES), that attack has the [DEVASTATING WOUNDS] ability.
 
 #### Unit Composition
 - 1 Knight Warden
@@ -1001,12 +1138,20 @@ IMPERIAL KNIGHTS
 | melee | -- | Reaper chainfist - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Reaper chainfist - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Code Chivalric, Super-heavy Walker
 - Acheron's Duty (Bondsman): While a model is affected by this ability, at the start of the Fight phase, each enemy unit within Engagement Range of one or more units with this ability must take a Battle-shock test, subtracting 1 from the result when they do.
-  Searing Flames: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with an Acheron flame cannon. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
+- Searing Flames: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks made with an Acheron flame cannon. Until the end of the phase, that enemy unit cannot have the Benefit of Cover.
 
 #### Unit Composition
 - 1 Cerastus Knight Acheron
@@ -1068,12 +1213,20 @@ IMPERIAL KNIGHTS
 | melee | -- | Atrapos lascutter - low intensity | sustained hits 1 | Melee | 12 | 3+ | 7 | -1 | 2 |
 | melee | -- | Atrapos lascutter - high intensity | sustained hits 1 | Melee | 6 | 3+ | 14 | -3 | 4 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Code Chivalric, Super-heavy Walker
 - Atrapos' Duty (Bondsman): While a model is affected by this ability, each time that model makes an attack that targets a TITANIC or TOWERING model, you can re-roll the Hit roll and you can re-roll the Wound roll.
-  Macro-extinction Protocols: Each time this model makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll. If that target is TITANIC or TOWERING, add 1 to the Wound roll as well.
+- Macro-extinction Protocols: Each time this model makes an attack that targets a MONSTER or VEHICLE unit, add 1 to the Hit roll. If that target is TITANIC or TOWERING, add 1 to the Wound roll as well.
 
 #### Unit Composition
 - 1 Cerastus Knight Atrapos
@@ -1132,12 +1285,20 @@ IMPERIAL KNIGHTS
 | melee | -- | Tempest warblade - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Tempest warblade - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Code Chivalric, Super-heavy Walker
 - Castigator's Duty (Bondsman): While a model is affected by this ability, its ranged weapons have the [SUSTAINED HITS 1] ability and the Armour Penetration characteristic of its ranged weapons is improved by 1.
-  Storm of Bolts: In your Shooting phase, after this model has shot, select one unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this model is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
+- Storm of Bolts: In your Shooting phase, after this model has shot, select one unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this model is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
 - 1 Cerastus Knight Castigator
@@ -1196,12 +1357,20 @@ IMPERIAL KNIGHTS
 | melee | -- | Cerastus shock lance - strike | lance | Melee | 5 | 2+ | 20 | -3 | 8 |
 | melee | -- | Cerastus shock lance - sweep | -- | Melee | 10 | 2+ | 10 | -2 | 3 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: Code Chivalric, Super-heavy Walker
 - Lancer's Duty (Bondsman): While a model is affected by this ability, it is eligible to declare a charge in a turn in which it Advanced.
-  Shock Charge: You can target this model with the Crushing Impact Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
+- Shock Charge: You can target this model with the Crushing Impact Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
 
 #### Unit Composition
 - 1 Cerastus Knight Lancer
@@ -1264,12 +1433,20 @@ IMPERIAL KNIGHTS
 | melee | -- | Reaper chainsword - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Reaper chainsword - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Magaera's Duty (Bondsman): While a model is affected by this ability, each time that model makes a ranged attack that targets the closest eligible target, improve the Strength and Armour Penetration characteristics of that attack by 1.
-  Repair Auto-simulacra: At the end of your Command phase, this model regains up to D3 lost wounds.
+- Repair Auto-simulacra: At the end of your Command phase, this model regains up to D3 lost wounds.
 
 #### Unit Composition
 - 1 Questoris Knight Magaera
@@ -1332,12 +1509,20 @@ IMPERIAL KNIGHTS
 | melee | -- | Reaper chainsword - strike | -- | Melee | 4 | 3+ | 14 | -4 | 6 |
 | melee | -- | Reaper chainsword - sweep | -- | Melee | 12 | 3+ | 9 | -3 | 2 |
 
+#### Wargear options
+- This model's reaper chainsword can be replaced with 1 hekaton siege claw and 1 twin rad cleanser.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Styrix's Duty (Bondsman): While a model is affected by this ability, each time that model is selected to shoot or fight, after it has resolved all of its attacks, select one enemy unit hit by one or more of those attacks; that unit must take a Battle-shock test, subtracting one from the test when doing so.
-  Grav-pinned: In your Shooting phase, after this model has shot, if an enemy INFANTRY unit was hit by one or more of those attacks made with a graviton crusher, until the end of your opponent's next turn, that enemy unit is grav-pinned. While a unit is grav-pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.
+- Grav-pinned: In your Shooting phase, after this model has shot, if an enemy INFANTRY unit was hit by one or more of those attacks made with a graviton crusher, until the end of your opponent's next turn, that enemy unit is grav-pinned. While a unit is grav-pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.
 
 #### Unit Composition
 - 1 Questoris Knight Styrix
@@ -1401,13 +1586,25 @@ IMPERIAL KNIGHTS
 | melee | -- | Alpha combat weapon | -- | Melee | 2 | 4+ | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Skitarii Ranger Alpha can be equipped with 1 Alpha combat weapon.
+- The Skitarii Ranger Alpha's galvanic rifle can be replaced with 1 Mechanicus pistol.
+- 1 Skitarii Ranger's galvanic rifle can be replaced with 1 arc rifle.
+- 1 Skitarii Ranger's galvanic rifle can be replaced with 1 plasma caliver.
+- 1 Skitarii Ranger's galvanic rifle can be replaced with 1 transuranic arquebus.
+- 1 Skitarii Ranger equipped with a galvanic rifle can be equipped with one of the following:
+  - 1 enhanced data-tether*
+  - 1 omnispex*
+
+#### Core Abilities
+- Scouts 6"
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 6"
-- FACTION: Doctrina Imperatives
 - Objective Scouted: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
-
-#### Wargear Abilities
 - Enhanced data-tether: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Omnispex: Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 
@@ -1447,12 +1644,22 @@ ADEPTUS MECHANICUS
 | melee | -- | Alpha combat weapon | -- | Melee | 2 | 4+ | 5 | -1 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Skitarii Vanguard Alpha can be equipped with 1 Alpha combat weapon.
+- The Skitarii Vanguard Alpha's radium carbine can be replaced with 1 Mechanicus pistol.
+- 1 Skitarii Vanguard's radium carbine can be replaced with 1 arc rifle.
+- 1 Skitarii Vanguard's radium carbine can be replaced with 1 plasma caliver.
+- 1 Skitarii Vanguard's radium carbine can be replaced with 1 transuranic arquebus.
+- 1 Skitarii Vanguard equipped with a radium carbine can be equipped with one of the following:
+  - 1 enhanced data-tether*
+  - 1 omnispex*
+
+#### Army Rules
+- Doctrina Imperatives
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Doctrina Imperatives
 - Rad-saturation (Aura): While an enemy unit (excluding VEHICLE units) is within 3" of this unit, subtract 1 from the Objective Control characteristic of models in that unit.
-
-#### Wargear Abilities
 - Enhanced data-tether: Each time you select the bearer's unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Omnispex: Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.
 
@@ -1488,10 +1695,18 @@ ADEPTUS MECHANICUS
 | ranged | -- | Twin conversion beam cannon | conversion sustained hits d3 twin-linked | 48" | 3 | 3+ | 16 | -2 | 6 |
 | melee | -- | Titanic feet | -- | Melee | 6 | 4+ | 10 | -1 | 2 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Sunderer of Fortresses: Each time this model makes an attack that targets a VEHICLE, improve the Strength and Damage characteristics of that attack by 1. If that attack targets a FORTIFICATION, improve the Strength and Damage characteristics of that attack by 2 instead.
 
 #### Unit Composition
@@ -1531,10 +1746,21 @@ IMPERIAL KNIGHTS
 | ranged | -- | Twin magna lascannon | blast twin-linked | 72" | D6 | 3+ | 18 | -4 | D6+6 |
 | melee | -- | Titanic feet | -- | Melee | 6 | 4+ | 10 | -1 | 2 |
 
+#### Wargear options
+- This model's 2 Acastus autocannons can be replaced with one of the following:
+  - 2 lascannons
+  - 1 Acastus autocannon and 1 lascannon
+- This model's Acastus ironstorm missile pod can be replaced with 1 helios defence missiles.
+
+#### Core Abilities
+- Deadly Demise 2D6
+
+#### Army Rules
+- Code Chivalric
+- Super-heavy Walker
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 2D6
-- FACTION: Code Chivalric, Super-heavy Walker
 - Bastion of Firepower: Each time this model Remains Stationary, until the end of the turn, ranged weapons equipped by this model have the [LETHAL HITS] ability.
 
 #### Unit Composition
@@ -1572,10 +1798,17 @@ IMPERIAL KNIGHTS
 | ranged | -- | Questoris heavy stubber | rapid fire 3 | 36" | 3 | 3+ | 4 | -1 | 1 |
 | melee | -- | Armoured feet | -- | Melee | 4 | 3+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's Questoris heavy stubber can be replaced with 1 meltagun.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Code Chivalric
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Code Chivalric
 - Suppression Protocols: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks made with an Armiger autocannon. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
 
 #### Unit Composition
@@ -1617,10 +1850,17 @@ IMPERIAL KNIGHTS
 | melee | -- | Reaper chain-cleaver - strike | -- | Melee | 4 | 3+ | 10 | -3 | 3 |
 | melee | -- | Reaper chain-cleaver - sweep | -- | Melee | 8 | 3+ | 8 | -2 | 1 |
 
+#### Wargear options
+- This model's Questoris heavy stubber can be replaced with 1 meltagun.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Code Chivalric
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Code Chivalric
 - Impetuous Glory: Each time this model makes a Charge move, until the end of the turn, add 1 to the Attacks characteristic of this model's reaper chain-cleaver - strike profile, and add 2 to the Attacks characteristic of this model's reaper chain-cleaver - sweep profile.
 
 #### Unit Composition
@@ -1664,10 +1904,26 @@ IMPERIAL KNIGHTS
 | melee | -- | Armoured feet | -- | Melee | 4 | 3+ | 6 | 0 | 1 |
 | melee | -- | Siege claw | -- | Melee | 4 | 3+ | 12 | -3 | D6+2 |
 
+#### Wargear options
+- This model's volkite veuglaire can be replaced with one of the following:
+  - 1 siege claw and 1 rad cleanser
+  - 1 graviton pulsar
+  - 1 lightning lock
+  - 1 conversion beam cannon
+- This model's graviton pulsar can be replaced with one of the following;
+  - 1 siege claw and 1 rad cleanser
+  - 1 lightning lock
+  - 1 conversion beam cannon
+  - 1 volkite veuglaire
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- Code Chivalric
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: Code Chivalric
 - Protection Protocols: You can target this unit with the Heroic Intervention Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.
 
 #### Unit Composition
@@ -1693,6 +1949,8 @@ IMPERIAL KNIGHTS
 ## Detachments
 
 ### Valourstrike Lance (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Bold Gallantry
 - Each time an IMPERIAL KNIGHTS unit from your army Advances, until the end of the turn, ranged weapons equipped by IMPERIAL KNIGHTS models from your army have the [ASSAULT] ability.
 
@@ -1745,6 +2003,8 @@ IMPERIAL KNIGHTS
   EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.
 
 ### Gate Warden Lance (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Dauntless Defenders
 - At the start of the first battle round, select two objectives to be your foundations. Place a circular 40mm foundation marker in each one. When you draw a line from any part of one your foundation markers to any part of the other, if any part of a model's base (or any part of a model's hull, for a model without a base) crosses that line, that model's unit is said to be on your defensive line.
   While an IMPERIAL KNIGHTS unit from your army is on your defensive line, that unit has the following ability:
@@ -1799,6 +2059,8 @@ IMPERIAL KNIGHTS
   EFFECT: Until the end of the phase, each time an enemy unit selects your unit as a target of a charge, that unit must take a Battle-shock test, subtracting 1 from the result.
 
 ### Questoris Companions (3 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Heroes of Legend
 - At the start of your turn, if your current Oath is fulfilled, determine an additional Oath as described here, with the exception that you cannot select a Deed or Quality you have already selected (if you are randomly selecting the Deed and/or Quality and roll any result that you have already selected, select a Deed or Quality you have not already selected instead). If you cannot determine an additional Oath because you have already selected each Deed and each Quality, do not determine an additional Oath.
   The Qualities from Oaths you have fulfilled continue to apply to all models in your army with the Code Chivalric ability. When the Deed for an additional Oath is completed, you instead gain 1CP, regardless of how you selected the Deed or Quality.
@@ -1854,6 +2116,8 @@ IMPERIAL KNIGHTS
   EFFECT: Until the end of the turn, your unit is eligible to declare a charge in a turn in which it Advanced.
 
 ### Spearhead-At-Arms (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Knightly Teachings
 - Each time a model from your army uses its Bondsman ability, if no other model from your army has used that Bondsman ability that turn, you can select up to three friendly ARMIGER models (instead of one) within 12" of that model, or within 15" of that model while your army is Honoured (you still cannot select a model that is already being affected by a Bondsman ability). Until the start of your next Command phase, those models are affected by that Bondsman ability.
   KEYWORDS
@@ -1908,6 +2172,8 @@ IMPERIAL KNIGHTS
   EFFECT: For each of your ARMIGER models that is within 9" of one or more battlefield edges and not within Engagement Range of one or more enemy units, remove that ARMIGER model from the battlefield and place it into Strategic Reserves.
 
 ### Freeblade Company (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Knights of Legend
 - IMPERIAL KNIGHTS models from your army have the Feel No Pain 6+ ability. In addition, at the start of your Command phase, each IMPERIAL KNIGHTS model from your army regains 1 lost wound.
 
@@ -1918,6 +2184,9 @@ IMPERIAL KNIGHTS
 - IMPERIAL KNIGHTS model only. Ranged weapons equipped by the bearer have the [IGNORES COVER] ability.
 - Mysterious Guardian 35 pts
 - IMPERIAL KNIGHTS model only. (Once per battle, per army) At the end of your opponent's turn, if this unit is unengaged, you can use this ability. If you do:
+  - Place this unit in strategic reserves.
+  - This unit has Deep Strike until the start of your next Shooting phase.
+  - This unit must make an ingress move in your next Movement phase (including in your first turn).
 - Sanctuary 20 pts
 - IMPERIAL KNIGHTS model only. The bearer has a 5+ invulnerable save.
 
@@ -1960,6 +2229,8 @@ IMPERIAL KNIGHTS
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Dominus Foebreakers (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Rain of Devastation
 - Friendly IMPERIAL KNIGHTS DOMINUS units' attacks that target a unit
   in a terrain area have +1 to hit rolls.
@@ -1993,6 +2264,8 @@ IMPERIAL KNIGHTS
   EFFECT: Select one enemy unit hit by those attacks. That enemy unit makes a battle-shock roll, with -1 to that battle-shock roll.
 
 ### Questor Forgepact (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Cogbound Alliance
 - Friendly IMPERIAL KNIGHTS models have the following ability:
   Assisted Targeting (Aura): While a friendly ADEPTUS MECHANICUS unit is within 6" of this model, that ADEPTUS MECHANICUS unit's ranged attacks have:
@@ -2030,6 +2303,8 @@ IMPERIAL KNIGHTS
   EFFECT: That move does not prevent your unit from being eligible to start an action.
 
 ### Throne-Bonded Outriders (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Driven from Their Lairs
 - While a friendly ARMIGER unit is affected by a Bondsman ability, that unit's ranged attacks have [IGNORES COVER].
   This detachment has the ARMIGERS tag and cannot be taken with another ARMIGERS detachment.

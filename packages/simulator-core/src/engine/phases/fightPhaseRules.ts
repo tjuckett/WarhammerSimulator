@@ -271,21 +271,21 @@ export function playFightActivationUnitIds(
   return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
 }
 
-/** 11e Appendix: a player may pass when all of their eligible fighters are more than 5" from every enemy. */
+/** A player may decline its remaining Fight selections for this step. */
 export function playFightSideCanPass(
   state: BattleState,
   side: Side,
   rules: RulesEdition,
   context: FightMovementRulesContext,
 ): boolean {
-  if (rules.metadata.edition !== '11e' || !isFightUnitsStep(state)
+  if (state.pendingCombatResolution
+    || rules.metadata.edition !== '11e' || !isFightUnitsStep(state)
     || !sideCanSelectFightUnit(state, side, rules, context)
     || state.fightPassedSides?.includes(side)) return false;
   const eligible = context.activeUnits(state, side)
     .filter(unit => context.unitEligibleToFight(unit, state, rules));
   if (!eligible.length || !playFightActivationUnitIds(state, side, rules, context).length) return false;
-  return eligible.every(unit => context.enemies(state, side).every(enemy =>
-    attachedUnitBaseEdgeDistance(state, unit, enemy, context) > 5 + 0.001));
+  return true;
 }
 
 export function playFightFirstUnitIds(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): string[] {

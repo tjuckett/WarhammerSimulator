@@ -1,4 +1,4 @@
-import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type PhaseStepAction, type Side } from '../../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type PendingCombatContinuation, type PhaseStepAction, type Side } from '../../types/battle';
 import type { WeaponProfile } from '../../types/army';
 import type { RulesEdition } from '../rulesEngine';
 import type {
@@ -255,7 +255,11 @@ export function shootPlayUnitWeapon(
       logs.push(context.log(s, side, unit.profile.name, `  ${option.weapon.name}: ${target.profile.name} is not a valid target`, 'info'));
       continue;
     }
-    const attackLogs = context.resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, { deferCasualties: true });
+    const attackLogs = context.resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, {
+      deferCasualties: true,
+      interactiveStage: selectedWeapons.length === 1
+        && (context.attachedUnitComponents?.(s, unit).length ?? 1) <= 1,
+    });
     logs.push(...attackLogs);
     if (attackLogs.length > 0) firedWeaponIndices.push(option.weaponIndex);
     if (unit.destroyed || target.destroyed) break;
@@ -287,6 +291,7 @@ export function shootPlayUnitWeapons(
   allocations: PlayShootingAttackAllocation[],
   rules: RulesEdition,
   context: ManualShootingResolutionContext,
+  options: { interactiveStage?: boolean } = {},
 ): BattleState {
   const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
   if (pending?.snapShooting || !canResolveShootingUnit(state, unitId, side) || !allocations.length) return state;
@@ -474,13 +479,47 @@ export function shootPlayUnitWeapons(
   }
 
   const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `🔫 ${unit.profile.name} locks all ranged targets before rolling:`, 'shoot')];
+  const stagedContinuations: Array<{ targetUnitId: string; weaponIndex: number; continuation: PendingCombatContinuation; stage: 'hits' }> = [];
+  if (options.interactiveStage !== false) s.pendingCombatResolution = undefined;
   for (const allocation of normalizedAllocations) {
     const candidate = candidatesByAllocation.get(allocation);
     if (!candidate) continue;
     logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, candidate.target, candidate.weapon, candidate.weaponIndex, rules, {
       deferCasualties: true,
       modelIndexes: candidate.modelIndexes,
+      interactiveStage: options.interactiveStage !== false,
     }));
+    const staged = s.pendingCombatResolution?.continuation;
+    if (options.interactiveStage !== false && staged) {
+      stagedContinuations.push({
+        targetUnitId: candidate.target.id,
+        weaponIndex: candidate.weaponIndex,
+        continuation: staged,
+        stage: 'hits',
+      });
+      s.pendingCombatResolution = undefined;
+    }
+  }
+  if (stagedContinuations.length > 0) {
+    const first = stagedContinuations[0];
+    const firstResult = s.lastShootingResolution?.weapons.find(result =>
+      result.weaponIndex === first.weaponIndex && result.targetUnitId === first.targetUnitId,
+    );
+    const hitGroups = firstResult?.groups.filter(group => group.kind === 'hit') ?? [];
+    const rolls = hitGroups.flatMap(group => group.rolls);
+    s.pendingCombatResolution = {
+      kind: 'shooting',
+      attackerUnitId: unit.id,
+      attackerSide: unit.side,
+      targetUnitId: first.targetUnitId,
+      weaponIndex: first.weaponIndex,
+      stage: 'hits',
+      rolls,
+      target: hitGroups[0]?.target,
+      rollIds: rolls.map((_roll, index) => `shooting:${unit.id}:hits:${index}`),
+      continuation: first.continuation,
+      continuationQueue: stagedContinuations.slice(1),
+    };
   }
   unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...selectableWeapons.map(option => option.weaponIndex)])];
   unit.activated = true;

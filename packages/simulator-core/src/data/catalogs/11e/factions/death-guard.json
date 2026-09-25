@@ -1,0 +1,77 @@
+{
+  "id": "death-guard",
+  "name": "Death Guard",
+  "edition": "11e",
+  "unitRefs": [
+    "death-guard.typhus",
+    "death-guard.mortarion",
+    "death-guard.rotigus",
+    "death-guard.biologus-putrifier",
+    "death-guard.foul-blightspawn",
+    "death-guard.icon-bearer",
+    "death-guard.lord-of-contagion",
+    "death-guard.lord-of-poxes",
+    "death-guard.lord-of-virulence",
+    "death-guard.malignant-plaguecaster",
+    "death-guard.noxious-blightbringer",
+    "death-guard.plague-surgeon",
+    "death-guard.tallyman",
+    "death-guard.daemon-prince-of-nurgle",
+    "death-guard.daemon-prince-of-nurgle-with-wings",
+    "death-guard.great-unclean-one",
+    "death-guard.plague-marines",
+    "death-guard.plaguebearers",
+    "death-guard.chaos-rhino",
+    "death-guard.beasts-of-nurgle",
+    "death-guard.chaos-spawn",
+    "death-guard.blightlord-terminators",
+    "death-guard.deathshroud-terminators",
+    "death-guard.poxwalkers",
+    "death-guard.plague-drones",
+    "death-guard.nurglings",
+    "death-guard.chaos-land-raider",
+    "death-guard.chaos-predator-annihilator",
+    "death-guard.chaos-predator-destructor",
+    "death-guard.foetid-bloat-drone",
+    "death-guard.foetid-bloat-drone-with-heavy-blight-launcher",
+    "death-guard.myphitic-blight-hauler",
+    "death-guard.plagueburst-crawler",
+    "death-guard.defiler",
+    "death-guard.helbrute",
+    "death-guard.miasmic-malignifier"
+  ],
+  "ruleRefs": [
+    "death-guard.army-rule.pact-of-decay"
+  ],
+  "detachmentRefs": [
+    "death-guard.detachment.virulent-vectorium",
+    "death-guard.detachment.mortarions-hammer",
+    "death-guard.detachment.champions-of-contagion",
+    "death-guard.detachment.tallyband-summoners",
+    "death-guard.detachment.shamblerot-vectorium",
+    "death-guard.detachment.death-lords-chosen",
+    "death-guard.detachment.contagion-engines",
+    "death-guard.detachment.flyblown-host",
+    "death-guard.detachment.paragons-of-putrescence"
+  ],
+  "factionKeywords": [
+    "death-guard",
+    "Death Guard"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Death Guard faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/death-guard/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 36,
+    "normalizedEntryCount": 36,
+    "excludedLegendCount": 35,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

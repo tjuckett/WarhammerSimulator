@@ -1,0 +1,1641 @@
+{
+  "factionId": "adeptus-custodes",
+  "rules": [
+    {
+      "id": "adeptus-custodes.army-rule.martial-katah",
+      "name": "Martial Ka'tah",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "Each time a unit from your army with this ability is selected to fight, select one of the Ka'tah Stances below. Until that unit has finished making its attacks, the selected Stance is active for it and it gains the relevant ability: Dacatarai Stance Melee weapons equipped by models in this unit have the [SUSTAINED HITS 1] ability. Rendax Stance Melee weapons equipped by models in this unit have the [LETHAL HITS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Martial Ka'tah",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Martial Ka'tah"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "name": "Talons Of The Emperor - Revered Companions",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "ANATHEMA PSYKANA units from your army gain the following the ability: Null Aegis (Aura): While an ADEPTUS CUSTODES unit is within 6\" of this unit, models in that unit have the Feel No Pain 5+ ability against Psychic Attacks and mortal wounds. All other ADEPTUS CUSTODES units from your army gain the following ability: Deadly Unity (Aura): While an ANATHEMA PSYKANA unit is within 6\" of this unit, each time a model in that ANATHEMA PSYKANA unit makes an attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.enhancement.aegis-projector",
+      "name": "Aegis Projector",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "20 pts. ADEPTUS CUSTODES model only. Once per turn, the first time a saving throw is failed for the bearer's unit, change the Damage characteristic of that attack to 0.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.enhancement.champion-of-the-imperium",
+      "name": "Champion of the Imperium",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "25 pts. ADEPTUS CUSTODES model only. The range of the bearer's Null Aegis or Deadly Unity ability is increased to 9\".",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.enhancement.gift-of-terran-artifice",
+      "name": "Gift of Terran Artifice",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "15 pts. ADEPTUS CUSTODES model only. Each time the bearer makes a melee attack, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.enhancement.radiant-mantle",
+      "name": "Radiant Mantle",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "30 pts. ADEPTUS CUSTODES model only. Each time an attack targets the bearer's unit, if the attacking model is within 12\", subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.stratagem.hunt-as-one",
+      "name": "HUNT AS ONE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "1CP. Talons Of The Emperor - Strategic Ploy Stratagem. WHEN: Start of your Movement phase. TARGET: Up to two ADEPTUS CUSTODES units from your army. EFFECT: Until the end of the turn, your units are eilgible to shoot and/or declare a charge in a turn in which they Fell Back. RESTRICTIONS: You can only select two units if one (and only one) of them is an ANATHEMA PSYKANA unit and both are within 6\" of each other.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor - HUNT AS ONE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor - HUNT AS ONE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.stratagem.talons-interlocked",
+      "name": "TALONS INTERLOCKED",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "1CP. Talons Of The Emperor - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: Up to two ADEPTUS CUSTODES INFANTRY units from your army, and one enemy unit that is an eligible target for all of those units. EFFECT: Until the end of the phase, your units can only target that enemy unit, but each time a model in one of your units makes a ranged attack, improve the Strength and Armour Penetration characteristics of that attack by 1. RESTRICTIONS: You can only select two units if one (and only one) of them is an ANATHEMA PSYKANA unit and both are within 6\" of each other.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor - TALONS INTERLOCKED",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor - TALONS INTERLOCKED"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.stratagem.empyric-severance",
+      "name": "EMPYRIC SEVERANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "1CP. Talons Of The Emperor - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One ADEPTUS CUSTODES unit from your army that was selected as the target of one or more of the attacking unit's attacks, and one friendly ANATHEMA PSYKANA unit within 6\" of that ADEPTUS CUSTODES unit. EFFECT: Until the end of the phase, your unit has the Feel No Pain 4+ ability against Psychic attacks and mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor - EMPYRIC SEVERANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor - EMPYRIC SEVERANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.stratagem.emperors-executioners",
+      "name": "EMPEROR'S EXECUTIONERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "2CP. Talons Of The Emperor - Battle Tactic Stratagem. WHEN: Start of the Fight phase. TARGET: Up to two ADEPTUS CUSTODES units from your army. EFFECT: Until the end of the phase, each time a model in one of your units targets an enemy unit that is below its Starting Strength, add 1 to the Wound roll. RESTRICTIONS: You can only select two units if one (and only one) of them is an ANATHEMA PSYKANA unit and both are within 6\" of each other.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor - EMPEROR'S EXECUTIONERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor - EMPEROR'S EXECUTIONERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.stratagem.taloned-pincer",
+      "name": "TALONED PINCER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "1CP. Talons Of The Emperor - Battle Tactic Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: Up to two ADEPTUS CUSTODES units from your army that are within 8\" of that enemy unit. EFFECT: Your units can make a Normal move of up to 6\". RESTRICTIONS: You cannot select units that are within Engagement Range of one or more enemy units. You can only select two units if one (and only one) of them is an ANATHEMA PSYKANA unit and both are within 6\" of each other.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor - TALONED PINCER",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor - TALONED PINCER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.talons-of-the-emperor.stratagem.shield-of-honour",
+      "name": "SHIELD OF HONOUR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.talons-of-the-emperor",
+      "description": "1CP. Talons Of The Emperor - Epic Deed Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ANATHEMA PSYKANA INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks, and one other friendly ADEPTUS CUSTODES INFANTRY unit (excluding ANATHEMA PSYKANA units) within 6\" of that ANATHEMA PSYKANA INFANTRY unit. EFFECT: Until the end of the phase, any attack that targets your ANATHEMA PSYKANA unit must instead target your other ADEPTUS CUSTODES unit (unless it is not an eligible target).",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Talons Of The Emperor - SHIELD OF HONOUR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Talons Of The Emperor - SHIELD OF HONOUR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host",
+      "name": "Shield Host - Martial Mastery",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "forceDispositions": [
+        "purge-the-foe"
+      ],
+      "description": "At the start of the battle round, you can select one of the bullet points below. If you do, until the start of the next battle round, that bullet point's effects apply. Each time an ADEPTUS CUSTODES model from your army with the Martial Ka'tah ability makes a melee attack, a successful unmodified Hit roll of 5+ scores a Critical Hit. Improve the Armour Penetration characteristic of melee weapons equipped by ADEPTUS CUSTODES models from your army with the Martial Ka'tah ability by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.enhancement.auric-mantle",
+      "name": "Auric Mantle",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "15 pts. SHIELD-CAPTAIN or BLADE CHAMPION model only. Add 2 to the bearer's Wounds characteristic.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.enhancement.castellans-mark",
+      "name": "Castellan's Mark",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "20 pts. SHIELD-CAPTAIN model only. After both players have deployed their armies, you can select up to two ADEPTUS CUSTODES units from your army (excluding ANATHEMA PSYKANA units) and redeploy all of those units. When doing so, any of those units can be placed into Strategic Reserves, regardless of how many units are already in Strategic Reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.enhancement.from-the-hall-of-armouries",
+      "name": "From the Hall of Armouries",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "20 pts. SHIELD-CAPTAIN model only. Add 1 to the Strength and Damage characteristics of the bearer's melee weapons.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.enhancement.panoptispex",
+      "name": "Panoptispex",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "5 pts. SHIELD-CAPTAIN or BLADE CHAMPION model only. While the bearer is leading a unit, ranged weapons equipped by models in that unit have the [IGNORES cover] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.stratagem.arcane-genetic-alchemy",
+      "name": "ARCANE GENETIC ALCHEMY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "1CP. Shield Host - Battle Tactic Stratagem. WHEN: Any phase, just after a mortal wound has been allocated to an ADEPTUS CUSTODES model from your army(excluding ANATHEMA PSYKANA models). TARGET: That ADEPTUS CUSTODES model's unit. EFFECT: Until the end of the phase, models in your unit have the Feel No Pain 4+ ability against mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host - ARCANE GENETIC ALCHEMY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host - ARCANE GENETIC ALCHEMY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.stratagem.avenge-the-fallen",
+      "name": "AVENGE THE FALLEN",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "1CP. Shield Host - Strategic Ploy Stratagem. WHEN: Start of the Fight phase. TARGET: One ADEPTUS CUSTODES unit from your army (excluding ANATHEMA PSYKANA units) that is below its Starting Strength. EFFECT: Until the end of the phase, add 1 to the Attacks characteristic of melee weapons equipped by models in that unit. If your unit is Below Half-strength, until the end of the phase, add 2 to the Attacks characteristic of those melee weapons instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host - AVENGE THE FALLEN",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host - AVENGE THE FALLEN"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.stratagem.unwavering-sentinels",
+      "name": "UNWAVERING SENTINELS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "1CP. Shield Host - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One ADEPTUS CUSTODES INFANTRY unit from your army (excluding ANATHEMA PSYKANA units) that is within range of an objective marker you control and that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a melee attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host - UNWAVERING SENTINELS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host - UNWAVERING SENTINELS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.stratagem.multipotentiality",
+      "name": "MULTIPOTENTIALITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "1CP. Shield Host - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One ADEPTUS CUSTODES unit from your army that Fell Back this phase. EFFECT: Until the end of your turn, that unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host - MULTIPOTENTIALITY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host - MULTIPOTENTIALITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.stratagem.vigilance-eternal",
+      "name": "VIGILANCE ETERNAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "1CP. Shield Host - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One ADEPTUS CUSTODES BATTLELINE unit from your army (excluding ANATHEMA PSYKANA units) within range of an objective marker you control. EFFECT: That objective marker remains under your control even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host - VIGILANCE ETERNAL",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host - VIGILANCE ETERNAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.shield-host.stratagem.archeotech-munitions",
+      "name": "ARCHEOTECH MUNITIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.shield-host",
+      "description": "1CP. Shield Host - Wargear Stratagem. WHEN: Your Shooting phase. TARGET: One ADEPTUS CUSTODES unit from your army (excluding ANATHEMA PSYKANA units) that has not been selected to shoot this phase. EFFECT: Select either the [LETHAL HITS] or [SUSTAINED HITS 1] ability. Until the end of the phase ranged weapons equipped by models in your unit have the selected ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Shield Host - ARCHEOTECH MUNITIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Shield Host - ARCHEOTECH MUNITIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil",
+      "name": "Null Maiden Vigil - Creeping Dread (Aura)",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "In the Battle-shock step of your opponent's Command phase, if an enemy unit that is either a PSYKER unit or below its Starting Strength is within 12\" of one or more ANATHEMA PSYKANA models from your army, that enemy unit must take a Battle-shock test. If that unit is Below Half-strength, it must subtract 1 from its Battle-shock test this phase instead. Designer's Note: This means that all enemy PSYKER units within range of this Aura ability and all enemy units within range of this Aura ability that have lost one or more models must take a Battle-shock test in your opponents Command phase, not just those that are Below Half-strength.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.enhancement.enhanced-voidsheen-cloak",
+      "name": "Enhanced Voidsheen Cloak",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "10 pts. ANATHEMA PSYKANA model only. Each time an attack is allocated to the bearer, subtract 1 from the Damage characteristic of that attack. If that attack was made by a PSYKER or Battle-shocked model, change the Damage characteristic of that attack to 1 instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.enhancement.huntress-eye",
+      "name": "Huntress' Eye",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "15 pts. ANATHEMA PSYKANA model only. In your Command phase, select one enemy unit within 12\" of the bearer. That unit must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.enhancement.oblivion-knight",
+      "name": "Oblivion Knight",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "25 pts. ANATHEMA PSYKANA model only. While the bearer is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll. If that attack targeted an enemy PSYKER unit, add 1 to the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.enhancement.raptor-blade",
+      "name": "Raptor Blade",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "5 pts. ANATHEMA PSYKANA model only. Add 1 to the Attacks, Strength and Damage characteristics of the bearers melee weapons. While the bearer is within Engagement Range of one or more enemy PSYKER units that are Battle-shocked, add 2 to the Attacks, Strength and Damage characteristics of the bearer's melee weapons instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.stratagem.desperations-price",
+      "name": "DESPERATION'S PRICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "1CP. Null Maiden Vigil - Strategic Ploy Stratagem. WHEN: Any phase, just after an enemy PSYKER unit has either finished using a Psychic ability that targets a unit, or finished making Psychic Attacks. TARGET: One ANATHEMA PSYKANA unit from your army within 18\" of that enemy PSYKER unit. EFFECT: That enemy PSYKER unit must take a Leadership test If the test is passed, that PSYKER unit is Battle-shocked; if the test is failed that PSYKER unit suffers 3 mortal wounds and is Battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil - DESPERATION'S PRICE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil - DESPERATION'S PRICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.stratagem.witch-hunters",
+      "name": "WITCH HUNTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "1CP. Null Maiden Vigil - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One ANATHEMA PSYKANA unit from your army that has not been selected to shoot or fight this phase. EFFECT: Select either the [LETHAL HITS] or [SUSTAINED HITS 1] ability. Until the end of the phase, weapons equipped by models in your unit have the selected ability, but models in your unit can only target PSYKER units with their attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil - WITCH HUNTERS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil - WITCH HUNTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.stratagem.anathema-blademastery",
+      "name": "ANATHEMA BLADEMASTERY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "1CP. Null Maiden Vigil - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One VIGILATORS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a melee attack, you can re-roll the Hit roll If the target of that attack is Battle-shocked or a PSYKER, you can re-roll the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil - ANATHEMA BLADEMASTERY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil - ANATHEMA BLADEMASTERY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.stratagem.psy-chaff-volley",
+      "name": "PSY-CHAFF VOLLEY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "1CP. Null Maiden Vigil - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One PROSECUTORS unit from your army that has just shot. EFFECT: Select one enemy unit hit by one or more of those attacks. Until the start of your next turn, while your unit is on the battlefield, that enemy unit is prosecuted. While a unit is prosecuted, each time an ANATHEMA PSYKANA model makes an attack against that unit, improve the Armour Penetration characteristic of that attack by 1. While a PSYKER or Battle-shocked unit is prosecuted, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil - PSY-CHAFF VOLLEY",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil - PSY-CHAFF VOLLEY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.stratagem.purgation-sweep",
+      "name": "PURGATION SWEEP",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "1CP. Null Maiden Vigil - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One WITCHSEEKERS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, add 1 to the Attacks characteristic of Torrent weapons equipped by models in your unit. If such a weapon targets a PSYKER or Battle-shocked unit this phase, add 2 to its Attacks characteristic instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil - PURGATION SWEEP",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil - PURGATION SWEEP"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.null-maiden-vigil.stratagem.psychic-abominations",
+      "name": "PSYCHIC ABOMINATIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.null-maiden-vigil",
+      "description": "1CP. Null Maiden Vigil - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One ANATHEMA PSYKANA INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit has the Stealth ability, and Battle-shocked and PSYKER models can only select your unit as a target of a ranged attack if they are within 12\".",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Null Maiden Vigil - PSYCHIC ABOMINATIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Null Maiden Vigil - PSYCHIC ABOMINATIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions",
+      "name": "Auric Champions - Assemblage of Might",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "forceDispositions": [
+        "priority-targets"
+      ],
+      "description": "At the start of your Command phase, select one unit from your opponent's army. Until the start of your next Command phase, each time a model in an ADEPTUS CUSTODES CHARACTER unit from your army makes an attack that targets that enemy unit, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.enhancement.blade-imperator",
+      "name": "Blade Imperator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "25 pts. ADEPTUS CUSTODES model only. Each time the bearer's unit ends a Charge move, select one enemy unit within Engagement Range of the bearer and roll one D6: on a 4+, that enemy unit suffers D3 mortal wounds. Once per battle, after the bearer s unit ends a Charge move, all enemy units within 6\" of the bearer must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.enhancement.inspirational-exemplar",
+      "name": "Inspirational Exemplar",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "10 pts. ADEPTUS CUSTODES model only. The bearer has a Leadership characteristic of 5+. Once per battle, at the start of any phase, you can select one friendly ADEPTUS CUSTODES unit that is Battle-shocked and within 12\" of the bearer; that unit is no longer Battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.enhancement.martial-philosopher",
+      "name": "Martial Philosopher",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "30 pts. ADEPTUS CUSTODES model only. The bearer's unit is eligible to shoot and/or declare a charge in a turn in which it Fell Back. Once per battle, in your opponent's Movement phase, when an enemy unit ends a Normal, Advance or Fall Back move within 8\" of the bearer, if the bearer's unit is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.enhancement.veiled-blade",
+      "name": "Veiled Blade",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "25 pts. ADEPTUS CUSTODES model only. Add 2 to the Attacks characteristic of the bearers melee weapons. Once per battle, at the start of any Command phase, triple the bearer's Objective Control characteristic until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.stratagem.slayer-of-champions",
+      "name": "SLAYER OF CHAMPIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "1CP. Auric Champions - Epic Deed Stratagem. WHEN: Any phase. TARGET: One ADEPTUS CUSTODES CHARACTER unit from your army that has just destroyed the unit you selected at the start of your Command phase as the target of your Assemblage of Might ability. EFFECT: Select one enemy unit on the battlefield Until the start of your next Command phase, each time an ADEPTUS CUSTODES CHARACTER model from your army makes an attack that target that enemy unit, add 1 to the Wound roll In addition, if the destroyed unit was a CHARACTER unit, gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions - SLAYER OF CHAMPIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions - SLAYER OF CHAMPIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.stratagem.superhuman-reserves",
+      "name": "SUPERHUMAN RESERVES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "2CP. Auric Champions - Epic Deed Stratagem. WHEN: Any phase, just after an ADEPTUS CUSTODES WARLORD model from your army has used an ability on its datasheet or from an Enhancement that says it can only be used Once per battle. TARGET: That ADEPTUS CUSTODES WARLORD model. EFFECT: Your model can use its Once per battle' ability one additional time during this battle (but not in the same phase). RESTRICTIONS: You cannot use this Stratagem more than once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions - SUPERHUMAN RESERVES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions - SUPERHUMAN RESERVES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.stratagem.the-emperors-auspice",
+      "name": "THE EMPEROR'S AUSPICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "1CP. Auric Champions - Epic Deed Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One ADEPTUS CUSTODES CHARACTER unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, CHARACTER models in your unit have the Feel No Pain 4+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions - THE EMPEROR'S AUSPICE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions - THE EMPEROR'S AUSPICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.stratagem.earning-of-a-name",
+      "name": "EARNING OF A NAME",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "1CP. Auric Champions - Epic Deed Stratagem. WHEN: Fight phase. TARGET: Up to two ADEPTUS CUSTODES CHARACTER units from your army that have not been selected to fight this phase. EFFECT: Until the end of the phase, each time a CHARACTER model in either of your units makes an attack that targets a MONSTER or VEHICLE unit, you can re-roll the Hit roll and you can re-roll the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions - EARNING OF A NAME",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions - EARNING OF A NAME"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.stratagem.vigil-unending",
+      "name": "VIGIL UNENDING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "2CP. Auric Champions - Epic Deed Stratagem. WHEN: Fight phase. TARGET: One ADEPTUS CUSTODES CHARACTER model from your army that was just destroyed and has not fought this phase. You can use this Stratagem on that unit even though it was just destroyed. EFFECT: Do not remove your destroyed model from play. The destroyed model can fight after the attacking unit has finished making attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions - VIGIL UNENDING",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions - VIGIL UNENDING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.auric-champions.stratagem.shoulder-the-mantle",
+      "name": "SHOULDER THE MANTLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.auric-champions",
+      "description": "1CP. Auric Champions - Epic Deed Stratagem. WHEN: Your Movement phase, before the Reinforcements step. TARGET: One ADEPTUS CUSTODES CHARACTER model from your army that is not leading a unit. EFFECT: Select one friendly unit (excluding Battle-shocked and Attached units) within 2\" horizontally and 5\" vertically of your model that it could lead (as described in the Leader section of its datasheet). Your model attaches to that unit as a Leader. Change that unit's Starting Strength accordingly.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Auric Champions - SHOULDER THE MANTLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Auric Champions - SHOULDER THE MANTLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead",
+      "name": "Solar Spearhead - Auric Armour",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "While an ADEPTUS CUSTODES VEHICLE unit from your army is at Starting Strength, unless that unit is an AIRCRAFT or it is Battle-shocked, add 2 to the Objective Control characteristic of models in that unit. While an ADEPTUS CUSTODES VEHICLE unit from your army is below Starting Strength, each time a model in that unit makes an attack, re-roll a Hit roll of 1. While an ADEPTUS CUSTODES VEHICLE unit from your army is Below Half-strength, each time a model in that unit makes an attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1. MORITOI ANCIENTS Add 2\" to the Move characteristic of models in ADEPTUS CUSTODES WALKER units from your army and add 1 to Advance and Charge rolls made for such units. KEYWORDS In the Muster Armies step, you can select up to 2 ADEPTUS CUSTODES WALKER models from your army. The selected units gain the CHARACTER keyword. Designer's Note: This means that the selected models can be given Enhancements and one of them can be selected as your WARLORD.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 2 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.enhancement.adamantine-talisman",
+      "name": "Adamantine Talisman",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "25 pts. ADEPTUS CUSTODES model only. Improve the Attacks, Strength and Damage characteristics of melee weapons equipped by the bearer by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.enhancement.augury-uplink",
+      "name": "Augury Uplink",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "35 pts. ADEPTUS CUSTODES model only. The bearer has the Feel No Pain 5+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.enhancement.honoured-fallen-aura",
+      "name": "Honoured Fallen (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "15 pts. ADEPTUS CUSTODES VEHICLE model only. While a friendly ADEPTUS CUSTODES INFANTRY or ADEPTUS CUSTODES MOUNTED unit is within 6\" of the bearer, each time a model in that unit makes an attack, re-roll a Hit roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.enhancement.veteran-of-the-kataphraktoi",
+      "name": "Veteran of the Kataphraktoi",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "10 pts. ADEPTUS CUSTODES INFANTRY or ADEPTUS CUSTODES MOUNTED model only. In your Command phase, select one ADEPTUS CUSTODES VEHICLE or ADEPTUS CUSTODES MOUNTED unit within 6\" of the bearer. Until the start of your next Command phase, that unit is eligible to shoot in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.stratagem.flawless-construction",
+      "name": "FLAWLESS CONSTRUCTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "1CP. Solar Spearhead - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One ADEPTUS CUSTODES VEHICLE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets a model in your unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of your unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead - FLAWLESS CONSTRUCTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead - FLAWLESS CONSTRUCTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.stratagem.emperors-vengeance",
+      "name": "EMPEROR'S VENGEANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "1CP. Solar Spearhead - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One ADEPTUS CUSTODES unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 to the result if your unit has the WALKER keyword. On a 4+, do not remove it from play; The destroyed model can fight after the attacking unit has finished making its attacks (when doing so, it is assumed to have 1 wound remaining), and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead - EMPEROR'S VENGEANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead - EMPEROR'S VENGEANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.stratagem.wrathful-advance",
+      "name": "WRATHFUL ADVANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "1CP. Solar Spearhead - Battle Tactic Stratagem. WHEN: Fight phase, just before an ADEPTUS CUSTODES unit from your army Piles In. TARGET: That ADEPTUS CUSTODES unit. EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in move, it can move up to D3+3\" instead of up to 3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead - WRATHFUL ADVANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead - WRATHFUL ADVANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.stratagem.unstoppable",
+      "name": "UNSTOPPABLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "1CP. Solar Spearhead - Strategic Ploy Stratagem. WHEN: Your Movement phase or your Charge phase. TARGET: One ADEPTUS CUSTODES VEHICLE or ADEPTUS CUSTODES MOUNTED unit from your army. EFFECT: Until the end of the phase, each time a model in your unit makes a move, it can move through terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead - UNSTOPPABLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead - UNSTOPPABLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.stratagem.relentless-persecution",
+      "name": "RELENTLESS PERSECUTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "1CP. Solar Spearhead - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after an ADEPTUS CUSTODES VEHICLE unit from your army Advances. TARGET: That ADEPTUS CUSTODES VEHICLE unit. EFFECT: Until the end of the turn, your unit is eligible to shoot in a turn in which it Advanced. If your unit has the WALKER keyword, until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead - RELENTLESS PERSECUTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead - RELENTLESS PERSECUTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.solar-spearhead.stratagem.punishment-inescapable",
+      "name": "PUNISHMENT INESCAPABLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.solar-spearhead",
+      "description": "1CP. Solar Spearhead - Strategic Ploy Stratagem. WHEN: Your Shooting phase. TARGET: One ADEPTUS CUSTODES unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, ranged weapons equipped by models in your unit have the [IGNORES COVER] ability, and until the end of the phase, each time a model in your unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic Skill characteristic and/or any or all modifiers to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Solar Spearhead - PUNISHMENT INESCAPABLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Solar Spearhead - PUNISHMENT INESCAPABLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "name": "Lions of the Emperor - Against All Odds",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Each time a model in an ADEPTUS CUSTODES unit from your army (excluding VEHICLES) makes an attack, if there are no other friendly units within 6\" of that unit, add 1 to the Hit roll and add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 3 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.enhancement.superior-creation",
+      "name": "Superior Creation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "25 pts. ADEPTUS CUSTODES INFANTRY model only. The first time the bearer is destroyed, roll one D6 at the end of the phase. On a 2+, set the bearer back up on the battlefield, as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with its full wounds remaining.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.enhancement.praesidius",
+      "name": "Praesidius",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "25 pts. ADEPTUS CUSTODES model only. The bearer has the Lone Operative and Stealth abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.enhancement.fierce-conqueror",
+      "name": "Fierce Conqueror",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "15 pts. SHIELD-CAPTAIN model only. At the start of the Fight phase, until the end of the phase, add 2 to the Attacks characteristic of melee weapons equipped by the bearer for every 5 enemy models within 6\" of the bearer (rounding down).",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.enhancement.admonimortis",
+      "name": "Admonimortis",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "30 pts. SHIELD-CAPTAIN model only. Improve the Strength characteristic of melee weapons equipped by the bearer by 3, and improve the Armour Penetration and Damage characteristics of those weapons by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.stratagem.gilded-champion",
+      "name": "GILDED CHAMPION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "1CP. Lions of the Emperor - Strategic Ploy Stratagem. WHEN: Any phase, just after an ADEPTUS CUSTODES CHARACTER model from your army has used an ability on its datasheet that states it can only be used 'once per battle'. TARGET: That ADEPTUS CUSTODES CHARACTER model. EFFECT: Your model can use that 'once per battle' ability one additional time during the battle (but not in the same phase). RESTRICTIONS: You cannot use this Stratagem on the same ADEPTUS CUSTODES CHARACTER model more than once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor - GILDED CHAMPION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor - GILDED CHAMPION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.stratagem.defiant-to-the-last",
+      "name": "DEFIANT TO THE LAST",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "1CP. Lions of the Emperor - Strategic Ploy Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One ADEPTUS CUSTODES unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 2 to the result if that model has the CHARACTER keyword. On a 4+, do not remove it from play; the destroyed model can fight after the attacking unit has finished making its attacks (when doing so, it is treated as having 1 wound remaining), and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor - DEFIANT TO THE LAST",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor - DEFIANT TO THE LAST"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.stratagem.peerless-warrior",
+      "name": "PEERLESS WARRIOR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "1CP. Lions of the Emperor - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One ADEPTUS CUSTODES unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [PRECISION] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor - PEERLESS WARRIOR",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor - PEERLESS WARRIOR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.stratagem.unleash-the-lions",
+      "name": "UNLEASH THE LIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "1CP. Lions of the Emperor - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One ALLARUS CUSTODIANS or AQUILON CUSTODIANS unit from your army that is on the battlefield. EFFECT: That unit is split into separate units, each containing one model. These new units each have a Starting Strength of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor - UNLEASH THE LIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor - UNLEASH THE LIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.stratagem.manoeuvre-and-fire",
+      "name": "MANOEUVRE AND FIRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "1CP. Lions of the Emperor - Strategic Ploy Stratagem. WHEN: Your Movement phase, just after an ADEPTUS CUSTODES unit from your army Falls Back. TARGET: That ADEPTUS CUSTODES unit. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor - MANOEUVRE AND FIRE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor - MANOEUVRE AND FIRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.lions-of-the-emperor.stratagem.swift-as-the-eagle",
+      "name": "SWIFT AS THE EAGLE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.lions-of-the-emperor",
+      "description": "1CP. Lions of the Emperor - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One ADEPTUS CUSTODES unit from your army (excluding VEHICLE units) that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Your unit can make a Normal move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Lions of the Emperor - SWIFT AS THE EAGLE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Lions of the Emperor - SWIFT AS THE EAGLE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "name": "Might of the Moritoi - March of the Honoured Dead",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "forceDispositions": [
+        "take-and-hold"
+      ],
+      "description": "Friendly ADEPTUS CUSTODES WALKER units: Have +2\" M. Have +1 to advance rolls and charge rolls. This detachment has the ARMOURY tag and cannot be taken with another ARMOURY detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Might of the Moritoi",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Might of the Moritoi"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.might-of-the-moritoi.enhancement.interred-expertiseupgrade",
+      "name": "Interred ExpertiseUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "maximumSelections": 3,
+      "description": "25 pts. ADEPTUS CUSTODES WALKER unit only. This unit's attacks can: Re-roll hit rolls of 1. Re-roll wound rolls of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Might of the Moritoi enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Might of the Moritoi enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.might-of-the-moritoi.enhancement.auramite-sarcophagusupgrade",
+      "name": "Auramite SarcophagusUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "maximumSelections": 3,
+      "description": "15 pts. ADEPTUS CUSTODES WALKER unit only. When you target this unit with the Crushing Impact stratagem, that use is -1 CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Might of the Moritoi enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Might of the Moritoi enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.might-of-the-moritoi.stratagem.flawless-construction",
+      "name": "FLAWLESS CONSTRUCTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "description": "1CP. Might of the Moritoi Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly ADEPTUS CUSTODES WALKER unit. TARGET: That ADEPTUS CUSTODES WALKER unit. EFFECT: Attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Might of the Moritoi - FLAWLESS CONSTRUCTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Might of the Moritoi - FLAWLESS CONSTRUCTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.might-of-the-moritoi.stratagem.unstoppable-advance",
+      "name": "UNSTOPPABLE ADVANCE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "description": "1CP. Might of the Moritoi Stratagem. WHEN: Your Movement phase, when a friendly ADEPTUS CUSTODES WALKER unit is selected to move. TARGET: That ADEPTUS CUSTODES WALKER unit. EFFECT: Your unit has MOBILE.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Might of the Moritoi - UNSTOPPABLE ADVANCE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Might of the Moritoi - UNSTOPPABLE ADVANCE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.might-of-the-moritoi.stratagem.prioritised-eradication",
+      "name": "PRIORITISED ERADICATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.might-of-the-moritoi",
+      "description": "1CP. Might of the Moritoi Stratagem. WHEN: Your Shooting phase, when a friendly TELEMON HEAVY DREADNOUGHT unit is selected to shoot. TARGET: That TELEMON HEAVY DREADNOUGHT unit. EFFECT: Your unit's: Arachnus Storm Cannon weapons have [RAPID FIRE 6]. Iliastus Accelerator Culverin weapons have [RAPID FIRE 2].",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Might of the Moritoi - PRIORITISED ERADICATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Might of the Moritoi - PRIORITISED ERADICATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.silent-hunters",
+      "name": "Silent Hunters - Skin-Crawling Disorientation",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.silent-hunters",
+      "forceDispositions": [
+        "reconnaissance"
+      ],
+      "description": "When a friendly ANATHEMA PSYKANA unit is selected to make an advance move, that advance move does not prevent that unit from being eligible to start an action. Friendly ANATHEMA PSYKANA units have the following ability: Ceaseless Vigilance: In your Shooting phase, this unit can select one visible enemy unit within 12\". That enemy unit is nulled: While a unit is nulled, that unit has +3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Silent Hunters",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Silent Hunters"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.silent-hunters.enhancement.encircling-hunter",
+      "name": "Encircling Hunter",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.silent-hunters",
+      "description": "15 pts. ANATHEMA PSYKANA model only. When both players have deployed their armies, you can redeploy up to three friendly ANATHEMA PSYKANA INFANTRY units. When doing so, you can set those units up in strategic reserves, regardless of how many units are already in strategic reserves.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Silent Hunters enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Silent Hunters enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.silent-hunters.enhancement.psyk-out-grenadesupgrade",
+      "name": "Psyk-Out GrenadesUPGRADE",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.silent-hunters",
+      "maximumSelections": 3,
+      "description": "10 pts. ANATHEMA PSYKANA unit only. This unit has EXPLOSIVES. When you target this unit with the Explosives stratagem, if you select an enemy PSYKER unit, you can re-roll rolls to determine whether that enemy unit suffers a mortal wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Silent Hunters enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Silent Hunters enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.silent-hunters.stratagem.deathsong-scythes",
+      "name": "DEATHSONG SCYTHES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.silent-hunters",
+      "description": "1CP. Silent Hunters Stratagem. WHEN: Fight phase, when a friendly VIGILATORS unit is selected to fight. TARGET: That VIGILATORS unit. EFFECT: Your unit's melee attacks have [LANCE]. Your unit's melee attacks that target a PSYKER unit have +1 A.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Silent Hunters - DEATHSONG SCYTHES",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Silent Hunters - DEATHSONG SCYTHES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.silent-hunters.stratagem.umbral-prosecution",
+      "name": "UMBRAL PROSECUTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.silent-hunters",
+      "description": "1CP. Silent Hunters Stratagem. WHEN: Your Shooting phase, when a friendly PROSECUTORS unit is selected to shoot. TARGET: That PROSECUTORS unit. EFFECT: Your unit's Boltgun weapons have: [RAPID FIRE 2]. +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Silent Hunters - UMBRAL PROSECUTION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Silent Hunters - UMBRAL PROSECUTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.silent-hunters.stratagem.synchronised-inferno",
+      "name": "SYNCHRONISED INFERNO",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.silent-hunters",
+      "description": "1CP. Silent Hunters Stratagem. WHEN: Your Shooting phase, when a friendly WITCHSEEKERS unit is selected to shoot. TARGET: That WITCHSEEKERS unit. EFFECT: Your unit's [TORRENT] ranged attacks have [BLAST 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Silent Hunters - SYNCHRONISED INFERNO",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Silent Hunters - SYNCHRONISED INFERNO"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "name": "Tharanatoi Hammerblow - The Hammer Falls",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "forceDispositions": [
+        "disruption"
+      ],
+      "description": "If a friendly ADEPTUS CUSTODES TERMINATOR unit made an ingress move this turn, that unit can re-roll charge rolls. This detachment has the LIONS tag and cannot be taken with another LIONS detachment.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Tharanatoi Hammerblow",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Tharanatoi Hammerblow"
+        }
+      ],
+      "notes": [
+        "Detachment cost: 1 DP."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.tharanatoi-hammerblow.enhancement.mnemo-locked-shrine-cipher",
+      "name": "Mnemo-Locked Shrine Cipher",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "description": "25 pts. ADEPTUS CUSTODES TERMINATOR model only. In your first Movement phase, this unit can make an ingress move.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Tharanatoi Hammerblow enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Tharanatoi Hammerblow enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.tharanatoi-hammerblow.enhancement.efficient-aggression",
+      "name": "Efficient Aggression",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "description": "25 pts. ADEPTUS CUSTODES TERMINATOR model only. (Once per turn, per army) In your opponent's Shooting phase, when an enemy unit has shot, if this unit lost a wound as a result of those attacks, this unit can make a surge move of up to D6+1\".",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Tharanatoi Hammerblow enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Tharanatoi Hammerblow enhancements"
+        }
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.tharanatoi-hammerblow.stratagem.hardened-resolve",
+      "name": "HARDENED RESOLVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "description": "1CP. Tharanatoi Hammerblow Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly ADEPTUS CUSTODES TERMINATORADEPTUS CUSTODES TERMINATOR unit. TARGET: That ADEPTUS CUSTODES TERMINATOR unit. EFFECT: Your unit has +1 T.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Tharanatoi Hammerblow - HARDENED RESOLVE",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Tharanatoi Hammerblow - HARDENED RESOLVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.tharanatoi-hammerblow.stratagem.unleash-the-lions",
+      "name": "UNLEASH THE LIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "description": "1CP. Tharanatoi Hammerblow Stratagem. WHEN: Your Command phase. TARGET: One friendly ALLARUS CUSTODIANS/AQUILON CUSTODIANS unit that is on the battlefield. EFFECT: Your unit is split into separate units, each containing one model. These new units each have a starting strength of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Tharanatoi Hammerblow - UNLEASH THE LIONS",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Tharanatoi Hammerblow - UNLEASH THE LIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.detachment.tharanatoi-hammerblow.stratagem.electroexorcist-saturation",
+      "name": "ELECTROEXORCIST SATURATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "adeptus-custodes.detachment.tharanatoi-hammerblow",
+      "description": "1CP. Tharanatoi Hammerblow Stratagem. WHEN: Your Shooting phase, when a friendly ADEPTUS CUSTODES TERMINATOR unit is selected to shoot. TARGET: That ADEPTUS CUSTODES TERMINATOR unit. EFFECT: Your unit's Ballistus Grenade Launcher weapons have D3+3 A.",
+      "sources": [
+        {
+          "title": "Wahapedia Adeptus Custodes Tharanatoi Hammerblow - ELECTROEXORCIST SATURATION",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/",
+          "capturedAt": "2026-09-25",
+          "section": "Tharanatoi Hammerblow - ELECTROEXORCIST SATURATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

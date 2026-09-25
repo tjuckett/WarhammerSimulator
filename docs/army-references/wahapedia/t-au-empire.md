@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/t-au-empire/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/t-au-empire/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -101,14 +101,18 @@
 | ranged | -- | Pulse pistol | pistol | 12" | 1 | 3+ | 5 | 0 | 1 |
 | melee | -- | Battlesuit fists | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Lone Operative, Stealth
-- FACTION: For the Greater Good
 - Agile Combatant: This model is eligible to shoot in a turn in which it Fell Back.
-  Hero of the Empire (Aura): While a friendly T'AU EMPIRE unit is within 6" of this model, each time a model in that unit makes a ranged attack, re-roll a Hit roll of 1.
-
-#### Wargear Abilities
+- Hero of the Empire (Aura): While a friendly T'AU EMPIRE unit is within 6" of this model, each time a model in that unit makes a ranged attack, re-roll a Hit roll of 1.
 - Advanced Guardian Drone: Each time a ranged attack targets the bearer, subtract 1 from the Wound roll.
 - Command-link Drone (Aura): While a friendly T'AU EMPIRE unit is within 6" of the bearer, each time you select that unit as the target of a Stratagem, roll one D6: on a 5+, you gain 1CP.
 
@@ -144,12 +148,18 @@ T'AU EMPIRE
 | ranged | -- | Shade | assault | 18" | 2 | 2+ | 5 | 0 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Leader
+- Scouts 7"
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader, Scouts 7"
-- FACTION: For the Greater Good
 - Structural Analyser: While this model is leading a unit, each time a model in that unit makes a ranged attack, add 1 to the Wound roll.
-  Jammer Array: Enemy units that are set up on the battlefield from Reserves cannot be set up within 12" of this model.
+- Jammer Array: Enemy units that are set up on the battlefield from Reserves cannot be set up within 12" of this model.
 
 #### Unit Composition
 - 1 Darkstrider - EPIC HERO
@@ -185,12 +195,17 @@ T'AU EMPIRE
 | melee | -- | Dawn Blade - strike | -- | Melee | 4 | 2+ | 10 | -2 | 3 |
 | melee | -- | Dawn Blade - sweep | -- | Melee | 8 | 2+ | 6 | -1 | 1 |
 
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: For the Greater Good
 - Way of the Short Blade: While this model is leading a unit, each time a model in that unit makes an attack that targets an enemy unit within 9", add 1 to the Wound roll.
-  Puretide's Teachings: Once per battle round, you can target this model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
+- Puretide's Teachings: Once per battle round, you can target this model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 
 #### Unit Composition
 - 1 Commander Farsight - EPIC HERO
@@ -238,15 +253,21 @@ T'AU EMPIRE
 | melee | -- | Ion scattercannon | extra attacks | Melee | 3 | 4+ | 7 | -2 | 2 |
 | melee | -- | XV pulse pistol | -- | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Wargear options
+- None.
+
+#### Core Abilities
+- Deep Strike
+- Scouts 8"
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Scouts 8"
-- FACTION: For the Greater Good
 - Exemplars of Mont'ka: Each time a model in this unit makes a ranged attack that targets the closest eligible target, that attack has the [SUSTAINED HITS 1] and [IGNORES COVER] abilities.
-  Neocapacitor Shields: At the start of your opponent's Charge phase, you can select one visible enemy unit (excluding MONSTER and VEHICLE units) within 12" of this unit. That unit must take a Battle-shock test and, until the end of the turn, subtract 1 from Charge rolls made for that unit.
-  Retro-thrusters: At the end of the Fight phase, if this unit was eligible to fight this phase, this unit can either make a Normal move of up to 6" or a Fall Back move.
-
-#### Wargear Abilities
+- Neocapacitor Shields: At the start of your opponent's Charge phase, you can select one visible enemy unit (excluding MONSTER and VEHICLE units) within 12" of this unit. That unit must take a Battle-shock test and, until the end of the turn, subtract 1 from Charge rolls made for that unit.
+- Retro-thrusters: At the end of the Fight phase, if this unit was eligible to fight this phase, this unit can either make a Normal move of up to 6" or a Fall Back move.
 - MV15 Gun Drone: The bearer is equipped with 1 twin pulse blaster.
 
 #### Unit Composition
@@ -280,12 +301,22 @@ T'AU EMPIRE
 | ranged | -- | Fireblade pulse rifle | rapid fire 1 | 30" | 1 | 3+ | 5 | 0 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with up to two of the following, and can take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: For the Greater Good
 - Volley Fire: While this model is leading a unit, add 1 to the Attacks characteristic of ranged weapons equipped by models in that unit.
-  Crack Shot: Each time this model makes a ranged attack, on a Critical Wound, that attack has an Armour Penetration characteristic of -3.
+- Crack Shot: Each time this model makes a ranged attack, on a Critical Wound, that attack has an Armour Penetration characteristic of -3.
 
 #### Unit Composition
 - 1 Cadre Fireblade
@@ -302,10 +333,10 @@ T'AU EMPIRE
 - Solid-image Projection Unit 20 pts
 - Through Unity, Devastation 30 pts
 - Admired Leader 20 pts
-- Strike Swiftly 45 pts
 - Exemplar of the Mont'ka 10 pts
 - Strategic Conqueror 15 pts
 - Coordinated Exploitation 30 pts
+- Strike Swiftly 45 pts
 - Target Optimisation Microdrones
 
 #### Points
@@ -332,14 +363,23 @@ T'AU EMPIRE
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Honour stave | -- | Melee | 2 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 hover drone.
+- This model can be equipped with up to two of the following, and can take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: For the Greater Good
 - Failure Is Not an Option: While this model is leading a unit, models in that unit have the Feel No Pain 5+ ability.
-  Coordinated Leadership: At the end of your Command phase, roll one D6: on a 4+, you gain 1CP.
-
-#### Wargear Abilities
+- Coordinated Leadership: At the end of your Command phase, roll one D6: on a 4+, you gain 1CP.
 - Hover Drone: The bearer can FLY and has a Move characteristic of 10".
 
 #### Unit Composition
@@ -357,10 +397,10 @@ T'AU EMPIRE
 - Solid-image Projection Unit 20 pts
 - Through Unity, Devastation 30 pts
 - Admired Leader 20 pts
-- Strike Swiftly 45 pts
 - Exemplar of the Mont'ka 10 pts
 - Strategic Conqueror 15 pts
 - Coordinated Exploitation 30 pts
+- Strike Swiftly 45 pts
 - Duty's Echo
 
 #### Points
@@ -389,10 +429,19 @@ T'AU EMPIRE
 | ranged | -- | Pulse pistol | pistol | 12" | 1 | 3+ | 5 | 0 | 1 |
 | melee | -- | Close combat weapons | -- | Melee | 4 | 5+ | 3 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Lone Operative, Stealth
-- FACTION: For the Greater Good
 - Precise Targeting: Each time a model in this unit makes an attack that targets a Spotted unit, you can re-roll the Hit roll.
 
 #### Unit Composition
@@ -406,10 +455,10 @@ T'AU EMPIRE
 - Solid-image Projection Unit 20 pts
 - Through Unity, Devastation 30 pts
 - Admired Leader 20 pts
-- Strike Swiftly 45 pts
 - Exemplar of the Mont'ka 10 pts
 - Strategic Conqueror 15 pts
 - Coordinated Exploitation 30 pts
+- Strike Swiftly 45 pts
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **55 pts**
@@ -436,11 +485,16 @@ T'AU EMPIRE
 | ranged | -- | Kroot scattergun | assault | 12" | 2 | 4+ | 4 | 0 | 1 |
 | melee | -- | Twin ritualistic blades | twin-linked | Melee | 4 | 2+ | 5 | -1 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Leader
+- Scouts 7"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader, Scouts 7", Stealth
 - Ritual Butchery: While this model is leading a unit, melee weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability.
-  Rites of Feasting: While this model is leading a unit, models in that unit have the Feel No Pain 6+ ability. If that unit destroys one or more enemy units in the Fight phase, until the end of the battle, models in that unit have the Feel No Pain 5+ ability instead.
+- Rites of Feasting: While this model is leading a unit, models in that unit have the Feel No Pain 6+ ability. If that unit destroys one or more enemy units in the Fight phase, until the end of the battle, models in that unit have the Feel No Pain 5+ ability instead.
 
 #### Unit Composition
 - 1 Kroot Flesh Shaper
@@ -455,8 +509,8 @@ T'AU EMPIRE
 - Precision of the Patient Hunter 15 pts
 - Solid-image Projection Unit 20 pts
 - Student of Kauyon 20 pts
-- Strike Swiftly 45 pts
 - Strategic Conqueror 15 pts
+- Strike Swiftly 45 pts
 - Kroothawk Flock 10 pts
 - Borthrod Gland 15 pts
 - Experienced Leader
@@ -487,11 +541,16 @@ T'AU EMPIRE
 | ranged | -- | Kroot rifle | rapid fire 1 | 24" | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Shaper's blade | -- | Melee | 4 | 2+ | 5 | 0 | 1 |
 
+#### Core Abilities
+- Infiltrators
+- Leader
+- Scouts 7"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader, Scouts 7", Stealth
 - Trail Finding: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
-  Kroot Ambush: After both players have deployed their armies, you can redeploy this model's unit and one other friendly KROOT unit. When doing so, any of those units can be placed into Strategic Reserves, regardless of how many units are already in Strategic Reserves.
+- Kroot Ambush: After both players have deployed their armies, you can redeploy this model's unit and one other friendly KROOT unit. When doing so, any of those units can be placed into Strategic Reserves, regardless of how many units are already in Strategic Reserves.
 
 #### Unit Composition
 - 1 Kroot Trail Shaper
@@ -506,8 +565,8 @@ T'AU EMPIRE
 - Precision of the Patient Hunter 15 pts
 - Solid-image Projection Unit 20 pts
 - Student of Kauyon 20 pts
-- Strike Swiftly 45 pts
 - Strategic Conqueror 15 pts
+- Strike Swiftly 45 pts
 - Kroothawk Flock 10 pts
 - Nomadic Hunter 20 pts
 - Experienced Leader
@@ -540,11 +599,19 @@ T'AU EMPIRE
 | melee | -- | Bladestave and prey-hook | lethal hits | Melee | 4 | 2+ | 5 | -1 | 2 |
 | melee | -- | Shaper's blade | -- | Melee | 4 | 2+ | 5 | 0 | 1 |
 
+#### Wargear options
+- This model's dart-bow and tri-bade can be replaced with 1 bladestave and prey-hook.
+
+#### Core Abilities
+- Infiltrators
+- Leader
+- Scouts 7"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Leader, Scouts 7", Stealth
 - War Leader: Once per battle round, one unit from your army with this ability can use it when its unit is targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-  Root of Honour: Once per battle, at the start of any phase, you can select one friendly KROOT unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
+- Root of Honour: Once per battle, at the start of any phase, you can select one friendly KROOT unit that is Battle-shocked and within 12" of this model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Kroot War Shaper
@@ -559,8 +626,8 @@ T'AU EMPIRE
 - Precision of the Patient Hunter 15 pts
 - Solid-image Projection Unit 20 pts
 - Student of Kauyon 20 pts
-- Strike Swiftly 45 pts
 - Strategic Conqueror 15 pts
+- Strike Swiftly 45 pts
 - Kroothawk Flock 10 pts
 - Root-carved Weapons 10 pts
 - Experienced Leader
@@ -594,11 +661,18 @@ T'AU EMPIRE
 | melee | -- | Hunting javelin | lance | Melee | 3 | 3+ | 4 | -1 | 1 |
 | melee | -- | Kalamandra's bite | extra attacks | Melee | 4 | 4+ | 5 | -1 | 1 |
 
+#### Wargear options
+- This model's Kroot long gun can be replaced with 1 blast javelin and 1 hunting javelin.
+
+#### Core Abilities
+- Lone Operative
+- Scouts 7"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative, Scouts 7", Stealth
 - Advanced Scouting: Each time this model makes a ranged attack that hits an enemy unit, until the end of the turn, each time another KROOT model from your army makes an attack that targets that enemy unit, you can re-roll the Hit roll.
-  Fire and Fade: In your Shooting phase, after this model has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this model is not eligible to declare a charge.
+- Fire and Fade: In your Shooting phase, after this model has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6". If it does, until the end of the turn, this model is not eligible to declare a charge.
 
 #### Unit Composition
 - 1 Kroot Lone-Spear
@@ -609,10 +683,10 @@ T'AU EMPIRE
 - Exemplar of the Kauyon 20 pts
 - Solid-image Projection Unit 20 pts
 - Through Unity, Devastation 30 pts
-- Strike Swiftly 45 pts
 - Exemplar of the Mont'ka 10 pts
 - Strategic Conqueror 15 pts
 - Coordinated Exploitation 30 pts
+- Strike Swiftly 45 pts
 - Kroothawk Flock 10 pts
 
 #### Points
@@ -648,13 +722,44 @@ T'AU EMPIRE
 | ranged | -- | T'au flamer | ignores cover torrent | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Battlesuit fists | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- This model's high-output burst cannon can be replaced with one of the following:
+  - 1 airbursting fragmentation projector*
+  - 1 battlesuit support system*
+  - 1 burst cannon
+  - 1 cyclic ion blaster*
+  - 1 fusion blaster
+  - 1 missile pod
+  - 1 plasma rifle
+  - 1 shield generator*
+  - 1 T'au flamer
+  - 1 weapon support system*
+- This model can be equipped with up to two of the following, and can take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+- This model can be equipped with up to three of the following, and can take duplicates:
+  - 1 airbursting fragmentation projector*
+  - 1 battlesuit support system*
+  - 1 burst cannon
+  - 1 cyclic ion blaster*
+  - 1 fusion blaster
+  - 1 missile pod
+  - 1 plasma rifle
+  - 1 shield generator*
+  - 1 T'au flamer
+  - 1 weapon support system*
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: For the Greater Good
 - Coldstar Commander: While this model is leading a unit, models in that unit have a Move characteristic of 12" and ranged weapons equipped by models in that unit have the [ASSAULT] ability.
-
-#### Wargear Abilities
 - Battlesuit Support System: The bearer's unit is eligible to shoot in a turn in which it Fell Back, but when doing so only models equipped with this wargear can make ranged attacks.
 - Shield Generator: The bearer has a 4+ invulnerable save.
 - Weapon Support System: Each time the bearer makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
@@ -679,10 +784,10 @@ T'AU EMPIRE
 - Supernova Launcher 15 pts
 - Thermoneutronic Projector 15 pts
 - Plasma Accelerator Rifle 20 pts
-- Strike Swiftly 45 pts
 - Exemplar of the Mont'ka 10 pts
 - Strategic Conqueror 15 pts
 - Coordinated Exploitation 30 pts
+- Strike Swiftly 45 pts
 - Prototype Weapon System 15 pts
 - Puretide Engram Neurochip 15 pts
 - Internal Grenade Racks 20 pts
@@ -720,13 +825,43 @@ T'AU EMPIRE
 | ranged | -- | T'au flamer | ignores cover torrent | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Battlesuit fists | -- | Melee | 3 | 4+ | 5 | 0 | 1 |
 
+#### Wargear options
+- This model's burst cannon can be replaced with one of the following:
+  - 1 airbursting fragmentation projector*
+  - 1 battlesuit support system*
+  - 1 cyclic ion blaster*
+  - 1 fusion blaster
+  - 1 missile pod
+  - 1 plasma rifle
+  - 1 shield generator*
+  - 1 T'au flamer
+  - 1 weapon support system*
+- This model can be equipped with up to two of the following, and can take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+- This model can be equipped with up to three of the following, and can take duplicates:
+  - 1 airbursting fragmentation projector*
+  - 1 battlesuit support system*
+  - 1 burst cannon
+  - 1 cyclic ion blaster*
+  - 1 fusion blaster
+  - 1 missile pod
+  - 1 plasma rifle
+  - 1 shield generator*
+  - 1 T'au flamer
+  - 1 weapon support system*
+
+#### Core Abilities
+- Deep Strike
+- Leader
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike, Leader
-- FACTION: For the Greater Good
 - Enforcer Commander: While this model is leading a unit, each time a ranged attack targets that unit, worsen the Armour Penetration characteristic of that attack by 1.
-
-#### Wargear Abilities
 - Battlesuit Support System: The bearer's unit is eligible to shoot in a turn in which it Fell Back, but when doing so only models equipped with this wargear can make ranged attacks.
 - Shield Generator: The bearer has a 4+ invulnerable save.
 - Weapon Support System: Each time the bearer makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
@@ -751,10 +886,10 @@ T'AU EMPIRE
 - Supernova Launcher 15 pts
 - Thermoneutronic Projector 15 pts
 - Plasma Accelerator Rifle 20 pts
-- Strike Swiftly 45 pts
 - Exemplar of the Mont'ka 10 pts
 - Strategic Conqueror 15 pts
 - Coordinated Exploitation 30 pts
+- Strike Swiftly 45 pts
 - Prototype Weapon System 15 pts
 - Puretide Engram Neurochip 15 pts
 - Internal Grenade Racks 20 pts
@@ -787,11 +922,20 @@ T'AU EMPIRE
 | ranged | -- | Support turret | indirect fire twin-linked | 30" | 2 | 5+ | 5 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Breacher Fire Warrior Shas'ui can be equipped with up to two of the following, and can take duplicates:
+  - 1 guardian drone (it cannot take duplicates of this piece of wargear)
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- FACTION: For the Greater Good
 - Breach and Clear: Each time a model in this unit makes a ranged attack that targets an enemy unit within range of an objective marker, you can re-roll the Wound roll.
-  DS8 Support Turret: In your Movement phase, if this unit Remains Stationary, until the start of your next Movement phase, its Fire Warrior Shas'ui model is equipped with the support turret missile system weapon.
+- DS8 Support Turret: In your Movement phase, if this unit Remains Stationary, until the start of your next Movement phase, its Fire Warrior Shas'ui model is equipped with the support turret missile system weapon.
   Designer's Note: Place a Support Turret token next to this unit to remind you.
 
 #### Unit Composition
@@ -827,11 +971,21 @@ T'AU EMPIRE
 | ranged | -- | Support turret | indirect fire twin-linked | 30" | 2 | 5+ | 5 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Fire Warrior Shas'ui can be equipped with up to two of the following, and can take duplicates:
+  - 1 guardian drone (it cannot take duplicates of this piece of wargear)
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+- Any number of Fire Warrior models can each have their pulse rifle replaced with 1 pulse carbine.
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- FACTION: For the Greater Good
 - Suppression Volley: In your Shooting phase, after this unit has shot, select one enemy INFANTRY unit hit by one or more of those attacks. Until the start of your next turn, while this unit is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
-  DS8 Support Turret: In your Movement phase, if this unit Remains Stationary, until the start of your next Movement phase, its Fire Warrior Shas'ui model is equipped with the support turret missile system weapon.
+- DS8 Support Turret: In your Movement phase, if this unit Remains Stationary, until the start of your next Movement phase, its Fire Warrior Shas'ui model is equipped with the support turret missile system weapon.
   Designer's Note: Place a Support Turret token next to this unit to remind you.
 
 #### Unit Composition
@@ -867,18 +1021,26 @@ T'AU EMPIRE
 | ranged | -- | Smart missile system | indirect fire | 30" | 3 | 4+ | 5 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin pulse carbines can be replaced with 2 smart missile systems.
+- This model can be equipped with up to 2 seeker missiles.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: For the Greater Good
 - Rapid Deployment: Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
+
+#### Transport
+- This model has a transport capacity of 12 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models.
 
 #### Unit Composition
 - 1 Devilfish
   This model is equipped with: accelerator burst cannon; 2 twin pulse carbines; armoured hull.
-
-#### Transport
-- This model has a transport capacity of 12 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **75 pts**
@@ -910,10 +1072,17 @@ T'AU EMPIRE
 | ranged | -- | Seeker missile | one shot | 48" | 1 | 4+ | 14 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's accelerator burst cannon can be replaced with 1 missile pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: For the Greater Good
 - Ground Strike Fighter: Each time this model makes a ranged attack that targets an enemy unit that cannot FLY, add 1 to the Hit roll.
 
 #### Unit Composition
@@ -952,10 +1121,17 @@ T'AU EMPIRE
 | ranged | -- | Twin ion rifle - overcharge | hazardous twin-linked | 30" | 3 | 4+ | 8 | -2 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's missile pod can be replaced with 1 twin missile pod.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: For the Greater Good
 - Pulse Bombs: At the end of your opponent's Fight phase, select one visible enemy unit (excluding Lone Operative units) within 24" of this unit, and roll six D6 for that unit: For each 4+, that unit suffers 1 mortal wound.
 
 #### Unit Composition
@@ -995,10 +1171,18 @@ T'AU EMPIRE
 | ranged | -- | Twin heavy rail cannon | devastating wounds twin-linked | 120" | 1 | 4+ | 26 | -5 | 12 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with up to 6 seeker missiles.
+- This model's 2 burst cannons can be replaced with 2 cyclic ion blasters.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: For the Greater Good
 - Titan Hunter: This model's twin heavy rail cannon and seeker missiles have the [ANTI-TITANIC 3+] ability while targeting a unit within half range.
 
 #### Unit Composition
@@ -1039,12 +1223,26 @@ T'AU EMPIRE
 | ranged | -- | Seeker missile | one shot | 48" | 1 | 4+ | 14 | -3 | D6+1 |
 | melee | -- | Armoured hull | -- | Melee | 8 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise 3D6
+- Hover
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 3D6, Hover
-- FACTION: For the Greater Good
 - Aggressive Deployment: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.
-  Air Caste Colossus: Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.
+- Air Caste Colossus: Each time you target this model with a Stratagem, you must spend three times that Stratagem's stated CP cost to do so.
+
+#### Transport
+- This model has a transport capacity of all of the following:
+  - 200 T'AU EMPIRE INFANTRY or TACTICAL DRONE models
+  - 4 DEVILFISH, SKY RAY GUNSHIP or HAMMERHEAD models
+  - 8 BATTLESUIT models with a Wounds characteristic of 9 or less
 
 #### Unit Composition
 - 1 Manta
@@ -1052,12 +1250,6 @@ T'AU EMPIRE
 
 #### Damaged: 1-20 Wounds Remaining
 - While this model has 1-20 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of all of the following:
-  - 200 T'AU EMPIRE INFANTRY or TACTICAL DRONE models
-  - 4 DEVILFISH, SKY RAY GUNSHIP or HAMMERHEAD models
-  - 8 BATTLESUIT models with a Wounds characteristic of 9 or less
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **2100 pts**
@@ -1093,13 +1285,23 @@ T'AU EMPIRE
 | ranged | -- | Swiftstrike railgun | devastating wounds | 72" | 1 | 4+ | 20 | -5 | D6+6 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 burst cannons can be replaced with 2 cyclic ion blasters.
+- This model's 2 ion cannons can be replaced with one of the following:
+  - 2 swiftstrike burst cannons
+  - 2 swiftstrike railguns
+- This model can be equipped with up to 6 seeker missiles.
+- This model's transport bay can be replaced with 2 skyspear missile racks.
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: For the Greater Good
 - Strafing Run: In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks that cannot FLY. That enemy unit must take a Battle-shock test.
-
-#### Wargear Abilities
 - Transport Bay: The bearer has the TRANSPORT keyword and has a transport capacity of 12 TACTICAL DRONES models.
 
 #### Unit Composition
@@ -1134,11 +1336,14 @@ T'AU EMPIRE
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | melee | -- | Ripping fangs | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Scouts 7"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7", Stealth
 - Loping Pounce: At the start of your Command phase, if this unit is within 6" of one or more friendly KROOT INFANTRY units, then until the end of the turn, this unit is eligible to declare a charge in a turn in which it Advanced.
-  Hunting Hounds: While this unit is within 12" of one or more friendly KROOT CHARACTER models, the Objective Control characteristic of models in this unit is 1.
+- Hunting Hounds: While this unit is within 12" of one or more friendly KROOT CHARACTER models, the Objective Control characteristic of models in this unit is 1.
 
 #### Unit Composition
 - 5-10 Kroot Hounds
@@ -1173,9 +1378,16 @@ T'AU EMPIRE
 | ranged | -- | Kroot carbine | -- | 18" | 1 | 4+ | 4 | 0 | 2 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 4 | 0 | 1 |
 
+#### Wargear options
+- The Long-quill's Kroot rifle can be replaced with 1 Kroot carbine.
+- For every 10 models in this unit, one Kroot Carnivore's Kroot rifle can be replaced with 1 Tanglebomb launcher.
+
+#### Core Abilities
+- Scouts 7"
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7", Stealth
 - Fieldcraft: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control, even if you have no models within range of it, until your opponent controls it at the start or end of any turn.
 
 #### Unit Composition
@@ -1220,12 +1432,20 @@ T'AU EMPIRE
 | melee | -- | Ripping fangs | -- | Melee | 3 | 3+ | 3 | 0 | 1 |
 | melee | -- | Ritual blade | -- | Melee | 3 | 3+ | 5 | 0 | 1 |
 
+#### Wargear options
+- The Kroot Kill-broker's Farstalker firearm can be replaced with 1 T'au-tech rifle.
+- 1 Kroot Farstalker's Farstalker firearm can be replaced with one of the following:
+  - 1 Dvorgite skinner
+  - 1 Londaxi tribalest
+- 1 Kroot Farstalker equipped with a Farstalker firearm can be equipped with 1 Pech'ra.
+
+#### Core Abilities
+- Infiltrators
+- Stealth
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Stealth
 - Bounty Hunters: At the start of the battle, select one unit from your opponent's army. Each time a model in this unit makes an attack that targets that unit, that attack has the [LETHAL HITS] and [PRECISION] abilities.
-
-#### Wargear Abilities
 - Pech'ra: Ranged weapons equipped by the bearer's unit have the [IGNORES COVER] ability.
 
 #### Unit Composition
@@ -1269,13 +1489,29 @@ T'AU EMPIRE
 | ranged | -- | Semi-automatic grenade launcher - fusion | -- | 18" | 1 | 4+ | 6 | -1 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 5+ | 3 | 0 | 1 |
 
+#### Wargear options
+- The Pathfinder Shas'ui can be equipped with one of the following:
+  - 1 grav-inhibitor drone
+  - 1 pulse accelerator drone
+  - 1 recon drone
+- The Pathfinder Shas'ui can be equipped with up to two of the following, and can take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+- Up to 3 Pathfinders can each have their pulse carbine replaced with one of the following:
+  - 1 ion rifle
+  - 1 rail rifle
+- 1 model in this unit equipped with a pulse carbine can be equipped with 1 semi-automatic grenade launcher. That model's pulse carbine cannot be replaced.
+
+#### Core Abilities
+- Scouts 7"
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
-- FACTION: For the Greater Good
 - Target Uploaded: Each time a model in this unit makes an attack that targets their Spotted unit, improve the Ballistic Skill characteristic of that attack by 1 and that attack has the [IGNORES COVER] ability.
-
-#### Wargear Abilities
 - Grav-inhibitor Drone: Subtract 2 from Charge rolls made for any enemy unit that declares a charge against the bearer's unit (this is not cumulative with any other reductions to that Charge roll).
 - Pulse Accelerator Drone: Add 6" to the Range characteristic of pulse carbines equipped by models in the bearer's unit.
 - Recon Drone: The bearer is equipped with 1 drone burst cannon and the bearer's unit has the Infiltrators ability.
@@ -1317,13 +1553,23 @@ T'AU EMPIRE
 | ranged | -- | Pulse pistol | pistol | 12" | 1 | 4+ | 5 | 0 | 1 |
 | melee | -- | Battlesuit fists | -- | Melee | 2 | 5+ | 4 | 0 | 1 |
 
+#### Wargear options
+- The Stealth Shas'vre can be equipped with 1 gun drone.
+- The Stealth Shas'vre can be equipped with 1 marker drone.
+- The Stealth Shas'vre can be equipped with 1 pulse pistol.
+- 1 Stealth Shas'ui can be equipped with 1 homing beacon.
+- 2 models can each have their burst cannon replaced with 1 fusion blaster.
+
+#### Core Abilities
+- Infiltrators
+- Stealth
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators, Stealth
-- FACTION: For the Greater Good
 - Forward Observers: Each time this unit is an Observer unit, until the end of the phase, each time a ranged attack is made by a model in a Guided unit that targets their Spotted unit, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.
-
-#### Wargear Abilities
 - Homing Beacon: Once per battle, you can use the Rapid Ingress Stratagem for 0CP. The target must be set up within 3" of the bearer's unit and more than 8" away from all enemy units.
   Designer's Note: Place a Homing Beacon token next to this unit, removing it once this ability is used.
 
@@ -1365,12 +1611,19 @@ T'AU EMPIRE
 | ranged | -- | T'au flamer | IGNORES COVER TORRENT | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Stingwing claws | -- | Melee | 1 | 4+ | 4 | -1 | 1 |
 
+#### Wargear options
+- If this unit contains 10 models:
+  - The Vespid Strain Leader can be equipped with 1 Oversight Drone.
+  - 1 Vespid Stingwing can replace its neutron blaster with 1 T'au flamer
+  - 1 Vespid Stingwing can replace its neutron blaster with 1 neutron grenade launcher
+  - 1 Vespid Stingwing can replace its neutron blaster with 1 neutron rail rifle.
+
+#### Core Abilities
+- Deep Strike
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
 - Airborne Agility: At the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
 - Oversight Drone: Once per battle, when the bearer's unit is selected to shoot, until the end of the phase, ranged weapons equipped by models in this unit have the [IGNORES COVER] ability.
   Designer's Note: Place an Oversight Drone token next to the bearer, removing it once this ability has been used.
 
@@ -1406,9 +1659,11 @@ T'AU EMPIRE
 | melee | -- | Close combat weapon | Lance | Melee | 3 | 3+ | 4 | -1 | 1 |
 | melee | -- | Krootox fists | EXTRA ATTACKS sustained hits 1 | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Core Abilities
+- Scouts 7"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
 - Kroot Linebreakers: Each time this unit ends a Charge move, select one enemy unit within Engagement Range of it, then roll one D6 for each model in this unit that is within Engagement Range of that enemy unit: for each 4+, that enemy unit suffers D3 mortal wounds. If one or more enemy models are destroyed as a result of these mortal wounds, that enemy unit must take a Battle-shock test.
 
 #### Unit Composition
@@ -1445,9 +1700,14 @@ T'AU EMPIRE
 | melee | -- | Close combat weapon | -- | Melee | 2 | 3+ | 4 | 0 | 1 |
 | melee | -- | Krootox fists | EXTRA ATTACKS | Melee | 4 | 3+ | 6 | -1 | 2 |
 
+#### Wargear options
+- Any number of models can each have their repeater cannon replaced with 1 tanglecannon.
+
+#### Core Abilities
+- Scouts 7"
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 7"
 - Kroot Packmates: Once per turn, in your opponent's Shooting phase, when a friendly KROOT INFANTRY unit within 6" of this unit is selected as the target of an attack, one unit from your army with this ability can use it. If it does, after that enemy unit has finished making its attacks, that unit with this ability can shoot as if it were your Shooting phase, but when resolving those attacks it can only target that enemy unit (and only if it is an eligible target).
 
 #### Unit Composition
@@ -1489,13 +1749,23 @@ T'AU EMPIRE
 | ranged | -- | Twin T'au flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Thunderous footfalls | -- | Melee | 3 | 5+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's pulse driver cannon can be replaced with 1 pulse blast cannon.
+- This model's twin T'au flamer can be replaced with one of the following:
+  - 1 twin airbursting fragmentation projector
+  - 1 twin burst cannon
+
+#### Core Abilities
+- Deadly Demise D6+2
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+2
-- FACTION: For the Greater Good
 - Heavy Walker: Each time this model makes a Normal, Advance or Fall Back move, it can move over models (excluding TITANIC models) and terrain features that are 4" or less in height as if they were not there.
-  Support System: Each time this model makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
-  Titan-killer: Each time this model makes a ranged attack that targets a TITANIC or TOWERING unit, you can re-roll the Hit roll.
+- Support System: Each time this model makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
+- Titan-killer: Each time this model makes a ranged attack that targets a TITANIC or TOWERING unit, you can re-roll the Hit roll.
 
 #### Unit Composition
 - 1 Stormsurge
@@ -1538,10 +1808,22 @@ T'AU EMPIRE
 | ranged | -- | Tri-axis ion cannon - supercharge | blast hazardous | 36" | D6+3 | 4+ | 9 | -3 | 3 |
 | melee | -- | Crushing feet | -- | Melee | 6 | 5+ | 8 | -1 | 2 |
 
+#### Wargear options
+- This model's tri-axis ion cannon can be replaced with 1 fusion eradicator.
+- This model's fusion eradicator can be replaced with 1 tri-axis ion cannon.
+- This model's 3 pulse ordnance drivers can be replaced with one of the following:
+  - 2 nexus missile launchers
+  - 1 heavy rail cannon array and 1 fragmentation cluster shell launcher
+
+#### Core Abilities
+- Deadly Demise D6+3
+- Super-heavy Walker
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6+3, Super-heavy Walker
-- FACTION: For the Greater Good
 - Coordinated Strike: While this model is a Guided unit, each time it makes an attack that targets its Spotted unit, re-roll a Hit roll of 1.
 
 #### Unit Composition
@@ -1583,12 +1865,23 @@ T'AU EMPIRE
 | ranged | -- | Smart missile system | indirect fire | 30" | 3 | 4+ | 5 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's railgun can be replaced with 1 ion cannon.
+- This model's 2 twin pulse carbines can be replaced with one of the following:
+  - 2 accelerator burst cannons
+  - 2 smart missile systems
+- This model can be equipped with up to 2 seeker missiles.
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: For the Greater Good
 - Armour Hunter: Each time this model makes an attack that targets a MONSTER or VEHICLE, add 1 to the Hit roll.
-  Targeting Array: Each time this model is selected to shoot, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.
+- Targeting Array: Each time this model is selected to shoot, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.
 
 #### Unit Composition
 - 1 Hammerhead Gunship
@@ -1626,10 +1919,19 @@ T'AU EMPIRE
 | ranged | -- | Twin pulse carbine | twin-linked assault | 20" | 2 | 4+ | 5 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 2 | 5+ | 4 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their Piranha burst cannon can be replaced with 1 Piranha fusion blaster.
+- Any number of models can each be equipped with up to 2 seeker missiles.
+
+#### Core Abilities
+- Deadly Demise 1
+- Scouts 9"
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Scouts 9"
-- FACTION: For the Greater Good
 - Drone Harassment Tactics: At the end of your Movement phase, select one enemy unit within 12" of this unit; that enemy unit must take a Battle-shock test.
 
 #### Unit Composition
@@ -1669,12 +1971,21 @@ T'AU EMPIRE
 | ranged | -- | Smart missile system | indirect fire | 30" | 3 | 4+ | 5 | 0 | 1 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin pulse carbines can be replaced with one of the following:
+  - 2 accelerator burst cannons
+  - 2 smart missile systems
+
+#### Core Abilities
+- Deadly Demise D3
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3
-- FACTION: For the Greater Good
 - Velocity Tracker: Each time this model makes a ranged attack that targets a unit that can FLY, you can re-roll the Hit roll.
-  Targeting Array: Each time this unit is selected to shoot, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.
+- Targeting Array: Each time this unit is selected to shoot, you can re-roll one Hit roll or you can re-roll one Wound roll when resolving those attacks.
 
 #### Unit Composition
 - 1 Sky Ray Gunship
@@ -1712,12 +2023,25 @@ T'AU EMPIRE
 | ranged | -- | Twin smart missile system | indirect fire twin-linked | 30" | 4 | 4+ | 5 | 0 | 1 |
 | melee | -- | Crushing bulk | -- | Melee | 3 | 5+ | 6 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their heavy rail rifle replaced with 1 high-yield missile pods.
+- Any number of models can each be equipped with up to two of the following, but cannot take duplicates:
+  - 1 seeker missile
+  - 1 twin plasma rifle*
+  - 1 twin smart missile system*
+  - 1 weapon support system
+- Any number of models can each be equipped with up to two of the following, and can take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 missile drone
+  - 1 shield drone
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- FACTION: For the Greater Good
 - Advanced Armour: Models in this unit have the Feel No Pain 4+ ability against mortal wounds.
-
-#### Wargear Abilities
 - Weapon Support System: Each time the bearer makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
 
 #### Unit Composition
@@ -1757,12 +2081,24 @@ T'AU EMPIRE
 | ranged | -- | Plasma rifle | -- | 18" | 1 | 4+ | 8 | -3 | 3 |
 | melee | -- | Battlesuit fists | -- | Melee | 3 | 5+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their plasma rifle replaced with 1 missile pod.
+- Any number of models can each have their missile pod replaced with 1 plasma rifle.
+- Any number of models can be equipped with up to two of the following, but cannot take duplicates
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: For the Greater Good
 - Fireknife: Each time a model in this unit makes a ranged attack, re-roll a Hit roll of 1. If that attack targets a unit that is at its Starting Strength, you can re-roll the Hit roll instead.
-  Weapon Support System: Each time a model in this unit makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
+- Weapon Support System: Each time a model in this unit makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
 
 #### Unit Composition
 - 1 Crisis Fireknife Shas'vre
@@ -1797,12 +2133,24 @@ T'AU EMPIRE
 | ranged | -- | T'au flamer | ignores cover torrent | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Battlesuit fists | -- | Melee | 3 | 5+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can each have their burst cannon replaced with 1 T'au flamer.
+- Any number of models can each have their T'au flamer replaced with 1 burst cannon.
+- Any number of models can be equipped with up to two of the following, but cannot take duplicates
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: For the Greater Good
 - Starscythe: Each time a model in this unit makes a ranged attack (excluding attacks that target MONSTERS and VEHICLES), improve the Armour Penetration characteristic of that attack by 1.
-  Battlesuit Support System: This unit is eligible to shoot in a turn in which it Fell Back.
+- Battlesuit Support System: This unit is eligible to shoot in a turn in which it Fell Back.
 
 #### Unit Composition
 - 1 Crisis Starscythe Shas'vre
@@ -1836,10 +2184,20 @@ T'AU EMPIRE
 | ranged | -- | Fusion blaster | melta 2 | 12" | 1 | 4+ | 9 | -4 | D6 |
 | melee | -- | Battlesuit fists | -- | Melee | 3 | 5+ | 5 | 0 | 1 |
 
+#### Wargear options
+- Any number of models can be equipped with up to two of the following, but cannot take duplicates:
+  - 1 gun drone
+  - 1 marker drone
+  - 1 shield drone
+
+#### Core Abilities
+- Deep Strike
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deep Strike
-- FACTION: For the Greater Good
 - Sunforge: Each time a model in this unit makes a ranged attack that targets a MONSTER or VEHICLE unit, you can re-roll the Wound roll and you can re-roll the Damage roll.
 
 #### Unit Composition
@@ -1878,14 +2236,26 @@ T'AU EMPIRE
 | ranged | -- | Twin T'au flamer | ignores cover torrent twin-linked | 12" | D6 | N/A | 4 | 0 | 1 |
 | melee | -- | Ghostkeel fists | -- | Melee | 3 | 5+ | 6 | 0 | 2 |
 
+#### Wargear options
+- This model's fusion collider can be replaced with 1 cyclic ion raker.
+- This model's twin T'au flamer can be replaced with one of the following:
+  - 1 twin fusion blaster
+  - 1 twin burst cannon
+- This model can be equipped with one battlesuit support system.
+
+#### Core Abilities
+- Deadly Demise D3
+- Infiltrators
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Infiltrators, Lone Operative, Stealth
-- FACTION: For the Greater Good
 - Stealth Drones: Twice per battle, after an attack has been allocated to this model, you can change the Damage characteristic of that attack to 0.
   Designer's Note: Place two Stealth Drone tokens next to the unit, removing one each time this ability has been used.
-
-#### Wargear Abilities
 - Battlesuit Support System: The bearer is eligible to shoot in a turn in which it Fell Back but it loses the SMOKE keyword.
 
 #### Unit Composition
@@ -1930,13 +2300,24 @@ T'AU EMPIRE
 | ranged | -- | Twin smart missile system | indirect fire twin-linked | 30" | 3 | 4+ | 5 | 0 | 1 |
 | melee | -- | Riptide fists | -- | Melee | 6 | 5+ | 6 | 0 | 2 |
 
+#### Wargear options
+- This model's heavy burst cannon can be replaced with 1 ion accelerator.
+- This model's twin plasma rifles can be replaced with one of the following:
+  - 1 twin fusion blaster
+  - 1 twin smart missile system
+- This model can be equipped with up to 2 missile drones.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- For the Greater Good
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: For the Greater Good
 - Battlesuit Support System: The bearer is eligible to shoot in a turn in which it Fell Back.
-  Nova Charge: Once per battle, when this unit is selected to shoot in your Shooting phase, select one ranged weapon equipped by this model. Until the end of the phase, that weapon has the [DEVASTATING WOUNDS] ability.
-  Weapon Support System: Each time the bearer makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
+- Nova Charge: Once per battle, when this unit is selected to shoot in your Shooting phase, select one ranged weapon equipped by this model. Until the end of the phase, that weapon has the [DEVASTATING WOUNDS] ability.
+- Weapon Support System: Each time the bearer makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
 
 #### Unit Composition
 - 1 Riptide Battlesuit
@@ -1971,21 +2352,27 @@ T'AU EMPIRE
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | ranged | -- | Drone defenders | assault twin-linked | 20" | 8 | 5+ | 5 | 0 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 11
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 11
 - Droneport: Each time this FORTIFICATION is selected to shoot, its drone defender's weapon will target and resolve attacks against every enemy unit that is an eligible target to this FORTIFICATION.
-  Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
+- Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
-  Tidewall Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this Fortification, that model has the Benefit of Cover against that attack.
+- Tidewall Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this Fortification, that model has the Benefit of Cover against that attack.
+
+#### Transport
+- This model has a transport capacity of 11 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models.
 
 #### Unit Composition
 - 1 Tidewall Droneport
   This model is equipped with: drone defenders.
-
-#### Transport
-- This model has a transport capacity of 11 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models.
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **85 pts**
@@ -2011,20 +2398,26 @@ T'AU EMPIRE
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | ranged | -- | Supremacy railgun | devastating wounds twin-linked | 72" | 1 | 5+ | 20 | -5 | D6+6 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 11
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 11
 - Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
-  Tidewall Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Tidewall Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+
+#### Transport
+- This model has a transport capacity of 11 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models.
 
 #### Unit Composition
 - 1 Tidewall Gunrig
   This model is equipped with: supremacy railgun.
-
-#### Transport
-- This model has a transport capacity of 11 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models.
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **90 pts**
@@ -2050,21 +2443,27 @@ T'AU EMPIRE
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
+#### Wargear options
+- This model can be equipped with 1 Tidewall defence platform.
+
+#### Core Abilities
+- Deadly Demise D3
+- Firing Deck 20
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D3, Firing Deck 20
 - Fortification: While an enemy unit is only within Engagement Range of one or more FORTIFICATIONS from your army:
   - That unit can still be selected as the target of ranged attacks, but each time such an attack is made, unless it is made with a Pistol, subtract 1 from the Hit roll.
   - Models in that unit do not need to take Desperate Escape tests due to Falling Back while Battle-shocked, except for those that will move over enemy models when doing so.
-  Tidewall Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
-  Tidewall Defence Platform: If equipped with a Tidewall defence platform, this FORTIFICATION has a Wounds characteristic of 15.
+- Tidewall Cover: Each time a ranged attack is allocated to a model, if that model is not fully visible to every model in the attacking unit because of this FORTIFICATION, that model has the Benefit of Cover against that attack.
+- Tidewall Defence Platform: If equipped with a Tidewall defence platform, this FORTIFICATION has a Wounds characteristic of 15.
+
+#### Transport
+- This model has a transport capacity of 11 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models. If this model is equipped with a Tidewall defence platform, it has a transport capacity of 22 T'au Infantry models instead.
 
 #### Unit Composition
 - 1 Tidewall Shieldline
   This model can be equipped with 1 Tidewall defence platform
-
-#### Transport
-- This model has a transport capacity of 11 T'AU EMPIRE INFANTRY models. It cannot transport BATTLESUIT, KROOT or VESPID STINGWINGS models. If this model is equipped with a Tidewall defence platform, it has a transport capacity of 22 T'au Infantry models instead.
 
 #### Points
 - YOUR UNIT COSTS: 1 model -- **85 pts**
@@ -2078,6 +2477,8 @@ T'AU EMPIRE
 ## Detachments
 
 ### Kauyon (2 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Patient Hunter
 - During the third, fourth and fifth battle rounds, ranged weapons equipped by T'AU EMPIRE models from your army have the [SUSTAINED HITS 1] ability. During the third, fourth and fifth battle rounds, while a unit is a Guided unit (see For the Greater Good), each time a ranged attack is made by a model in that unit that targets a Spotted unit, you can ignore any or all modifiers to that attack's Ballistic skill characteristics and/or all modifiers to the Hit roll.
 
@@ -2135,6 +2536,8 @@ T'AU EMPIRE
   RESTRICTIONS: You cannot target a unit that is within Engagement Range of one or more enemy units.
 
 ### Mont'ka (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Killing Blow
 - During the first, second and third battle rounds, ranged weapons equipped by T'AU EMPIRE models from your army have the [ASSAULT] ability. During the first, second and third battle rounds, while a unit is a Guided unit, its ranged weapons have the [LETHAL HITS] ability.
 
@@ -2188,8 +2591,10 @@ T'AU EMPIRE
   EFFECT: Until the end of the phase, each time an attack is allocated to your unit, subtract 1 from the Damage characteristic of that attack.
 
 ### Retaliation Cadre (3 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Bonded Heroes
-- Each time a T'AU EMPIRE BATTLESUIT model from your army makes a ranged attack that targets a unit within 12", improve the Strength characteristic of that attack by 1. If that attack targets a unit within 9", improve the Armour Penetration characteristic of that attack by 1 as well.
+- Each time a T'AU EMPIRE BATTLESUIT model from your army makes a ranged attack that targets a unit within 12", improve the Strength characteristic of that attack by 1. If that attack targets a unit within 8", improve the Armour Penetration characteristic of that attack by 1 as well.
 
 #### Enhancements
 - Internal Grenade Racks 20 pts
@@ -2241,6 +2646,8 @@ T'AU EMPIRE
   EFFECT: That enemy unit must immediately take a Battle-shock test and you must roll one D6 for each model in that enemy unit: for each 6, that enemy unit suffers 1 mortal wound.
 
 ### Kroot Hunting Pack (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Hunter's Instincts
 - Each time a KROOT model from your army makes an attack, add 1 to the Hit roll if the target of that attack is below its Starting Strength, and add 1 to the Wound roll as well if the target of that attack is Below Half-strength.
 #### Detachment rule -- Skirmish Fighters
@@ -2298,6 +2705,8 @@ T'AU EMPIRE
   EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18".
 
 ### Advanced Acquisition Cadre (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Expert Fieldcraft
 - In your Shooting phase, when a friendly PATHFINDER TEAM/STEALTH BATTLESUITS unit is selected to shoot, those ranged attacks do not prevent your unit from being hidden.
 
@@ -2328,6 +2737,8 @@ T'AU EMPIRE
   EFFECT: Your unit has +1 Sv.
 
 ### Auxiliary Cadre (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Integrated Command Structure
 - Friendly KROOT/VESPID STINGWINGS units have the following ability:
   Harnessed Alien Instincts: In your Shooting phase, this unit can select one visible enemy unit within 12". That enemy unit is prey-marked:
@@ -2363,6 +2774,8 @@ T'AU EMPIRE
   EFFECT: Your unit's ranged attacks that target a unit within 9" of a friendly KROOT/VESPID STINGWINGS unit have [LETHAL HITS].
 
 ### Experimental Prototype Cadre (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Superior Craftsmanship
 - Friendly BATTLESUIT CHARACTER units' ranged attacks have +6" R.
   This detachment has the BATTLESUIT tag and cannot be taken with another BATTLESUIT detachment.
@@ -2370,10 +2783,16 @@ T'AU EMPIRE
 #### Enhancements
 - Thermoneutronic Projector 15 pts
 - BATTLESUIT model only. In the Declare Battle Formations step, select one of this model's T'au Flamer weapons. That weapon's attacks have:
+  - +2 S
+  - +1 AP and D.
 - Plasma Accelerator Rifle 20 pts
 - BATTLESUIT model only. In the Declare Battle Formations step, select one of this model's Plasma Rifle weapons. That weapon's attacks have:
+  - +2 S
+  - +1 A, AP and D.
 - Supernova Launcher 15 pts
 - BATTLESUIT model only. In the Declare Battle Formations step, select one of this model's Airbursting Fragmentation Projector weapons. That weapon's attacks have:
+  - +3 S
+  - +1 AP and D.
 
 #### Stratagems
 - EXPERIMENTAL AMMUNITION

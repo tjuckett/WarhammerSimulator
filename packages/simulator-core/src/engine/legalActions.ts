@@ -104,7 +104,7 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
 
 export function phaseCanAdvance(state: BattleState, side: Side, rules: RulesEdition): boolean {
   if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'end') return false;
-  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length || state.pendingFightMovement) return false;
+  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length || state.pendingCombatResolution || state.pendingFightMovement) return false;
   if (hasPendingRequiredPhaseStepActions(state)) return false;
   if (state.phase === 'movement'
     && state.phaseStep !== PHASE_STEP.MovementEnd

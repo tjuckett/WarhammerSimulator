@@ -1,6 +1,7 @@
 import React from 'react';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type UnitProfile } from '@warhammer-simulator/core/types/army';
+import type { RuleDefinition } from '@warhammer-simulator/core/types/catalog';
 import { DEPLOYMENT_STRATEGIES, type DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { canDeployOutsideDeploymentZone, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
@@ -38,6 +39,8 @@ interface Props {
   strategy: DeploymentStrategy;
   showDeploymentControls?: boolean;
   unitPoints?: (unit: UnitProfile, unitIndex: number) => number | undefined;
+  enhancementOptionsForUnit?: (unit: UnitProfile) => RuleDefinition[];
+  enhancementMaximumSelectionsForId?: (enhancementId: string) => number | undefined;
   savedArmies?: SavedArmyRecord[];
   onLoadSavedArmy?: (id: string) => void | Promise<void>;
   playDeployment?: boolean;
@@ -67,6 +70,8 @@ export function ArmyPanel({
   strategy,
   showDeploymentControls = true,
   unitPoints,
+  enhancementOptionsForUnit,
+  enhancementMaximumSelectionsForId,
   savedArmies = [],
   onLoadSavedArmy,
   playDeployment = false,
@@ -136,9 +141,25 @@ export function ArmyPanel({
   function changeUnit(unitIndex: number, nextUnit: UnitProfile) {
     if (!army) return;
     const previousUnit = army.units[unitIndex];
-    const normalizedUnit = previousUnit?.baseModelCount !== nextUnit.baseModelCount
+    const resizedUnit = previousUnit?.baseModelCount !== nextUnit.baseModelCount
       ? { ...nextUnit, modelBases: undefined }
       : nextUnit;
+    const normalizedUnit = resizedUnit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
+      && resizedUnit.deployment.transportUnitId
+      ? {
+        ...resizedUnit,
+        deployment: { ...resizedUnit.deployment, transportName: undefined },
+      }
+      : resizedUnit;
+    if (normalizedUnit.selectedEnhancementId !== previousUnit?.selectedEnhancementId
+      && normalizedUnit.selectedEnhancementId) {
+      const maximumSelections = Math.max(
+        1,
+        enhancementMaximumSelectionsForId?.(normalizedUnit.selectedEnhancementId) ?? 1,
+      );
+      const selectedCount = army.units.filter(unit => unit.selectedEnhancementId === normalizedUnit.selectedEnhancementId).length;
+      if (selectedCount >= maximumSelections) return;
+    }
     const previousDeployment = previousUnit?.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport ? previousUnit.deployment : undefined;
     const nextDeployment = normalizedUnit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport ? normalizedUnit.deployment : undefined;
     const transportChanged = previousDeployment?.transportUnitId !== nextDeployment?.transportUnitId
@@ -332,7 +353,9 @@ export function ArmyPanel({
             color={color}
             editable={!battleState}
             showDeploymentControls={showDeploymentControls}
+            showUnitSizeControls={!playDeployment}
             unitPoints={unitPoints}
+            enhancementOptionsForUnit={enhancementOptionsForUnit}
             selectedUnitIndex={selectedInspectedProfileIndex}
             onInspectUnit={onInspectProfile ? unitIndex => onInspectProfile(side, unitIndex) : undefined}
             onChangeUnit={changeUnit}

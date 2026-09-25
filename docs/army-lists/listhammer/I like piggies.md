@@ -17,7 +17,7 @@ Ghazghkull Thraka (235 points)
 • 1x Makari
 • 1x Makari’s stabba
 
-Painboy (115 points)
+Painboy (45 points)
 * Attached as: Support (Character)
 • 1x Grot Orderly
 1x Power klaw
@@ -138,12 +138,10 @@ Gretchin (45 points)
 • 1x Runtherd tools
 1x Slugga
 
-Lootas (50 points)
-• 1x Spanner
-• 1x Close combat weapon
-1x Kustom mega-blasta
-• 4x Loota
-• 4x Close combat weapon
-4x Deffgun
+Flash Gitz (105 points)
+• 1x Kaptin
+• 4x Flash Git
+• 5x Choppa
+5x Snazzgun
 
 Exported from listhammer.info: https://listhammer.info/list/3c91c6b94e65bc5ee0

@@ -424,7 +424,7 @@ export function nextBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep
 export function advanceBattlePhase(state: BattleState): Extract<BattlePhaseTransition, { kind: 'phase' }> | null {
   // A pending event-backed combat opportunity must be resolved or declined
   // before the battle can leave its current phase/step.
-  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length) return null;
+  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length || state.pendingCombatResolution) return null;
   const transition = nextBattlePhase(state);
   if (!transition || transition.kind !== 'phase') return null;
   const changesPhase = transition.from.phase !== transition.to.phase;

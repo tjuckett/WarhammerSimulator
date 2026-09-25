@@ -2,7 +2,7 @@
 // Shared attack resolution remains in manualCombat; this module owns when and
 // how Fight can call it.
 // @ts-nocheck
-import { PHASE_STEP, type BattleState, type BattleUnit, type FightMovementIntent, type LogEntry, type PhaseStepAction, type Position, type Side } from '../../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type FightMovementIntent, type LogEntry, type PendingCombatContinuation, type PhaseStepAction, type Position, type Side } from '../../types/battle';
 import type { UnitProfile, WeaponProfile } from '../../types/army';
 import type { RulesEdition } from '../rulesEngine';
 import { COHERENCY_VERTICAL_RANGE } from '../coherency';
@@ -515,7 +515,10 @@ export function passPlayFight(
   rules: RulesEdition,
   context: FightPhaseActionContext,
 ): BattleState {
-  if (!playFightSideCanPass(state, side, rules, context)) return state;
+  // A staged hit/wound/save result is still an active combat decision.  Do
+  // not let the optional Fight pass boundary consume it and enter
+  // Consolidation before the defender has acknowledged the remaining rolls.
+  if (state.pendingCombatResolution || !playFightSideCanPass(state, side, rules, context)) return state;
   const next = context.clone(state);
   next.fightPassedSides = [...new Set([...(next.fightPassedSides ?? []), side])];
   next.lastFightSelectionSide = side;
@@ -900,6 +903,7 @@ export function fightPlayUnitWeapons(
   allocations: PlayMeleeAttackAllocation[],
   rules: RulesEdition,
   context: FightPhaseActionContext,
+  options: { interactiveStage?: boolean } = {},
 ): BattleState {
   const reject = (_reason: string, _details: Record<string, unknown> = {}) => state;
   const pending = pendingCombatActionFor(state, 'fight', unitId, side);
@@ -975,6 +979,8 @@ export function fightPlayUnitWeapons(
   const fightingUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!fightingUnit) return reject('fighter disappeared while preparing resolution', { unitId, side });
   const logs: LogEntry[] = [context.log(next, side, fightingUnit.profile.name, `${fightingUnit.profile.name} locks all melee targets before rolling:`, 'fight')];
+  const stagedContinuations: Array<{ targetUnitId: string; weaponIndex: number; continuation: PendingCombatContinuation; stage: 'hits' }> = [];
+  if (options.interactiveStage !== false) next.pendingCombatResolution = undefined;
   for (const selected of selectableWeapons) {
     const entries = grouped.get(selected.weaponIndex)!;
     const assignedModelIndexes = new Set<number>();
@@ -998,9 +1004,41 @@ export function fightPlayUnitWeapons(
         modelIndexes,
         selectedTargetCount: entries.length,
         result,
+        interactiveStage: options.interactiveStage !== false,
       }));
+      const staged = next.pendingCombatResolution?.continuation;
+      if (options.interactiveStage !== false && staged) {
+        stagedContinuations.push({
+          targetUnitId: target.id,
+          weaponIndex: selected.weaponIndex,
+          continuation: staged,
+          stage: 'hits',
+        });
+        next.pendingCombatResolution = undefined;
+      }
       manualCombat.appendCombatWeaponResult(next, fightingUnit, result);
     }
+  }
+  if (stagedContinuations.length > 0) {
+    const first = stagedContinuations[0];
+    const firstResult = next.lastShootingResolution?.weapons.find(result =>
+      result.weaponIndex === first.weaponIndex && result.targetUnitId === first.targetUnitId,
+    );
+    const hitGroups = firstResult?.groups.filter(group => group.kind === 'hit') ?? [];
+    const rolls = hitGroups.flatMap(group => group.rolls);
+    next.pendingCombatResolution = {
+      kind: 'fight',
+      attackerUnitId: fightingUnit.id,
+      attackerSide: fightingUnit.side,
+      targetUnitId: first.targetUnitId,
+      weaponIndex: first.weaponIndex,
+      stage: 'hits',
+      rolls,
+      target: hitGroups[0]?.target,
+      rollIds: rolls.map((_roll, index) => `fight:${fightingUnit.id}:hits:${index}`),
+      continuation: first.continuation,
+      continuationQueue: stagedContinuations.slice(1),
+    };
   }
   if (!logs.length) return reject('resolution produced no combat log entries', { unitId, allocations });
   fightingUnit.activated = true;
@@ -1080,6 +1118,7 @@ export function fightPlayUnitWeapon(
         attackCountOverride: split.attacks,
         selectedTargetCount: normalizedTargetSplits.length,
         result,
+        interactiveStage: false,
       });
       manualCombat.appendCombatWeaponResult(next, fightingUnit, result);
       logs.push(...attackLogs); madeAttacks = madeAttacks || attackLogs.length > 0;
@@ -1094,6 +1133,8 @@ export function fightPlayUnitWeapon(
         deferCasualties: true,
         modelIndexes,
         result,
+        interactiveStage: selectedMeleeWeapons.length === 1
+          && context.attachedComponents(next, fightingUnit).length <= 1,
       });
       manualCombat.appendCombatWeaponResult(next, fightingUnit, result);
       logs.push(...attackLogs);

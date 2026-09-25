@@ -1,4 +1,5 @@
 import type {
+  PendingCombatResolution,
   ShootingHitCalculation,
   ShootingHitModifier,
   ShootingHitPreview,
@@ -27,4 +28,8 @@ export interface CombatAttackResolutionOptions {
   selectedTargetCount?: number;
   modelIndexes?: number[];
   result?: ShootingWeaponResult;
+  /** Interactive play can stop after a roll stage and resume from typed state. */
+  interactiveStage?: boolean;
+  resumeFrom?: 'wounds' | 'saves' | 'damage';
+  continuation?: PendingCombatResolution['continuation'];
 }

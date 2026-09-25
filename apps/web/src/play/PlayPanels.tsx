@@ -1,10 +1,11 @@
 import { type ReactNode, useState } from 'react';
 import { Box, Button, CircularProgress, TextField, Tooltip, Typography } from '@mui/material';
-import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
+import type { BattleState, BattleUnit, CombatRerollSelection, PendingCombatResolution, PendingFeelNoPainReroll } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { estimateSequentialModelEquivalentLosses, modelGroupsForCombatEstimate } from '@warhammer-simulator/core/engine/combatEstimation';
 import { battleUnitsBaseEdgeDistance, playShootingWeaponModelCount, type CombatHitPreview, type FiringDeckSelection, type PlayChargeTargetOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
+import { combatResolutionGroupMatchesStage } from '@warhammer-simulator/core/engine/combatResolutionCursor';
 import type { ShootingTargetVisibility } from './shootingSession';
 import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
 import {
@@ -178,13 +179,21 @@ function cachedCombatEstimateGroups(unit: BattleUnit) {
   return groups;
 }
 
-export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = [], selectedTargetId, onTargetSelect, onDone, lastAllocationOutcome }: { unit: BattleUnit; result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null; shooter?: BattleUnit | null; targetIds?: string[]; selectedTargetId?: string; onTargetSelect?: (targetId: string) => void; onDone?: () => void; lastAllocationOutcome?: { modelIndex: number; damage: number; killedModels: number } | null }) {
+export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = [], selectedTargetId, resultStage, advanceLabel, advanceDisabled = false, combatKind = 'shooting', onSelectCombatDie, onAdvance, onTargetSelect, onDone, lastAllocationOutcome, showFeelNoPainResults = false, feelNoPainResultTargetUnitId, feelNoPainReview }: { unit: BattleUnit; result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null; shooter?: BattleUnit | null; targetIds?: string[]; selectedTargetId?: string; resultStage?: PendingCombatResolution['stage']; advanceLabel?: string; advanceDisabled?: boolean; combatKind?: CombatRerollSelection['kind']; onSelectCombatDie?: (selection: CombatRerollSelection, roll: number, rollType: CommandRerollRollType) => void; onAdvance?: () => void; onTargetSelect?: (targetId: string) => void; onDone?: () => void; lastAllocationOutcome?: { modelIndex: number; damage: number; killedModels: number; feelNoPain?: { target: number; rolls: number[]; ignored: number } } | null; showFeelNoPainResults?: boolean; feelNoPainResultTargetUnitId?: string; feelNoPainReview?: PendingFeelNoPainReroll }) {
   const label = pendingDamageLabel(unit);
   const feelNoPain = bestFeelNoPain(unit);
-  const hasResultForUnit = !!result?.weapons.some(weapon => weapon.targetUnitId === unit.id);
-  if (!label && !hasResultForUnit) return null;
+  const hasResultForUnit = !!result?.weapons.some(weapon => weapon.targetUnitId === unit.id
+    || (showFeelNoPainResults && weapon.targetUnitId === feelNoPainResultTargetUnitId));
+  if (!label && !hasResultForUnit && !(showFeelNoPainResults && feelNoPainReview)) return null;
   const pendingAllocations = unit.pendingDamageAllocations ?? [];
+  const damageStage = resultStage === 'damage';
+  const showDamageSection = damageStage || (resultStage === undefined && !!label);
   const nextAllocation = pendingAllocations[0];
+  const resultHasFeelNoPain = !!result?.weapons.some(weapon =>
+    (weapon.targetUnitId === unit.id
+      || (showFeelNoPainResults && weapon.targetUnitId === feelNoPainResultTargetUnitId))
+      && weapon.groups.some(group => group.kind === 'feel-no-pain'),
+  );
   const damageByWeapon = new Map<string, typeof pendingAllocations>();
   for (const allocation of pendingAllocations) {
     const weapon = allocation.source ?? 'Unattributed attack';
@@ -207,7 +216,45 @@ export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = 
       display: 'grid',
       gap: 0.35,
     }}>
-      <StructuredShootingResultSummary result={result} section="defender" />
+      {(showFeelNoPainResults || (resultStage && resultStage !== 'hits' && resultStage !== 'wounds')) && result?.weapons
+        .filter(weaponResult => weaponResult.targetUnitId === unit.id
+          || (showFeelNoPainResults && weaponResult.targetUnitId === feelNoPainResultTargetUnitId))
+        .map(weaponResult => {
+          const weaponProfile = shooter?.profile.weapons[weaponResult.weaponIndex];
+          const damageRequiresRoll = !weaponProfile
+            || !/^\d+$/i.test(String(weaponProfile.damage).trim());
+          const hasFeelNoPainResult = showFeelNoPainResults
+            && weaponResult.groups.some(group => group.kind === 'feel-no-pain');
+          if (resultStage === 'damage' && !damageRequiresRoll && !hasFeelNoPainResult) return null;
+          return (
+            <Box key={`${weaponResult.weaponIndex}:${weaponResult.targetUnitId}:save-reroll`} sx={{ display: 'grid', gap: 0.2 }}>
+              <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800 }}>
+                {weaponResult.weaponName}
+              </Typography>
+              <ShootingTargetDice
+                result={result}
+                weaponIndex={weaponResult.weaponIndex}
+                targetId={weaponResult.targetUnitId}
+                stage={resultStage}
+                showFeelNoPainResults={showFeelNoPainResults}
+                resultTargetId={feelNoPainResultTargetUnitId}
+                selectionTargetId={feelNoPainReview?.targetUnitId}
+                combatKind={combatKind}
+                attackerUnitId={shooter?.id ?? ''}
+                damageRerollable={damageRequiresRoll}
+                onSelectDie={shooter ? onSelectCombatDie : undefined}
+              />
+            </Box>
+          );
+        })}
+      {showFeelNoPainResults && feelNoPainReview && !resultHasFeelNoPain && (
+        <FeelNoPainReviewDice
+          review={feelNoPainReview}
+          combatKind={combatKind}
+          attackerUnitId={shooter?.id ?? feelNoPainReview.attackerUnitId}
+          onSelectDie={onSelectCombatDie}
+        />
+      )}
       {targetIds.length > 1 && onTargetSelect && (
         <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
           {targetIds.map(targetId => {
@@ -226,10 +273,12 @@ export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = 
           })}
         </Box>
       )}
-      <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
-        Damage to apply
-      </Typography>
-      {[...damageByWeapon.entries()].map(([weapon, damages]) => (
+      {showDamageSection && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
+          Damage to apply
+        </Typography>
+      )}
+      {showDamageSection && [...damageByWeapon.entries()].map(([weapon, damages]) => (
         <Box key={weapon} sx={{ display: 'grid', gap: 0.25 }}>
           <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
             {weapon}
@@ -252,19 +301,24 @@ export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = 
           </Box>
         </Box>
       ))}
-      {!damageByWeapon.size && (
+      {showDamageSection && !damageByWeapon.size && (
         <Typography variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
           {label ?? 'No damage to apply.'}
         </Typography>
       )}
-      {!label && onDone && (
+      {showDamageSection && !label && !advanceLabel && onDone && (
         <Button size="small" variant="contained" onClick={onDone} sx={{ justifySelf: 'start' }}>
           Done
         </Button>
       )}
+      {onAdvance && advanceLabel && (
+        <Button size="small" variant="contained" color="primary" disabled={advanceDisabled} onClick={onAdvance} sx={{ justifySelf: 'start' }}>
+          {advanceLabel}
+        </Button>
+      )}
       {feelNoPain !== null && (
         <Typography variant="caption" sx={{ color: uiTokens.color.combat.save, fontWeight: 800, lineHeight: 1.2 }}>
-          Feel No Pain {feelNoPain}+ active: one roll is made for each point of pending damage when you allocate it. Only damage not ignored is applied.
+          Feel No Pain {feelNoPain}+ active: the roll is made after you allocate this damage. Only damage not ignored is applied.
         </Typography>
       )}
       {lastAllocationOutcome && (
@@ -274,7 +328,12 @@ export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = 
             : `Last allocation: Model ${lastAllocationOutcome.modelIndex + 1} ignored all damage.`}
         </Typography>
       )}
-      {label && (
+      {lastAllocationOutcome?.feelNoPain && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.combat.save, fontWeight: 800, lineHeight: 1.2 }}>
+          Feel No Pain {lastAllocationOutcome.feelNoPain.target}+: [{lastAllocationOutcome.feelNoPain.rolls.join(', ')}] → {lastAllocationOutcome.feelNoPain.ignored} ignored
+        </Typography>
+      )}
+      {showDamageSection && label && (
         <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
           {forcedModel} Each hit's damage applies to one model; excess damage does not carry over.
         </Typography>
@@ -283,56 +342,196 @@ export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = 
   );
 }
 
+function FeelNoPainReviewDice({ review, combatKind, attackerUnitId, onSelectDie }: {
+  review: PendingFeelNoPainReroll;
+  combatKind: CombatRerollSelection['kind'];
+  attackerUnitId: string;
+  onSelectDie?: (selection: CombatRerollSelection, roll: number, rollType: CommandRerollRollType) => void;
+}) {
+  return (
+    <Box sx={{ display: 'grid', gap: 0.2 }}>
+      <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800 }}>
+        Feel No Pain ({review.target}+) - {review.ignored} ignored
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 0.25, flexWrap: 'wrap' }}>
+        {review.rolls.map((roll, rollIndex) => {
+          const selection = onSelectDie && review.groupIndex >= 0 && review.weaponIndex >= 0
+            ? {
+              kind: combatKind,
+              attackerUnitId,
+              weaponIndex: review.weaponIndex,
+              targetUnitId: review.targetUnitId,
+              groupKind: 'feel-no-pain' as const,
+              groupIndex: review.groupIndex,
+              rollIndex,
+            } satisfies CombatRerollSelection
+            : null;
+          const success = roll >= review.target;
+          const sx = {
+            minWidth: 18,
+            px: 0.35,
+            py: 0,
+            border: `2px solid ${success ? '#2a5c2a' : '#3a1818'}`,
+            borderRadius: 0.75,
+            background: success ? '#0d260d' : '#1a0d0d',
+            color: success ? '#78d786' : '#664444',
+            textAlign: 'center' as const,
+            fontSize: 11,
+            fontWeight: 700,
+            lineHeight: 1.6,
+          };
+          return selection ? (
+            <Button key={`${roll}-${rollIndex}`} size="small" variant="text" title="Click to Command Re-roll this die" onClick={() => onSelectDie(selection, roll, 'feel-no-pain')} sx={sx}>{roll}</Button>
+          ) : (
+            <Box key={`${roll}-${rollIndex}`} sx={sx}>{roll}</Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+}
+
 function ShootingTargetDice({
   result,
   weaponIndex,
   targetId,
+  stage,
+  showFeelNoPainResults = false,
+  resultTargetId,
+  selectionTargetId,
+  combatKind,
+  attackerUnitId,
+  damageRerollable,
+  onSelectDie,
 }: {
   result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null;
   weaponIndex: number;
   targetId: string;
+  stage?: PendingCombatResolution['stage'];
+  showFeelNoPainResults?: boolean;
+  resultTargetId?: string;
+  selectionTargetId?: string;
+  combatKind: CombatRerollSelection['kind'];
+  attackerUnitId: string;
+  damageRerollable?: boolean;
+  onSelectDie?: (selection: CombatRerollSelection, roll: number, rollType: CommandRerollRollType) => void;
 }) {
   // Large Fight/Shooting activations can contain hundreds of rolls. The
   // complete typed result is retained for resolution and history, but
   // mounting a MUI element for every die makes the popup take seconds to
   // paint. Keep a representative, ordered sample alongside the exact total.
   const maxRenderedDice = 48;
-  const weaponResult = result?.weapons.find(candidate => candidate.weaponIndex === weaponIndex && candidate.targetUnitId === targetId);
+  const weaponResult = result?.weapons.find(candidate => candidate.weaponIndex === weaponIndex && candidate.targetUnitId === targetId)
+    ?? (showFeelNoPainResults && resultTargetId
+      ? result.weapons.find(candidate => candidate.weaponIndex === weaponIndex && candidate.targetUnitId === resultTargetId)
+      : undefined);
   if (!weaponResult) return null;
   // The engine can resolve model subsets independently (for example when
   // cover produces multiple pools). Preserve those typed pools, but display
   // them by attack stage rather than execution order: Hit pools first, then
   // Wound pools. Without this a valid split reads "Hit, Wound, Hit".
   const groups = weaponResult.groups
-    .filter(group => group.kind === 'hit' || group.kind === 'wound')
+    .filter(group => {
+      // Feel No Pain is generated when a pending damage packet is allocated
+      // to a model. Do not expose a stale/legacy FNP group while the packet
+      // is still waiting for that allocation.
+      if (group.kind === 'feel-no-pain' && !showFeelNoPainResults) return false;
+      if (stage === 'damage' && group.kind === 'damage' && !damageRerollable) return false;
+      // Once the core has recorded the allocation, keep its FNP dice visible
+      // even if the combat cursor has moved to a terminal/legacy stage.
+      if (showFeelNoPainResults && group.kind === 'feel-no-pain') return true;
+      if (!stage) return group.kind === 'hit' || group.kind === 'wound';
+      return combatResolutionGroupMatchesStage(group, stage);
+    })
     .sort((left, right) => (left.kind === 'hit' ? 0 : 1) - (right.kind === 'hit' ? 0 : 1));
   if (!groups.length) return null;
   return (
     <Box sx={{ display: 'grid', gap: 0.25, mt: 0.25, pl: 0.5 }}>
       {groups.map((group, groupIndex) => {
-        const displayedRolls = orderedDice(group.rolls).slice(0, maxRenderedDice);
-        const successCount = group.target !== undefined
+        const validRolls = group.rolls
+          .map((roll, rollIndex) => ({ roll, rollIndex }))
+          .filter(({ roll }) => Number.isFinite(roll));
+        const displayedRolls = validRolls
+          .sort((left, right) => right.roll - left.roll)
+          .slice(0, maxRenderedDice);
+        const successCount = group.successes ?? (group.target !== undefined
           ? group.rolls.filter(roll => roll >= group.target).length
-          : group.successes;
-        const label = group.kind === 'hit' ? 'Hit' : 'Wound';
+          : undefined);
+        const label = group.kind === 'hit'
+          ? 'Hit'
+          : group.kind === 'wound'
+            ? 'Wound'
+            : group.kind === 'save'
+              ? 'Save'
+              : group.kind === 'feel-no-pain'
+                ? 'Feel No Pain'
+                : 'Damage';
+        const saveTargetLabel = group.kind === 'save' && group.target !== undefined
+          ? group.target > 6 ? ' (no save)' : ` (${group.target}+)`
+          : '';
+        const feelNoPainTargetLabel = group.kind === 'feel-no-pain' && group.target !== undefined
+          ? ` (${group.target}+)`
+          : '';
+        const resultCountLabel = successCount !== undefined
+          ? group.kind === 'feel-no-pain'
+            ? ` - ${successCount} ignored`
+            : ` - ${successCount} ${group.kind === 'hit' ? 'hits' : group.kind === 'wound' ? 'wounds' : group.kind === 'save' ? 'saves' : 'results'}`
+          : '';
+        const sustainedLabel = group.kind === 'hit' && (group.bonusHits ?? 0) > 0
+          ? ` (+${group.bonusHits} Sustained Hits)`
+          : '';
+        const autoHitLabel = group.kind === 'hit' && (group.autoSuccesses ?? 0) > 0
+          ? ` (${group.autoSuccesses} auto-hit${group.autoSuccesses === 1 ? '' : 's'})`
+          : '';
         return (
           <Box key={`${group.kind}-${groupIndex}`} sx={{ display: 'flex', gap: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
             <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontSize: 10, fontWeight: 700 }}>
-              {label}{successCount !== undefined ? ` - ${successCount} ${group.kind === 'hit' ? 'hits' : 'wounds'}` : ''}
+              {label}{saveTargetLabel}{feelNoPainTargetLabel}{resultCountLabel}{sustainedLabel}{autoHitLabel}
             </Typography>
             <Box sx={{ display: 'flex', gap: 0.25, flexWrap: 'wrap' }}>
+              {(group.autoSuccesses ?? 0) > 0 && (
+                <Box title="Auto-hit: no hit die was rolled" sx={{ minWidth: 18, px: 0.35, border: '2px solid #2a5c2a', borderRadius: 0.75, background: '#0d260d', color: '#78d786', textAlign: 'center', fontSize: 10, fontWeight: 800 }}>
+                  Auto-hit
+                </Box>
+              )}
               {displayedRolls.map((roll, rollIndex) => {
-                const success = group.target !== undefined && roll >= group.target;
-                const critical = roll === 6;
-                return (
-                  <Box key={`${roll}-${rollIndex}`} sx={{ minWidth: 18, px: 0.35, border: `1px solid ${critical ? '#7040a0' : success ? '#2a5c2a' : '#3a1818'}`, borderRadius: 0.75, background: critical ? '#241238' : success ? '#0d260d' : '#1a0d0d', color: critical ? '#d5a6ff' : success ? '#78d786' : '#664444', textAlign: 'center', fontSize: 11, fontWeight: 700 }}>
-                    {roll}
+                const success = group.target !== undefined && roll.roll >= group.target;
+                const critical = roll.roll === 6;
+                const rerolled = group.rerolledRollIndices?.includes(roll.rollIndex) ?? false;
+                const rollType = group.kind === 'hit' || group.kind === 'wound' || group.kind === 'save'
+                  || group.kind === 'feel-no-pain'
+                  || (group.kind === 'damage' && damageRerollable)
+                  ? group.kind
+                  : null;
+                const selection = rollType && onSelectDie
+                  ? {
+                    kind: combatKind,
+                    attackerUnitId,
+                    weaponIndex,
+                    targetUnitId: selectionTargetId ?? targetId,
+                    groupKind: group.kind,
+                    groupIndex: weaponResult.groups.indexOf(group),
+                    rollIndex: roll.rollIndex,
+                  } satisfies CombatRerollSelection
+                  : null;
+                return selection && rollType ? (
+                  <Button
+                    key={`${roll.roll}-${roll.rollIndex}`}
+                    size="small"
+                    variant="text"
+                    title={rerolled ? 'Rerolled by Command Re-roll' : 'Click to Command Re-roll this die'}
+                    onClick={() => onSelectDie(selection, roll.roll, rollType)}
+                    sx={{ minWidth: 18, px: 0.35, py: 0, border: `2px solid ${rerolled ? '#ffd166' : critical ? '#7040a0' : success ? '#2a5c2a' : '#3a1818'}`, borderRadius: 0.75, background: rerolled ? 'rgba(255, 209, 102, 0.3)' : critical ? '#241238' : success ? '#0d260d' : '#1a0d0d', color: rerolled ? '#ffe7a3' : critical ? '#d5a6ff' : success ? '#78d786' : '#664444', boxShadow: rerolled ? '0 0 0 2px rgba(255, 209, 102, 0.22)' : 'none', textAlign: 'center', fontSize: 11, fontWeight: 700, lineHeight: 1.6, '&:hover': { background: 'rgba(93, 173, 226, 0.24)' } }}
+                  >{roll.roll}</Button>
+                ) : (
+                  <Box key={`${roll.roll}-${roll.rollIndex}`} title={rerolled ? 'Rerolled by Command Re-roll' : undefined} sx={{ minWidth: 18, px: 0.35, border: `2px solid ${rerolled ? '#ffd166' : critical ? '#7040a0' : success ? '#2a5c2a' : '#3a1818'}`, borderRadius: 0.75, background: rerolled ? 'rgba(255, 209, 102, 0.3)' : critical ? '#241238' : success ? '#0d260d' : '#1a0d0d', color: rerolled ? '#ffe7a3' : critical ? '#d5a6ff' : success ? '#78d786' : '#664444', boxShadow: rerolled ? '0 0 0 2px rgba(255, 209, 102, 0.22)' : 'none', textAlign: 'center', fontSize: 11, fontWeight: 700 }}>
+                    {roll.roll}
                   </Box>
                 );
               })}
-              {group.rolls.length > displayedRolls.length && (
+              {validRolls.length > displayedRolls.length && (
                 <Typography variant="caption" sx={{ alignSelf: 'center', color: uiTokens.color.text.secondary, fontSize: 10 }}>
-                  +{group.rolls.length - displayedRolls.length} more
+                  +{validRolls.length - displayedRolls.length} more
                 </Typography>
               )}
             </Box>
@@ -347,6 +546,7 @@ function CombatPanel({
   shooter,
   popup = false,
   structuredResult = null,
+  resultStage,
   resultSection = 'all',
   title = PLAY_PANEL_LABELS.shooting,
   actionLabel = 'Shoot',
@@ -379,10 +579,12 @@ function CombatPanel({
   weaponModelCountFor,
   targetAllocationCap,
   onResolve,
+  onSelectCombatDie,
 }: {
   shooter: BattleUnit | null;
   popup?: boolean;
   structuredResult?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null;
+  resultStage?: PendingCombatResolution['stage'];
   resultSection?: 'attacker' | 'defender' | 'all';
   title?: string;
   actionLabel?: string;
@@ -415,6 +617,7 @@ function CombatPanel({
   weaponModelCountFor?: (weaponIndex: number) => number;
   targetAllocationCap?: (weaponIndex: number, targetId: string, allocatedElsewhere: number, weaponModelCount: number) => number;
   onResolve: () => void;
+  onSelectCombatDie?: (selection: CombatRerollSelection, roll: number, rollType: CommandRerollRollType) => void;
 }) {
   const [firingDeckKeys, setFiringDeckKeys] = useState<string[]>([]);
   if (!shooter) {
@@ -429,6 +632,17 @@ function CombatPanel({
   const shootingLocked = damageAllocationLocked;
   const hasStructuredResult = !!structuredResult?.weapons.length;
   const isAttackerResultReview = hasStructuredResult && resultSection === 'attacker';
+  const stageLabel = resultStage === 'hits'
+    ? 'Hit rolls'
+    : resultStage === 'wounds'
+      ? 'Wound rolls'
+      : resultStage === 'saves'
+        ? 'Save rolls'
+        : resultStage === 'feel-no-pain'
+          ? 'Feel No Pain rolls'
+        : resultStage === 'damage'
+          ? 'Damage / allocation'
+          : null;
   const allocationsReadOnly = hasStructuredResult;
   const resolvePendingDamage = shootingLocked && hasStructuredResult;
   const completedWithoutPendingDamage = hasStructuredResult && !shootingLocked;
@@ -639,6 +853,16 @@ function CombatPanel({
           </Button>
         </Box>
       )}
+      {hasStructuredResult && stageLabel && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 0.35 }}>
+          Current stage: {stageLabel}
+        </Typography>
+      )}
+      {hasStructuredResult && resultStage && resultStage !== 'feel-no-pain' && onSelectCombatDie && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 800 }}>
+          Command Re-roll pending: click a die in this stage to reroll it.
+        </Typography>
+      )}
       {blockedTargetNames.length > 0 && !hasStructuredResult && (
         <Typography variant="caption" sx={{ color: uiTokens.color.status.danger, fontWeight: 700 }}>
           Blocked by LOS: {blockedTargetNames.join(', ')}
@@ -714,6 +938,11 @@ function CombatPanel({
                     <Typography variant="caption" sx={{ color: uiTokens.color.combat.damage, fontWeight: 900, fontSize: 15, lineHeight: 1.1 }}>{weapon.damage}</Typography>
                   </Box>
                 </Box>
+                {weapon.keywords.length > 0 && (
+                  <Typography variant="caption" sx={{ color: '#8f9fc4', lineHeight: 1.3 }}>
+                    Keywords: {weapon.keywords.join(', ')}
+                  </Typography>
+                )}
                 {option.targetIds.length === 0 && (
                   <Typography variant="caption" role="alert" sx={{ ...warningTextSx, fontStyle: 'italic', py: 0.5 }}>
                     No eligible targets for this weapon.
@@ -1063,7 +1292,16 @@ function CombatPanel({
                       )}
                       </Box>
                       {resultSection === 'attacker' && hasStructuredResult && (
-                        <ShootingTargetDice result={structuredResult} weaponIndex={option.weaponIndex} targetId={targetId} />
+                        <ShootingTargetDice
+                          result={structuredResult}
+                          weaponIndex={option.weaponIndex}
+                          targetId={targetId}
+                          stage={resultStage}
+                          combatKind={combatMode === 'melee' ? 'fight' : 'shooting'}
+                          attackerUnitId={shooter.id}
+                          damageRerollable={!/^\d+$/i.test(String(weapon.damage).trim())}
+                          onSelectDie={onSelectCombatDie}
+                        />
                       )}
                     </Box>
                   );
@@ -1251,13 +1489,18 @@ function CombatPanel({
                     <div style={{ fontSize: 13, fontWeight: 900, color: uiTokens.color.combat.damage, lineHeight: 1.1 }}>{weapon.damage}</div>
                   </div>
                 </div>
+                {weapon.keywords.length > 0 && (
+                  <Typography variant="caption" sx={{ display: 'block', px: 0.75, py: 0.5, color: '#8f9fc4', lineHeight: 1.3 }}>
+                    Keywords: {weapon.keywords.join(', ')}
+                  </Typography>
+                )}
               </div>
             );
           })}
         </div>
       ) : null}
       {resultSection !== 'attacker' && (
-        <StructuredShootingResultSummary result={structuredResult} section={resultSection} />
+        <StructuredShootingResultSummary result={structuredResult} section={resultSection} stage={resultStage} />
       )}
     </CombatDeclarationPanel>
   );

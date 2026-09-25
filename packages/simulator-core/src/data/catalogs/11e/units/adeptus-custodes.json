@@ -1,0 +1,5074 @@
+{
+  "factionId": "adeptus-custodes",
+  "units": [
+    {
+      "id": "adeptus-custodes.aleya",
+      "name": "Aleya",
+      "externalIds": {
+        "wahapedia": "Aleya"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 55
+        }
+      ],
+      "profile": {
+        "name": "Aleya",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "ANATHEMA PSYKANA",
+          "ALEYA"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Somnus",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 6,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Anti-psyker 5+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Tactical Perception",
+          "description": "While this model is leading a unit, models in that unit have the Fights First ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Tenacious Spirit",
+          "description": "While this model is leading a unit, each time a model in that unit makes an attack, add 1 to the Hit roll if that unit is below its Starting Strength, and add 1 to the Wound roll as well if that unit is Below Half-strength.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daughter of the Abyss",
+          "description": "This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: PROSECUTORS VIGILATORS WITCHSEEKERS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "PROSECUTORS",
+        "VIGILATORS",
+        "WITCHSEEKERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Aleya datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Aleya",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.prosecutors",
+        "adeptus-custodes.vigilators",
+        "adeptus-custodes.witchseekers"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.trajann-valoris",
+      "name": "Trajann Valoris",
+      "externalIds": {
+        "wahapedia": "Trajann-Valoris"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 135
+        }
+      ],
+      "profile": {
+        "name": "Trajann Valoris",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 7,
+        "leadership": 5,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "TRAJANN VALORIS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Eagle's Scream",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Watcher's Axe",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 10,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Feel No Pain 5+",
+            "description": "Core ability: Feel No Pain 5+.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Captain-General",
+          "description": "While this model is leading a unit, each time a model in this unit makes an attack, you can ignore any or all modifiers to that attack's Ballistic skill or Weapon skill characteristics and/or all modifiers to the Hit roll",
+          "category": "datasheet"
+        },
+        {
+          "name": "Moment Shackle",
+          "description": "Once per battle, at the start of the Fight phase, you can select one of the following to take effect until the end of the phase: This model's Watcher's Axe melee weapon has an Attacks characteristic of 12. This model has a 2+ invulnerable save.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: CUSTODIAN GUARD CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS CUSTODIAN WARDENS SAGITTARUM CUSTODIANS",
+          "category": "datasheet"
+        },
+        {
+          "name": "Supreme Commander",
+          "description": "If this model is in your army, it must be your Warlord.",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "CUSTODIAN GUARD",
+        "CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS",
+        "CUSTODIAN WARDENS",
+        "SAGITTARUM CUSTODIANS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Trajann Valoris datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Trajann-Valoris",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.custodian-guard",
+        "adeptus-custodes.custodian-guard-with-adrasite-and-pyrithite-spears",
+        "adeptus-custodes.custodian-wardens",
+        "adeptus-custodes.sagittarum-custodians"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.valerian",
+      "name": "Valerian",
+      "externalIds": {
+        "wahapedia": "Valerian"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Epic Hero",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 110
+        }
+      ],
+      "profile": {
+        "name": "Valerian",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 6,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "EPIC HERO",
+          "IMPERIUM",
+          "SHIELD-CAPTAIN",
+          "VALERIAN"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Gnosis",
+            "range": 24,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Gnosis",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 8,
+            "ap": -3,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Feel No Pain 6+",
+            "description": "Core ability: Feel No Pain 6+.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Golden Laurels",
+          "description": "While this model is leading a unit, each time a melee attack targets that unit, worsen the Armour Penetration characteristic of that attack by 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Hero of Lion's Gate",
+          "description": "Once per battle, after making a Hit roll, Wound roll or saving throw for this model, you can change the result of that roll to an unmodified 6.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: CUSTODIAN GUARD CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS CUSTODIAN WARDENS SAGITTARUM CUSTODIANS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "CUSTODIAN GUARD",
+        "CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS",
+        "CUSTODIAN WARDENS",
+        "SAGITTARUM CUSTODIANS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Valerian datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Valerian",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.custodian-guard",
+        "adeptus-custodes.custodian-guard-with-adrasite-and-pyrithite-spears",
+        "adeptus-custodes.custodian-wardens",
+        "adeptus-custodes.sagittarum-custodians"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.blade-champion",
+      "name": "Blade Champion",
+      "externalIds": {
+        "wahapedia": "Blade-Champion"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 110,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 125,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "profile": {
+        "name": "Blade Champion",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 6,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "BLADE CHAMPION"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Vaultswords - Behemor",
+            "profileGroup": "Vaultswords",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Precision"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Vaultswords - Hurricanus",
+            "profileGroup": "Vaultswords",
+            "range": 0,
+            "attacks": "9",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": true
+          },
+          {
+            "name": "Vaultswords - Victus",
+            "profileGroup": "Vaultswords",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 6,
+            "ap": -3,
+            "damage": "3",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Swift Onslaught",
+          "description": "While this model is leading a unit, you can re-roll Charge rolls made for that unit",
+          "category": "datasheet"
+        },
+        {
+          "name": "Martial Inspiration",
+          "description": "Once per battle, in your Charge phase, this model's unit is eligible to declare a charge in a turn which it Advanced.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: CUSTODIAN GUARD CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS CUSTODIAN WARDENS SAGITTARUM CUSTODIANS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "CUSTODIAN GUARD",
+        "CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS",
+        "CUSTODIAN WARDENS",
+        "SAGITTARUM CUSTODIANS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Blade Champion datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Blade-Champion",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.custodian-guard",
+        "adeptus-custodes.custodian-guard-with-adrasite-and-pyrithite-spears",
+        "adeptus-custodes.custodian-wardens",
+        "adeptus-custodes.sagittarum-custodians"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.knight-centura",
+      "name": "Knight-centura",
+      "externalIds": {
+        "wahapedia": "Knight-centura"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 55
+        }
+      ],
+      "wargearOptions": [
+        "This model's executioner greatblade can be replaced with one of the following:; 1 master-crafted boltgun and 1 close combat weapon; 1 Witchseeker flamer and 1 close combat weapon"
+      ],
+      "profile": {
+        "name": "Knight-centura",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "invulnSave": 5,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "ANATHEMA PSYKANA",
+          "KNIGHT-CENTURA"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Master-crafted boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Witchseeker flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Executioner greatblade",
+            "range": 0,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Anti-psyker 5+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Seeker's Instincts",
+          "description": "While this model is leading a unit, add 2\" to the Move characteristic of models in that unit and add 2 to Advance and Charge rolls made for that unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Daughter of the Abyss",
+          "description": "This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Corner the Quarry",
+          "description": "Each time an enemy unit (excluding MONSTERS and VEHICLES) that is within Engagement Range of this model's unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: PROSECUTORS VIGILATORS WITCHSEEKERS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "PROSECUTORS",
+        "VIGILATORS",
+        "WITCHSEEKERS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Knight-centura datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Knight-centura",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.prosecutors",
+        "adeptus-custodes.vigilators",
+        "adeptus-custodes.witchseekers"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.shield-captain",
+      "name": "Shield-captain",
+      "externalIds": {
+        "wahapedia": "Shield-captain"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 110
+        }
+      ],
+      "wargearOptions": [
+        "This model's guardian spear can be replaced with one of the following:; 1 castellan axe; 1 sentinel blade; 1 sentinel blade and 1 praesidium shield; 1 pyrithite spear and 1 praesidium shield"
+      ],
+      "profile": {
+        "name": "Shield-captain",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 6,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "IMPERIUM",
+          "SHIELD-CAPTAIN"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Castellan axe",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Guardian spear",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Pyrithite spear",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Sentinel blade",
+            "range": 12,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Pistol",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castellan axe",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Guardian spear",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Pyrithite spear",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Sentinel blade",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            5
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Master of the Stances",
+          "description": "Once per battle, when this models unit is selected to fight, it can use this ability. if it does until that fight is resolved, both Ka'tah Stances are active for that unit, instead of only one.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Strategic Mastery",
+          "description": "Once per battle round, you can select one model from your army with this ability. That model's unit can be targeted with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Praesidium shield",
+          "description": "Add 1 to the bearer's Wounds characteristic.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: CUSTODIAN GUARD CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS CUSTODIAN WARDENS SAGITTARUM CUSTODIANS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "CUSTODIAN GUARD",
+        "CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS",
+        "CUSTODIAN WARDENS",
+        "SAGITTARUM CUSTODIANS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Shield-captain datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Shield-captain",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.custodian-guard",
+        "adeptus-custodes.custodian-guard-with-adrasite-and-pyrithite-spears",
+        "adeptus-custodes.custodian-wardens",
+        "adeptus-custodes.sagittarum-custodians"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.shield-captain-in-allarus-terminator-armour",
+      "name": "Shield-captain In Allarus Terminator Armour",
+      "externalIds": {
+        "wahapedia": "Shield-captain-In-Allarus-Terminator-Armour"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 130
+        }
+      ],
+      "wargearOptions": [
+        "This model's guardian spear can be replaced with 1 castellan axe."
+      ],
+      "profile": {
+        "name": "Shield-captain In Allarus Terminator Armour",
+        "move": 5,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 7,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "CHARACTER",
+          "TERMINATOR",
+          "IMPERIUM",
+          "SHIELD-CAPTAIN"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Balistus grenade launcher",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castellan axe",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Guardian spear",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castellan axe",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Guardian spear",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Auramite and Adamantine",
+          "description": "Once per battle, at the start of any phase, this model can use this ability If it does, until the end of the phase, each time an attack is allocated to this model, change the Damage characteristic of that attack to 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Strategic Mastery",
+          "description": "Once per battle round, you can select one model from your army with this ability and target that model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: ALLARUS CUSTODIANS AQUILON CUSTODIANS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "ALLARUS CUSTODIANS",
+        "AQUILON CUSTODIANS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Shield-captain In Allarus Terminator Armour datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Shield-captain-In-Allarus-Terminator-Armour",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.allarus-custodians",
+        "adeptus-custodes.aquilon-custodians"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.shield-captain-on-dawneagle-jetbike",
+      "name": "Shield-captain On Dawneagle Jetbike",
+      "externalIds": {
+        "wahapedia": "Shield-captain-On-Dawneagle-Jetbike"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted Character",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 140
+        }
+      ],
+      "wargearOptions": [
+        "This model's salvo launcher can be replaced with 1 Vertus hurricane bolter."
+      ],
+      "profile": {
+        "name": "Shield-captain On Dawneagle Jetbike",
+        "move": 12,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 8,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 75,
+            "lengthMm": 42
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "CHARACTER",
+          "FLY",
+          "IMPERIUM",
+          "DAWNEAGLE JETBIKE",
+          "SHIELD-CAPTAIN"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Vertus hurricane bolter",
+            "range": 18,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 3",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Salvo launcher",
+            "range": 24,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 10,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Interceptor lance",
+            "range": 0,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Leader",
+            "description": "Core ability: Leader.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Sweeping Advance",
+          "description": "Once per battle, at the end of the Fight phase, if this model's unit has fought this phase, if it is within Engagement Range of one or more enemy units, it can make a Fall Back move or, if it is not within Engagement Range of one or more enemy units, it can make a Normal move",
+          "category": "datasheet"
+        },
+        {
+          "name": "Strategic Mastery",
+          "description": "Once per battle round, you can select one model from your army with this ability and target that model's unit with a Stratagem. If it does, reduce the CP cost of that use of that Stratagem by 1CP.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Leader",
+          "description": "This model can be attached to the following units: AGAMATUS CUSTODIANS VERTUS PRAETORS",
+          "category": "datasheet"
+        }
+      ],
+      "leaderTargetNames": [
+        "AGAMATUS CUSTODIANS",
+        "VERTUS PRAETORS"
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Shield-captain On Dawneagle Jetbike datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Shield-captain-On-Dawneagle-Jetbike",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ],
+      "leaderTargetRefs": [
+        "adeptus-custodes.agamatus-custodians",
+        "adeptus-custodes.vertus-praetors"
+      ]
+    },
+    {
+      "id": "adeptus-custodes.custodian-guard",
+      "name": "Custodian Guard",
+      "aliases": [
+        "Custodian Guard (x4)",
+        "Custodian Guard (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Custodian-Guard"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Battleline",
+      "modelCount": {
+        "minimum": 4,
+        "maximum": 5,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 4,
+          "points": 170,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 215,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 4,
+          "points": 180,
+          "unitNumber": {
+            "minimum": 4
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 225,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their guardian spear replaced with 1 sentinel blade and 1 praesidium shield.",
+        "1 model's guardian spear can be replaced with one of the following:; 1 vexilla and 1 misericordia; 1 vexilla, 1 misericordia and 1 praesidium shield"
+      ],
+      "profile": {
+        "name": "Custodian Guard",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 4,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "BATTLELINE",
+          "IMPERIUM",
+          "CUSTODIAN GUARD"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Guardian spear",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Sentinel blade",
+            "range": 12,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Pistol",
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Guardian spear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Misericordia",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Sentinel blade",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Stand Vigil",
+          "description": "Each time a model in this unit makes an attack, re-roll a Wound roll of 1. While this unit is within range of an objective marker you control, you can re-roll the Wound roll instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Sentinel Storm",
+          "description": "Once per battle, in your Shooting phase, after this unit has shot, it can shoot again.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Praesidium Shield",
+          "description": "Add 1 to the bearer's Wounds characteristic.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Vexilla",
+          "description": "Add 1 to the Objective Control characteristic of models in the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Custodian Guard datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Custodian-Guard",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.anathema-psykana-rhino",
+      "name": "Anathema Psykana Rhino",
+      "externalIds": {
+        "wahapedia": "Anathema-Psykana-Rhino"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Dedicated Transports",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 65,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 75,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with 1 hunter-killer missile."
+      ],
+      "profile": {
+        "name": "Anathema Psykana Rhino",
+        "move": 12,
+        "toughness": 9,
+        "save": 3,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "DEDICATED TRANSPORT",
+          "FRAME",
+          "SMOKE",
+          "IMPERIUM",
+          "ANATHEMA PSYKANA",
+          "RHINO"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Hunter-killer missile",
+            "range": 48,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "One Shot"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Firing Deck 2",
+            "description": "Core ability: Firing Deck 2.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "transportCapacity": 12
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Daughters of the Abyss",
+          "description": "This model has the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Self Repair",
+          "description": "At the start of your Command phase, this model regains 1 lost wound.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 12 ANATHEMA PSYKANA INFANTRY models.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Anathema Psykana Rhino datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Anathema-Psykana-Rhino",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.ares-gunship",
+      "name": "Ares Gunship",
+      "externalIds": {
+        "wahapedia": "Ares-Gunship"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Aircraft",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 580,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 610,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Ares Gunship",
+        "move": 6,
+        "toughness": 12,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 22,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 160
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "AIRCRAFT",
+          "FLY",
+          "IMPERIUM",
+          "ARES GUNSHIP"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Arachnus heavy blaze cannon",
+            "range": 36,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Arachnus magna-blaze cannon",
+            "range": 48,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 18,
+            "ap": -4,
+            "damage": "D6+6",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured hull",
+            "range": 0,
+            "attacks": "9",
+            "skill": 4,
+            "strength": 9,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 7,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Infernus Firebombs",
+          "description": "At the end of your Movement phase, select one visible enemy unit (excluding AIRCRAFT/Lone Operative units) within 24\" of this unit: That enemy unit cannot have the benefit of cover until the end of your next Shooting phase. Roll one D6 for each model in that enemy unit: for each 6, that enemy unit suffers 1 mortal wound.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-7 Wounds Remaining While this model has 1-7 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Ares Gunship datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Ares-Gunship",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.allarus-custodians",
+      "name": "Allarus Custodians",
+      "aliases": [
+        "Allarus Custodians (x2)",
+        "Allarus Custodians (x3)",
+        "Allarus Custodians (x5)",
+        "Allarus Custodians (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Allarus-Custodians"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 2,
+        "maximum": 6,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 110,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 165,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 280,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 340,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 2,
+          "points": 140,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 195,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 310,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 370,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their guardian spear replaced with 1 castellan axe.",
+        "1 model's guardian spear can be replaced with 1 vexilla and 1 misericordia."
+      ],
+      "profile": {
+        "name": "Allarus Custodians",
+        "move": 5,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "TERMINATOR",
+          "IMPERIUM",
+          "ALLARUS CUSTODIANS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Balistus grenade launcher",
+            "range": 18,
+            "attacks": "D6",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castellan axe",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Guardian spear",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castellan axe",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Guardian spear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Misericordia",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            4
+          ],
+          [
+            0,
+            2,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Slayers of Tyrants",
+          "description": "Each time a model in this unit makes an attack that targets a CHARACTER, MONSTER or VEHICLE unit, you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "From Golden Light",
+          "description": "Once per battle, at the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Vexilla",
+          "description": "Add 1 to the Objective Control characteristic of models in the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Allarus Custodians datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Allarus-Custodians",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.custodian-wardens",
+      "name": "Custodian Wardens",
+      "aliases": [
+        "Custodian Wardens (x4)",
+        "Custodian Wardens (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Custodian-Wardens"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 4,
+        "maximum": 5,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 4,
+          "points": 200,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 250,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 4,
+          "points": 220,
+          "unitNumber": {
+            "minimum": 2
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 270,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their guardian spear replaced with 1 castellan axe.",
+        "1 model can be equipped with 1 vexilla."
+      ],
+      "profile": {
+        "name": "Custodian Wardens",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 4,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "CUSTODIAN WARDENS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Castellan axe",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Guardian spear",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Castellan axe",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Guardian spear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Resolute Will",
+          "description": "While a CHARACTER is leading this unit, each time an attack targets this unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of this unit, subtract 1 from the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Living Fortress",
+          "description": "Once per battle, at the start of any phase, this unit can use this ability. If it does, until the end of the phase, models in this unit have the Feel No Pain 4+ ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Vexilla",
+          "description": "Add 1 to the Objective Control characteristic of models in the bearer's unit.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Custodian Wardens datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Custodian-Wardens",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.prosecutors",
+      "name": "Prosecutors",
+      "aliases": [
+        "Prosecutors (x4)",
+        "Prosecutors (x5)",
+        "Prosecutors (x9)",
+        "Prosecutors (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Prosecutors"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 4,
+        "maximum": 10,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 4,
+          "points": 45
+        },
+        {
+          "modelCount": 5,
+          "points": 50
+        },
+        {
+          "modelCount": 9,
+          "points": 75
+        },
+        {
+          "modelCount": 10,
+          "points": 85
+        }
+      ],
+      "profile": {
+        "name": "Prosecutors",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "wounds": 1,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 4,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "ANATHEMA PSYKANA",
+          "PROSECUTORS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Boltgun",
+            "range": 24,
+            "attacks": "1",
+            "skill": 3,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Daughters of the Abyss",
+          "description": "Models in this unit have the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Purity of Execution",
+          "description": "Each time a model in this unit makes a ranged attack that targets a PSYKER unit, that attack has the [PRECISION] and [DEVASTATING WOUNDS] abilities.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Prosecutors datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Prosecutors",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.vigilators",
+      "name": "Vigilators",
+      "aliases": [
+        "Vigilators (x4)",
+        "Vigilators (x5)",
+        "Vigilators (x9)",
+        "Vigilators (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Vigilators"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 4,
+        "maximum": 10,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 4,
+          "points": 50
+        },
+        {
+          "modelCount": 5,
+          "points": 55
+        },
+        {
+          "modelCount": 9,
+          "points": 90
+        },
+        {
+          "modelCount": 10,
+          "points": 100
+        }
+      ],
+      "profile": {
+        "name": "Vigilators",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "wounds": 1,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 4,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "ANATHEMA PSYKANA",
+          "VIGILATORS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Executioner greatblade",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 5,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Anti-psyker 5+",
+              "Devastating Wounds"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Daughters of the Abyss",
+          "description": "Models in this unit have the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Deft Parry",
+          "description": "Each time a melee attack targets this unit, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Vigilators datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Vigilators",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.witchseekers",
+      "name": "Witchseekers",
+      "aliases": [
+        "Witchseekers (x4)",
+        "Witchseekers (x5)",
+        "Witchseekers (x9)",
+        "Witchseekers (x10)"
+      ],
+      "externalIds": {
+        "wahapedia": "Witchseekers"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 4,
+        "maximum": 10,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 4,
+          "points": 50
+        },
+        {
+          "modelCount": 5,
+          "points": 55
+        },
+        {
+          "modelCount": 9,
+          "points": 90
+        },
+        {
+          "modelCount": 10,
+          "points": 100
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Witchseekers",
+        "move": 6,
+        "toughness": 3,
+        "save": 3,
+        "wounds": 1,
+        "leadership": 6,
+        "oc": 1,
+        "baseModelCount": 4,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          },
+          {
+            "shape": "round",
+            "diameterMm": 32
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "ANATHEMA PSYKANA",
+          "WITCHSEEKERS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Witchseeker flamer",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Close combat weapon",
+            "range": 0,
+            "attacks": "2",
+            "skill": 3,
+            "strength": 3,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Scouts 6\"",
+            "description": "Core ability: Scouts 6\".",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Daughters of the Abyss",
+          "description": "Models in this unit have the Feel No Pain 3+ ability against Psychic Attacks and mortal wounds.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Sanctified Flames",
+          "description": "In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. That enemy unit must take a Battle-shock test.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Witchseekers datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Witchseekers",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.aquilon-custodians",
+      "name": "Aquilon Custodians",
+      "aliases": [
+        "Aquilon Custodians (x3)",
+        "Aquilon Custodians (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Aquilon-Custodians"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 195
+        },
+        {
+          "modelCount": 6,
+          "points": 390
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their lastrum storm bolter replaced with one of the following:; 1 infernus firepike; 1 twin adrathic destructor",
+        "Any number of models can each have their solerite power gauntlet replaced with 1 solerite power talon."
+      ],
+      "profile": {
+        "name": "Aquilon Custodians",
+        "move": 5,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 50
+          },
+          {
+            "shape": "round",
+            "diameterMm": 50
+          },
+          {
+            "shape": "round",
+            "diameterMm": 50
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "TERMINATOR",
+          "IMPERIUM",
+          "AQUILON CUSTODIANS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Infernus firepike",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lastrum storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin adrathic destructor",
+            "range": 18,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Solerite power gauntlet",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Solerite power talon",
+            "range": 0,
+            "attacks": "7",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Heavy Assault Infantry",
+          "description": "Each time a model in this unit makes a ranged attack that targets the closest eligible target, re-roll a Wound roll of 1.",
+          "category": "datasheet"
+        },
+        {
+          "name": "From Golden Light",
+          "description": "Once per battle, at the end of your opponent's turn, if this unit is not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Aquilon Custodians datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Aquilon-Custodians",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.custodian-guard-with-adrasite-and-pyrithite-spears",
+      "name": "Custodian Guard With Adrasite And Pyrithite Spears",
+      "aliases": [
+        "Custodian Guard With Adrasite And Pyrithite Spears (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Custodian-Guard-With-Adrasite-And-Pyrithite-Spears"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 250,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        {
+          "modelCount": 5,
+          "points": 260,
+          "unitNumber": {
+            "minimum": 4
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their adrasite spear replaced with 1 pyrithite spear."
+      ],
+      "profile": {
+        "name": "Custodian Guard With Adrasite And Pyrithite Spears",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Adrasite spear",
+            "range": 18,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Pyrithite spear",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Adrasite spear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Pyrithite spear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Stand Vigil",
+          "description": "Each time a model in this unit makes an attack, re-roll a Wound roll of 1. While this unit is within range of an objective marker you control, you can re-roll the Wound roll instead.",
+          "category": "datasheet"
+        },
+        {
+          "name": "No Foe Shall Stand",
+          "description": "Once per battle, at the start of your Shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [LETHAL HITS] and [IGNORES COVER] abilities.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Custodian Guard With Adrasite And Pyrithite Spears datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Custodian-Guard-With-Adrasite-And-Pyrithite-Spears",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.sagittarum-custodians",
+      "name": "Sagittarum Custodians",
+      "aliases": [
+        "Sagittarum Custodians (x5)"
+      ],
+      "externalIds": {
+        "wahapedia": "Sagittarum-Custodians"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 5
+      },
+      "points": [
+        {
+          "modelCount": 5,
+          "points": 225
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Sagittarum Custodians",
+        "move": 6,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 5,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "IMPERIUM",
+          "SAGITTARUM CUSTODIANS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Adrastus bolt caliver",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Misericordia",
+            "range": 0,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Saturation Volleys",
+          "description": "In your Shooting phase, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, while this unit is on the battlefield, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Disintegration Beams",
+          "description": "Once per battle, at the start of your Shooting phase, this unit can use this ability. If it does, until the end of the phase, ranged weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Sagittarum Custodians datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Sagittarum-Custodians",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.venatari-custodians",
+      "name": "Venatari Custodians",
+      "aliases": [
+        "Venatari Custodians (x3)",
+        "Venatari Custodians (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Venatari-Custodians"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Infantry",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 150,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 300,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 160,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 6,
+          "points": 310,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their Venatari lance replaced with 1 kinetic destroyer and 1 tarsus buckler."
+      ],
+      "profile": {
+        "name": "Venatari Custodians",
+        "move": 10,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 3,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          },
+          {
+            "shape": "round",
+            "diameterMm": 40
+          }
+        ],
+        "keywords": [
+          "INFANTRY",
+          "FLY",
+          "JUMP PACK",
+          "IMPERIUM",
+          "VENATARI CUSTODIANS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Kinetic destroyer",
+            "range": 12,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1",
+              "Pistol"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Venatari lance",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Assault"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Tarsis buckler",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 5,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Venatari lance",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deep Strike",
+            "description": "Core ability: Deep Strike.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Strike from the Skies",
+          "description": "This unit is eligible to shoot and declare a charge in a turn in which it Fell Back.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Swooping Dive",
+          "description": "Once per battle, you can target this unit with the Rapid Ingress Stratagem for 0CP, and can do so even if you have already targeted a different unit with that Stratagem this phase.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Tarsis Buckler",
+          "description": "The bearer has a Wounds characteristic of 4.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Venatari Custodians datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Venatari-Custodians",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.vertus-praetors",
+      "name": "Vertus Praetors",
+      "aliases": [
+        "Vertus Praetors (x2)",
+        "Vertus Praetors (x3)"
+      ],
+      "externalIds": {
+        "wahapedia": "Vertus-Praetors"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted",
+      "modelCount": {
+        "minimum": 2,
+        "maximum": 3,
+        "step": 1
+      },
+      "points": [
+        {
+          "modelCount": 2,
+          "points": 145,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 215,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 2,
+          "points": 170,
+          "unitNumber": {
+            "minimum": 3
+          }
+        },
+        {
+          "modelCount": 3,
+          "points": 240,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their salvo launcher replaced with 1 Vertus hurricane bolter."
+      ],
+      "profile": {
+        "name": "Vertus Praetors",
+        "move": 12,
+        "toughness": 7,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 5,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 2,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 75,
+            "lengthMm": 42
+          },
+          {
+            "shape": "oval",
+            "widthMm": 75,
+            "lengthMm": 42
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "FLY",
+          "IMPERIUM",
+          "VERTUS PRAETORS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Salvo launcher",
+            "range": 24,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 10,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Vertus hurricane bolter",
+            "range": 18,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 4,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Rapid Fire 3",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Interceptor lance",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Turbo-boost",
+          "description": "Each time this unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6\" to the Move characteristic of models in this unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Quicksilver Execution",
+          "description": "Once per battle, after this unit ends a Normal Move or Advance move, you can select one enemy unit (excluding MONSTER and VEHICLE units) that it moved over during that move, then roll one D6 for each model in this unit: for each 2+, that enemy unit suffers 2 mortal wounds.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Vertus Praetors datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Vertus-Praetors",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.agamatus-custodians",
+      "name": "Agamatus Custodians",
+      "aliases": [
+        "Agamatus Custodians (x3)",
+        "Agamatus Custodians (x6)"
+      ],
+      "externalIds": {
+        "wahapedia": "Agamatus-Custodians"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Mounted",
+      "modelCount": {
+        "minimum": 3,
+        "maximum": 6,
+        "step": 3
+      },
+      "points": [
+        {
+          "modelCount": 3,
+          "points": 225
+        },
+        {
+          "modelCount": 6,
+          "points": 450
+        }
+      ],
+      "wargearOptions": [
+        "Any number of models can each have their lastrum bolt cannon replaced with one of the following:; 1 adrathic devastator; 1 twin las-pulsar"
+      ],
+      "profile": {
+        "name": "Agamatus Custodians",
+        "move": 12,
+        "toughness": 6,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 4,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 3,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          },
+          {
+            "shape": "round",
+            "diameterMm": 60
+          },
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "MOUNTED",
+          "FLY",
+          "FRAME",
+          "IMPERIUM",
+          "AGAMATUS CUSTODIANS"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Adrathic devastator",
+            "range": 18,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Lastrum bolt cannon",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin las-pulsar",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Interceptor lance",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": -2,
+            "damage": "2",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Turbo-boost",
+          "description": "Each time this unit Advances, do not make an Advance roll. Instead, until the end of the phase, add 6\" to the Move characteristic of models in this unit.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Implacable Vanguard",
+          "description": "Once per battle, in your Shooting phase, after this unit has shot, if it is not within Engagement Range of one or more enemy units, it can make a Normal move of up to 6\". If it does, until the end of the turn, this unit is not eligible to declare a charge.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Agamatus Custodians datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Agamatus-Custodians",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.venerable-land-raider",
+      "name": "Venerable Land Raider",
+      "externalIds": {
+        "wahapedia": "Venerable-Land-Raider"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Transport",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 220,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 240,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model can be equipped with 1 hunter-killer missile.",
+        "This model can be equipped with 1 storm bolter."
+      ],
+      "profile": {
+        "name": "Venerable Land Raider",
+        "move": 10,
+        "toughness": 12,
+        "save": 2,
+        "wounds": 16,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FRAME",
+          "IMPERIUM",
+          "TRANSPORT",
+          "SMOKE",
+          "VENERABLE LAND RAIDER"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Godhammer lascannon",
+            "range": 48,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Hunter-killer missile",
+            "range": 48,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 14,
+            "ap": -3,
+            "damage": "D6",
+            "keywords": [
+              "One Shot"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin heavy bolter",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Sustained Hits 1",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured tracks",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 8,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3,
+            4
+          ]
+        ],
+        "transportCapacity": 6,
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Assault Ramp",
+          "description": "Each time a unit disembarks from this model after it has made a Normal move, that unit makes an assault disembark move (Core Rules, 18.06) for that disembarkation.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 6 ADEPTUS CUSTODES INFANTRY models.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Venerable Land Raider datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Venerable-Land-Raider",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.coronus-grav-carrier",
+      "name": "Coronus Grav-carrier",
+      "externalIds": {
+        "wahapedia": "Coronus-Grav-carrier"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Transport",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 180,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 200,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Coronus Grav-carrier",
+        "move": 12,
+        "toughness": 12,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 16,
+        "leadership": 6,
+        "oc": 5,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "other",
+            "label": "Use model"
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "FLY",
+          "FRAME",
+          "IMPERIUM",
+          "CORONUS GRAV-CARRIER"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Twin arachnus blaze cannon",
+            "range": 24,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin lastrum bolt cannon",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured hull",
+            "range": 0,
+            "attacks": "6",
+            "skill": 4,
+            "strength": 8,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "transportCapacity": 8,
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Fire Support",
+          "description": "In your Shooting phase, after this model has shot, select one enemy unit hit by one or more of those attacks. Until the end of the phase, each time a friendly model that disembarked from this TRANSPORT this turn makes an attack that targets that enemy unit, you can re-roll the Wound roll.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 8 ADEPTUS CUSTODES INFANTRY models.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Coronus Grav-carrier datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Coronus-Grav-carrier",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.orion-assault-dropship",
+      "name": "Orion Assault Dropship",
+      "externalIds": {
+        "wahapedia": "Orion-Assault-Dropship"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Transport",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 690,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 740,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Orion Assault Dropship",
+        "move": 14,
+        "toughness": 12,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 22,
+        "leadership": 6,
+        "oc": 0,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 160
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "TRANSPORT",
+          "FLY",
+          "IMPERIUM",
+          "ORION ASSAULT DROPSHIP"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Arachnus heavy blaze cannon",
+            "range": 36,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+1",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Spiculus heavy bolt launcher",
+            "range": 36,
+            "attacks": "D6+6",
+            "skill": 2,
+            "strength": 7,
+            "ap": -1,
+            "damage": "2",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin lastrum bolt cannon",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured hull",
+            "range": 0,
+            "attacks": "9",
+            "skill": 4,
+            "strength": 9,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D6",
+            "description": "Core ability: Deadly Demise D6.",
+            "category": "datasheet"
+          },
+          {
+            "name": "Hover",
+            "description": "Core ability: Hover.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            3
+          ]
+        ],
+        "transportCapacity": 12,
+        "damagedProfile": {
+          "maxRemainingWounds": 7,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Assault Dropship",
+          "description": "If a unit disembarks from this TRANSPORT before it moves, until the end of the turn, that unit is eligible to charge in a turn in which it Advanced.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Transport",
+          "description": "This model has a transport capacity of 12 ADEPTUS CUSTODES INFANTRY models. This model can also transport 1 VENERABLE CONTEMPTOR DREADNOUGHT, 1 CONTEMPTOR-ACHILLUS DREADNOUGHT or 1 CONTEMPTOR GALATUS-DREADNOUGHT; while doing so, its transport capacity is reduced to 6 ADEPTUS CUSTODES INFANTRY models.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-7 Wounds Remaining While this model has 1-7 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Orion Assault Dropship datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Orion-Assault-Dropship",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.caladius-grav-tank",
+      "name": "Caladius Grav-tank",
+      "externalIds": {
+        "wahapedia": "Caladius-Grav-tank"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 210,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 225,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's twin iliastus accelerator cannon can be replaced with 1 twin arachnus heavy blaze cannon."
+      ],
+      "profile": {
+        "name": "Caladius Grav-tank",
+        "move": 10,
+        "toughness": 11,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 14,
+        "leadership": 6,
+        "oc": 4,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 170,
+            "lengthMm": 109
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FLY",
+          "FRAME",
+          "IMPERIUM",
+          "CALADIUS GRAV-TANK"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Twin arachnus heavy blaze cannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 12,
+            "ap": -3,
+            "damage": "D6+2",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin iliastus accelerator cannon",
+            "range": 48,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 10,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [
+              "Rapid Fire 4",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin lastrum bolt cannon",
+            "range": 36,
+            "attacks": "3",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Sustained Hits 1"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured hull",
+            "range": 0,
+            "attacks": "4",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 5,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Advanced Firepower",
+          "description": "Each time this model makes an attack with its twin iliastus accelerator cannon that targets an enemy unit (excluding MONSTERS and VEHICLES), that attack has the [LETHAL HITS] ability. Each time this model makes an attack with its twin arachnus heavy blaze cannon that targets an enemy MONSTER or VEHICLE unit, that attack has the [LETHAL HITS] ability.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-5 Wounds Remaining While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Caladius Grav-tank datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Caladius-Grav-tank",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.pallas-grav-attack",
+      "name": "Pallas Grav-attack",
+      "externalIds": {
+        "wahapedia": "Pallas-Grav-attack"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Vehicle",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 100
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Pallas Grav-attack",
+        "move": 12,
+        "toughness": 8,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 9,
+        "leadership": 6,
+        "oc": 2,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "oval",
+            "widthMm": 105,
+            "lengthMm": 70
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "FLY",
+          "FRAME",
+          "IMPERIUM",
+          "PALLAS GRAV-ATTACK"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Twin arachnus blaze cannon",
+            "range": 24,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds",
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured hull",
+            "range": 0,
+            "attacks": "3",
+            "skill": 4,
+            "strength": 6,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Merciless Hunter",
+          "description": "In your Shooting phase, each time this model makes an attack that targets an enemy unit that is Below Half-strength, add 1 to the Wound roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Pallas Grav-attack datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Pallas-Grav-attack",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.venerable-contemptor-dreadnought",
+      "name": "Venerable Contemptor Dreadnought",
+      "externalIds": {
+        "wahapedia": "Venerable-Contemptor-Dreadnought"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 170,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 185,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's multi-melta can be replaced with 1 Kheres-pattern assault cannon."
+      ],
+      "profile": {
+        "name": "Venerable Contemptor Dreadnought",
+        "move": 6,
+        "toughness": 9,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "VENERABLE CONTEMPTOR DREADNOUGHT"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Combi-bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 4,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Kheres-pattern assault cannon",
+            "range": 24,
+            "attacks": "6",
+            "skill": 2,
+            "strength": 7,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Multi-melta",
+            "range": 18,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 9,
+            "ap": -4,
+            "damage": "D6",
+            "keywords": [
+              "Melta 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Contemptor combat weapon",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 12,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Unyielding Ancient",
+          "description": "The first time this model is destroyed, remove it from play without resolving its Deadly Demise ability. Then, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of any enemy units, with D6 wounds remaining.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Venerable Contemptor Dreadnought datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Venerable-Contemptor-Dreadnought",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.contemptor-achillus-dreadnought",
+      "name": "Contemptor-achillus Dreadnought",
+      "externalIds": {
+        "wahapedia": "Contemptor-achillus-Dreadnought"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 155,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 170,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 lastrum storm bolters can be replaced with one of the following:; 2 infernus incinerators; 2 twin adrathic destructors; 1 lastrum storm bolter and 1 infernus incinerator; 1 lastrum storm bolter and 1 twin adrathic destructor; 1 infernus incinerator and 1 twin adrathic destructor"
+      ],
+      "profile": {
+        "name": "Contemptor-achillus Dreadnought",
+        "move": 6,
+        "toughness": 9,
+        "save": 2,
+        "invulnSave": 5,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "CONTEMPTOR-ACHILLUS DREADNOUGHT"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Achillus dreadspear",
+            "range": 12,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 9,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Infernus incinerator",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Lastrum storm bolter",
+            "range": 24,
+            "attacks": "2",
+            "skill": 2,
+            "strength": 5,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Rapid Fire 2"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin adrathic destructor",
+            "range": 18,
+            "attacks": "1",
+            "skill": 2,
+            "strength": 6,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [
+              "Twin-linked"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Achillus dreadspear",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 12,
+            "ap": -2,
+            "damage": "D6+1",
+            "keywords": [
+              "Lance"
+            ],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Dread Foe",
+          "description": "Each time this model is selected to fight, you can select one enemy unit within Engagement Range of it and roll one D6, adding 2 to the result if this model made a Charge move this turn: on a 4-5, that enemy unit suffers D3 mortal wounds; on a 6+, that enemy unit suffers 3 mortal wounds.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Contemptor-achillus Dreadnought datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Contemptor-achillus-Dreadnought",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.contemptor-galatus-dreadnought",
+      "name": "Contemptor-galatus Dreadnought",
+      "externalIds": {
+        "wahapedia": "Contemptor-galatus-Dreadnought"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 165,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 2
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 180,
+          "unitNumber": {
+            "minimum": 3
+          }
+        }
+      ],
+      "wargearOptions": [
+        "None"
+      ],
+      "profile": {
+        "name": "Contemptor-galatus Dreadnought",
+        "move": 6,
+        "toughness": 9,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 10,
+        "leadership": 6,
+        "oc": 3,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 60
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "CONTEMPTOR-GALATUS DREADNOUGHT"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Galatus warblade",
+            "range": 12,
+            "attacks": "D6",
+            "skill": 6,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Ignores Cover",
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Galatus warblade",
+            "range": 0,
+            "attacks": "8",
+            "skill": 2,
+            "strength": 8,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise 1",
+            "description": "Core ability: Deadly Demise 1.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Galatus Shield",
+          "description": "Each time a melee attack targets this model, subtract 1 from the Wound roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Contemptor-galatus Dreadnought datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Contemptor-galatus-Dreadnought",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    },
+    {
+      "id": "adeptus-custodes.telemon-heavy-dreadnought",
+      "name": "Telemon Heavy Dreadnought",
+      "externalIds": {
+        "wahapedia": "Telemon-Heavy-Dreadnought"
+      },
+      "status": "current",
+      "implementationStatus": "partial",
+      "role": "Walker",
+      "modelCount": {
+        "minimum": 1
+      },
+      "points": [
+        {
+          "modelCount": 1,
+          "points": 225,
+          "unitNumber": {
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        {
+          "modelCount": 1,
+          "points": 245,
+          "unitNumber": {
+            "minimum": 2
+          }
+        }
+      ],
+      "wargearOptions": [
+        "This model's 2 iliastus accelerator culverins can be replaced with one of the following:; 2 arachnus storm cannons; 2 Telemon caestus and 2 twin plasma projectors; 1 iliastus accelerator culverin and 1 arachnus storm cannon; 1 iliastus accelerator culverin, 1 Telemon caestus and 1 twin plasma projector; 1 arachnus storm cannon, 1 Telemon caestus and 1 twin plasma projector"
+      ],
+      "profile": {
+        "name": "Telemon Heavy Dreadnought",
+        "move": 8,
+        "toughness": 10,
+        "save": 2,
+        "invulnSave": 4,
+        "wounds": 12,
+        "leadership": 6,
+        "oc": 4,
+        "baseModelCount": 1,
+        "modelBases": [
+          {
+            "shape": "round",
+            "diameterMm": 100
+          }
+        ],
+        "keywords": [
+          "VEHICLE",
+          "WALKER",
+          "IMPERIUM",
+          "TELEMON HEAVY DREADNOUGHT"
+        ],
+        "factionKeywords": [
+          "adeptus-custodes",
+          "Adeptus Custodes"
+        ],
+        "weapons": [
+          {
+            "name": "Arachnus storm cannon",
+            "range": 24,
+            "attacks": "12",
+            "skill": 2,
+            "strength": 6,
+            "ap": -1,
+            "damage": "1",
+            "keywords": [
+              "Devastating Wounds"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Iliastus accelerator culverin",
+            "range": 48,
+            "attacks": "4",
+            "skill": 2,
+            "strength": 9,
+            "ap": -1,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": false
+          },
+          {
+            "name": "Spiculus bolt launcher",
+            "range": 36,
+            "attacks": "D6+3",
+            "skill": 2,
+            "strength": 5,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [
+              "Blast"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Twin plasma projector",
+            "range": 12,
+            "attacks": "D3",
+            "skill": 6,
+            "strength": 7,
+            "ap": -2,
+            "damage": "1",
+            "keywords": [
+              "Twin-linked",
+              "Torrent"
+            ],
+            "isMelee": false
+          },
+          {
+            "name": "Armoured feet",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 7,
+            "ap": 0,
+            "damage": "1",
+            "keywords": [],
+            "isMelee": true
+          },
+          {
+            "name": "Telemon caestus",
+            "range": 0,
+            "attacks": "5",
+            "skill": 2,
+            "strength": 12,
+            "ap": -2,
+            "damage": "3",
+            "keywords": [],
+            "isMelee": true
+          }
+        ],
+        "abilities": [
+          {
+            "name": "Deadly Demise D3",
+            "description": "Core ability: Deadly Demise D3.",
+            "category": "datasheet"
+          }
+        ],
+        "rules": [],
+        "modelWeaponLoadouts": [
+          [
+            2,
+            4
+          ]
+        ],
+        "damagedProfile": {
+          "maxRemainingWounds": 4,
+          "hitRollModifier": 1
+        }
+      },
+      "ruleRefs": [
+        "adeptus-custodes.army-rule.martial-katah"
+      ],
+      "rawRules": [
+        {
+          "name": "Guardian Eternal",
+          "description": "Each time an attack is allocated to this model, subtract 1 from the Damage characteristic of that attack.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Devoted to Destruction",
+          "description": "If this model is equipped with 2 Telemon caestus weapons in addition to its armoured feet weapon, add 2 to the Attacks characteristic of those Telemon caestus weapons.",
+          "category": "datasheet"
+        },
+        {
+          "name": "Damaged profile",
+          "description": "1-4 Wounds Remaining While this model has 1-4 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.",
+          "category": "datasheet"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Wahapedia Telemon Heavy Dreadnought datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/adeptus-custodes/Telemon-Heavy-Dreadnought",
+          "capturedAt": "2026-09-25"
+        }
+      ],
+      "notes": [
+        "Generated from the current 11th-edition Wahapedia reference. Wargear choices are derived by the shared catalog normalizer."
+      ]
+    }
+  ]
+}

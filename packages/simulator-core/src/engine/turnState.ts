@@ -15,6 +15,7 @@ export function resetUnitForActiveTurn(unit: BattleUnit, options: ActiveTurnRese
   unit.consolidated = undefined;
   unit.firedWeaponIndices = undefined;
   unit.movementAction = undefined;
+  unit.advanceRoll = undefined;
   unit.movementAllowanceRemaining = undefined;
   unit.movementAllowanceRemainingByModel = undefined;
   unit.movementAllowanceTotalByModel = undefined;

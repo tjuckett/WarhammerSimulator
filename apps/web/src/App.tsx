@@ -15,7 +15,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
-import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleState, type BattleUnit, type PhaseStep } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleState, type BattleUnit, type CombatRerollSelection, type PhaseStep } from '@warhammer-simulator/core/types/battle';
 import { advanceBattlePhase, nextPhaseStep, phaseStepFor } from '@warhammer-simulator/core/engine/battleStateMachine';
 import { isFightResolutionStep } from '@warhammer-simulator/core/engine/phases/fightPhaseRules';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
@@ -25,8 +25,8 @@ import { rulesEditionForRuleset, rulesetMetadataForState, type RulesEdition } fr
 import { modelWeaponLoadout } from '@warhammer-simulator/core/engine/unitModelState';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, enterBattlePhase, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, placeNextUnit, removePlayModels, rollPlayBattleshock, startPlayScoutMove,
-  advancePlayFightPileInStep, advancePlayConsolidationStep, allocatePlayDamageToModel, battleUnitVisibilityToAttachedUnit, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, completePlayFightMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playConsolidationPendingFightUnitIds, playConsolidationUnitIds, playFightActivationUnitIds, playFightFirstUnitIds, playFightIneligibleUnitIds, playFightPhaseHasPendingActivations, playFightPileInUnitIds, playFightSideCanPass, playFightStepNeedsStart, playFightWeaponAllocationCap, playFightWeaponOptions, playFightPileInTargetOptions, playFightConsolidationOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponModelIndexesForTarget, playShootingWeaponModelCount, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanDeclareSuperHeavyMobile, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayChargeStep, startPlayConsolidationStep, startPlayFightPileInStep, startPlayFightStep, startPlayShootingStep, startPlayUnitAction, surveilTargetOptions, playCombatHitPreview, reorganizePlayModelsGrid, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type CombatHitPreview, type DeploymentStrategy, type FiringDeckSelection, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, enterBattlePhase, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, placeNextUnit, removePlayModels, resolvePreBattleFormation, rollPlayBattleshock, startPlayScoutMove,
+  advancePlayCombatResolution, advancePlayFightPileInStep, advancePlayConsolidationStep, allocatePlayDamageToModel, rerollPlayFeelNoPainAllocation, battleUnitVisibilityToAttachedUnit, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, clearPlayCombatResolution, combatResolutionNeedsFollowThrough, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playConsolidationPendingFightUnitIds, playConsolidationUnitIds, playFightActivationUnitIds, playFightFirstUnitIds, playFightIneligibleUnitIds, playFightPhaseHasPendingActivations, playFightPileInUnitIds, playFightSideCanPass, playFightStepNeedsStart, playFightWeaponAllocationCap, playFightWeaponOptions, playFightPileInTargetOptions, playFightConsolidationOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponModelIndexesForTarget, playShootingWeaponModelCount, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanDeclareSuperHeavyMobile, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayChargeStep, startPlayConsolidationStep, startPlayFightPileInStep, startPlayFightStep, startPlayShootingStep, startPlayUnitAction, surveilTargetOptions, playCombatHitPreview, reorganizePlayModelsGrid, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type CombatHitPreview, type DeploymentStrategy, type FiringDeckSelection, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -35,7 +35,7 @@ import { availablePhaseStepActionUnitIds, hasPendingRequiredPhaseStepActions, ph
 import { formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '@warhammer-simulator/core/engine/missionScoring';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '@warhammer-simulator/core/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem as applyStratagem } from '@warhammer-simulator/core/engine/stratagems';
-import { availableUnitAbilities, useUnitAbility as applyUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
+import { availableArmyAbilities, availableUnitAbilities, useArmyAbility as applyArmyAbility, useUnitAbility as applyUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
 import {
   loadBrain, saveBrain, recordGame, suggestStrategy, brainStats,
   type BrainMemory, type GameRecord,
@@ -47,7 +47,9 @@ import { moveSelectedPlayModels, moveSelectedPlayModelsVertically, rotateSelecte
 import { PhaseStepper } from './components/PhaseStepper';
 import { BattleLog } from './components/BattleLog';
 import { ArmyPanel } from './components/ArmyPanel';
+import { PreBattleFormationPanel } from './components/PreBattleFormationPanel';
 import { ArmyBuilder } from './components/ArmyBuilder';
+import { PrimaryMissionPanel } from './play/PrimaryMissionPanel';
 import { ControllerSeatControls } from './components/ControllerSeatControls';
 import { armyRepository, type SavedArmyRecord } from './army/armyRepository';
 import { UnitStatsPanel } from './components/UnitStatsPanel';
@@ -716,13 +718,51 @@ export default function App() {
     }));
   }, [activeSelectedShootingUnit, setSelectedShootingTargetId]);
   const clearInspectedSelection = useCallback(() => setInspectedSelection(null), []);
+  const pendingShootingResolution = battleState?.pendingCombatResolution?.kind === 'shooting'
+    && battleState.lastShootingResolution?.shooterUnitId === battleState.pendingCombatResolution.attackerUnitId
+    ? battleState.lastShootingResolution
+    : null;
   const activeShootingResolution = activeSelectedShootingUnit
     && battleState?.lastShootingResolution?.shooterUnitId === activeSelectedShootingUnit.id
     ? battleState.lastShootingResolution
-    : null;
+    : pendingShootingResolution;
   const activeCombatResolution = activeShootingResolution ?? (battleState?.phase === BATTLE_PHASE.Fight
     ? battleState.lastShootingResolution ?? null
     : null);
+  const activeCombatResolutionStage = battleState?.pendingCombatResolution
+    && battleState.pendingCombatResolution.attackerUnitId === activeCombatResolution?.shooterUnitId
+    ? battleState.pendingCombatResolution.stage
+    : undefined;
+  // The core cursor is authoritative while a staged result is being
+  // acknowledged. Keep the review action visible even if the local session
+  // status briefly falls back to idle during the attacker/defender handoff.
+  const hasActiveShootingCursor = !!battleState?.pendingCombatResolution
+    && battleState.pendingCombatResolution.kind === 'shooting'
+    && battleState.lastShootingResolution?.shooterUnitId === battleState.pendingCombatResolution.attackerUnitId;
+  const shootingResultActive = shootingResolutionStatus === 'rolled' || hasActiveShootingCursor;
+  const combatStageActionLabel = (stage: typeof activeCombatResolutionStage, rolled: boolean) => {
+    if (!rolled || !stage) return undefined;
+    if (stage === 'hits') return 'Continue to Wounds';
+    if (stage === 'wounds') return 'Continue to Saves';
+    if (stage === 'saves') {
+      if (!battleState || !combatResolutionNeedsFollowThrough(battleState)) return 'Done';
+      const hasFeelNoPainRolls = activeCombatResolution?.weapons.some(weapon =>
+        weapon.groups.some(group => group.kind === 'feel-no-pain'),
+      );
+      return hasFeelNoPainRolls ? 'Continue to Feel No Pain' : 'Review Damage';
+    }
+    if (stage === 'feel-no-pain') return 'Review Damage';
+    return 'Done';
+  };
+  const combatDefenderAdvanceLabel = (pending: BattleState['pendingCombatResolution']) => {
+    if (!pending) return undefined;
+    if (pending.stage === 'damage') {
+      return pending.continuationQueue?.some(entry => (entry.stage ?? 'hits') !== 'damage')
+        ? 'Continue to Next Weapon'
+        : undefined;
+    }
+    return combatStageActionLabel(pending.stage, true) ?? 'Continue';
+  };
   const shootingResolutionTargetIds = activeCombatResolution
     ? [...new Set(activeCombatResolution.weapons.map(weapon => weapon.targetUnitId))]
       .sort((a, b) => (battleState?.units.findIndex(unit => unit.id === a) ?? Number.MAX_SAFE_INTEGER)
@@ -734,7 +774,7 @@ export default function App() {
   const combatResolutionStatus = battleState?.phase === BATTLE_PHASE.Fight
     ? fightResolutionStatus
     : shootingResolutionStatus;
-  const shootingResolutionTargetUnit = combatResolutionStatus === 'rolled' && activeCombatResolution
+  const shootingResolutionTargetUnit = (combatResolutionStatus === 'rolled' || hasActiveShootingCursor) && activeCombatResolution
     ? battleState?.units.find(unit => unit.id === selectedShootingResolutionTargetId && !unit.destroyed && !unit.embarkedInUnitId) ?? null
     : null;
   const chargeUnitsStepActive = battleState?.phase === BATTLE_PHASE.Charge
@@ -775,6 +815,10 @@ export default function App() {
     && fightResolutionStatus === 'rolled'
     ? battleState.lastShootingResolution ?? null
     : null;
+  const activeFightResolutionStage = battleState?.pendingCombatResolution?.kind === 'fight'
+    && battleState.pendingCombatResolution.attackerUnitId === activeFightResolution?.shooterUnitId
+    ? battleState.pendingCombatResolution.stage
+    : undefined;
   const displayedFightUnit = activeFightResolution
     ? battleState?.units.find(unit => unit.id === activeFightResolution.shooterUnitId && !unit.destroyed && !unit.embarkedInUnitId) ?? null
     : selectedFightUnit;
@@ -936,7 +980,11 @@ export default function App() {
       }
 
       if (fightStep === PHASE_STEP.FightUnits) {
-        if (playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)) return 'Finish Fights';
+        if (playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)) {
+          return fightPassSide === null
+            ? 'Finish Fights'
+            : `Pass ${armyName(fightPassSide)} Fight`;
+        }
         if (fightReadyToStartConsolidation) return `Start ${armyName(battleState.activeArmy)} Consolidation`;
       }
 
@@ -1012,6 +1060,14 @@ export default function App() {
     selectedFightTargetId,
     selectedFightWeaponIndex,
   });
+  const chargeRerollAvailable = !!(
+    battleState?.pendingCommandReroll
+    && battleState.pendingCommandReroll.phase === 'charge'
+    && selectedChargeUnit
+    && selectedPlayChargeResult
+    && battleState.pendingCommandReroll.side === selectedChargeUnit.side
+    && selectedPlayChargeDice.length === 2
+  );
   const fightResultWeaponOptionsRef = useRef<typeof selectedPlayFightOptions>([]);
   const fightPopupWeaponOptions = activeFightResolution
     ? fightResultWeaponOptionsRef.current
@@ -1273,15 +1329,23 @@ export default function App() {
     [isPlayMode, battleState, activeRulesForBattle, selectedTacticsUnit, selectedTacticsSide],
   );
   const availablePlayAbilities = useMemo<AbilityOption[]>(() => {
-    if (!isPlayMode || !battleState || !selectedTacticsUnit) return [];
+    if (!isPlayMode || !battleState) return [];
     const timings: AbilityTiming[] = ['manual'];
     if (battleState.phase === 'command') timings.push('command-phase');
     timings.push('end-of-phase');
-    return timings.flatMap(timing =>
-      availableUnitAbilities(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, timing, activeRulesForBattle)
+    const armyAbilities = timings.flatMap(timing =>
+      availableArmyAbilities(battleState, selectedTacticsSide, timing, activeRulesForBattle)
         .map(ability => ({ ability, timing })),
     );
-  }, [isPlayMode, battleState, selectedTacticsUnit, activeRulesForBattle]);
+    const unitAbilities = selectedTacticsUnit
+      ? timings.flatMap(timing =>
+        availableUnitAbilities(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, timing, activeRulesForBattle)
+          .filter(ability => !ability.armyWideOncePerBattle)
+          .map(ability => ({ ability, timing })),
+      )
+      : [];
+    return [...armyAbilities, ...unitAbilities];
+  }, [isPlayMode, battleState, selectedTacticsUnit, selectedTacticsSide, activeRulesForBattle]);
   const canSelectedUnitStartAction = useMemo(
     () => !!battleState
       && !!selectedTacticsUnit
@@ -1438,7 +1502,12 @@ export default function App() {
         if (option.weaponIndex < 0) continue;
         const sourceUnit = battleState.units.find(unit => unit.id === option.sourceUnitId) ?? shooter;
         const sourceWeaponIndex = option.sourceWeaponIndex ?? option.weaponIndex;
-        const cacheKey = `${isFight ? 'fight' : 'shooting'}:${sourceUnit.id}:${target.id}:${sourceWeaponIndex}`;
+        const shootingModelIndexes = !isFight
+          ? shootingTargetVisibility.get(target.id)?.weaponModelIndexes[sourceWeaponIndex] ?? []
+          : [];
+        const fightModelIndexes = isFight ? option.targetModelIndexes?.[target.id] ?? [] : [];
+        const previewModelIndexes = isFight ? fightModelIndexes : shootingModelIndexes;
+        const cacheKey = `${isFight ? 'fight' : 'shooting'}:${sourceUnit.id}:${target.id}:${sourceWeaponIndex}:${previewModelIndexes.join(',')}`;
         const preview = previewCache.previews.get(cacheKey) ?? playCombatHitPreview(
           battleState,
           sourceUnit.id,
@@ -1448,11 +1517,12 @@ export default function App() {
           activeRulesForBattle,
           {
             targetAlreadyValid: true,
-            // Fight already has the exact engaged model set from the core
-            // weapon-option query. Shooting intentionally defers LOS here.
+            // Both paths use the exact model set already returned by the core
+            // visibility/engagement queries, so cover and modifiers match the
+            // eventual declaration resolution before the player rolls.
             modelIndexes: isFight
-              ? option.targetModelIndexes?.[target.id] ?? []
-              : [],
+              ? fightModelIndexes
+              : [...shootingModelIndexes],
           },
         );
         if (preview) previewCache.previews.set(cacheKey, preview);
@@ -1477,6 +1547,7 @@ export default function App() {
     selectedFightWeaponIndex,
     selectedPlayFightOptions,
     selectedPlayFightTargets,
+    shootingTargetVisibility,
   ]);
   const coverUnitIds = useMemo<Set<string>>(
     () => new Set([...combatHitPreviews.entries()]
@@ -1643,7 +1714,25 @@ export default function App() {
   const damageAllocationReviewUnit = useMemo(() => damageAllocationTargetId
     ? battleState?.units.find(unit => unit.id === damageAllocationTargetId && !unit.embarkedInUnitId) ?? null
     : null, [battleState, damageAllocationTargetId]);
-  const damageAllocationPopupUnit = pendingDamageAllocationUnit ?? damageAllocationReviewUnit;
+  // Once a packet is allocated, the pending queue can become empty. Keep the
+  // defender popup anchored to the typed FNP review state so the newly rolled
+  // dice remain visible instead of falling back to the attacker panel.
+  const feelNoPainReviewUnit = useMemo(() => {
+    const review = battleState?.pendingFeelNoPainReroll;
+    const targetUnitId = review?.targetUnitId;
+    return (targetUnitId
+      ? battleState?.units.find(unit => unit.id === targetUnitId && !unit.embarkedInUnitId)
+      : undefined)
+      ?? review?.beforeUnit
+      ?? null;
+  }, [battleState]);
+  // Once FNP is being reviewed, the typed review target is the authoritative
+  // defender. The previous allocation target can be a destroyed bodyguard or
+  // a stale component after a Leader transfer, which has no board geometry.
+  const damageAllocationPopupUnit = pendingDamageAllocationUnit
+    ?? (battleState?.pendingFeelNoPainReroll ? feelNoPainReviewUnit : damageAllocationReviewUnit)
+    ?? feelNoPainReviewUnit
+    ?? damageAllocationReviewUnit;
   const damageAllocationOverlayAnchor = useMemo<PlayModelSelection | null>(() => damageAllocationPopupUnit
     ? {
       side: damageAllocationPopupUnit.side,
@@ -1654,9 +1743,11 @@ export default function App() {
       }],
     }
     : null, [damageAllocationPopupUnit]);
-  // The fixed allocation overlay remains open through the final packet so
-  // its Done action cannot fall back into the old selection-based popup.
+  // A roll result remains on the attacker until the player explicitly presses
+  // Resolve. Once allocation has started it owns the fixed overlay, including
+  // when a final bodyguard casualty transfers the next packet to a Leader.
   const damageAllocationPopupActive = shootingSessionKind === 'allocating-damage'
+    || !!battleState?.pendingFeelNoPainReroll
     || (damageAllocationLocked
       && battleState?.phase === BATTLE_PHASE.Fight
       && casualtyRemovalShooterId !== null);
@@ -1706,6 +1797,7 @@ export default function App() {
     () => isPlayMode && battleState ? playPhaseCoherencyIssues(battleState) : [],
     [isPlayMode, battleState],
   );
+  const [battleShockSelectedUnitId, setBattleShockSelectedUnitId] = useState<string | null>(null);
   const battleShockStepActive = !!(
     isPlayMode
     && battleState?.phase === BATTLE_PHASE.Command
@@ -1717,6 +1809,17 @@ export default function App() {
       : [],
     [battleShockStepActive, battleState],
   );
+  useEffect(() => {
+    if (!battleShockStepActive) {
+      setBattleShockSelectedUnitId(null);
+      return;
+    }
+    setBattleShockSelectedUnitId(current =>
+      current && battleShockEligibleUnits.some(unit => unit.unitId === current)
+        ? current
+        : battleState?.battleshockPendingUnitId ?? null,
+    );
+  }, [battleShockStepActive, battleShockEligibleUnits, battleState?.battleshockPendingUnitId]);
   const battleShockPendingUnitIds = useMemo(() => {
     if (!battleShockStepActive || !battleState) return [];
     const resolved = new Set((battleState.battleshockResults ?? []).map(result => result.unitId));
@@ -1926,7 +2029,19 @@ export default function App() {
       && battleState?.units.some(unit => (unit.pendingDamageAllocations?.length ?? 0) > 0)) {
       return;
     }
+    // The packet queue is empty after the allocation, but a Feel No Pain
+    // review is still active. Keep the UI session alive until the player
+    // dismisses that typed result or resolves its Command Re-roll.
+    if (battleState?.pendingFeelNoPainReroll) return;
     if (!battleState || !shootingUnitsStepActive || !selectedShootingUnit) {
+      clearShootingSession();
+      return;
+    }
+    // Timeline undo/redo restores the core combat cursor. Keep the result
+    // session alive while that cursor is still pending (for example, undoing
+    // a Command Re-roll back to the hit stage), but discard a stale result
+    // session once the restored state has no interactive shooting result.
+    if (shootingResolutionStatus === 'rolled' && !battleState.pendingCombatResolution) {
       clearShootingSession();
       return;
     }
@@ -2296,7 +2411,7 @@ export default function App() {
     // Damage allocation moves the board selection from the attacker to the
     // defender automatically. That is a result-review handoff, not a player
     // choosing a new shooter, so it must never trigger the normal lock path.
-    if (damageAllocationLocked || shootingResolutionStatus === 'rolled' || casualtyRemovalShooterId) return;
+    if (damageAllocationLocked || shootingResultActive || casualtyRemovalShooterId) return;
     if (!lastId || lastId === currentId) return;
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'shooting') return;
@@ -2340,11 +2455,13 @@ export default function App() {
 
   function updateArmy1(nextArmy: ImportedArmy) {
     setArmy1(nextArmy);
+    if (nextArmy.forceDisposition) changeForceDisposition0(nextArmy.forceDisposition);
     resetConfiguredBattle();
   }
 
   function updateArmy2(nextArmy: ImportedArmy) {
     setArmy2(nextArmy);
+    if (nextArmy.forceDisposition) changeForceDisposition1(nextArmy.forceDisposition);
     resetConfiguredBattle();
   }
 
@@ -2370,6 +2487,14 @@ export default function App() {
     setPlayModelSelection((result.interactionState?.modelSelection as PlayModelSelection | null | undefined) ?? null);
     setInspectedSelection(null);
     commitBattleState(result.state);
+    // Interaction state is recorded before the staged advance callback runs.
+    // Re-apply the defender handoff from the restored core cursor so undo,
+    // redo, and seek show the same save/damage popup as the live action.
+    if (result.state.pendingCombatResolution
+      && result.state.pendingCombatResolution.stage !== 'hits'
+      && result.state.pendingCombatResolution.stage !== 'wounds') {
+      handoffCombatResolutionAfterAdvance(result.state);
+    }
   }
 
   function commitPlayTimelineAction(pending: PendingPlayTimelineAction) {
@@ -2512,7 +2637,7 @@ export default function App() {
     fightReadyUnitIds,
     damageAllocationLocked,
     pendingDamageAllocationUnitIds,
-    shootingResolutionShooterId: shootingResolutionStatus === 'rolled'
+    shootingResolutionShooterId: shootingResultActive
       ? battleState?.lastShootingResolution?.shooterUnitId ?? null
       : null,
     casualtyRemovalShooterId,
@@ -2571,6 +2696,11 @@ export default function App() {
     setPlayModelSelection(selection);
   }
 
+  useEffect(() => {
+    if (!battleShockStepActive || !battleState || !battleShockSelectedUnitId) return;
+    selectPlacedPlayUnit(battleShockSelectedUnitId, battleState.activeArmy);
+  }, [battleShockStepActive, battleShockSelectedUnitId, battleState?.activeArmy]);
+
   function toggleSelectedChargeTarget(targetUnitId: string) {
     setSelectedChargeTargetIds(current => current.includes(targetUnitId)
       ? current.filter(id => id !== targetUnitId)
@@ -2619,6 +2749,22 @@ export default function App() {
       return;
     }
     const currentState = battleStateRef.current ?? battleState;
+    if (isPlayMode
+      && currentState?.phase === BATTLE_PHASE.Command
+      && currentState.phaseStep === PHASE_STEP.CommandBattleShock) {
+      const battleShockUnitId = battleShockEligibleUnits.find(candidate =>
+        candidate.side === side
+        && attachedBattleUnitIdsForSelection(currentState, candidate.unitId).includes(unitId),
+      )?.unitId;
+      if (!battleShockUnitId) {
+        setTargetErrorMsg('Select a unit listed for Battle-shock');
+        return;
+      }
+      setBattleShockSelectedUnitId(battleShockUnitId);
+      selectPlacedPlayUnit(battleShockUnitId, side);
+      setTargetErrorMsg(null);
+      return;
+    }
     if (isPlayMode && shootingUnitsStepActive) {
       const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
       if (!clickedUnit) return;
@@ -2640,7 +2786,7 @@ export default function App() {
         return;
       }
 
-      const openShootingResolution = shootingResolutionStatus === 'rolled'
+      const openShootingResolution = shootingResultActive
         ? battleState.lastShootingResolution
         : null;
       if (openShootingResolution) {
@@ -3198,9 +3344,12 @@ export default function App() {
     if (!canEditPlayModels(current) && !hasPendingChargeMovement(current) && !current?.pendingFightMovement) return;
     const normalized = normalizePlaySelectionForState(current, selection);
     if (!normalized) return;
+    const movementSelection: PlayModelSelection = normalized.modelHighlights?.length
+      ? { side: normalized.side, parts: normalized.modelHighlights }
+      : normalized;
     pendingPlayModelMoveUndoRef.current = {
       ...playUndoEntry(current),
-      playModelSelection: normalized,
+      playModelSelection: movementSelection,
     };
     pendingPlayModelMoveActionRef.current = {
       undoEntry: {
@@ -3223,7 +3372,12 @@ export default function App() {
     if (!canEditPlayModels(prev) && !hasPendingChargeMovement(prev) && !prev?.pendingFightMovement) return;
     const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
-    const next = previewState ?? moveSelectedPlayModels(prev, normalized, dx, dy, false);
+    // Attached units are expanded for unit-level rules actions, while a drag
+    // must move only the model(s) directly clicked on the board.
+    const movementSelection: PlayModelSelection = normalized.modelHighlights?.length
+      ? { side: normalized.side, parts: normalized.modelHighlights }
+      : normalized;
+    const next = previewState ?? moveSelectedPlayModels(prev, movementSelection, dx, dy, false);
     if (next === prev) return;
 
     const pendingAction = pendingPlayModelMoveActionRef.current;
@@ -3255,7 +3409,10 @@ export default function App() {
     const selection = playModelSelection;
     const prev = battleStateRef.current;
     if (!selection || (!canEditMovementModels(prev) && !(prev?.phase === 'setup' && selectedPlayBattleUnit?.scoutMoveStarted))) return;
-    const next = moveSelectedPlayModelsVertically(prev, selection, dz);
+    const movementSelection: PlayModelSelection = selection.modelHighlights?.length
+      ? { side: selection.side, parts: selection.modelHighlights }
+      : selection;
+    const next = moveSelectedPlayModelsVertically(prev, movementSelection, dz);
     if (next === prev) return;
     const nextSelection = normalizePlaySelectionForState(next, selection);
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -3328,6 +3485,12 @@ export default function App() {
     setInspectedSelection,
     setTargetErrorMsg,
   });
+  const passFightAndDismissWarning = useCallback((side: 0 | 1) => {
+    // Passing is a valid core Fight action. Dismiss a previous attempt's
+    // "resolve every fight" warning as soon as the player chooses it.
+    setPlayPhaseWarning('');
+    passSelectedPlayFight(side);
+  }, [passSelectedPlayFight]);
 
   const { selectPendingDamageUnit, selectShootingResolutionTarget } = createPendingDamageSelectionAction({
     battleStateRef,
@@ -3361,6 +3524,7 @@ export default function App() {
     setPlayModelSelection,
     setInspectedSelection,
     setShootingAttackAllocations,
+    onCombatResolutionAdvanced: handoffCombatResolutionAfterAdvance,
   });
 
   function selectShootingResolutionTargetPopup(targetId: string) {
@@ -3380,6 +3544,47 @@ export default function App() {
     }));
     setInspectedSelection({ kind: 'battle', side: target.side, unitId: target.id });
     setTargetErrorMsg(null);
+  }
+
+  function handoffCombatResolutionAfterAdvance(next: BattleState) {
+    const pending = next.pendingCombatResolution;
+    if (!pending) return;
+    if (pending.stage === 'hits' || pending.stage === 'wounds') {
+      // A queued weapon starts a fresh attacker-side review. Restore the
+      // attacker popup so the next staged weapon is not left without an
+      // action panel after the defender review.
+      selectPlacedPlayUnit(pending.attackerUnitId, pending.attackerSide);
+      setCasualtyRemovalShooterId(null);
+      return;
+    }
+    // Saves and later stages belong to the defender-side popup. The core
+    // cursor remains authoritative; this only changes which typed result view
+    // is visible and where model allocation clicks are handled.
+    setDamageAllocationTargetId(pending.targetUnitId);
+    selectShootingResolutionTarget(next, pending.attackerUnitId, pending.targetUnitId);
+  }
+
+  function advanceCombatResolutionFromDamagePopup() {
+    const previous = battleStateRef.current;
+    const pending = previous?.pendingCombatResolution;
+    if (!previous || !pending) return;
+    if (pending.stage === 'saves' && !combatResolutionNeedsFollowThrough(previous)) {
+      // The save stage is terminal when every wound was saved and no typed
+      // mortal/devastating or queued damage remains. Do not create an empty
+      // damage stage just to make the player press Done a second time.
+      finishCombatResultReview();
+      return;
+    }
+    const next = advancePlayCombatResolution(previous, pending.kind, pending.attackerUnitId);
+    if (next === previous) return;
+    pushPlayUndo(playUndoEntry(previous), next, {
+      type: GAME_ACTION_TYPE.AdvanceCombatResolution,
+      kind: pending.kind,
+      unitId: pending.attackerUnitId,
+      side: pending.attackerSide,
+    });
+    commitBattleState(next);
+    handoffCombatResolutionAfterAdvance(next);
   }
 
   function markMovementWaypoint(point: { x: number; y: number }) {
@@ -3443,6 +3648,7 @@ export default function App() {
     setFightResolutionStatus,
     setSelectedFightWeaponIndex,
     setFightResultWeaponOptions: options => { fightResultWeaponOptionsRef.current = options; },
+    onCombatResolutionAdvanced: handoffCombatResolutionAfterAdvance,
   });
   const resolveSelectedPlayFightWithTrace = useCallback(() => {
     const trace = beginPerformanceTrace('fight-resolution', {
@@ -3455,6 +3661,19 @@ export default function App() {
 
   function finishCombatResultReview() {
     if (damageAllocationLocked) return;
+    const pendingCombat = battleStateRef.current?.pendingCombatResolution;
+    if (pendingCombat) {
+      const previous = battleStateRef.current!;
+      const cleared = clearPlayCombatResolution(previous, pendingCombat.attackerUnitId);
+      if (cleared !== previous) {
+        pushPlayUndo(playUndoEntry(previous), cleared, {
+          type: GAME_ACTION_TYPE.ClearCombatResolution,
+          unitId: pendingCombat.attackerUnitId,
+          side: pendingCombat.attackerSide,
+        });
+        commitBattleState(cleared);
+      }
+    }
     if (battleState?.phase === BATTLE_PHASE.Shooting) {
       if (shootingSessionKind === 'allocating-damage') finishShootingDamageAllocation();
       else clearShootingSession();
@@ -3563,21 +3782,69 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function resolvePendingCommandReroll(originalRolls: number[], label: string, rollType: CommandRerollRollType) {
+  function resolvePendingCommandReroll(originalRolls: number[], label: string, rollType: CommandRerollRollType, combatRoll?: CombatRerollSelection, rollUnitId?: string) {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !prev.pendingCommandReroll) return;
     const side = prev.pendingCommandReroll.side;
-    const next = resolveCommandReroll(prev, side, originalRolls, { label, rollType });
+    const next = combatRoll?.groupKind === 'feel-no-pain'
+      ? rerollPlayFeelNoPainAllocation(prev, combatRoll, originalRolls[0])
+      : resolveCommandReroll(prev, side, originalRolls, { label, rollType, combatRoll, rules: activeRulesForBattle, rollUnitId });
     if (next === prev) return;
+    if (combatRoll?.groupKind === 'feel-no-pain') {
+      const outcomeEvent = [...(next.events ?? [])].reverse().find(event =>
+        event.type === 'damage-applied' && event.data.targetUnitId === combatRoll.targetUnitId,
+      );
+      if (outcomeEvent) {
+        const rolls = outcomeEvent.data.feelNoPainRolls;
+        const target = Number(outcomeEvent.data.feelNoPainTarget);
+        const ignored = Number(outcomeEvent.data.feelNoPainIgnored);
+        setDamageAllocationOutcome({
+          targetUnitId: combatRoll.targetUnitId,
+          modelIndex: next.pendingFeelNoPainReroll?.modelIndex ?? 0,
+          damage: Number(outcomeEvent.data.damage ?? 0),
+          killedModels: Number(outcomeEvent.data.killedModels ?? 0),
+          ...(Array.isArray(rolls) && Number.isFinite(target) && Number.isFinite(ignored)
+            ? { feelNoPain: { target, rolls: rolls.filter((roll): roll is number => typeof roll === 'number'), ignored } }
+            : {}),
+        });
+      }
+    }
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.ResolveCommandReroll,
       side,
       originalRolls,
       label,
       rollType,
+      combatRoll,
+      rollUnitId,
     });
     setTargetErrorMsg('Command Re-roll resolved.');
     commitBattleState(next);
+  }
+
+  function selectCombatRerollDie(selection: CombatRerollSelection, roll: number, rollType: CommandRerollRollType) {
+    const prev = battleStateRef.current;
+    const pending = prev?.pendingCombatResolution;
+    const pendingFeelNoPain = prev?.pendingFeelNoPainReroll;
+    const selectedFeelNoPainReview = selection.groupKind === 'feel-no-pain'
+      && pendingFeelNoPain?.targetUnitId === selection.targetUnitId
+      && pendingFeelNoPain.attackerUnitId === selection.attackerUnitId;
+    const selectedWeaponIsStaged = !!pending && (
+      pending.weaponIndex === selection.weaponIndex && pending.targetUnitId === selection.targetUnitId
+      || pending.continuationQueue?.some(entry =>
+        entry.weaponIndex === selection.weaponIndex && entry.targetUnitId === selection.targetUnitId,
+      )
+      || selectedFeelNoPainReview
+    );
+    if (!prev || !isPlayMode || !prev.pendingCommandReroll || !pending
+      || pending.kind !== selection.kind
+      || pending.attackerUnitId !== selection.attackerUnitId
+      || !selectedWeaponIsStaged
+      || (selection.groupKind === 'hit' ? pending.stage !== 'hits'
+        : selection.groupKind === 'wound' ? pending.stage !== 'wounds'
+          : selection.groupKind === 'save' ? pending.stage !== 'saves'
+            : selection.groupKind === 'feel-no-pain' || selection.groupKind === 'damage' ? pending.stage !== 'damage' : true)) return;
+    resolvePendingCommandReroll([roll], `${rollType} roll`, rollType, selection);
   }
 
   function rollSelectedPlayBattleshock(unitId: string) {
@@ -3585,6 +3852,10 @@ export default function App() {
     if (!prev || !isPlayMode || prev.phase !== BATTLE_PHASE.Command || prev.phaseStep !== PHASE_STEP.CommandBattleShock) return;
     const next = rollPlayBattleshock(prev, unitId, prev.activeArmy);
     if (next === prev) return;
+    // Follow the core-owned cursor so the yellow row and board advance
+    // together after resolving this test.
+    setBattleShockSelectedUnitId(next.battleshockPendingUnitId ?? null);
+    if (next.battleshockPendingUnitId) selectPlacedPlayUnit(next.battleshockPendingUnitId, prev.activeArmy);
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.RollBattleshock,
       side: prev.activeArmy,
@@ -3595,22 +3866,23 @@ export default function App() {
 
   function useSelectedPlayAbility() {
     const prev = battleStateRef.current;
-    if (!prev || !isPlayMode || !selectedTacticsUnit || !selectedAbilityKey) return;
+    if (!prev || !isPlayMode || !selectedAbilityKey) return;
     const option = availablePlayAbilities.find(candidate => abilityOptionKey(candidate) === selectedAbilityKey);
     if (!option) return;
-    const next = applyUnitAbility(
-      prev,
-      selectedTacticsUnit.id,
-      selectedTacticsUnit.side,
-      option.ability.id,
-      option.timing,
-      activeRulesForBattle,
-    );
+    const side = option.ability.armyWideOncePerBattle ? prev.activeArmy : selectedTacticsUnit?.side;
+    if (side === undefined) return;
+    const next = option.ability.armyWideOncePerBattle
+      ? applyArmyAbility(prev, side, option.ability.id, option.timing, activeRulesForBattle)
+      : selectedTacticsUnit
+        ? applyUnitAbility(prev, selectedTacticsUnit.id, side, option.ability.id, option.timing, activeRulesForBattle)
+        : prev;
     if (next === prev) return;
+    const sourceUnitId = next.abilityUses?.at(-1)?.sourceUnitId;
+    if (!sourceUnitId) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.UseUnitAbility,
-      side: selectedTacticsUnit.side,
-      unitId: selectedTacticsUnit.id,
+      side,
+      unitId: sourceUnitId,
       abilityId: option.ability.id,
       timing: option.timing,
     });
@@ -3735,6 +4007,20 @@ export default function App() {
     const { next, placed, action } = resolvePlayPlacement(prev, selection, { x, y });
     if (!placed) return;
     pushPlayUndo(playUndoEntry(prev), next, action);
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
+    commitBattleState(next);
+  }
+
+  function resolvePreBattleFormationChoice(resolution: import('@warhammer-simulator/core/types/battle').PreBattleFormationResolution) {
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== BATTLE_PHASE.Deployment) return;
+    const next = resolvePreBattleFormation(prev, resolution);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: GAME_ACTION_TYPE.ResolvePreBattleFormation,
+      resolution,
+    });
     setPlayDeploySelection(null);
     setPlayModelSelection(null);
     commitBattleState(next);
@@ -3925,7 +4211,6 @@ export default function App() {
 
   const undoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
-    clearShootingSession();
     if (pendingPlayModelMoveUndoRef.current) {
       const entry = pendingPlayModelMoveUndoRef.current;
       clearPendingPlayModelMove();
@@ -3955,14 +4240,12 @@ export default function App() {
     pendingPlayModelMoveUndoRef,
     undoGameSessionTimelineAction,
     pendingPlayRotationUndoRef,
-    clearShootingSession,
   ]);
 
   const redoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
-    clearShootingSession();
     redoGameSessionTimelineAction();
-  }, [isPlayMode, redoGameSessionTimelineAction, clearShootingSession]);
+  }, [isPlayMode, redoGameSessionTimelineAction]);
 
   const undoDisplayedTimeline = useCallback(() => {
     undoPlayAction();
@@ -4123,7 +4406,7 @@ export default function App() {
     }
     const standardStep = advanceStandardPlayPhaseStep(
       prev,
-      clone,
+      state => clone({ ...state, log: state.log.slice(-500), events: state.events?.slice(-500) }),
       gainCommandPhaseCommandPoints,
       beginBattleshockStep,
       markRemainingStationaryUnits,
@@ -4132,6 +4415,14 @@ export default function App() {
     );
     if (standardStep.kind === 'advanced') {
       recordGameSessionAction(prev, standardStep.state, { type: GAME_ACTION_TYPE.StepPhase });
+      // A whole attached-unit cursor from the previous phase (for example,
+      // Battle-shock) must not become the first Movement drag selection.
+      // Model clicks intentionally preserve an existing group selection, so
+      // clear it whenever the core moves to a new phase.
+      if (standardStep.state.phase !== prev.phase) {
+        setPlayModelSelection(null);
+        setInspectedSelection(null);
+      }
       commitBattleState(standardStep.state);
       return;
     }
@@ -4162,7 +4453,10 @@ export default function App() {
       return;
     }
     setPlayPhaseWarning('');
-    const next = clone(prev);
+    // The log is presentation history, never rules input. Keep the recent
+    // portion when crossing a phase boundary so cloning an old combat log
+    // cannot block the next paint or an autosave.
+    const next = clone({ ...prev, log: prev.log.slice(-500), events: prev.events?.slice(-500) });
     next.pendingChargeRoll = undefined;
     next.pendingChargeMovement = undefined;
     if (next.phase !== BATTLE_PHASE.Movement || movementStep(next) === MOVEMENT_STEP.Reinforcements) {
@@ -4346,7 +4640,7 @@ export default function App() {
   const hasPendingDamageActions = () => !!pendingDamageAllocationUnit;
   const hasShootingActions = () => (
     (shootingUnitsStepActive && !!activeSelectedShootingUnit)
-    || (shootingUnitsStepActive && shootingResolutionStatus === 'rolled' && !!activeShootingResolution)
+    || (shootingUnitsStepActive && shootingResultActive && !!activeCombatResolution)
   );
   const hasChargeActions = () => (
     selectedPlayCanRollCharge
@@ -4383,7 +4677,6 @@ export default function App() {
     || hasChargeActions()
     || hasMovementActions()
     || hasFightActions()
-    || !!selectedBattleShockUnit
   );
   const selectedModelActionsVisible = !!battleState
     && battleState.phase !== 'deployment'
@@ -4408,6 +4701,12 @@ export default function App() {
     ?? (battleState?.pendingFightMovement
       ? selectionForPlacedGroup(battleState.pendingFightMovement.unitId, battleState.pendingFightMovement.side)
       : null);
+  // A Battle-shock row is the active board selection for that step. The canvas
+  // draws whole-unit selection from `selectedUnitId` (rather than a full-model
+  // selection), so pass the cursor through that visual path as well.
+  const battlefieldSelectedUnitId = battleShockStepActive
+    ? battleShockSelectedUnitId
+    : inspectedBattleUnitId;
   const battlefieldSelectedUnitIds = useMemo(() => (
     isPlayMode
       ? (shootingUnitsStepActive && selectedShootingTargetId
@@ -4463,6 +4762,7 @@ export default function App() {
       <AppHeader
         armyBuilderMode={isArmyBuilderMode}
         battleStarted={!!battleState}
+        battleSetup={battleState?.setup}
         editionId={editionId}
         isEleventhEdition={isEleventhEdition}
         primaryMission={primaryMission}
@@ -4493,9 +4793,9 @@ export default function App() {
       )}
 
       {/* ── Main layout ───────────────────────────────────────────────────── */}
-      <div className={`main${isArmyBuilderMode ? ' army-builder-hidden' : ''}${isEditorMode ? ' terrain-editor-mode' : ''}`}>
+      <div className={`main${isArmyBuilderMode ? ' army-builder-hidden' : ''}${isEditorMode ? ' terrain-editor-mode' : ''}${isPlayMode && battleState ? ' play-layout' : ''}`}>
         {/* Left: Army panels */}
-        {!isEditorMode && <div className="side-panel">
+        {!isEditorMode && !(isPlayMode && battleState) && <div className="side-panel">
           <Profiler id="army-panel-0" onRender={(_id, phase, actualDuration) => recordPerformanceTrace(
             'army-panel-render', actualDuration, { side: 0, phase },
           )}>
@@ -4565,7 +4865,7 @@ export default function App() {
           )}>
           <Battlefield
             state={movementDraftState ?? battleState ?? previewState}
-            selectedUnitId={inspectedBattleUnitId}
+            selectedUnitId={battlefieldSelectedUnitId}
             movementEngagementUnitId={isPlayMode
               && battleState?.phase === BATTLE_PHASE.Movement
               && battleState.phaseStep === PHASE_STEP.MovementUnits
@@ -4651,7 +4951,7 @@ export default function App() {
             deployer={isPlayMode && battleState && battleState.phase !== 'end' ? {
               enabled: true,
               onPlace: placeSelectedPlayUnit,
-              canPlaceUnit: !!selectedPlayUnit && (
+              canPlaceUnit: !!selectedPlayUnit && !battleState.pendingPreBattleFormations?.length && (
                 (battleState.phase === BATTLE_PHASE.Deployment && playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment)
                 || (isPlayReinforcementsStep && (playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Reinforcement || playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.StrategicReserve))
               ),
@@ -4667,19 +4967,58 @@ export default function App() {
                 }
                 : null,
               selectedModel: boardPlayModelSelection,
-              fixedOverlay: damageAllocationPopupActive && damageAllocationPopupUnit ? (
+              fixedOverlay: battleState.pendingPreBattleFormations?.length ? (
+                <PreBattleFormationPanel
+                  choices={battleState.pendingPreBattleFormations}
+                  onResolve={resolvePreBattleFormationChoice}
+                />
+              ) : damageAllocationPopupActive && damageAllocationPopupUnit ? (
                 <PendingDamageAllocationHud
                   unit={damageAllocationPopupUnit}
                   lastAllocationOutcome={damageAllocationOutcome?.targetUnitId === damageAllocationPopupUnit.id ? damageAllocationOutcome : null}
+                  showFeelNoPainResults={!!battleState.pendingFeelNoPainReroll}
+                  feelNoPainResultTargetUnitId={battleState.pendingFeelNoPainReroll?.resultTargetUnitId}
                   result={activeCombatResolution}
                   shooter={combatResolutionAttacker}
+                  feelNoPainReview={battleState.pendingFeelNoPainReroll}
                   targetIds={shootingResolutionTargetIds}
                   selectedTargetId={damageAllocationPopupUnit.id}
+                  resultStage={battleState.pendingCombatResolution?.stage}
+                  advanceLabel={combatDefenderAdvanceLabel(battleState.pendingCombatResolution)}
+                  advanceDisabled={damageAllocationLocked}
+                  combatKind={battleState.pendingCombatResolution?.kind ?? (battleState.phase === BATTLE_PHASE.Fight ? 'fight' : 'shooting')}
+                  onSelectCombatDie={battleState.pendingCommandReroll && (
+                    battleState.pendingCombatResolution?.continuation
+                    || battleState.pendingCombatResolution?.continuationQueue?.length
+                    || !!battleState.pendingFeelNoPainReroll
+                  )
+                    ? selectCombatRerollDie
+                    : undefined}
                   onTargetSelect={selectShootingResolutionTargetPopup}
+                  onAdvance={advanceCombatResolutionFromDamagePopup}
                   onDone={finishCombatResultReview}
+                />
+              ) : battleShockStepActive ? (
+                <BattleShockPanel
+                  popup
+                  armyName={battleState.armies[battleState.activeArmy]?.name ?? `Player ${battleState.activeArmy + 1}`}
+                  eligibleUnits={battleShockEligibleUnits}
+                  results={battleState.battleshockResults ?? []}
+                  pendingUnitId={battleState.battleshockPendingUnitId}
+                  selectedUnitId={battleShockSelectedUnitId ?? undefined}
+                  canRerollUnitId={battleState.pendingCommandReroll?.phase === 'command'
+                    ? battleShockSelectedUnitId ?? battleState.battleshockPendingUnitId
+                    : undefined}
+                  onSelect={unitId => {
+                    setBattleShockSelectedUnitId(unitId);
+                    selectPlacedPlayUnit(unitId, battleState.activeArmy);
+                  }}
+                  onRoll={rollSelectedPlayBattleshock}
+                  onResolveCommandReroll={(unitId, dice) => resolvePendingCommandReroll(dice, 'Leadership test', 'leadership', undefined, unitId)}
                 />
               ) : undefined,
               fixedOverlayAnchor: damageAllocationPopupActive ? damageAllocationOverlayAnchor : undefined,
+              fixedOverlayPlacement: battleState.pendingPreBattleFormations?.length || (battleShockStepActive && !damageAllocationPopupActive) ? 'bottom' : undefined,
               onSelectModel: selectPlayModels,
               onBeginModelMove: canEditPlayModelsNow ? beginPlayModelMove : undefined,
               onMoveModel: canEditPlayModelsNow ? moveSelectedPlayModel : undefined,
@@ -4690,16 +5029,6 @@ export default function App() {
                 : undefined,
               selectedModelActions: !damageAllocationPopupActive && selectedModelActionsVisible ? (
                 <>
-                  {battleShockStepActive && selectedBattleShockUnit && (
-                    <BattleShockPanel
-                      popup
-                      armyName={battleState.armies[battleState.activeArmy]?.name ?? `Player ${battleState.activeArmy + 1}`}
-                      eligibleUnits={battleShockEligibleUnits}
-                      results={battleState.battleshockResults ?? []}
-                      pendingUnitId={battleState.battleshockPendingUnitId}
-                      onRoll={rollSelectedPlayBattleshock}
-                    />
-                  )}
                   {shootingUnitsStepActive && shootingSessionKind !== 'allocating-damage' && activeSelectedShootingUnit && primaryPlaySelection?.unitId === activeSelectedShootingUnit.id && (
                     <Profiler id="shooting-combat-panel" onRender={(_id, phase, actualDuration) => recordPerformanceTrace(
                       'combat-panel-render', actualDuration, { phase },
@@ -4710,12 +5039,16 @@ export default function App() {
                       structuredResult={battleState.lastShootingResolution?.shooterUnitId === activeSelectedShootingUnit.id
                         ? battleState.lastShootingResolution
                         : null}
+                      resultStage={battleState.pendingCombatResolution?.kind === 'shooting'
+                        && battleState.pendingCombatResolution.attackerUnitId === activeSelectedShootingUnit.id
+                        ? battleState.pendingCombatResolution.stage
+                        : undefined}
                       resultSection="attacker"
-                      actionLabel={shootingResolutionStatus === 'rolled'
-                        ? 'Resolve All'
+                      actionLabel={shootingResultActive
+                        ? combatStageActionLabel(activeCombatResolutionStage, true) ?? 'Resolve All'
                         : selectedShootingHasNoEligibleTargets ? 'Done' : 'Shoot all weapons'}
                       pendingDamageActionLabel="Resolve All"
-                      warning={shootingResolutionStatus === 'rolled' && damageAllocationLocked
+                      warning={shootingResultActive && damageAllocationLocked
                         ? 'Resolve All opens the defender review; select models to apply pending damage.'
                         : undefined}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
@@ -4753,6 +5086,9 @@ export default function App() {
                         return Math.max(0, Math.min(option?.targetModelCounts?.[targetId] ?? 0, exactTargetCount, weaponModelCount - allocatedElsewhere));
                       }}
                       combatHitPreviews={combatHitPreviews}
+                  onSelectCombatDie={battleState.pendingCommandReroll && (battleState.pendingCombatResolution?.continuation || battleState.pendingCombatResolution?.continuationQueue?.length)
+                        ? selectCombatRerollDie
+                        : undefined}
                       onResolve={resolveSelectedPlayShooting}
                     />
                     </Profiler>
@@ -4763,11 +5099,26 @@ export default function App() {
                     <PendingDamageAllocationHud
                       unit={targetDamagePopupUnit}
                       lastAllocationOutcome={damageAllocationOutcome?.targetUnitId === targetDamagePopupUnit.id ? damageAllocationOutcome : null}
+                      showFeelNoPainResults={!!battleState.pendingFeelNoPainReroll}
+                      feelNoPainResultTargetUnitId={battleState.pendingFeelNoPainReroll?.resultTargetUnitId}
                       result={activeCombatResolution}
                       shooter={combatResolutionAttacker}
+                      feelNoPainReview={battleState.pendingFeelNoPainReroll}
                       targetIds={shootingResolutionTargetIds}
                       selectedTargetId={targetDamagePopupUnit.id}
+                      resultStage={battleState.pendingCombatResolution?.stage}
+                      advanceLabel={combatDefenderAdvanceLabel(battleState.pendingCombatResolution)}
+                      advanceDisabled={damageAllocationLocked}
+                      combatKind={battleState.pendingCombatResolution?.kind ?? (battleState.phase === BATTLE_PHASE.Fight ? 'fight' : 'shooting')}
+                      onSelectCombatDie={battleState.pendingCommandReroll && (
+                        battleState.pendingCombatResolution?.continuation
+                        || battleState.pendingCombatResolution?.continuationQueue?.length
+                        || !!battleState.pendingFeelNoPainReroll
+                      )
+                        ? selectCombatRerollDie
+                        : undefined}
                       onTargetSelect={selectShootingResolutionTargetPopup}
+                      onAdvance={advanceCombatResolutionFromDamagePopup}
                       onDone={finishCombatResultReview}
                     />
                   )}
@@ -4828,8 +5179,11 @@ export default function App() {
                       structuredResult={activeFightResolution?.shooterUnitId === displayedFightUnit.id
                         ? activeFightResolution
                         : null}
+                      resultStage={activeFightResolutionStage}
                       resultSection="attacker"
-                      actionLabel={fightResolutionStatus === 'rolled' ? 'Resolve' : 'Fight'}
+                      actionLabel={fightResolutionStatus === 'rolled'
+                        ? combatStageActionLabel(activeFightResolutionStage, true) ?? 'Resolve'
+                        : 'Fight'}
                       optionsPending={selectedFightOptionsPending && !activeFightResolution}
                       targets={selectedPlayFightTargets}
                       resultTargets={battleState.units}
@@ -4852,6 +5206,9 @@ export default function App() {
                         const option = fightPopupWeaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
                         return Math.max(0, Math.min(option?.targetModelCounts?.[targetId] ?? 0, weaponModelCount - allocatedElsewhere));
                       }}
+                      onSelectCombatDie={battleState.pendingCommandReroll && (battleState.pendingCombatResolution?.continuation || battleState.pendingCombatResolution?.continuationQueue?.length)
+                        ? selectCombatRerollDie
+                        : undefined}
                       onResolve={resolveSelectedPlayFightWithTrace}
                     />
                   )}
@@ -4914,9 +5271,20 @@ export default function App() {
                           {selectedPlayChargeDice.length > 0 && (
                             <div style={{ display: 'flex', gap: 4 }}>
                               {selectedPlayChargeDice.map((die, index) => (
-                                <span key={`${die}-${index}`} style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2c16b', borderRadius: 4, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12 }}>
-                                  {die}
-                                </span>
+                                chargeRerollAvailable ? (
+                                  <Button
+                                    key={`${die}-${index}`}
+                                    size="small"
+                                    variant="text"
+                                    title="Click either die to Command Re-roll both charge dice"
+                                    onClick={() => resolvePendingCommandReroll([...selectedPlayChargeDice], 'charge roll', 'charge')}
+                                    sx={{ minWidth: 22, width: 22, height: 22, p: 0, border: '1px solid #e2c16b', borderRadius: 1, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12, lineHeight: 1, '&:hover': { background: 'rgba(93, 173, 226, 0.28)' } }}
+                                  >{die}</Button>
+                                ) : (
+                                  <span key={`${die}-${index}`} style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2c16b', borderRadius: 4, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12 }}>
+                                    {die}
+                                  </span>
+                                )
                               ))}
                             </div>
                           )}
@@ -4996,9 +5364,20 @@ export default function App() {
                       {selectedPlayChargeDice.length > 0 && (
                         <div style={{ display: 'flex', gap: 4 }}>
                           {selectedPlayChargeDice.map((die, index) => (
-                            <span key={`${die}-${index}`} style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2c16b', borderRadius: 4, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12 }}>
-                              {die}
-                            </span>
+                            chargeRerollAvailable ? (
+                              <Button
+                                key={`${die}-${index}`}
+                                size="small"
+                                variant="text"
+                                title="Click either die to Command Re-roll both charge dice"
+                                onClick={() => resolvePendingCommandReroll([...selectedPlayChargeDice], 'charge roll', 'charge')}
+                                sx={{ minWidth: 22, width: 22, height: 22, p: 0, border: '1px solid #e2c16b', borderRadius: 1, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12, lineHeight: 1, '&:hover': { background: 'rgba(93, 173, 226, 0.28)' } }}
+                              >{die}</Button>
+                            ) : (
+                              <span key={`${die}-${index}`} style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2c16b', borderRadius: 4, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12 }}>
+                                {die}
+                              </span>
+                            )
                           ))}
                         </div>
                       )}
@@ -5198,6 +5577,7 @@ export default function App() {
             />
             </Profiler>
           )}
+          {battleState && <PrimaryMissionPanel state={battleState} />}
           {isEditorMode ? (
             <TerrainLayoutEditor
               layout={editorLayout}
@@ -5510,6 +5890,11 @@ export default function App() {
                 ? advanceFightPileInStep
                 : fightConsolidationCanAdvance
                   ? advanceConsolidationStep
+                  : battleState.phase === BATTLE_PHASE.Fight
+                    && fightStep === PHASE_STEP.FightUnits
+                    && playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)
+                    && fightPassSide !== null
+                    ? () => passFightAndDismissWarning(fightPassSide)
                   : tracePlayPhaseAdvance}
               disabled={playCoherencyIssues.length > 0 || requiredStepActionPending}
               title={phaseAdvanceDisabledReason}
@@ -5526,7 +5911,7 @@ export default function App() {
                 color="warning"
                 variant="outlined"
                 size="large"
-                onClick={() => passSelectedPlayFight(fightPassSide)}
+                onClick={() => passFightAndDismissWarning(fightPassSide)}
               >
                 Pass Fight
               </Button>
@@ -5592,7 +5977,7 @@ export default function App() {
             Battle Round {battleRound(battleState)}/{maxBattleRounds(battleState)}
             {' · '}
             CP {commandPoints(battleState)[0]}-{commandPoints(battleState)[1]}
-            {' Â· '}
+            {' · '}
             {battleState.phase === 'movement' && isPlayReinforcementsStep
               ? 'Movement: Reinforcements'
               : PHASE_LABELS[battleState.phase] ?? battleState.phase}

@@ -1,0 +1,76 @@
+{
+  "id": "thousand-sons",
+  "name": "Thousand Sons",
+  "edition": "11e",
+  "unitRefs": [
+    "thousand-sons.kairos-fateweaver",
+    "thousand-sons.magnus-the-red",
+    "thousand-sons.ahriman",
+    "thousand-sons.exalted-sorcerer",
+    "thousand-sons.infernal-master",
+    "thousand-sons.sorcerer",
+    "thousand-sons.sorcerer-in-terminator-armour",
+    "thousand-sons.daemon-prince-of-tzeentch",
+    "thousand-sons.daemon-prince-of-tzeentch-with-wings",
+    "thousand-sons.lord-of-change",
+    "thousand-sons.exalted-sorcerer-on-disc-of-tzeentch",
+    "thousand-sons.tzaangor-shaman",
+    "thousand-sons.blue-horrors",
+    "thousand-sons.pink-horrors",
+    "thousand-sons.rubric-marines",
+    "thousand-sons.chaos-rhino",
+    "thousand-sons.chaos-spawn",
+    "thousand-sons.screamers",
+    "thousand-sons.flamers",
+    "thousand-sons.scarab-occult-terminators",
+    "thousand-sons.tzaangors",
+    "thousand-sons.mutalith-vortex-beast",
+    "thousand-sons.tzaangor-enlightened",
+    "thousand-sons.tzaangor-enlightened-with-fatecaster-greatbows",
+    "thousand-sons.chaos-land-raider",
+    "thousand-sons.chaos-predator-annihilator",
+    "thousand-sons.chaos-predator-destructor",
+    "thousand-sons.chaos-vindicator",
+    "thousand-sons.heldrake",
+    "thousand-sons.defiler",
+    "thousand-sons.forgefiend",
+    "thousand-sons.helbrute",
+    "thousand-sons.maulerfiend",
+    "thousand-sons.sekhetar-robots"
+  ],
+  "ruleRefs": [
+    "thousand-sons.army-rule.cabal-of-sorcerers",
+    "thousand-sons.army-rule.pact-of-sorcery"
+  ],
+  "detachmentRefs": [
+    "thousand-sons.detachment.grand-coven",
+    "thousand-sons.detachment.changehost-of-deceit",
+    "thousand-sons.detachment.warpmeld-pact",
+    "thousand-sons.detachment.rubricae-phalanx",
+    "thousand-sons.detachment.warpforged-cabal",
+    "thousand-sons.detachment.ritual-of-regeneration",
+    "thousand-sons.detachment.sekhetar-cohort",
+    "thousand-sons.detachment.servants-of-change",
+    "thousand-sons.detachment.hexwarp-thrallband"
+  ],
+  "factionKeywords": [
+    "thousand-sons",
+    "Thousand Sons"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Thousand Sons faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/thousand-sons/",
+      "capturedAt": "2026-09-25",
+      "sourceRevision": "Faction Pack. 11th edition"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 34,
+    "normalizedEntryCount": 34,
+    "excludedLegendCount": 26,
+    "notes": [
+      "Current non-Legends datasheets, profiles, weapons, abilities, points, wargear text, detachments, enhancements, stratagems, and force dispositions are regenerated from the saved 11th-edition Wahapedia capture."
+    ]
+  }
+}

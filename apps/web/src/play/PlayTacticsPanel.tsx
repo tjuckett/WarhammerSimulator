@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
-import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
+import type { BattleState, BattleUnit, CombatRerollSelection } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleUnitsBaseEdgeDistance } from '@warhammer-simulator/core/engine/simulator';
@@ -46,9 +46,10 @@ export function PlayTacticsPanel({
   onUseAbility: () => void;
   onStartAction: () => void;
   onToggleCondemnedUnit: () => void;
-  onResolveCommandReroll: (originalRolls: number[], label: string, rollType: CommandRerollRollType) => void;
+  onResolveCommandReroll: (originalRolls: number[], label: string, rollType: CommandRerollRollType, combatRoll?: CombatRerollSelection, rollUnitId?: string) => void;
 }) {
   const cp = commandPoints(state);
+  const selectedStratagem = stratagems.find(stratagem => stratagem.id === selectedStratagemId) ?? null;
   const selectedAbility = abilities.find(option => abilityOptionKey(option) === selectedAbilityKey) ?? null;
   const pendingFollowUps = stratagemFollowUpLabels(state);
   const [commandRerollInput, setCommandRerollInput] = useState('');
@@ -61,6 +62,24 @@ export function PlayTacticsPanel({
   const [explosivesTargetsForUnitId, setExplosivesTargetsForUnitId] = useState<string | null>(null);
   const [heroicInterventionMode, setHeroicInterventionMode] = useState<HeroicInterventionMode>('leap-to-defend');
   const commandRerollRolls = parseDiceInput(commandRerollInput);
+  // These are the roll types with a typed result available to the practice
+  // action. Hazardous tests and variable attack-count rolls currently resolve
+  // immediately inside combat, so exposing them here would imply a reroll can
+  // change an outcome that the core no longer retains.
+  const manualCommandRerollTypes: CommandRerollRollType[] = [
+    'advance', 'charge', 'damage', 'hit', 'leadership', 'save', 'wound',
+  ];
+  const effectiveCommandRerollRollType = manualCommandRerollTypes.includes(commandRerollRollType)
+    ? commandRerollRollType
+    : 'hit';
+  // Staged shooting and fight results expose each eligible die directly in
+  // their combat popup. Keep the tactics panel from offering a second,
+  // ambiguous manual value entry for that same reroll.
+  const combatCommandRerollPending = Boolean(
+    state.pendingCommandReroll
+      && state.pendingCombatResolution
+      && (state.pendingCombatResolution.kind === 'shooting' || state.pendingCombatResolution.kind === 'fight'),
+  );
   const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
     ? Math.min(epicChallengeModelIndex, selectedUnit.modelPositions.length - 1)
     : 0;
@@ -126,37 +145,58 @@ export function PlayTacticsPanel({
           </Typography>
         ))}
         {state.pendingCommandReroll && (
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 0.75, alignItems: 'center' }}>
-            <Select
-              size="small"
-              value={commandRerollRollType}
-              onChange={event => setCommandRerollRollType(event.target.value as CommandRerollRollType)}
-              aria-label="Command Re-roll type"
-            >
-              {['advance', 'charge', 'damage', 'hazard', 'hit', 'save', 'wound', 'attacks'].map(type => (
-                <MenuItem key={type} value={type}>{type === 'attacks' ? 'attacks roll' : `${type} roll`}</MenuItem>
-              ))}
-            </Select>
-            <TextField
-              size="small"
-              label="Original roll"
-              placeholder="6 or 1,2"
-              value={commandRerollInput}
-              onChange={event => setCommandRerollInput(event.target.value)}
-              error={commandRerollInput.trim().length > 0 && commandRerollRolls.length === 0}
-              helperText="D6 values"
-            />
-            <Button
-              size="small"
-              variant="contained"
-              disabled={!commandRerollRolls.length}
-              onClick={() => {
-                onResolveCommandReroll(commandRerollRolls, `${commandRerollRollType} roll`, commandRerollRollType);
-                setCommandRerollInput('');
-              }}
-            >
-              {PLAY_PANEL_LABELS.resolve}
-            </Button>
+          <Box sx={{ display: 'grid', gap: 0.75 }}>
+            {combatCommandRerollPending ? (
+              <Typography variant="caption" sx={{ color: uiTokens.color.text.quiet }}>
+                Select the die to reroll in the shooting or fight popup.
+              </Typography>
+            ) : (
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 0.75, alignItems: 'center' }}>
+                <Select
+                  size="small"
+                  value={effectiveCommandRerollRollType}
+                  onChange={event => setCommandRerollRollType(event.target.value as CommandRerollRollType)}
+                  aria-label="Command Re-roll type"
+                >
+                  {manualCommandRerollTypes.map(type => (
+                    <MenuItem key={type} value={type}>{type === 'attacks' ? 'attacks roll' : `${type} roll`}</MenuItem>
+                  ))}
+                </Select>
+                <TextField
+                  size="small"
+                  label="Original roll"
+                  placeholder="6 or 1,2"
+                  value={commandRerollInput}
+                  onChange={event => setCommandRerollInput(event.target.value)}
+                  error={commandRerollInput.trim().length > 0 && commandRerollRolls.length === 0}
+                  helperText="D6 values"
+                />
+                <Button
+                  size="small"
+                  variant="contained"
+                  disabled={!commandRerollRolls.length}
+                  onClick={() => {
+                    onResolveCommandReroll(
+                      commandRerollRolls,
+                      `${effectiveCommandRerollRollType} roll`,
+                      effectiveCommandRerollRollType,
+                      undefined,
+                      ['advance', 'leadership'].includes(effectiveCommandRerollRollType)
+                        ? selectedUnit?.id
+                        : undefined,
+                    );
+                    setCommandRerollInput('');
+                  }}
+                >
+                  {PLAY_PANEL_LABELS.resolve}
+                </Button>
+              </Box>
+            )}
+            {!combatCommandRerollPending && (
+              <Typography variant="caption" sx={{ gridColumn: '1 / -1', color: uiTokens.color.text.quiet }}>
+                Hazardous tests and variable attack-count rolls are resolved immediately and are not available for a typed reroll yet.
+              </Typography>
+            )}
           </Box>
         )}
         {selectedUnit && stratagems.some(stratagem => stratagem.id === 'epic-challenge') && (
@@ -244,6 +284,15 @@ export function PlayTacticsPanel({
             <span>{stratagem.cost}CP</span>
           </Button>
         ))}
+        {selectedStratagem && (
+          <Typography
+            variant="caption"
+            sx={{ color: uiTokens.color.text.muted, lineHeight: 1.35 }}
+            aria-live="polite"
+          >
+            {selectedStratagem.description}
+          </Typography>
+        )}
         {!stratagems.length && (
           <Typography variant="caption" sx={disabledTextSx}>
             {PLAY_PANEL_MESSAGES.noStratagems}
@@ -251,7 +300,7 @@ export function PlayTacticsPanel({
         )}
       </Box>
 
-      <FormControl size="small" fullWidth disabled={!selectedUnit || !abilities.length}>
+      <FormControl size="small" fullWidth disabled={!abilities.length}>
         <InputLabel id="play-ability-label">{PLAY_PANEL_LABELS.ability}</InputLabel>
         <Select
           labelId="play-ability-label"

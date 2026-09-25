@@ -109,6 +109,30 @@ export function availableUnitAbilities(
   );
 }
 
+/** Army-wide abilities are declared for a side, rather than by a selected unit. */
+export function availableArmyAbilities(
+  state: BattleState,
+  side: Side,
+  timing: AbilityTiming,
+  rules: RulesEdition,
+): UnitAbilityDefinition[] {
+  return rules.unitAbilities.filter(ability =>
+    ability.armyWideOncePerBattle === true
+    && ability.target === 'none'
+    && ability.timing === timing
+    && timingAllowed(state, timing, ability)
+    && state.units.some(unit =>
+      unit.side === side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+      && unitHasAbility(unit, ability)
+      && abilityCanBeUsed(state, unit, ability)
+      && !abilityUsed(state, unit, ability)
+      && targetAllowed(state, unit, ability)
+    )
+  );
+}
+
 export function useUnitAbility(
   state: BattleState,
   unitId: string,
@@ -162,6 +186,31 @@ export function useUnitAbility(
     type: 'info',
   }];
   return next;
+}
+
+/** Uses an army-wide ability and records one eligible bearer as its source. */
+export function useArmyAbility(
+  state: BattleState,
+  side: Side,
+  abilityId: string,
+  timing: AbilityTiming,
+  rules: RulesEdition,
+): BattleState {
+  const ability = availableArmyAbilities(state, side, timing, rules)
+    .find(candidate => candidate.id === abilityId);
+  if (!ability) return state;
+
+  const source = state.units.find(unit =>
+    unit.side === side
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && unitHasAbility(unit, ability)
+    && abilityCanBeUsed(state, unit, ability)
+    && !abilityUsed(state, unit, ability)
+  );
+  return source
+    ? useUnitAbility(state, source.id, side, ability.id, timing, rules)
+    : state;
 }
 
 /** Resolve modeled automatic abilities at their declared simulation timing. */

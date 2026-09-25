@@ -1,7 +1,9 @@
 import type { BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { ModelStatProfile, UnitProfile } from '@warhammer-simulator/core/types/army';
+import type { RuleDefinition } from '@warhammer-simulator/core/types/catalog';
 import { Fragment, memo, type CSSProperties, type ReactNode } from 'react';
 import { unitBaseSummary } from '@warhammer-simulator/core/engine/baseSizes';
+import { rulePoints } from '@warhammer-simulator/core/engine/catalog';
 import { modelWeaponLoadout as coreModelWeaponLoadout } from '@warhammer-simulator/core/engine/unitModelState';
 import { uiTokens } from '../theme/uiTokens';
 
@@ -39,9 +41,10 @@ type SourcedRuleText = UnitProfile['abilities'][number] & {
 interface Props {
   inspected: InspectedUnit | null;
   onClear?: () => void;
+  enhancementOptions?: RuleDefinition[];
 }
 
-export const UnitStatsPanel = memo(function UnitStatsPanel({ inspected, onClear }: Props) {
+export const UnitStatsPanel = memo(function UnitStatsPanel({ inspected, onClear, enhancementOptions = [] }: Props) {
   if (!inspected) {
     return (
       <div style={panelStyle}>
@@ -118,7 +121,9 @@ export const UnitStatsPanel = memo(function UnitStatsPanel({ inspected, onClear 
 
       <SelectedUnitUpgradesSection views={profileViews} />
 
-      <RulesSection title="Abilities" entries={visibleAbilities} emptyText="No abilities listed." defaultOpen />
+      <EnhancementSection views={profileViews} options={enhancementOptions} />
+
+      <RulesSection title="Abilities" entries={visibleAbilities} emptyText="No abilities listed." inlineEntries />
 
       <RulesSection title="Keyword Rules" entries={visibleRules} emptyText="No keyword rules listed." />
 
@@ -150,20 +155,27 @@ function RulesSection({
   title,
   entries,
   emptyText,
-  defaultOpen = false,
+  inlineEntries = false,
 }: {
   title: string;
   entries: SourcedRuleText[];
   emptyText: string;
-  defaultOpen?: boolean;
+  inlineEntries?: boolean;
 }) {
   return (
     <div style={sectionStyle}>
       <div style={sectionTitleStyle}>{title}</div>
       {entries.length ? (
         <div style={{ display: 'grid', gap: 4 }}>
-          {entries.map((entry, index) => (
-            <details key={`${entry.name}-${index}`} open={defaultOpen} style={detailsStyle}>
+          {inlineEntries ? entries.map((entry, index) => (
+            <div key={`${entry.name}-${index}`} style={abilityEntryStyle}>
+              <span style={abilityLabelStyle}>
+                {entry.name}{entry.source ? ` (${entry.source})` : ''}:
+              </span>{' '}
+              <span style={{ color: uiTokens.color.text.secondary }}>{cleanRulesText(entry.description)}</span>
+            </div>
+          )) : entries.map((entry, index) => (
+            <details key={`${entry.name}-${index}`} style={detailsStyle}>
               <summary style={{ cursor: 'pointer', color: uiTokens.color.text.primary, fontWeight: 700, fontSize: 12 }}>
                 {entry.name}{entry.source ? ` (${entry.source})` : ''}
               </summary>
@@ -240,6 +252,38 @@ function SelectedUnitUpgradesSection({ views }: { views: ProfileView[] }) {
       </div>
     </div>
   );
+}
+
+function EnhancementSection({ views, options }: { views: ProfileView[]; options: RuleDefinition[] }) {
+  const selected = views.flatMap(view => {
+    const selectedId = view.profile.selectedEnhancementId;
+    const enhancement = selectedId ? options.find(option => option.id === selectedId) : undefined;
+    return enhancement ? [{ enhancement, source: views.length > 1 ? view.profile.name : undefined }] : [];
+  });
+  if (!options.length && !selected.length) return null;
+
+  return (
+    <div style={sectionStyle}>
+      <div style={sectionTitleStyle}>Enhancements</div>
+      {selected.length ? selected.map(({ enhancement, source }, index) => (
+        <div key={`${enhancement.id}-${source ?? ''}-${index}`} style={{ display: 'grid', gap: 2 }}>
+          <div style={selectedUpgradeStyle}>
+            <span>{enhancementLabel(enhancement)}</span>
+            {source && <span style={{ color: uiTokens.color.text.faint }}>({source})</span>}
+          </div>
+          <div style={selectedUpgradeDescriptionStyle}>{cleanRulesText(enhancement.description)}</div>
+        </div>
+      )) : (
+        <div style={emptySmallStyle}>No enhancement selected.</div>
+      )}
+    </div>
+  );
+}
+
+function enhancementLabel(enhancement: RuleDefinition): string {
+  const name = enhancement.name.replace(/\s*upgrade$/i, '').trim();
+  const points = rulePoints(enhancement);
+  return points === undefined ? name : `${name} (${points} pts)`;
 }
 
 function modelStatlinesForView(view: ProfileView): ModelStatProfile[] {
@@ -698,6 +742,21 @@ const detailsStyle = {
   border: `1px solid ${uiTokens.border.inset}`,
   borderRadius: uiTokens.radius.card,
   padding: '5px 6px',
+} satisfies CSSProperties;
+
+const abilityEntryStyle = {
+  padding: '4px 6px',
+  background: uiTokens.surface.inset,
+  border: `1px solid ${uiTokens.border.inset}`,
+  borderRadius: uiTokens.radius.card,
+  color: uiTokens.color.text.secondary,
+  fontSize: 12,
+  lineHeight: 1.4,
+} satisfies CSSProperties;
+
+const abilityLabelStyle = {
+  color: uiTokens.color.text.primary,
+  fontWeight: 800,
 } satisfies CSSProperties;
 
 const keywordStyle = {

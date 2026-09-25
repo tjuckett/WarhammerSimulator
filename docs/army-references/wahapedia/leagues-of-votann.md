@@ -3,7 +3,7 @@
 ## Scope
 
 - Edition: Warhammer 40,000 11th edition.
-- Captured: 2026-08-29.
+- Captured: 2026-09-25.
 - Sources: [faction rules](https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/), [datasheets](https://wahapedia.ru/wh40k11ed/factions/leagues-of-votann/datasheets.html).
 - Main one-level faction page only; subfaction pages, Crusade, Boarding Actions, and FAQ/errata history are not expanded here.
 - Legends datasheets are excluded. Forge World datasheets remain when they are non-Legends entries on the faction datasheet page.
@@ -87,12 +87,20 @@
 | melee | -- | Kromlok's Revenge - plasma sweeps | -- | Melee | 8 | 2+ | 7 | -2 | 2 |
 | melee | -- | Warforge Gauntlets | extra attacks | Melee | 2 | 2+ | 6 | -2 | 1 |
 
+#### Wargear options
+- None
+
+#### Core Abilities
+- Feel No Pain 4+
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 4+, Leader
-- FACTION: Prioritised Efficiency
 - Break the Foe: Melee weapons equipped by models in this model's unit have the [SUSTAINED HITS 1] ability.
-  Relentless Avalanche: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
+- Relentless Avalanche: You can target this unit with the Heroic Intervention stratagem, regardless of any other uses of that stratagem this phase. If you do:
   - That use is -1 CP.
   - That use does not prevent any uses of that stratagem on other units this phase.
 
@@ -130,12 +138,17 @@ LEAGUES OF VOTANN
 | melee | -- | Bane - strike | precision | Melee | 5 | 2+ | 12 | -3 | 3 |
 | melee | -- | Bane - sweep | -- | Melee | 10 | 2+ | 6 | -2 | 1 |
 
+#### Core Abilities
+- Lone Operative
+- Stealth
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Lone Operative, Stealth
-- FACTION: Prioritised Efficiency
 - Grudge-fuelled Fortitude: The first time this model is destroyed, at the end of the phase, roll one D6: on a 2+, set this model back up on the battlefield as close as possible to where it was destroyed and not within Engagement Range of one or more enemy units, with its full wounds remaining.
-  Unhinged Vengeance: In your opponent's Shooting phase, when an enemy unit has shot, if this model lost one or more wounds as a result of those attacks, this unit can make a surge move of up to D6+2".
+- Unhinged Vengeance: In your opponent's Shooting phase, when an enemy unit has shot, if this model lost one or more wounds as a result of those attacks, this unit can make a surge move of up to D6+2".
 
 #### Unit Composition
 - 1 Buri Aegnirssen - EPIC HERO
@@ -166,14 +179,16 @@ LEAGUES OF VOTANN
 | ranged | -- | Volkanite disintegrator | devastating wounds | 24" | 3 | 2+ | 5 | 0 | 1 |
 | melee | -- | Blade of the Ancestors | devastating wounds | Melee | 5 | 2+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Prioritised Efficiency
 - Ancestral Fortune: Once per turn, you can spend 1YP to change one Hit roll, one Wound roll or one saving throw made for this model to an unmodified 6.
-  Grim Efficiency: Once per battle round, when a friendly LEAGUES OF VOTANN unit within 12" of this model is targeted with a Stratagem, this model can use this ability. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
-
-#### Wargear Abilities
+- Grim Efficiency: Once per battle round, when a friendly LEAGUES OF VOTANN unit within 12" of this model is targeted with a Stratagem, this model can use this ability. If it does, reduce the CP cost of that use of that Stratagem by 1CP.
 - Rampart Crest: While the bearer is leading a unit, models in that unit have a 5+ invulnerable save.
 
 #### Unit Composition
@@ -217,12 +232,16 @@ LEAGUES OF VOTANN
 | ranged | -- | Transmatter inverter - overcharge | hazardous overcharge rapid fire 3 | 24" | 3 | 2+ | 8 | -3 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Prioritised Efficiency
 - Science Guild Support: While this model is within 3" of one or more other friendly LEAGUES OF VOTANN INFANTRY units (excluding units with the Lone Operative ability), this model has the Lone Operative ability.
-  Resource Transmutation: Once per turn, in your Shooting phase, one model with this ability can use it when it is selected to shoot. If it does, you must spend 1YP and, until the end of the phase, ranged weapons equipped by that model have the [SUSTAINED HITS 1] ability and, after that model has shot this phase, if one or more enemy units were destroyed by those attacks, you can gain up to 2YP.
+- Resource Transmutation: Once per turn, in your Shooting phase, one model with this ability can use it when it is selected to shoot. If it does, you must spend 1YP and, until the end of the phase, ranged weapons equipped by that model have the [SUSTAINED HITS 1] ability and, after that model has shot this phase, if one or more enemy units were destroyed by those attacks, you can gain up to 2YP.
 
 #### Unit Composition
 - 1 Arkanyst Evaluator
@@ -279,13 +298,17 @@ LEAGUES OF VOTANN
 | melee | -- | Manipulator arms | -- | Melee | 3 | 4+ | 3 | 0 | 1 |
 | melee | -- | Plasma torch | -- | Melee | 1 | 4+ | 6 | -3 | 2 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Prioritised Efficiency
 - Brokhyr Guild Support: While this unit is within 3" of one or more friendly LEAGUES OF VOTANN VEHICLE or IRONKIN STEELJACKS units, if this unit is not an Attached unit, it has the Lone Operative ability.
-  Multispectral Visor: Each time a model in this unit makes a ranged attack, re-roll a Wound roll of 1.
-  Forgewrought Expertise: At the end of your Movement phase, this unit can repair one friendly LEAGUES OF VOTANN VEHICLE, EXOFRAME or IRONKIN STEELJACKS unit within 3" of it. One model in that unit regains up to D3 lost wounds, or up to 3 lost wounds instead if this unit contains an Ironkin Assistant model. Each unit can only be repaired once per turn.
+- Multispectral Visor: Each time a model in this unit makes a ranged attack, re-roll a Wound roll of 1.
+- Forgewrought Expertise: At the end of your Movement phase, this unit can repair one friendly LEAGUES OF VOTANN VEHICLE, EXOFRAME or IRONKIN STEELJACKS unit within 3" of it. One model in that unit regains up to D3 lost wounds, or up to 3 lost wounds instead if this unit contains an Ironkin Assistant model. Each unit can only be repaired once per turn.
 
 #### Unit Composition
 - 1 Brokhyr Iron-master
@@ -354,14 +377,20 @@ LEAGUES OF VOTANN
 | melee | -- | Darkstar axe | -- | Melee | 6 | 2+ | 6 | -3 | 2 |
 | melee | -- | Mass hammer | -- | Melee | 3 | 3+ | 12 | -3 | D6+1 |
 
+#### Wargear options
+- This model's mass hammer can be replaced with 1 darkstar axe.
+- This model's weavefield crest can be replaced with 1 teleport crest.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Prioritised Efficiency
 - Exemplar of the Einhyr: While this model is leading a unit, add 1 to Advance and Charge rolls made for that unit.
-  Mass Driver Accelerators: Each time this model ends a Charge move, you can select one enemy unit within Engagement Range of this model and roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
-
-#### Wargear Abilities
+- Mass Driver Accelerators: Each time this model ends a Charge move, you can select one enemy unit within Engagement Range of this model and roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers D3+3 mortal wounds.
 - Teleport Crest: While the bearer is leading a unit, models in that unit have the Deep Strike ability.
 - Weavefield Crest: The bearer has a 4+ invulnerable save.
 
@@ -413,7 +442,7 @@ LEAGUES OF VOTANN
 #### Profiles
 | Model | Base | M | T | Sv | W | Ld | OC | Invulnerable save |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| GRIMNYR | (diameter 40mm) | 5" | 5 | 4+ | 4 | 6+ | 1 | 4+ |
+| GRIMNYR | (diameter 40mm) | 5" | 5 | 4+ | 4 | 6+ | 1 | -- |
 | CORV | (diameter 25mm) | 5" | 5 | 4+ | 1 | 6+ | 1 | 4+ |
 
 #### Weapons
@@ -425,12 +454,16 @@ LEAGUES OF VOTANN
 | melee | -- | Ancestral ward stave | psychic | Melee | 2 | 3+ | 7 | -1 | D3 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Prioritised Efficiency
 - Fortify (Psychic): While this unit is leading a unit, models in that unit have the Feel No Pain 5+ ability.
-  Grimnyr's Regard: Once per battle, at the start of any phase, you can select one friendly LEAGUES OF VOTANN unit that is Battle-shocked and within 12" of this unit's GRIMNYR model. That unit is no longer Battle-shocked.
+- Grimnyr's Regard: Once per battle, at the start of any phase, you can select one friendly LEAGUES OF VOTANN unit that is Battle-shocked and within 12" of this unit's GRIMNYR model. That unit is no longer Battle-shocked.
 
 #### Unit Composition
 - 1 Grimnyr
@@ -491,14 +524,21 @@ LEAGUES OF VOTANN
 | melee | -- | Forgewrought plasma axe | -- | Melee | 4 | 2+ | 5 | -2 | 2 |
 | melee | -- | Mass gauntlet | -- | Melee | 3 | 3+ | 8 | -3 | 3 |
 
+#### Wargear options
+- This model's Autoch-pattem combi-bolter can be replaced with 1 volkanite disintegrator.
+- This model's forgewrought plasma axe can be replaced with 1 mass gauntlet.
+- This model's rampart crest can be replaced with 1 teleport crest.
+
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Prioritised Efficiency
 - Kindred Hero: While this model is leading a unit, weapons equipped by models in that unit have the [LETHAL HITS] ability.
-  Seized Opportunity: Once per phase, one model from your army with this ability can use it when its unit destroys an enemy unit. If it does, you gain 1YP.
-
-#### Wargear Abilities
+- Seized Opportunity: Once per phase, one model from your army with this ability can use it when its unit destroys an enemy unit. If it does, you gain 1YP.
 - Rampart Crest: While this model is leading a unit, models in that unit have a 5+ invulnerable save.
 - Teleport Crest: While the bearer is leading a unit, models in that unit have the Deep Strike ability.
 
@@ -562,12 +602,16 @@ LEAGUES OF VOTANN
 | ranged | -- | Autoch-pattern bolt pistol | pistol | 12" | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 3 | 0 | 1 |
 
+#### Core Abilities
+- Leader
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Leader
-- FACTION: Prioritised Efficiency
 - Computational Mastermind: At the end of your Command phase, before you determine if units from your army have Hostile Acquisition or Fortify Takeover, for each objective marker you control that has one or more models with this ability within range of it, you can spend 1YP or gain 1YP.
-  Predictive Guidance: Once per battle round, this model can use this ability. If it does, you can target this unit with the Fire Overwatch or Heroic Intervention Stratagem for 0CP.
+- Predictive Guidance: Once per battle round, when you target this unit with the Fire Overwatch/Heroic Intervention stratagem, you can use this ability. If you do, that use of that stratagem is -1 CP.
 
 #### Unit Composition
 - 1 Memnyr Strategist
@@ -637,14 +681,30 @@ LEAGUES OF VOTANN
 | melee | -- | Plasma knife | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 | melee | -- | Theyn's melee weapon | -- | Melee | 2 | 4+ | 5 | -2 | 2 |
 
+#### Wargear options
+- Any number of Hearthkyn Warriors can each have their Autoch-pattern bolter replaced with 1 ion blaster.
+- Up to 2 Hearthkyn Warriors can each have their Autoch-pattern bolter or ion blaster replaced with one of the following (duplicates are not allowed):
+  - 1 HYLas auto rifle
+  - 1 HYLas rotary cannon
+  - 1 L7 missile launcher
+  - 1 EtaCarn plasma beamer
+  - 1 magna-rail rifle
+- Up to 2 Hearthkyn Warriors can each have their Autoch-pattern bolter or ion blaster replaced with 1 plasma knife.
+- The Theyn's Autoch-pattern bolter can be replaced with one of the following:
+  - 1 ion blaster
+  - 1 Theyn's pistol
+- The Theyn can be equipped with 1 Theyn's melee weapon.
+
+#### Core Abilities
+- Feel No Pain 6+
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 6+
-- FACTION: Prioritised Efficiency
 - Luck Has. Need Keeps. Toil Earns: At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent's Level of Control over that objective markers greater than yours at the end of a phase.
-  Panspectral Scanning: Each time a model in this unit makes a ranged attack, re-roll a Hit roll of 1.
-
-#### Wargear Abilities
+- Panspectral Scanning: Each time a model in this unit makes a ranged attack, re-roll a Hit roll of 1.
 - Weavefield Crest: Models in the bearer's unit have a 5+ invulnerable save.
 
 #### Unit Composition
@@ -679,22 +739,29 @@ LEAGUES OF VOTANN
 | ranged | -- | Twin magna-coil autocannon | twin-linked | 24" | 3 | 4+ | 7 | -1 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model can be equipped with 1 smoke launcher.
+
+#### Core Abilities
+- Deadly Demise 1
+- Firing Deck 5
+- Scouts 9"
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Firing Deck 5, Scouts 9"
-- FACTION: Prioritised Efficiency
 - Scanner Uplinks: In your Shooting phase, after this model has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks. Until the start of your next turn, that enemy unit is suppressed. While a unit is suppressed, each time a model in that unit makes an attack, subtract 1 from the Hit roll.
-
-#### Wargear Abilities
 - Smoke Launcher: The bearer has the SMOKE keyword.
-
-#### Unit Composition
-- 1 Kapricus Carrier
-  This model is equipped with: magna-coil autocannon; twin magna-coil autocannon; armoured hull.
 
 #### Transport
 - This model has a transport capacity of 5 HERNKYN YAEGIR models.
   At the start of the Declare Battle Formations step, you can select one HERNKYN YAEGIR unit from your army that has not been split. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units). One of these units must start the battle embarked within this TRANSPORT; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.
+
+#### Unit Composition
+- 1 Kapricus Carrier
+  This model is equipped with: magna-coil autocannon; twin magna-coil autocannon; armoured hull.
 
 #### Points
 - YOUR 1ST TO 3RD UNITS COST: 1 model -- **70 pts**
@@ -727,19 +794,28 @@ LEAGUES OF VOTANN
 | ranged | -- | Twin bolt cannon | sustained hits 2 twin-linked | 36" | 3 | 4+ | 6 | -1 | 2 |
 | melee | -- | Armoured wheels | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- This model's HYLas beam cannon can be replaced with one of the following:
+  - 1 L7 missile launcher and 1 Sagitaur missile launcher
+  - 1 MATR autocannon
+
+#### Core Abilities
+- Deadly Demise 1
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1
-- FACTION: Prioritised Efficiency
 - Blistering Advance: Units can disembark from this TRANSPORT after it has Advanced. Units that do so make a shock disembark move (Core Rules, 18.07) for that disembarkation.
-
-#### Unit Composition
-- 1 Sagitaur
-  This model is equipped with: HYLas beam cannon; twin bolt cannon; armoured wheels.
 
 #### Transport
 - This model has a transport capacity of 6 LEAGUES OF VOTANN INFANTRY models. It cannot transport ARTILLERY, EXOARMOUR, EXOFRAME or IRONKIN STEELJACKS models.
   At the start of the Declare Battle Formations step, you can select one HEARTHKYN WARRIORS unit from your army that has not been split. If you do, that unit is split into two units, each containing as equal a number of models as possible (when splitting a unit in this way, make a note of which models form each of the two new units). One of these units must start the battle embarked within this TRANSPORT; the other can start the battle embarked within another TRANSPORT, or it can be deployed as a separate unit.
+
+#### Unit Composition
+- 1 Sagitaur
+  This model is equipped with: HYLas beam cannon; twin bolt cannon; armoured wheels.
 
 #### Enhancements
 - Optimised Attack Lines 15 pts
@@ -773,9 +849,15 @@ LEAGUES OF VOTANN
 | ranged | -- | SP conversion beamer | conversion lethal hits | 24" | 2 | 4+ | 7 | -2 | 3 |
 | melee | -- | Close combat weapon | -- | Melee | 2 | 4+ | 4 | 0 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their bolt cannon replaced with 1 graviton blast cannon.
+- All models in this unit can each have their bolt cannon replaced with 1 SP conversion beamer.
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Prioritised Efficiency
 - Breaching Fire: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks. Until the start of your next Shooting phase, that enemy unit cannot have the Benefit of Cover.
 
 #### Unit Composition
@@ -812,12 +894,21 @@ LEAGUES OF VOTANN
 | melee | -- | Heavy plasma axe | -- | Melee | 3 | 4+ | 7 | -2 | 3 |
 | melee | -- | Twin concussion gauntlet | twin-linked | Melee | 4 | 4+ | 9 | -2 | 2 |
 
+#### Wargear options
+- All models in this unit can each have their heavy plasma axe replaced with 1 concussion maul.
+- For every 5 models in this unit, 1 model that is not equipped with a mole grenade launcher can have its heavy plasma axe or concussion maul replaced with 1 twin concussion gauntlet.
+- For every 5 models in this unit, 1 model that is not equipped with a twin concussion gauntlet or a mole grenade launcher can be equipped with 1 mole grenade launcher.*
+
+#### Core Abilities
+- Feel No Pain 4+
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Feel No Pain 4+
-- FACTION: Prioritised Efficiency
 - Cyberstimms: Each time a model in this unit is destroyed by a melee attack, if that model has not fought this phase, roll one D6, adding 1 to the result if units from your army have Fortify Takeover: on a 4+, do not remove it from play. The destroyed model can fight after the attacking unit has finished making its attacks, and is then removed from play.
-  Subterranean Explosives: In your Shooting phase, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks made with a mole grenade launcher. Until the start of your next Shooting phase, that enemy unit cannot be targeted with the Fire Overwatch Stratagem.
+- Subterranean Explosives: In your Shooting phase, after this unit has shot, select one enemy unit (excluding MONSTERS and VEHICLES) hit by one or more of those attacks made with a mole grenade launcher. Until the start of your next Shooting phase, that enemy unit cannot be targeted with the Fire Overwatch Stratagem.
   Designer's Note: We recommend placing a Mole Grenade token next to that enemy unit as a reminder.
 
 #### Unit Composition
@@ -852,11 +943,16 @@ LEAGUES OF VOTANN
 | ranged | -- | Tremor shells | blast heavy indirect fire | 36" | D6+4 | 5+ | 6 | -1 | 1 |
 | melee | -- | Plasma picks | -- | Melee | 4 | 3+ | 5 | -2 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their breacher ordnance replaced with 1 tremor shells.
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Prioritised Efficiency
 - Destabilising Quakes: In your Shooting phase, after this unit has shot, select one enemy unit hit by one or more of those attacks made with its tremor shells. That unit must take a Battle-shock test, subtracting 1 from the result.
-  Geomantic Hunters: Up to twice per battle, in your Shooting phase, when this unit is selected to shoot, it can use this ability. If it does, until the end of the phase, each time a model in this unit makes an attack with its breacher ordnance, you can re-roll the Wound roll.
+- Geomantic Hunters: Up to twice per battle, in your Shooting phase, when this unit is selected to shoot, it can use this ability. If it does, until the end of the phase, each time a model in this unit makes an attack with its breacher ordnance, you can re-roll the Wound roll.
   Designer's Note: Place two breacher ordnance tokens next to the unit, removing one each time this unit uses this ability.
 
 #### Unit Composition
@@ -892,12 +988,18 @@ LEAGUES OF VOTANN
 | melee | -- | Graviton hammer | anti-monster 3+ anti-vehicle 3+ | Melee | 3 | 4+ | 9 | -1 | 3 |
 | melee | -- | Plasma blade gauntlet | -- | Melee | 3 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their EtaCarn plasma gun replaced with 1 volkanite disintegrator.
+- All models in this unit can each have their concussion gauntlet replaced with 1 plasma blade gauntlet.
+- The Hesyr's concussion gauntlet or plasma blade gauntlet can be replaced with 1 graviton hammer.
+- The Hesyr's weavefield crest can be replaced with 1 teleport crest.
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Prioritised Efficiency
 - Decisive Destruction: Each time a model in this unit makes a ranged attack that targets the closest eligible target, re-roll a Hit roll of 1.
-
-#### Wargear Abilities
 - Teleport Crest: Models in the bearer's unit have the Deep Strike ability.
 - Weavefield Crest: Models in the bearer's unit have a 5+ invulnerable save.
 
@@ -939,10 +1041,19 @@ LEAGUES OF VOTANN
 | melee | -- | Close combat weapon | -- | Melee | 1 | 4+ | 4 | 0 | 1 |
 | melee | -- | Plasma knife | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- All models in this unit can each have their bolt shotgun replaced with 1 bolt revolver and 1 plasma knife.
+- 1 Hernkyn Yaegir can have its bolt revolver and plasma knife or its bolt shotgun replaced with 1 magna-coil rifle.
+- 1 Hernkyn Yaegir can have its bolt revolver and plasma knife or its bolt shotgun replaced with 1 APM launcher.
+
+#### Core Abilities
+- Infiltrators
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Infiltrators
-- FACTION: Prioritised Efficiency
 - Pragmatic Hunters: In your opponent's Movement phase, if an enemy unit ends a move within 8" of this unit, if this unit is not within Engagement Range of one or more enemy units, this unit can make a Normal move of up to D6".
 
 #### Unit Composition
@@ -980,12 +1091,15 @@ LEAGUES OF VOTANN
 | melee | -- | Plasma knife | -- | Melee | 2 | 3+ | 6 | -2 | 1 |
 | melee | -- | Plasma sword | sustained hits 1 | Melee | 6 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- The Steeljack Theyn's heavy volkanite disintegrator and plasma knife can be replaced with 1 Autoch-pattern bolter and 1 plasma sword.
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Prioritised Efficiency
 - Purge Response: Each time you target this unit with the Fire Overwatch Stratagem, hits are scored on unmodified Hit rolls of 5+ while resolving that Stratagem. If units from your army have Fortify Takeover, hits are scored on unmodified Hit rolls of 4+ while resolving that Stratagem instead.
-
-#### Wargear Abilities
 - Preymark Crest: Each time a model in the bearer's unit makes an attack that targets an enemy unit within range of one or more objective markers, on a Critical Wound, that attack has the [PRECISION] ability.
 
 #### Unit Composition
@@ -1023,12 +1137,15 @@ LEAGUES OF VOTANN
 | melee | -- | Concussion gauntlet | lethal hits | Melee | 3 | 4+ | 10 | -2 | 2 |
 | melee | -- | Plasma sword | sustained hits 1 | Melee | 6 | 3+ | 6 | -2 | 1 |
 
+#### Wargear options
+- Any number of models in this unit can each have their plasma sword replaced with 1 concussion gauntlet.
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- FACTION: Prioritised Efficiency
 - Merciless Eradication: Each time an enemy unit (excluding MONSTERS and VEHICLES) that is within Engagement Range of this unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.
-
-#### Wargear Abilities
 - Preymark Crest: Each time a model in the bearer's unit makes an attack that targets an enemy unit within range of one or more objective markers, on a Critical Wound, that attack has the [PRECISION] ability.
 
 #### Unit Composition
@@ -1069,13 +1186,23 @@ LEAGUES OF VOTANN
 | ranged | -- | Magna-coil autocannon | -- | 24" | 3 | 4+ | 7 | -1 | 2 |
 | melee | -- | Plasma knife | -- | Melee | 2 | 4+ | 4 | -2 | 1 |
 
+#### Wargear options
+- For every 3 models in this unit, 1 model can be equipped with one of the following::
+  - 1 HYLas rotary cannon
+  - 1 ion beamer
+- 1 model that is not equipped with either a HYLas rotary cannon or an ion beamer can be equipped with 1 multiwave comms array.*
+- 1 model that is not equipped with either a HYLas rotary cannon or an ion beamer can be equipped with 1 panspectral scanner.*
+- 1 model that is not equipped with either a HYLas rotary cannon or an ion beamer can be equipped with 1 rollbar searchlight.*
+
+#### Core Abilities
+- Scouts 9"
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Scouts 9"
-- FACTION: Prioritised Efficiency
 - Outflanking Mag-riders: At the end of your opponent's turn, if this unit is wholly within 9" of one or more battlefield edges and not within Engagement Range of one or more enemy units, you can remove it from the battlefield and place it into Strategic Reserves.
-
-#### Wargear Abilities
 - Multiwave Comms Array: Each time you target the bearer's unit with a Stratagem, roll one D6: on a 5+, you gain 1CP.
 - Panspectral Scanner: Each time a model in the bearer's unit makes a ranged attack, re-roll a Hit roll of 1.
 - Rollbar Searchlight: Each time a model in the bearer's unit makes a ranged attack, you can ignore any or all modifiers to the Hit roll.
@@ -1121,14 +1248,28 @@ LEAGUES OF VOTANN
 | ranged | -- | Twin ion beamer | blast twin-linked | 18" | D3+1 | 4+ | 8 | -2 | 1 |
 | melee | -- | Armoured wheels | -- | Melee | 6 | 4+ | 8 | 0 | 1 |
 
+#### Wargear options
+- This model's 2 twin bolt cannons can be replaced with one of the following:
+  - 1 twin bolt cannon and 1 twin ion beamer
+  - 2 twin ion beamers
+- This model's cyclic ion cannon can be replaced with one of the following:
+  - 1 SP heavy conversion beamer
+  - 1 heavy magna-rail cannon
+- This model's panspectral scanner can be replaced with 1 Hekaton warhead.
+
+#### Core Abilities
+- Deadly Demise D6
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise D6
-- FACTION: Prioritised Efficiency
 - MultiCOG Targeting: Each time this model makes a ranged attack, you can ignore any or all modifiers to the following: that attack's Ballistic Skill characteristic; the Hit roll.
-
-#### Wargear Abilities
 - Panspectral Scanner: Each time a model in the bearer's unit makes a ranged attack, re-roll a Hit roll of 1.
+
+#### Transport
+- This model has a transport capacity of 14 LEAGUES OF VOTANN INFANTRY models. Each EXOARMOUR, EXOFRAME or IRONKIN STEELJACKS model takes up the space of 2 models. It cannot transport ARTILLERY models.
 
 #### Unit Composition
 - 1 Hekaton Land Fortress
@@ -1136,9 +1277,6 @@ LEAGUES OF VOTANN
 
 #### Damaged: 1-5 Wounds Remaining
 - While this model has 1-5 wounds remaining, each time this model makes an attack, subtract 1 from the Hit roll.
-
-#### Transport
-- This model has a transport capacity of 14 LEAGUES OF VOTANN INFANTRY models. Each EXOARMOUR, EXOFRAME or IRONKIN STEELJACKS model takes up the space of 2 models. It cannot transport ARTILLERY models.
 
 #### Points
 - YOUR 1ST UNIT COSTS: 1 model -- **250 pts**
@@ -1168,13 +1306,20 @@ LEAGUES OF VOTANN
 | ranged | -- | Twin magna-coil autocannon | twin-linked | 24" | 3 | 4+ | 7 | -1 | 2 |
 | melee | -- | Armoured hull | -- | Melee | 3 | 4+ | 6 | 0 | 1 |
 
+#### Wargear options
+- Any number of models in this unit can each have their magna-rail cannon replaced with 1 HYLas rotary cannon.
+- Any number of models can each be equipped with 1 smoke launcher.
+
+#### Core Abilities
+- Deadly Demise 1
+- Scouts 9"
+
+#### Army Rules
+- Prioritised Efficiency
+
 #### Abilities
 **ABILITIES:**
-- CORE: Deadly Demise 1, Scouts 9"
-- FACTION: Prioritised Efficiency
 - Opportunistic Manoeuvre: In your Shooting phase, after this unit has shot, it can make a Normal move of up to D6". If it does, until the end of the turn, this unit is not eligible to declare a charge.
-
-#### Wargear Abilities
 - Smoke Launcher: The bearer has the SMOKE keyword.
 
 #### Unit Composition
@@ -1195,6 +1340,8 @@ LEAGUES OF VOTANN
 ## Detachments
 
 ### Needgaard Oathband (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Martial Leverage
 - Each time an enemy unit is destroyed, you gain 1YP.
 
@@ -1247,6 +1394,8 @@ LEAGUES OF VOTANN
   EFFECT: Your unit can shoot as if it were your Shooting phase, can only target that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.
 
 ### Persecution Prospect (2 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Assailed From Every Angle
 - LEAGUES OF VOTANN units from your army have the following ability:
   Guerrilla Adepts: In your Shooting phase, just after this unit is selected to shoot, this unit can use this ability. If it does, select one enemy unit (excluding MONSTERS and VEHICLES). Until the end of the phase, attacks made by models in this unit can only target that enemy unit (and only if it is an eligible target) and, after resolving those attacks, if one or more of those attacks hit that enemy unit, until the start of your next Shooting phase, that enemy unit is assailed (this simply labels that unit for the purposes of this ability and some Enhancements and Stratagems). If that unit is already assailed, until the start of your next Shooting phase, it is also pinned. While a unit is pinned, subtract 2" from its Move characteristic and subtract 2 from Charge rolls made for it.
@@ -1301,6 +1450,8 @@ LEAGUES OF VOTANN
   EFFECT: Until the end of the phase, your unit has the Stealth ability and each time a ranged attack targets your unit, models in your unit have the Benefit of Cover against that attack.
 
 ### Delve Assault Shift (2 DP)
+- **Force dispositions:** Purge the Foe
+
 #### Detachment rule -- Fury From The Delve
 - CTHONIAN BESERKS units from your army have the Deep Strike ability.
   KEYWORDS
@@ -1355,6 +1506,8 @@ LEAGUES OF VOTANN
   EFFECT: Remove your unit from the battlefield and place it into Strategic Reserves.
 
 ### Brandfast Oathband (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Mobile Sensor Relays
 - LEAGUES OF VOTANN TRANSPORT units from your army have the following ability:
   Firebase Control (Aura): While a friendly LEAGUES OF VOTANN INFANTRY unit is wholly within 6" of this TRANSPORT, ranged weapons equipped by models in that INFANTRY unit have the [sustained hits 1] ability.
@@ -1408,6 +1561,8 @@ LEAGUES OF VOTANN
   EFFECT: Each time you use this Stratagem, you can spend 2YP. Select one friendly KAPRICUS or SAGITAUR unit within 6" of your INFANTRY unit. If you spent YP during this use of this Stratagem, you can select one friendly HEKATON LAND FORTRESS unit within 6" of your INFANTRY unit instead. The selected unit can shoot as if it were your Shooting phase. When doing so, models in the selected unit can only target that enemy unit (and only if it is an eligible target).
 
 ### Hearthfyre Arsenal (2 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Optimal Application
 - At the end of your Command phase, you gain 1YP for each objective marker you control that is not within your deployment zone and has one or more IRON-MASTER and/or MEMNYR STRATEGIST models from your army within range of it (to a maximum of 2YP gained from this Detachment rule per turn).
   In your Shooting phase, each time a BROKHYR, IRONKIN STEELJACKS or ARKANYST EVALUATOR unit from your army is selected to shoot, you can spend 1YP. If you do, until the end of the phase, each time a model in that unit makes an attack, re-roll a Hit roll of 1.
@@ -1461,6 +1616,8 @@ LEAGUES OF VOTANN
   EFFECT: Your unit can make a Normal move. When doing so, your unit must end that move as close as possible to the closest objective marker.
 
 ### Hearthband (3 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Methodical Annihilation
 - Each time a LEAGUES OF VOTANN model from your army makes an attack with a weapon that targets the closest eligible target or a target that is within Engagement Range of that model's unit:
   - Re-roll a Wound roll of 1.
@@ -1516,6 +1673,8 @@ LEAGUES OF VOTANN
   EFFECT: Until the end of the phase, improve the Strength characteristic of ranged weapons equipped by models in your unit by 1. If you spend 1YP, until the end of the phase, ranged weapons equipped by models in that unit have the [SUSTAINED HITS 1] ability as well.
 
 ### Mercenary Oathband (2 DP)
+- **Force dispositions:** Take and Hold
+
 #### Detachment rule -- Ruthless Reinvestment
 - Your LEAGUES OF VOTANN units do not have the Hostile Acquisition or Fortify Takeover abilities except as described in this rule. At the start of the battle, your LEAGUES OF VOTANN units have the Hostile Acquisition ability. At the end of your Command phase, you can spend 3YP. If you do, LEAGUES OF VOTANN units from your army lose the Hostile Acquisition ability and gain the Fortify Takeover ability, or vice versa.
 
@@ -1568,6 +1727,8 @@ LEAGUES OF VOTANN
   EFFECT: Remove your units from the battlefield and place them into Strategic Reserves.
 
 ### Armoured Trailblazers (1 DP)
+- **Force dispositions:** Disruption
+
 #### Detachment rule -- Sagitaur Spearhead
 - Friendly SAGITAUR units have Scouts 6".
 
@@ -1600,12 +1761,15 @@ LEAGUES OF VOTANN
   EFFECT: Ranged attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.
 
 ### Farseekers (1 DP)
+- **Force dispositions:** Reconnaissance
+
 #### Detachment rule -- Eye of the Hunt
 - Friendly HERNKYN units' ranged attacks that target a unit within 12" have +1 to hit rolls.
 
 #### Enhancements
 - Pan-Spectral LockonsUPGRADE 10 pts
 - PIONEERS unit only. In your Shooting phase, you can select one visible enemy unit within 12" of this unit. That enemy unit is spotted:
+  - While a unit is spotted, that unit has +3" detection range.
 - Shroudwerke TalismansUPGRADE 15 pts
 - YAEGIRS unit only. This unit has -3" detection range
 
@@ -1630,6 +1794,8 @@ LEAGUES OF VOTANN
   EFFECT: Your unit can make a normal move of up to D3+3".
 
 ### Hearthguard Covenant (1 DP)
+- **Force dispositions:** Priority Assets
+
 #### Detachment rule -- Avatars of the Ancestors
 - Friendly KAHL/EINHYR CHAMPION/EINHYR HEARTHGUARD/UTHAR THE DESTINED units' ranged attacks that target a unit within 9" can re-roll wound rolls of 1.
   This detachment has the HEARTHGUARD tag and cannot be taken with another HEARTHGUARD detachment.
